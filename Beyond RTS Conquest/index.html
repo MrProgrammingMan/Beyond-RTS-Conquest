@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beyond Kings' Conquest</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --p1-col: #c0392b;
+    --p1-glow: rgba(192,57,43,0.6);
+    --p2-col: #2980b9;
+    --p2-glow: rgba(41,128,185,0.6);
+    --gold: #d4a843;
+    --soul-col: #9b59b6;
+    --body-col: #27ae60;
+    --bg: #0a0a0e;
+    --panel: #0f0f18;
+    --border: #2a2a3a;
+    --text: #e8e0d0;
+    --mid-col: #f39c12;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+
+  /* ── TITLE BAR ── */
+  #titlebar {
+    text-align: center;
+    padding: 4px 0 2px;
+    background: linear-gradient(180deg, #050508 0%, transparent 100%);
+    position: relative;
+    z-index: 10;
+  }
+  #titlebar h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(212,168,67,0.5);
+  }
+
+  /* ── BATTLEFIELD ── */
+  #battlefield-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid var(--border);
+  }
+
+  #battlefield {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #0d0d14;
+  }
+
+  /* Mid point UI overlay */
+  #mid-indicator {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--mid-col);
+    text-shadow: 0 0 8px var(--mid-col);
+    pointer-events: none;
+  }
+
+  /* ── BOTTOM HUD ── */
+  #hud {
+    height: 220px;
+    display: flex;
+    gap: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .player-hud {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 8px 6px;
+    gap: 4px;
+    position: relative;
+  }
+
+  #p1-hud { border-right: 2px solid var(--border); }
+
+  .player-hud::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+  #p1-hud::before { background: var(--p1-col); }
+  #p2-hud::before { background: var(--p2-col); }
+
+  /* Resource bar */
+  .res-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 6px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+
+  .res-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+  .res-icon { font-size: 0.85rem; }
+  .res-label { color: #888; font-size: 0.6rem; letter-spacing: 0.05em; }
+  .res-val { font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.8rem; }
+  .souls-val { color: var(--soul-col); }
+  .bodies-val { color: var(--body-col); }
+
+  .player-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    margin-left: auto;
+  }
+  #p1-hud .player-name { color: var(--p1-col); }
+  #p2-hud .player-name { color: var(--p2-col); }
+
+  /* Unit grid */
+  .unit-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    flex: 1;
+  }
+
+  .unit-card {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 2px 3px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .unit-card:hover {
+    transform: translateY(-1px);
+  }
+
+  #p1-hud .unit-card:hover { border-color: var(--p1-col); background: rgba(192,57,43,0.1); }
+  #p2-hud .unit-card:hover { border-color: var(--p2-col); background: rgba(41,128,185,0.1); }
+
+  .unit-card.cant-afford { opacity: 0.4; cursor: not-allowed; }
+  .unit-card.cant-afford:hover { transform: none; }
+
+  .unit-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.2));
+  }
+
+  .unit-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.45rem;
+    letter-spacing: 0.05em;
+    color: #aaa;
+    text-align: center;
+  }
+
+  .unit-cost {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cost-tag {
+    font-size: 0.5rem;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+  }
+  .cost-soul { background: rgba(155,89,182,0.3); color: #c39bd3; border: 1px solid #7d3c98; }
+  .cost-body { background: rgba(39,174,96,0.3); color: #82e0aa; border: 1px solid #1e8449; }
+
+  .unit-hotkey {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: 0.45rem;
+    color: #555;
+    font-family: 'Cinzel', serif;
+  }
+
+  /* ── BASE HP BARS ── */
+  .base-hp-bar {
+    height: 4px;
+    background: #1a1a2a;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .base-hp-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  #p1-hud .base-hp-fill { background: linear-gradient(90deg, #922b21, var(--p1-col)); }
+  #p2-hud .base-hp-fill { background: linear-gradient(90deg, var(--p2-col), #1a5276); }
+
+  /* ── GAME OVER OVERLAY ── */
+  #gameover {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  #gameover h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.3em;
+    text-shadow: 0 0 30px currentColor;
+  }
+  #gameover p {
+    font-size: 1rem;
+    color: #888;
+    letter-spacing: 0.1em;
+  }
+  #restart-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    padding: 10px 30px;
+    background: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+  #restart-btn:hover { background: rgba(212,168,67,0.15); }
+
+  /* ── TOOLTIPS ── */
+  .tooltip {
+    position: fixed;
+    background: #0a0a10;
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    pointer-events: none;
+    z-index: 50;
+    max-width: 180px;
+    display: none;
+  }
+  .tooltip-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .tooltip-stat { color: #aaa; line-height: 1.6; }
+
+  /* ── SPAWN FLASH ── */
+  @keyframes spawnFlash {
+    0% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+  .spawn-flash {
+    animation: spawnFlash 0.4s ease-out forwards;
+  }
+
+  /* kill feed */
+  #killfeed {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    pointer-events: none;
+  }
+  .kf-item {
+    font-size: 0.6rem;
+    color: #aaa;
+    font-family: 'Cinzel', serif;
+    animation: kfFade 2.5s ease-out forwards;
+    text-align: right;
+  }
+  @keyframes kfFade {
+    0% { opacity: 1; transform: translateX(0); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: translateX(10px); }
+  }
+</style>
+</head>
+<body>
+
+<div id="titlebar">
+  <h1>BEYOND KINGS' CONQUEST</h1>
+</div>
+
+<div id="battlefield-wrap">
+  <canvas id="battlefield"></canvas>
+  <div id="mid-indicator">⚔ MIDDLE POINT ⚔</div>
+  <div id="killfeed"></div>
+</div>
+
+<div id="hud">
+  <!-- PLAYER 1 HUD -->
+  <div class="player-hud" id="p1-hud">
+    <div class="res-bar">
+      <span class="player-name">PLAYER 1</span>
+      <div class="res-item">
+        <span class="res-icon">💀</span>
+        <div><div class="res-label">SOULS</div><div class="res-val souls-val" id="p1-souls">20</div></div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">🦴</span>
+        <div><div class="res-label">BODIES</div><div class="res-val bodies-val" id="p1-bodies">10</div></div>
+      </div>
+      <div class="res-item" style="margin-left:auto">
+        <span class="res-label" style="font-size:0.55rem">BASE HP</span>
+      </div>
+      <div style="flex:1; max-width:80px">
+        <div class="base-hp-bar"><div class="base-hp-fill" id="p1-hp-bar" style="width:100%"></div></div>
+      </div>
+      <span style="font-size:0.65rem; font-family:'Cinzel',serif; color:#c0392b" id="p1-hp-txt">100</span>
+    </div>
+    <div class="unit-grid" id="p1-grid"></div>
+  </div>
+
+  <!-- PLAYER 2 HUD -->
+  <div class="player-hud" id="p2-hud">
+    <div class="res-bar">
+      <span class="player-name">PLAYER 2</span>
+      <div class="res-item">
+        <span class="res-icon">💀</span>
+        <div><div class="res-label">SOULS</div><div class="res-val souls-val" id="p2-souls">20</div></div>
+      </div>
+      <div class="res-item">
+        <span class="res-icon">🦴</span>
+        <div><div class="res-label">BODIES</div><div class="res-val bodies-val" id="p2-bodies">10</div></div>
+      </div>
+      <div class="res-item" style="margin-left:auto">
+        <span class="res-label" style="font-size:0.55rem">BASE HP</span>
+      </div>
+      <div style="flex:1; max-width:80px">
+        <div class="base-hp-bar"><div class="base-hp-fill" id="p2-hp-bar" style="width:100%"></div></div>
+      </div>
+      <span style="font-size:0.65rem; font-family:'Cinzel',serif; color:#2980b9" id="p2-hp-txt">100</span>
+    </div>
+    <div class="unit-grid" id="p2-grid"></div>
+  </div>
+</div>
+
+<div id="gameover">
+  <h2 id="go-title"></h2>
+  <p id="go-sub"></p>
+  <button id="restart-btn" onclick="initGame()">⚔ PLAY AGAIN ⚔</button>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-name" id="tt-name"></div>
+  <div class="tooltip-stat" id="tt-stat"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  UNIT DEFINITIONS
+// ════════════════════════════════════════════════════════
+const UNIT_DEFS = [
+  {
+    id: 'worker',
+    name: 'Corpse Worker',
+    icon: '⛏️',
+    souls: 0,
+    bodies: 0,
+    hp: 30,
+    speed: 55,
+    dmg: 0,
+    range: 0,
+    aerial: false,
+    isWorker: true,
+    hotkey1: 'Q', hotkey2: 'U',
+    desc: 'Collects bodies. FREE to spawn.',
+    color1: '#27ae60', color2: '#1e8449',
+    radius: 6,
+    attackRate: 0,
+  },
+  {
+    id: 'soldier',
+    name: 'Soldier',
+    icon: '⚔️',
+    souls: 8,
+    bodies: 3,
+    hp: 60,
+    speed: 70,
+    dmg: 12,
+    range: 28,
+    aerial: false,
+    isWorker: false,
+    hotkey1: 'W', hotkey2: 'I',
+    desc: 'Sturdy melee fighter.',
+    color1: '#e74c3c', color2: '#c0392b',
+    radius: 7,
+    attackRate: 1.2,
+  },
+  {
+    id: 'archer',
+    name: 'Bone Archer',
+    icon: '🏹',
+    souls: 10,
+    bodies: 2,
+    hp: 35,
+    speed: 60,
+    dmg: 18,
+    range: 120,
+    aerial: false,
+    isWorker: false,
+    hotkey1: 'E', hotkey2: 'O',
+    desc: 'Ranged attacker. Targets aerial units.',
+    color1: '#e67e22', color2: '#d35400',
+    radius: 6,
+    attackRate: 1.8,
+  },
+  {
+    id: 'brute',
+    name: 'Grave Brute',
+    icon: '💪',
+    souls: 18,
+    bodies: 6,
+    hp: 140,
+    speed: 45,
+    dmg: 28,
+    range: 32,
+    aerial: false,
+    isWorker: false,
+    hotkey1: 'R', hotkey2: 'P',
+    desc: 'Slow but devastating melee.',
+    color1: '#8e44ad', color2: '#6c3483',
+    radius: 10,
+    attackRate: 0.7,
+  },
+  {
+    id: 'specter',
+    name: 'Specter',
+    icon: '👻',
+    souls: 22,
+    bodies: 4,
+    hp: 45,
+    speed: 90,
+    dmg: 22,
+    range: 60,
+    aerial: true,
+    isWorker: false,
+    hotkey1: 'T', hotkey2: '[',
+    desc: 'Fast aerial unit. Hard to hit.',
+    color1: '#1abc9c', color2: '#148f77',
+    radius: 7,
+    attackRate: 1.5,
+  },
+];
+
+// ════════════════════════════════════════════════════════
+//  GAME STATE
+// ════════════════════════════════════════════════════════
+const canvas = document.getElementById('battlefield');
+const ctx = canvas.getContext('2d');
+
+let G; // game state
+
+function initGame() {
+  document.getElementById('gameover').style.display = 'none';
+
+  const bw = canvas.parentElement.offsetWidth;
+  const bh = canvas.parentElement.offsetHeight;
+  canvas.width = bw;
+  canvas.height = bh;
+
+  const BASE_W = 70;
+  const GROUND_Y = bh * 0.72;
+
+  G = {
+    bw, bh,
+    groundY: GROUND_Y,
+    baseW: BASE_W,
+    running: true,
+    lastTime: null,
+    dt: 0,
+    units: [],
+    projectiles: [],
+    particles: [],
+    nextId: 1,
+    midTimer: 0,       // how long current holder has held middle
+    midHolder: null,   // 1, 2, or null
+    midX: bw / 2,
+    midRadius: 40,
+    players: [
+      {
+        id: 1,
+        souls: 20,
+        bodies: 10,
+        baseX: BASE_W / 2 + 10,
+        baseY: GROUND_Y,
+        baseHp: 100,
+        baseMaxHp: 100,
+        dir: 1,          // moves right
+        workers: 0,
+        bodyAccum: 0,
+        workersFree: true,
+      },
+      {
+        id: 2,
+        souls: 20,
+        bodies: 10,
+        baseX: bw - BASE_W / 2 - 10,
+        baseY: GROUND_Y,
+        baseHp: 100,
+        baseMaxHp: 100,
+        dir: -1,         // moves left
+        workers: 0,
+        bodyAccum: 0,
+        workersFree: true,
+      },
+    ],
+  };
+
+  buildHUD();
+  updateHUD();
+
+  // Spawn initial free workers
+  spawnUnit(1, 'worker');
+  spawnUnit(2, 'worker');
+
+  requestAnimationFrame(gameLoop);
+}
+
+// ════════════════════════════════════════════════════════
+//  HUD BUILD
+// ════════════════════════════════════════════════════════
+function buildHUD() {
+  [1, 2].forEach(pid => {
+    const grid = document.getElementById(`p${pid}-grid`);
+    grid.innerHTML = '';
+    UNIT_DEFS.forEach(def => {
+      const card = document.createElement('div');
+      card.className = 'unit-card';
+      card.dataset.unit = def.id;
+      card.dataset.player = pid;
+      card.innerHTML = `
+        <span class="unit-hotkey">${pid === 1 ? def.hotkey1 : def.hotkey2}</span>
+        <span class="unit-icon">${def.icon}</span>
+        <span class="unit-name">${def.name}</span>
+        <div class="unit-cost">
+          <span class="cost-tag cost-soul">💀${def.souls}</span>
+          <span class="cost-tag cost-body">🦴${def.bodies}</span>
+        </div>`;
+      card.addEventListener('click', () => trySpawn(pid, def.id));
+      card.addEventListener('mouseenter', e => showTooltip(e, def));
+      card.addEventListener('mouseleave', hideTooltip);
+      grid.appendChild(card);
+    });
+  });
+}
+
+function updateHUD() {
+  if (!G) return;
+  G.players.forEach(p => {
+    document.getElementById(`p${p.id}-souls`).textContent = Math.floor(p.souls);
+    document.getElementById(`p${p.id}-bodies`).textContent = Math.floor(p.bodies);
+    const hpPct = (p.baseHp / p.baseMaxHp) * 100;
+    document.getElementById(`p${p.id}-hp-bar`).style.width = hpPct + '%';
+    document.getElementById(`p${p.id}-hp-txt`).textContent = Math.floor(p.baseHp);
+
+    // Update card affordability
+    const cards = document.querySelectorAll(`#p${p.id}-grid .unit-card`);
+    cards.forEach(card => {
+      const def = UNIT_DEFS.find(d => d.id === card.dataset.unit);
+      const canAfford = p.souls >= def.souls && p.bodies >= def.bodies;
+      card.classList.toggle('cant-afford', !canAfford);
+    });
+  });
+}
+
+function showTooltip(e, def) {
+  const tt = document.getElementById('tooltip');
+  document.getElementById('tt-name').textContent = def.name;
+  document.getElementById('tt-stat').innerHTML =
+    `HP: ${def.hp} &nbsp; SPD: ${def.speed}<br>
+     DMG: ${def.dmg} &nbsp; RNG: ${def.range}<br>
+     ${def.aerial ? '🪽 Aerial' : '🦶 Ground'}<br>
+     <em style="color:#888">${def.desc}</em>`;
+  tt.style.display = 'block';
+  tt.style.left = (e.clientX + 10) + 'px';
+  tt.style.top = (e.clientY - 60) + 'px';
+}
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+}
+
+// ════════════════════════════════════════════════════════
+//  SPAWNING
+// ════════════════════════════════════════════════════════
+function trySpawn(pid, unitId) {
+  if (!G || !G.running) return;
+  const p = G.players[pid - 1];
+  const def = UNIT_DEFS.find(d => d.id === unitId);
+
+  // Free first workers
+  const costSouls = (def.isWorker && p.workersFree) ? 0 : def.souls;
+  const costBodies = (def.isWorker && p.workersFree) ? 0 : def.bodies;
+
+  if (p.souls < costSouls || p.bodies < costBodies) return;
+
+  p.souls -= costSouls;
+  p.bodies -= costBodies;
+  if (def.isWorker && p.workersFree) p.workersFree = false;
+
+  spawnUnit(pid, unitId);
+  updateHUD();
+}
+
+function spawnUnit(pid, unitId) {
+  const p = G.players[pid - 1];
+  const def = UNIT_DEFS.find(d => d.id === unitId);
+
+  const yOff = def.aerial ? -G.bh * 0.25 : 0;
+  const x = pid === 1
+    ? p.baseX + G.baseW / 2 + 10 + Math.random() * 20
+    : p.baseX - G.baseW / 2 - 10 - Math.random() * 20;
+
+  const unit = {
+    id: G.nextId++,
+    player: pid,
+    defId: unitId,
+    def,
+    x,
+    y: G.groundY + yOff,
+    hp: def.hp,
+    maxHp: def.hp,
+    vx: 0,
+    vy: 0,
+    state: def.isWorker ? 'walking' : 'marching',
+    attackCooldown: 0,
+    target: null,
+    returnTarget: null,   // for workers going back to base
+    carrying: false,
+    animFrame: 0,
+    animTimer: 0,
+    hitFlash: 0,
+  };
+
+  if (def.isWorker) {
+    p.workers++;
+    unit.state = 'marching'; // workers march to mid then return
+  }
+
+  G.units.push(unit);
+
+  // Particle burst at spawn
+  spawnParticles(x, G.groundY + yOff, def.color1, 10);
+}
+
+// ════════════════════════════════════════════════════════
+//  GAME LOOP
+// ════════════════════════════════════════════════════════
+function gameLoop(ts) {
+  if (!G.running) return;
+  if (!G.lastTime) G.lastTime = ts;
+  G.dt = Math.min((ts - G.lastTime) / 1000, 0.05);
+  G.lastTime = ts;
+
+  update(G.dt);
+  render();
+
+  requestAnimationFrame(gameLoop);
+}
+
+// ════════════════════════════════════════════════════════
+//  UPDATE
+// ════════════════════════════════════════════════════════
+function update(dt) {
+  updateResources(dt);
+  updateMiddlePoint(dt);
+  updateUnits(dt);
+  updateProjectiles(dt);
+  updateParticles(dt);
+  checkBaseAttacks();
+  checkWinCondition();
+  updateHUD();
+}
+
+function updateResources(dt) {
+  G.players.forEach(p => {
+    // Bodies from workers: 2/min per worker
+    const bpm = p.workers * 2.0;
+    p.bodyAccum += bpm * dt / 60;
+    if (p.bodyAccum >= 1) {
+      p.bodies += Math.floor(p.bodyAccum);
+      p.bodyAccum -= Math.floor(p.bodyAccum);
+    }
+    // Souls from middle
+    if (G.midHolder === p.id) {
+      const rate = 3.0; // souls/sec when holding middle
+      p.souls += rate * dt;
+    }
+    // Passive soul income
+    p.souls += 0.5 * dt;
+  });
+}
+
+function updateMiddlePoint(dt) {
+  const mx = G.midX;
+  const mr = G.midRadius;
+  let p1Near = false, p2Near = false;
+
+  G.units.forEach(u => {
+    if (u.def.isWorker) return;
+    const dist = Math.abs(u.x - mx);
+    if (dist < mr + u.def.radius) {
+      if (u.player === 1) p1Near = true;
+      else p2Near = true;
+    }
+  });
+
+  if (p1Near && !p2Near) {
+    G.midHolder = 1;
+  } else if (p2Near && !p1Near) {
+    G.midHolder = 2;
+  } else if (p1Near && p2Near) {
+    // contested
+    G.midHolder = null;
+  } else {
+    // nobody near — keep holder
+  }
+
+  const indicator = document.getElementById('mid-indicator');
+  if (G.midHolder === 1) {
+    indicator.style.color = '#c0392b';
+    indicator.textContent = '⚔ MIDDLE — PLAYER 1 ⚔';
+  } else if (G.midHolder === 2) {
+    indicator.style.color = '#2980b9';
+    indicator.textContent = '⚔ MIDDLE — PLAYER 2 ⚔';
+  } else if (p1Near && p2Near) {
+    indicator.style.color = '#f39c12';
+    indicator.textContent = '⚔ MIDDLE — CONTESTED ⚔';
+  } else {
+    indicator.style.color = '#f39c12';
+    indicator.textContent = '⚔ MIDDLE POINT ⚔';
+  }
+}
+
+function updateUnits(dt) {
+  G.units.forEach(u => {
+    u.animTimer += dt;
+    if (u.animTimer > 0.15) { u.animTimer = 0; u.animFrame = (u.animFrame + 1) % 4; }
+    if (u.hitFlash > 0) u.hitFlash -= dt * 4;
+
+    u.attackCooldown = Math.max(0, u.attackCooldown - dt);
+
+    const p = G.players[u.player - 1];
+    const dir = p.dir;
+
+    if (u.def.isWorker) {
+      updateWorker(u, p, dir, dt);
+      return;
+    }
+
+    // Find nearest enemy
+    const enemy = findNearestEnemy(u);
+    u.target = enemy;
+
+    if (enemy) {
+      const dist = dist2d(u, enemy);
+      if (dist <= u.def.range + 2) {
+        // Attack
+        u.vx = 0;
+        if (u.attackCooldown <= 0) {
+          attackUnit(u, enemy);
+          u.attackCooldown = 1 / u.def.attackRate;
+        }
+      } else {
+        // Chase or march
+        const dx = enemy.x - u.x;
+        const dy = enemy.y - u.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        u.vx = (dx / d) * u.def.speed;
+        u.vy = (dy / d) * u.def.speed;
+      }
+    } else {
+      // March forward
+      u.vx = dir * u.def.speed;
+      u.vy = 0;
+    }
+
+    u.x += u.vx * dt;
+    u.y += u.vy * dt;
+
+    // Clamp aerial / ground
+    if (!u.def.aerial) {
+      u.y = G.groundY;
+    } else {
+      u.y = Math.max(30, Math.min(G.groundY - 20, u.y));
+    }
+
+    // Clamp x to battlefield
+    u.x = Math.max(G.players[0].baseX + G.baseW/2, Math.min(G.players[1].baseX - G.baseW/2, u.x));
+  });
+
+  // Remove dead units
+  const dead = G.units.filter(u => u.hp <= 0);
+  dead.forEach(u => {
+    // Soul reward to enemy player
+    const killer = u.player === 1 ? 2 : 1;
+    let soulGain = u.def.souls * 0.5 + 2;
+    // Bonus if that player holds middle
+    if (G.midHolder !== null && G.midHolder !== u.player) {
+      soulGain *= 1.5;
+    }
+    G.players[killer - 1].souls += soulGain;
+
+    if (u.def.isWorker) {
+      G.players[u.player - 1].workers = Math.max(0, G.players[u.player - 1].workers - 1);
+    }
+
+    spawnParticles(u.x, u.y, u.def.color1, 14);
+    addKillFeed(killer, u.def.name);
+  });
+  G.units = G.units.filter(u => u.hp > 0);
+}
+
+function updateWorker(u, p, dir, dt) {
+  // Workers march to a "corpse field" midway then return to base
+  const targetX = p.id === 1 ? G.bw * 0.3 : G.bw * 0.7;
+  const baseX = p.baseX;
+
+  if (!u.carrying) {
+    // Go to field
+    const dx = targetX - u.x;
+    if (Math.abs(dx) < 8) {
+      u.carrying = true;
+    } else {
+      u.x += Math.sign(dx) * u.def.speed * dt;
+    }
+  } else {
+    // Return to base
+    const dx = baseX - u.x;
+    if (Math.abs(dx) < 8) {
+      u.carrying = false;
+      p.bodies += 2;
+    } else {
+      u.x += Math.sign(dx) * u.def.speed * 0.8 * dt;
+    }
+  }
+  u.y = G.groundY;
+}
+
+function attackUnit(attacker, target) {
+  if (attacker.def.range > 60) {
+    // Ranged — spawn projectile
+    G.projectiles.push({
+      x: attacker.x,
+      y: attacker.y - 4,
+      tx: target.x,
+      ty: target.y - 4,
+      targetId: target.id,
+      dmg: attacker.def.dmg,
+      player: attacker.player,
+      color: attacker.def.color1,
+      speed: 280,
+    });
+  } else {
+    // Melee
+    target.hp -= attacker.def.dmg;
+    target.hitFlash = 1;
+    spawnParticles(target.x, target.y, '#fff', 4);
+  }
+}
+
+function updateProjectiles(dt) {
+  G.projectiles.forEach(p => {
+    const target = G.units.find(u => u.id === p.targetId);
+    if (target) {
+      p.tx = target.x;
+      p.ty = target.y - 4;
+    }
+    const dx = p.tx - p.x;
+    const dy = p.ty - p.y;
+    const d = Math.sqrt(dx * dx + dy * dy);
+    if (d < 6) {
+      if (target) {
+        target.hp -= p.dmg;
+        target.hitFlash = 1;
+        spawnParticles(target.x, target.y, p.color, 5);
+      }
+      p.done = true;
+    } else {
+      p.x += (dx / d) * p.speed * dt;
+      p.y += (dy / d) * p.speed * dt;
+    }
+  });
+  G.projectiles = G.projectiles.filter(p => !p.done);
+}
+
+function updateParticles(dt) {
+  G.particles.forEach(p => {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vy += 120 * dt;
+    p.life -= dt;
+    p.alpha = Math.max(0, p.life / p.maxLife);
+  });
+  G.particles = G.particles.filter(p => p.life > 0);
+}
+
+function checkBaseAttacks() {
+  G.units.forEach(u => {
+    const enemyBase = G.players[u.player === 1 ? 1 : 0];
+    const baseX = enemyBase.baseX;
+    const dist = Math.abs(u.x - baseX);
+    if (dist < G.baseW / 2 + u.def.radius + 5) {
+      if (!u.def.isWorker && u.attackCooldown <= 0) {
+        enemyBase.baseHp -= u.def.dmg * 0.15;
+        u.attackCooldown = 1 / u.def.attackRate;
+        enemyBase.baseHp = Math.max(0, enemyBase.baseHp);
+        spawnParticles(baseX, G.groundY - 30, '#e74c3c', 6);
+      }
+    }
+  });
+}
+
+function checkWinCondition() {
+  G.players.forEach(p => {
+    if (p.baseHp <= 0) {
+      const winner = p.id === 1 ? 2 : 1;
+      endGame(winner);
+    }
+  });
+}
+
+function endGame(winner) {
+  G.running = false;
+  const go = document.getElementById('gameover');
+  const title = document.getElementById('go-title');
+  const sub = document.getElementById('go-sub');
+  title.textContent = `PLAYER ${winner} VICTORIOUS`;
+  title.style.color = winner === 1 ? '#c0392b' : '#2980b9';
+  sub.textContent = 'The enemy base has fallen. The souls are yours.';
+  go.style.display = 'flex';
+}
+
+// ════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════
+function findNearestEnemy(u) {
+  let best = null, bestD = Infinity;
+  G.units.forEach(e => {
+    if (e.player === u.player) return;
+    if (e.def.isWorker) return; // don't auto-target workers unless nothing else
+    const d = dist2d(u, e);
+    // Archers can hit aerial, others prefer ground
+    if (d < bestD) { best = e; bestD = d; }
+  });
+  if (!best) {
+    // Target workers as last resort
+    G.units.forEach(e => {
+      if (e.player === u.player) return;
+      const d = dist2d(u, e);
+      if (d < bestD) { best = e; bestD = d; }
+    });
+  }
+  return best;
+}
+
+function dist2d(a, b) {
+  const dx = a.x - b.x, dy = a.y - b.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const spd = 30 + Math.random() * 80;
+    G.particles.push({
+      x, y,
+      vx: Math.cos(angle) * spd,
+      vy: Math.sin(angle) * spd - 30,
+      color,
+      life: 0.4 + Math.random() * 0.4,
+      maxLife: 0.8,
+      size: 2 + Math.random() * 3,
+      alpha: 1,
+    });
+  }
+}
+
+let killFeedItems = [];
+function addKillFeed(killerPid, unitName) {
+  const kf = document.getElementById('killfeed');
+  const el = document.createElement('div');
+  el.className = 'kf-item';
+  el.style.color = killerPid === 1 ? '#e74c3c' : '#3498db';
+  el.textContent = `P${killerPid} killed ${unitName}`;
+  kf.appendChild(el);
+  setTimeout(() => el.remove(), 2500);
+}
+
+// ════════════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════════════
+function render() {
+  ctx.clearRect(0, 0, G.bw, G.bh);
+  drawBackground();
+  drawMiddlePoint();
+  drawBases();
+  drawUnits();
+  drawProjectiles();
+  drawParticles();
+}
+
+function drawBackground() {
+  // Sky gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, G.groundY);
+  grad.addColorStop(0, '#080812');
+  grad.addColorStop(1, '#121220');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, G.bw, G.bh);
+
+  // Stars
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  for (let i = 0; i < 60; i++) {
+    const sx = (i * 137.5) % G.bw;
+    const sy = (i * 73.1) % (G.groundY * 0.8);
+    const ss = 0.5 + (i % 3) * 0.5;
+    ctx.beginPath();
+    ctx.arc(sx, sy, ss, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Ground
+  const ggrad = ctx.createLinearGradient(0, G.groundY, 0, G.bh);
+  ggrad.addColorStop(0, '#1a1a2e');
+  ggrad.addColorStop(1, '#0d0d18');
+  ctx.fillStyle = ggrad;
+  ctx.fillRect(0, G.groundY, G.bw, G.bh - G.groundY);
+
+  // Ground line
+  ctx.strokeStyle = '#2a2a4a';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, G.groundY);
+  ctx.lineTo(G.bw, G.groundY);
+  ctx.stroke();
+}
+
+function drawMiddlePoint() {
+  const mx = G.midX;
+  const mr = G.midRadius;
+  const my = G.groundY;
+
+  // Pillar of light
+  let midColor = 'rgba(243,156,18,0.15)';
+  if (G.midHolder === 1) midColor = 'rgba(192,57,43,0.15)';
+  if (G.midHolder === 2) midColor = 'rgba(41,128,185,0.15)';
+
+  const lightGrad = ctx.createRadialGradient(mx, my * 0.5, 0, mx, my * 0.5, mr * 1.5);
+  lightGrad.addColorStop(0, midColor);
+  lightGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = lightGrad;
+  ctx.fillRect(mx - mr * 1.5, 0, mr * 3, my);
+
+  // Circle on ground
+  ctx.strokeStyle = G.midHolder === 1 ? '#c0392b' : G.midHolder === 2 ? '#2980b9' : '#f39c12';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.arc(mx, my, mr, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Center gem
+  ctx.fillStyle = G.midHolder === 1 ? '#c0392b' : G.midHolder === 2 ? '#2980b9' : '#f39c12';
+  ctx.shadowColor = ctx.fillStyle;
+  ctx.shadowBlur = 12;
+  ctx.beginPath();
+  ctx.arc(mx, my - 2, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawBases() {
+  G.players.forEach(p => {
+    const x = p.baseX;
+    const y = G.groundY;
+    const w = G.baseW;
+    const pCol = p.id === 1 ? '#c0392b' : '#2980b9';
+
+    // Castle silhouette
+    ctx.fillStyle = p.id === 1 ? '#2a0a08' : '#08182a';
+    // Base body
+    ctx.fillRect(x - w/2, y - 80, w, 80);
+    // Battlements
+    for (let i = 0; i < 4; i++) {
+      ctx.fillRect(x - w/2 + i * (w/3), y - 95, w/4, 18);
+    }
+    // Gate
+    ctx.fillStyle = '#050508';
+    ctx.fillRect(x - 12, y - 35, 24, 35);
+
+    // Border glow
+    ctx.strokeStyle = pCol;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = pCol;
+    ctx.shadowBlur = 8;
+    ctx.strokeRect(x - w/2, y - 80, w, 80);
+    ctx.shadowBlur = 0;
+
+    // Banner
+    ctx.fillStyle = pCol;
+    ctx.beginPath();
+    ctx.moveTo(x - 3, y - 100);
+    ctx.lineTo(x - 3, y - 80);
+    ctx.lineTo(x + 14, y - 90);
+    ctx.closePath();
+    ctx.fill();
+
+    // HP indicator above base
+    const hpPct = p.baseHp / p.baseMaxHp;
+    ctx.fillStyle = '#1a1a2a';
+    ctx.fillRect(x - w/2, y - 88, w, 5);
+    ctx.fillStyle = pCol;
+    ctx.fillRect(x - w/2, y - 88, w * hpPct, 5);
+  });
+}
+
+function drawUnits() {
+  G.units.forEach(u => {
+    const pCol = u.player === 1 ? '#c0392b' : '#2980b9';
+    const hitT = u.hitFlash;
+
+    ctx.save();
+    ctx.translate(u.x, u.y);
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(0, 2, u.def.radius * 1.2, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Body
+    const r = u.def.radius;
+    const bodyColor = hitT > 0 ? '#ffffff' : u.def.color1;
+
+    if (u.def.aerial) {
+      // Aerial units — diamond shape
+      ctx.fillStyle = bodyColor;
+      ctx.shadowColor = u.def.color1;
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.moveTo(0, -r * 1.4);
+      ctx.lineTo(r, 0);
+      ctx.lineTo(0, r);
+      ctx.lineTo(-r, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    } else if (u.def.id === 'brute') {
+      // Brute — wide rectangle
+      ctx.fillStyle = bodyColor;
+      ctx.shadowColor = u.def.color1;
+      ctx.shadowBlur = 6;
+      ctx.fillRect(-r * 1.3, -r * 2, r * 2.6, r * 2.2);
+      ctx.shadowBlur = 0;
+    } else {
+      // Standard — circle + head
+      ctx.fillStyle = bodyColor;
+      ctx.shadowColor = u.def.color1;
+      ctx.shadowBlur = 5;
+      // Body
+      ctx.fillRect(-r * 0.7, -r * 1.8, r * 1.4, r * 1.2);
+      // Head
+      ctx.beginPath();
+      ctx.arc(0, -r * 2.1, r * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Worker carry indicator
+    if (u.def.isWorker && u.carrying) {
+      ctx.fillStyle = '#27ae60';
+      ctx.beginPath();
+      ctx.arc(r * 0.8, -r * 0.5, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Team indicator dot
+    ctx.fillStyle = pCol;
+    ctx.beginPath();
+    ctx.arc(0, -r * 2.9, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // HP bar (only if damaged)
+    if (u.hp < u.maxHp) {
+      const barW = r * 2.5;
+      const barY = -r * 3.4;
+      ctx.fillStyle = '#2a2a3a';
+      ctx.fillRect(-barW/2, barY, barW, 3);
+      ctx.fillStyle = u.hp > u.maxHp * 0.5 ? '#27ae60' : '#e74c3c';
+      ctx.fillRect(-barW/2, barY, barW * (u.hp / u.maxHp), 3);
+    }
+
+    ctx.restore();
+  });
+}
+
+function drawProjectiles() {
+  G.projectiles.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Trail
+    ctx.strokeStyle = p.color + '88';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x - (p.tx - p.x) * 0.15, p.y - (p.ty - p.y) * 0.15);
+    ctx.stroke();
+  });
+}
+
+function drawParticles() {
+  G.particles.forEach(p => {
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
+// ════════════════════════════════════════════════════════
+//  KEYBOARD INPUT
+// ════════════════════════════════════════════════════════
+const P1_KEYS = { Q:'worker', W:'soldier', E:'archer', R:'brute', T:'specter' };
+const P2_KEYS = { U:'worker', I:'soldier', O:'archer', P:'brute', '[':'specter' };
+
+document.addEventListener('keydown', e => {
+  if (!G || !G.running) return;
+  const k = e.key.toUpperCase();
+  if (P1_KEYS[k]) { trySpawn(1, P1_KEYS[k]); }
+  if (P2_KEYS[k]) { trySpawn(2, P2_KEYS[k]); }
+});
+
+// ════════════════════════════════════════════════════════
+//  RESIZE
+// ════════════════════════════════════════════════════════
+window.addEventListener('resize', () => {
+  if (G) {
+    G.bw = canvas.parentElement.offsetWidth;
+    G.bh = canvas.parentElement.offsetHeight;
+    canvas.width = G.bw;
+    canvas.height = G.bh;
+    G.groundY = G.bh * 0.72;
+    G.midX = G.bw / 2;
+    G.players[0].baseX = G.baseW / 2 + 10;
+    G.players[0].baseY = G.groundY;
+    G.players[1].baseX = G.bw - G.baseW / 2 - 10;
+    G.players[1].baseY = G.groundY;
+  }
+});
+
+// ════════════════════════════════════════════════════════
+//  START
+// ════════════════════════════════════════════════════════
+initGame();
+</script>
+</body>
+</html>
