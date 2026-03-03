@@ -6,80 +6,73 @@
 <title>Beyond Kings' Conquest</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
-
 :root {
-  --p1:#c0392b; --p1d:#7b241c; --p1g:rgba(192,57,43,0.5);
-  --p2:#2471a3; --p2d:#1a4f72; --p2g:rgba(36,113,163,0.5);
-  --gold:#d4a843; --soul:#9b59b6; --bodyc:#27ae60;
-  --bg:#07070f; --panel:#0d0d1a; --panel2:#111122;
-  --border:#252538; --border2:#1e1e30; --text:#e8e0d0; --dim:#888; --mid:#f39c12;
+  --p1:#c0392b;--p1d:#7b241c;--p1g:rgba(192,57,43,0.5);
+  --p2:#2471a3;--p2d:#1a4f72;--p2g:rgba(36,113,163,0.5);
+  --gold:#d4a843;--soul:#9b59b6;--bodyc:#27ae60;
+  --bg:#07070f;--panel:#0d0d1a;--panel2:#111122;
+  --border:#252538;--border2:#1e1e30;--text:#e8e0d0;--dim:#888;--mid:#f39c12;
   --fs-xs:clamp(0.52rem,.85vw,.72rem);
   --fs-sm:clamp(0.65rem,1.0vw,.9rem);
   --fs-md:clamp(0.82rem,1.25vw,1.1rem);
   --fs-lg:clamp(1rem,1.8vw,1.5rem);
   --fs-xl:clamp(1.3rem,3vw,2.6rem);
   --fs-xxl:clamp(1.8rem,5vw,4rem);
-  --hud:clamp(170px,24vh,270px);
+  --hud:clamp(180px,25vh,280px);
   --gap:clamp(3px,.4vw,7px);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Crimson Text',serif;user-select:none;}
-
-/* ── SCREENS ── */
 .screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;}
 .screen.active{display:flex;}
-
-/* ── SHARED BUTTONS ── */
 .btn{font-family:'Cinzel',serif;font-size:var(--fs-md);letter-spacing:.12em;padding:clamp(8px,1.2vh,16px) clamp(20px,3vw,48px);background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--text);cursor:pointer;border-radius:3px;transition:all .18s;white-space:nowrap;}
 .btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.08);}
 .btn:disabled{opacity:.35;cursor:not-allowed;}
 .btn.primary{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.1);}
 .btn.primary:hover{background:rgba(212,168,67,.22);}
 kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--border);border-radius:3px;padding:2px 6px;font-family:'Cinzel',serif;font-size:var(--fs-xs);}
-
-/* ── SCREEN TITLES ── */
 .sc-title{font-family:'Cinzel',serif;font-size:var(--fs-xl);letter-spacing:.2em;color:var(--gold);text-align:center;}
 .sc-sub{font-size:var(--fs-sm);color:var(--dim);letter-spacing:.1em;text-align:center;}
 
-/* ════════ MAIN MENU ════════ */
+/* ── MENU ── */
 #sc-menu{overflow:hidden;}
 #menu-canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.15;pointer-events:none;}
-.menu-overlay{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(192,57,43,.12) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 50% 0%,rgba(36,113,163,.1) 0%,transparent 60%),linear-gradient(180deg,#07070f 0%,#0d0d1a 100%);pointer-events:none;}
+.menu-overlay{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(192,57,43,.12) 0%,transparent 70%),linear-gradient(180deg,#07070f,#0d0d1a);pointer-events:none;}
 .menu-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:clamp(24px,4vh,56px);}
-.menu-title-block{text-align:center;}
 .menu-eyebrow{font-size:var(--fs-sm);letter-spacing:.4em;color:var(--gold);opacity:.7;margin-bottom:.5em;}
-.menu-title{font-family:'Cinzel',serif;font-size:var(--fs-xxl);font-weight:900;line-height:1.05;letter-spacing:.06em;text-shadow:0 0 40px rgba(212,168,67,.3),0 0 80px rgba(192,57,43,.15);}
+.menu-title{font-family:'Cinzel',serif;font-size:var(--fs-xxl);font-weight:900;line-height:1.05;letter-spacing:.06em;text-shadow:0 0 40px rgba(212,168,67,.3);}
 .menu-btns{display:flex;flex-direction:column;gap:clamp(8px,1.5vh,18px);align-items:center;min-width:clamp(180px,25vw,320px);}
 .menu-btns .btn{width:100%;text-align:center;}
 
-/* ════════ FACTION SELECT ════════ */
-#sc-faction{background:var(--bg);padding:clamp(10px,1.5vh,20px);gap:clamp(8px,1.2vh,16px);overflow-y:auto;}
+/* ── FACTION ── */
+#sc-faction{background:var(--bg);padding:clamp(10px,1.5vh,18px);gap:clamp(8px,1.2vh,14px);overflow-y:auto;}
 .faction-layout{display:flex;gap:clamp(8px,1.5vw,24px);align-items:flex-start;justify-content:center;flex:1;width:100%;max-width:1400px;}
 .faction-side{flex:1;display:flex;flex-direction:column;gap:clamp(6px,1vh,12px);max-width:580px;}
-.faction-plabel{font-family:'Cinzel',serif;font-size:var(--fs-md);letter-spacing:.15em;text-align:center;padding:clamp(6px,1vh,12px);border-radius:4px;line-height:1.6;}
+.faction-plabel{font-family:'Cinzel',serif;font-size:var(--fs-md);letter-spacing:.15em;text-align:center;padding:clamp(6px,1vh,10px);border-radius:4px;line-height:1.6;}
 .faction-plabel span{font-size:var(--fs-xs);opacity:.6;display:block;}
 .p1l{color:var(--p1);border:1px solid var(--p1d);background:rgba(192,57,43,.08);}
 .p2l{color:var(--p2);border:1px solid var(--p2d);background:rgba(36,113,163,.08);}
-.faction-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(6px,.9vw,12px);}
-.fcard{background:var(--panel);border:2px solid var(--border);border-radius:6px;padding:clamp(8px,1.2vh,16px);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:clamp(4px,.6vh,8px);}
+.faction-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(5px,.8vw,10px);}
+.fcard{background:var(--panel);border:2px solid var(--border);border-radius:6px;padding:clamp(7px,1vh,14px);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:clamp(3px,.5vh,7px);}
 .fcard:hover{border-color:var(--gold);background:rgba(212,168,67,.05);}
 .fcard.sel1{border-color:var(--p1)!important;background:rgba(192,57,43,.1)!important;box-shadow:0 0 12px var(--p1g);}
 .fcard.sel2{border-color:var(--p2)!important;background:rgba(36,113,163,.1)!important;box-shadow:0 0 12px var(--p2g);}
-.fcard-head{display:flex;align-items:center;gap:10px;}
-.fcard-icon{font-size:clamp(1.4rem,2.2vw,2rem);}
+.fcard-head{display:flex;align-items:center;gap:8px;}
+.fcard-icon{font-size:clamp(1.2rem,2vw,1.8rem);}
 .fcard-name{font-family:'Cinzel',serif;font-size:var(--fs-md);letter-spacing:.08em;}
 .fcard-tag{font-size:var(--fs-xs);color:var(--dim);font-style:italic;line-height:1.4;}
 .fcard-units{display:flex;flex-wrap:wrap;gap:3px;}
-.futag{font-size:var(--fs-xs);padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.06);border:1px solid var(--border);font-family:'Cinzel',serif;letter-spacing:.04em;}
-.futag.air{border-color:#1abc9c;color:#1abc9c;}
-.futag.rng{border-color:var(--mid);color:var(--mid);}
+.futag{font-size:var(--fs-xs);padding:2px 5px;border-radius:2px;background:rgba(255,255,255,.06);border:1px solid var(--border);font-family:'Cinzel',serif;}
+.futag.air{border-color:#1abc9c;color:#1abc9c;}.futag.rng{border-color:var(--mid);color:var(--mid);}
 .fcard-pc{font-size:var(--fs-xs);color:var(--dim);line-height:1.5;}
 .pro{color:#2ecc71;}.con{color:#e74c3c;}
 .faction-vs{font-family:'Cinzel',serif;font-size:var(--fs-xl);color:var(--gold);opacity:.4;align-self:center;flex-shrink:0;}
 .faction-chosen{font-family:'Cinzel',serif;font-size:var(--fs-xs);text-align:center;color:var(--dim);letter-spacing:.1em;padding:5px;border:1px dashed var(--border);border-radius:3px;}
-.faction-footer{display:flex;gap:clamp(10px,2vw,24px);justify-content:center;}
+.faction-footer{display:flex;gap:clamp(10px,2vw,24px);justify-content:center;align-items:center;}
+.mirror-warn{font-family:'Cinzel',serif;font-size:var(--fs-xs);color:var(--mid);letter-spacing:.1em;opacity:0;transition:opacity .3s;}
+.mirror-warn.show{opacity:1;}
 
-/* ════════ TUTORIAL ════════ */
+/* ── TUTORIAL ── */
 #sc-tutorial{background:var(--bg);padding:clamp(14px,2.5vh,36px);}
 .tut-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2vh,28px);width:100%;max-width:860px;}
 .tut-display{width:100%;min-height:clamp(280px,52vh,480px);background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:clamp(16px,2.5vw,36px);display:flex;flex-direction:column;gap:clamp(10px,1.8vh,22px);}
@@ -95,9 +88,8 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
 .hl-icon{font-size:clamp(1.8rem,3vw,2.8rem);display:block;margin-bottom:8px;}
 .tut-nav{display:flex;align-items:center;gap:clamp(10px,2vw,24px);}
 .tut-count{font-family:'Cinzel',serif;font-size:var(--fs-md);color:var(--dim);min-width:60px;text-align:center;}
-.tut-skip-btn{font-size:var(--fs-xs);opacity:.5;padding:6px 14px;}
 
-/* ════════ CONTROLS ════════ */
+/* ── CONTROLS ── */
 #sc-controls{background:var(--bg);gap:clamp(14px,2vh,28px);}
 .ctrl-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2.2vh,28px);}
 .ctrl-grid{display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;}
@@ -106,81 +98,107 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
 .ctrl-p1 h3{color:var(--p1);}.ctrl-p2 h3{color:var(--p2);}
 .ctrl-row{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--dim);flex-wrap:wrap;}
 
-/* ════════ GAME SCREEN ════════ */
+/* ── GAME ── */
 #sc-game{display:none;flex-direction:column;padding:0;}
 #sc-game.active{display:flex;}
-#battlefield{flex:1;display:block;width:100%;min-height:0;background:#0a0a14;}
-#mid-indicator{position:absolute;top:clamp(4px,.8vh,10px);left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:var(--fs-sm);letter-spacing:.18em;color:var(--mid);text-shadow:0 0 10px var(--mid);pointer-events:none;z-index:5;white-space:nowrap;}
-#killfeed{position:absolute;top:clamp(26px,3.8vh,48px);right:clamp(5px,.8vw,12px);display:flex;flex-direction:column;gap:3px;pointer-events:none;z-index:5;}
+#battlefield{flex:1;display:block;width:100%;min-height:0;}
+
+/* Momentum bar */
+#momentum-bar-wrap{height:clamp(5px,0.8vh,9px);background:#111120;flex-shrink:0;position:relative;border-bottom:1px solid var(--border);}
+#momentum-bar{height:100%;width:50%;margin:0 auto;background:linear-gradient(90deg,var(--p1),var(--p2));transition:none;position:absolute;top:0;left:0;right:0;}
+#momentum-p1{position:absolute;left:0;top:0;bottom:0;background:var(--p1);transition:width .5s;}
+#momentum-p2{position:absolute;right:0;top:0;bottom:0;background:var(--p2);transition:width .5s;}
+#momentum-center{position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(255,255,255,.2);transform:translateX(-50%);}
+
+#mid-indicator{position:absolute;top:clamp(10px,1.5vh,16px);left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:var(--fs-sm);letter-spacing:.18em;color:var(--mid);text-shadow:0 0 10px var(--mid);pointer-events:none;z-index:5;white-space:nowrap;}
+#killfeed{position:absolute;top:clamp(32px,4.5vh,56px);right:clamp(5px,.8vw,12px);display:flex;flex-direction:column;gap:3px;pointer-events:none;z-index:5;max-height:120px;overflow:hidden;}
 .kf-item{font-family:'Cinzel',serif;font-size:var(--fs-xs);text-align:right;animation:kfFade 2.8s ease-out forwards;background:rgba(0,0,0,.5);padding:2px 8px;border-radius:3px;}
 @keyframes kfFade{0%{opacity:1;transform:translateX(0)}75%{opacity:1}100%{opacity:0;transform:translateX(12px)}}
 #popups{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden;}
 .rpop{position:absolute;font-family:'Cinzel',serif;font-size:var(--fs-sm);font-weight:700;pointer-events:none;animation:popFloat 1.5s ease-out forwards;text-shadow:0 1px 4px rgba(0,0,0,.9);}
 @keyframes popFloat{0%{opacity:1;transform:translateY(0) scale(1)}20%{opacity:1;transform:translateY(-14px) scale(1.1)}100%{opacity:0;transform:translateY(-44px) scale(.9)}}
+#pause-overlay{position:absolute;inset:0;background:rgba(0,0,0,.75);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:clamp(12px,2vh,24px);}
+#pause-overlay.show{display:flex;}
+.pause-title{font-family:'Cinzel',serif;font-size:var(--fs-xxl);color:var(--gold);letter-spacing:.3em;}
+.pause-sub{font-size:var(--fs-md);color:var(--dim);letter-spacing:.15em;}
+#siege-indicator{position:absolute;bottom:calc(var(--hud) + 4px);left:50%;transform:translateX(-50%);font-family:'Cinzel',serif;font-size:var(--fs-xs);color:#e74c3c;opacity:0;transition:opacity .5s;pointer-events:none;z-index:5;letter-spacing:.1em;}
 
-/* ════════ HUD ════════ */
+/* ── HUD ── */
 #hud{height:var(--hud);display:flex;flex-shrink:0;background:var(--panel);border-top:2px solid var(--border);position:relative;z-index:10;}
-.player-hud{flex:1;display:flex;flex-direction:column;padding:clamp(4px,.7vh,9px) clamp(5px,.7vw,12px);gap:clamp(3px,.5vh,7px);position:relative;overflow:hidden;}
+.player-hud{flex:1;display:flex;flex-direction:column;padding:clamp(4px,.7vh,9px) clamp(5px,.7vw,12px);gap:clamp(3px,.5vh,6px);position:relative;overflow:hidden;}
 .player-hud::before{content:'';position:absolute;inset:0;opacity:.035;pointer-events:none;}
 #p1-hud{border-right:2px solid var(--border);}
 #p1-hud::before{background:var(--p1);}
 #p2-hud::before{background:var(--p2);}
-.hud-top{display:flex;align-items:center;gap:clamp(6px,1vw,18px);flex-wrap:wrap;flex-shrink:0;}
+.hud-top{display:flex;align-items:center;gap:clamp(5px,.8vw,14px);flex-wrap:wrap;flex-shrink:0;}
 .pname{font-family:'Cinzel',serif;font-size:var(--fs-md);font-weight:700;letter-spacing:.18em;flex-shrink:0;}
 .pname1{color:var(--p1);text-shadow:0 0 12px var(--p1g);}
 .pname2{color:var(--p2);text-shadow:0 0 12px var(--p2g);}
-.res-grp{display:flex;gap:clamp(6px,1vw,16px);align-items:center;}
-.res-item2{display:flex;align-items:center;gap:clamp(3px,.5vw,7px);background:rgba(0,0,0,.35);padding:clamp(3px,.5vh,7px) clamp(5px,.8vw,12px);border-radius:4px;border:1px solid var(--border2);}
-.ricon{font-size:clamp(.9rem,1.6vw,1.5rem);}
+.res-grp{display:flex;gap:clamp(5px,.8vw,12px);align-items:center;}
+.res-item2{display:flex;align-items:center;gap:clamp(3px,.4vw,6px);background:rgba(0,0,0,.35);padding:clamp(2px,.4vh,6px) clamp(4px,.7vw,10px);border-radius:4px;border:1px solid var(--border2);transition:background .2s;}
+.res-item2.flash-red{background:rgba(192,57,43,.3)!important;}
+.ricon{font-size:clamp(.85rem,1.5vw,1.4rem);}
 .rtxt{display:flex;flex-direction:column;}
 .rlabel{font-size:var(--fs-xs);color:var(--dim);letter-spacing:.07em;line-height:1;}
 .rval{font-family:'Cinzel',serif;font-size:var(--fs-lg);font-weight:700;line-height:1.1;}
-.rval.s{color:var(--soul);}
-.rval.b{color:var(--bodyc);}
-.hp-wrap{display:flex;align-items:center;gap:clamp(3px,.5vw,9px);flex:1;min-width:0;}
+.rval.s{color:var(--soul);}.rval.b{color:var(--bodyc);}
+.hp-wrap{display:flex;align-items:center;gap:clamp(3px,.4vw,8px);flex:1;min-width:0;}
 .hp-bar{flex:1;height:clamp(5px,.9vh,11px);background:#1a1a2e;border-radius:4px;overflow:hidden;border:1px solid var(--border);min-width:36px;}
 .hp-fill{height:100%;border-radius:4px;transition:width .3s;}
 .hp1{background:linear-gradient(90deg,#7b241c,var(--p1));}
 .hp2{background:linear-gradient(90deg,var(--p2),#1a4f72);}
 .hp-txt{font-family:'Cinzel',serif;font-size:var(--fs-sm);font-weight:700;min-width:2.5em;text-align:right;flex-shrink:0;}
+.hud-meta{display:flex;align-items:center;gap:clamp(4px,.6vw,10px);flex-shrink:0;flex-wrap:wrap;}
+.unit-count{font-family:'Cinzel',serif;font-size:var(--fs-xs);padding:2px 7px;border-radius:3px;background:rgba(0,0,0,.35);border:1px solid var(--border2);white-space:nowrap;}
+.worker-count{font-family:'Cinzel',serif;font-size:var(--fs-xs);padding:2px 7px;border-radius:3px;background:rgba(39,174,96,.12);border:1px solid #1e8449;color:var(--bodyc);white-space:nowrap;}
+.desperation-badge{font-family:'Cinzel',serif;font-size:var(--fs-xs);padding:2px 7px;border-radius:3px;background:rgba(231,76,60,.12);border:1px solid #e74c3c;color:#e74c3c;animation:desperatePulse 1.5s infinite;display:none;}
+@keyframes desperatePulse{0%,100%{opacity:1}50%{opacity:.5}}
+.econ-rate{font-family:'Cinzel',serif;font-size:var(--fs-xs);color:var(--bodyc);opacity:.7;}
 
-/* Unit grid */
 .unit-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--gap);flex:1;min-height:0;}
 .ucard{background:rgba(0,0,0,.45);border:1.5px solid var(--border);border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:clamp(3px,.5vh,7px) clamp(2px,.3vw,5px);cursor:pointer;transition:border-color .14s,background .14s,transform .1s,box-shadow .14s;position:relative;overflow:hidden;min-width:0;}
 .ucard:hover{transform:translateY(-2px);}
 #p1-hud .ucard:hover{border-color:var(--p1);background:rgba(192,57,43,.12);box-shadow:0 0 10px var(--p1g);}
 #p2-hud .ucard:hover{border-color:var(--p2);background:rgba(36,113,163,.12);box-shadow:0 0 10px var(--p2g);}
 .ucard.sel{transform:translateY(-2px);}
-#p1-hud .ucard.sel{border-color:var(--p1);background:rgba(192,57,43,.18);box-shadow:0 0 16px var(--p1g),inset 0 0 8px rgba(192,57,43,.12);}
-#p2-hud .ucard.sel{border-color:var(--p2);background:rgba(36,113,163,.18);box-shadow:0 0 16px var(--p2g),inset 0 0 8px rgba(36,113,163,.12);}
+#p1-hud .ucard.sel{border-color:var(--p1);background:rgba(192,57,43,.18);box-shadow:0 0 16px var(--p1g);}
+#p2-hud .ucard.sel{border-color:var(--p2);background:rgba(36,113,163,.18);box-shadow:0 0 16px var(--p2g);}
 .ucard.sel::after{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;border-radius:5px 5px 0 0;}
 #p1-hud .ucard.sel::after{background:var(--p1);}
 #p2-hud .ucard.sel::after{background:var(--p2);}
 .ucard.cant{opacity:.38;cursor:not-allowed;}
 .ucard.cant:hover{transform:none;box-shadow:none;}
+.ucard.spawn-flash{animation:spawnPulse .25s ease-out;}
+@keyframes spawnPulse{0%{box-shadow:0 0 0 0 rgba(212,168,67,.8)}100%{box-shadow:0 0 0 8px rgba(212,168,67,0)}}
+.ucard.no-afford-shake{animation:cardShake .3s ease-out;}
+@keyframes cardShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .uicon{font-size:clamp(.9rem,2vh,1.85rem);line-height:1;}
 .uname{font-family:'Cinzel',serif;font-size:var(--fs-xs);color:#bbb;text-align:center;line-height:1.2;}
 .ucost{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;}
 .ctag{font-family:'Cinzel',serif;font-size:var(--fs-xs);padding:1px clamp(2px,.3vw,5px);border-radius:2px;white-space:nowrap;}
 .cs{background:rgba(155,89,182,.25);color:#c39bd3;border:1px solid #7d3c98;}
 .cb{background:rgba(39,174,96,.25);color:#82e0aa;border:1px solid #1e8449;}
-.utypetag{position:absolute;top:2px;left:3px;font-size:clamp(.3rem,.52vw,.48rem);padding:1px 3px;border-radius:2px;font-family:'Cinzel',serif;opacity:.85;}
+.utypetag{position:absolute;top:2px;left:3px;font-size:clamp(.3rem,.52vw,.46rem);padding:1px 3px;border-radius:2px;font-family:'Cinzel',serif;opacity:.85;}
 .t-air{background:rgba(26,188,156,.25);color:#1abc9c;border:1px solid #148f77;}
 .t-rng{background:rgba(243,156,18,.2);color:#f39c12;border:1px solid #d68910;}
 .t-mel{background:rgba(231,76,60,.2);color:#e74c3c;border:1px solid #c0392b;}
 .t-wrk{background:rgba(39,174,96,.2);color:#27ae60;border:1px solid #1e8449;}
 .t-sum{background:rgba(155,89,182,.2);color:#9b59b6;border:1px solid #6c3483;}
 
-/* ════════ GAMEOVER ════════ */
+/* ── GAMEOVER ── */
 #sc-gameover{background:rgba(0,0,0,.93);z-index:200;}
 .go-wrap{display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.5vh,30px);}
 .go-crown{font-size:clamp(2.5rem,6vw,5rem);animation:crownIn 1.2s ease-out;}
 @keyframes crownIn{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
 .go-title{font-family:'Cinzel',serif;font-size:var(--fs-xxl);letter-spacing:.2em;text-shadow:0 0 40px currentColor;}
-.go-sub{font-size:var(--fs-md);color:var(--dim);letter-spacing:.12em;text-align:center;}
+.go-sub{font-size:var(--fs-md);color:var(--dim);letter-spacing:.12em;}
+.go-stats{display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;}
+.go-stat-col{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:clamp(10px,1.8vh,20px) clamp(14px,2.5vw,32px);text-align:center;min-width:clamp(130px,16vw,200px);}
+.go-stat-label{font-family:'Cinzel',serif;font-size:var(--fs-sm);color:var(--dim);letter-spacing:.1em;margin-bottom:8px;}
+.go-stat-val{font-family:'Cinzel',serif;font-size:var(--fs-lg);font-weight:700;}
 .go-btns{display:flex;gap:clamp(10px,2vw,22px);}
 
-/* ════════ TOOLTIP ════════ */
+/* ── TOOLTIP ── */
 .tooltip{position:fixed;background:#08080f;border:1.5px solid var(--border);padding:clamp(8px,1.2vh,15px) clamp(10px,1.5vw,17px);border-radius:5px;pointer-events:none;z-index:500;max-width:clamp(150px,21vw,250px);display:none;box-shadow:0 4px 20px rgba(0,0,0,.7);}
 .tt-name{font-family:'Cinzel',serif;font-size:var(--fs-md);color:var(--gold);margin-bottom:6px;border-bottom:1px solid var(--border);padding-bottom:6px;}
 .tt-body{font-size:var(--fs-xs);color:var(--dim);line-height:1.7;}
@@ -190,15 +208,12 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
 </head>
 <body>
 
-<!-- ══════════ MAIN MENU ══════════ -->
+<!-- MAIN MENU -->
 <div id="sc-menu" class="screen active">
   <canvas id="menu-canvas"></canvas>
   <div class="menu-overlay"></div>
   <div class="menu-content">
-    <div class="menu-title-block">
-      <div class="menu-eyebrow">A REALM OF SOULS AND BONE</div>
-      <h1 class="menu-title">BEYOND KINGS'<br>CONQUEST</h1>
-    </div>
+    <div><div class="menu-eyebrow">A REALM OF SOULS AND BONE</div><h1 class="menu-title">BEYOND KINGS'<br>CONQUEST</h1></div>
     <div class="menu-btns">
       <button class="btn primary" id="btn-play">⚔ PLAY</button>
       <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
@@ -207,10 +222,10 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
   </div>
 </div>
 
-<!-- ══════════ FACTION SELECT ══════════ -->
+<!-- FACTION SELECT -->
 <div id="sc-faction" class="screen">
   <div class="sc-title">CHOOSE YOUR FACTION</div>
-  <div class="sc-sub">Each player selects their army — each has different strengths</div>
+  <div class="sc-sub">Each player selects their army — each plays differently</div>
   <div class="faction-layout">
     <div class="faction-side">
       <div class="faction-plabel p1l">PLAYER 1<span>W A S D + TAB to navigate &amp; spawn</span></div>
@@ -226,11 +241,12 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
   </div>
   <div class="faction-footer">
     <button class="btn" id="btn-faction-back">← BACK</button>
+    <span class="mirror-warn" id="mirror-warn">⚠ Mirror Match</span>
     <button class="btn primary" id="btn-start" disabled>START BATTLE →</button>
   </div>
 </div>
 
-<!-- ══════════ TUTORIAL ══════════ -->
+<!-- TUTORIAL -->
 <div id="sc-tutorial" class="screen">
   <div class="tut-wrap">
     <div class="tut-display" id="tut-display"></div>
@@ -239,48 +255,60 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
       <span class="tut-count" id="tut-count">1 / 8</span>
       <button class="btn primary" id="btn-tut-next">NEXT →</button>
     </div>
-    <button class="btn tut-skip-btn" id="btn-tut-skip">SKIP TUTORIAL</button>
+    <button class="btn" style="font-size:var(--fs-xs);opacity:.5;padding:6px 14px;" id="btn-tut-skip">SKIP TUTORIAL</button>
   </div>
 </div>
 
-<!-- ══════════ CONTROLS ══════════ -->
+<!-- CONTROLS -->
 <div id="sc-controls" class="screen">
   <div class="ctrl-wrap">
     <div class="sc-title">CONTROLS</div>
     <div class="ctrl-grid">
       <div class="ctrl-panel ctrl-p1">
         <h3>PLAYER 1</h3>
-        <div class="ctrl-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>&nbsp; Navigate unit grid</div>
-        <div class="ctrl-row"><kbd>TAB</kbd>&nbsp; Spawn selected unit</div>
+        <div class="ctrl-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>&nbsp;Navigate grid</div>
+        <div class="ctrl-row"><kbd>TAB</kbd>&nbsp;Spawn selected unit</div>
       </div>
       <div class="ctrl-panel ctrl-p2">
         <h3>PLAYER 2</h3>
-        <div class="ctrl-row"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>&nbsp; Navigate unit grid</div>
-        <div class="ctrl-row"><kbd>ENTER</kbd>&nbsp; Spawn selected unit</div>
+        <div class="ctrl-row"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd>&nbsp;Navigate grid</div>
+        <div class="ctrl-row"><kbd>ENTER</kbd>&nbsp;Spawn selected unit</div>
       </div>
+    </div>
+    <div class="ctrl-panel" style="text-align:center;">
+      <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd>&nbsp;Pause / Resume</div>
     </div>
     <button class="btn" id="btn-ctrl-back">← BACK</button>
   </div>
 </div>
 
-<!-- ══════════ GAME ══════════ -->
+<!-- GAME -->
 <div id="sc-game" class="screen">
+  <div id="momentum-bar-wrap"><div id="momentum-p1" style="width:50%"></div><div id="momentum-p2" style="width:50%"></div><div id="momentum-center"></div></div>
   <canvas id="battlefield"></canvas>
   <div id="mid-indicator">⚔ MIDDLE POINT ⚔</div>
   <div id="killfeed"></div>
   <div id="popups"></div>
+  <div id="siege-indicator">⏳ SIEGE DECAY ACTIVE</div>
+  <div id="pause-overlay"><div class="pause-title">PAUSED</div><div class="pause-sub">Press ESC to resume</div></div>
   <div id="hud">
     <div class="player-hud" id="p1-hud">
       <div class="hud-top">
         <span class="pname pname1">PLAYER 1</span>
         <div class="res-grp">
-          <div class="res-item2"><span class="ricon">💀</span><div class="rtxt"><div class="rlabel">SOULS</div><div class="rval s" id="p1-souls">20</div></div></div>
-          <div class="res-item2"><span class="ricon">🦴</span><div class="rtxt"><div class="rlabel">BODIES</div><div class="rval b" id="p1-bodies">10</div></div></div>
+          <div class="res-item2" id="p1-souls-wrap"><span class="ricon">💀</span><div class="rtxt"><div class="rlabel">SOULS</div><div class="rval s" id="p1-souls">20</div></div></div>
+          <div class="res-item2" id="p1-bodies-wrap"><span class="ricon">🦴</span><div class="rtxt"><div class="rlabel">BODIES</div><div class="rval b" id="p1-bodies">10</div></div></div>
         </div>
         <div class="hp-wrap">
-          <div class="rlabel">BASE&nbsp;HP</div>
+          <div class="rlabel">BASE</div>
           <div class="hp-bar"><div class="hp-fill hp1" id="p1-hp-bar" style="width:100%"></div></div>
           <span class="hp-txt" id="p1-hp-txt">100</span>
+        </div>
+        <div class="hud-meta">
+          <span class="unit-count" id="p1-unit-count">⚔ 0</span>
+          <span class="worker-count" id="p1-worker-count">⛏ 0/3</span>
+          <span class="desperation-badge" id="p1-desp">🔥 SURGE</span>
+          <span class="econ-rate" id="p1-econ"></span>
         </div>
       </div>
       <div class="unit-grid" id="p1-grid"></div>
@@ -289,13 +317,19 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
       <div class="hud-top">
         <span class="pname pname2">PLAYER 2</span>
         <div class="res-grp">
-          <div class="res-item2"><span class="ricon">💀</span><div class="rtxt"><div class="rlabel">SOULS</div><div class="rval s" id="p2-souls">20</div></div></div>
-          <div class="res-item2"><span class="ricon">🦴</span><div class="rtxt"><div class="rlabel">BODIES</div><div class="rval b" id="p2-bodies">10</div></div></div>
+          <div class="res-item2" id="p2-souls-wrap"><span class="ricon">💀</span><div class="rtxt"><div class="rlabel">SOULS</div><div class="rval s" id="p2-souls">20</div></div></div>
+          <div class="res-item2" id="p2-bodies-wrap"><span class="ricon">🦴</span><div class="rtxt"><div class="rlabel">BODIES</div><div class="rval b" id="p2-bodies">10</div></div></div>
         </div>
         <div class="hp-wrap">
-          <div class="rlabel">BASE&nbsp;HP</div>
+          <div class="rlabel">BASE</div>
           <div class="hp-bar"><div class="hp-fill hp2" id="p2-hp-bar" style="width:100%"></div></div>
           <span class="hp-txt" id="p2-hp-txt">100</span>
+        </div>
+        <div class="hud-meta">
+          <span class="unit-count" id="p2-unit-count">⚔ 0</span>
+          <span class="worker-count" id="p2-worker-count">⛏ 0/3</span>
+          <span class="desperation-badge" id="p2-desp">🔥 SURGE</span>
+          <span class="econ-rate" id="p2-econ"></span>
         </div>
       </div>
       <div class="unit-grid" id="p2-grid"></div>
@@ -303,12 +337,13 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
   </div>
 </div>
 
-<!-- ══════════ GAME OVER ══════════ -->
+<!-- GAME OVER -->
 <div id="sc-gameover" class="screen">
   <div class="go-wrap">
     <div class="go-crown">👑</div>
     <h2 class="go-title" id="go-title"></h2>
     <p class="go-sub" id="go-sub"></p>
+    <div class="go-stats" id="go-stats"></div>
     <div class="go-btns">
       <button class="btn primary" id="btn-rematch">⚔ REMATCH</button>
       <button class="btn" id="btn-to-menu">🏠 MAIN MENU</button>
@@ -316,433 +351,374 @@ kbd{display:inline-block;background:rgba(255,255,255,.1);border:1px solid var(--
   </div>
 </div>
 
-<div class="tooltip" id="tooltip">
-  <div class="tt-name" id="tt-name"></div>
-  <div class="tt-body" id="tt-body"></div>
-</div>
+<div class="tooltip" id="tooltip"><div class="tt-name" id="tt-name"></div><div class="tt-body" id="tt-body"></div></div>
 
 <script>
-// ════════════════════════════════════════════
-//  FACTIONS & UNIT DEFINITIONS
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  AUDIO ENGINE  (procedural, no assets needed)
+// ═══════════════════════════════════════════════
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+function beep(freq, type, dur, vol, attack=0.005, decay=0.05) {
+  try {
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.type = type; o.frequency.setValueAtTime(freq, AC.currentTime);
+    g.gain.setValueAtTime(0, AC.currentTime);
+    g.gain.linearRampToValueAtTime(vol, AC.currentTime + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + dur);
+    o.start(); o.stop(AC.currentTime + dur + 0.05);
+  } catch(e) {}
+}
+function noise(dur, vol) {
+  try {
+    const buf = AC.createBuffer(1, AC.sampleRate*dur, AC.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i=0;i<d.length;i++) d[i]=(Math.random()*2-1);
+    const s = AC.createBufferSource(), g = AC.createGain();
+    s.buffer=buf; s.connect(g); g.connect(AC.destination);
+    g.gain.setValueAtTime(vol, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime+dur);
+    s.start();
+  } catch(e) {}
+}
+const SFX = {
+  spawn:  ()=>beep(440,'square',.08,.06),
+  hit:    ()=>noise(.04,.08),
+  death:  ()=>beep(180,'sawtooth',.12,.07),
+  baseHit:()=>{ beep(80,'sine',.18,.12); noise(.06,.05); },
+  victory:()=>{ beep(523,'sine',.2,.15); setTimeout(()=>beep(659,'sine',.2,.15),180); setTimeout(()=>beep(784,'sine',.35,.15),360); },
+};
+
+// ═══════════════════════════════════════════════
+//  FACTION DEFINITIONS
+// ═══════════════════════════════════════════════
 const FACTIONS = [
   {
-    id: 'warriors',
-    name: 'Warriors',
-    icon: '⚔️',
-    tagline: 'The classic human army. Balanced offense and defense.',
-    pros: ['Balanced cost', 'Good versatility', 'Solid ranged unit'],
-    cons: ['No summoning power', 'Average at everything'],
-    units: [
-      { id:'w_worker',  name:'Peasant',      icon:'⛏️', souls:0,  bodies:0,  hp:30,  speed:55, dmg:0,  range:0,   aerial:false, isWorker:true,  attackRate:0,   radius:6,  color:'#27ae60', type:'wrk', desc:'Collects bodies from the field.' },
-      { id:'w_soldier', name:'Soldier',       icon:'🗡️', souls:8,  bodies:3,  hp:65,  speed:70, dmg:13, range:26,  aerial:false, isWorker:false, attackRate:1.2, radius:7,  color:'#e74c3c', type:'mel', desc:'Reliable melee fighter.' },
-      { id:'w_archer',  name:'Archer',        icon:'🏹', souls:10, bodies:2,  hp:35,  speed:60, dmg:20, range:130, aerial:false, isWorker:false, attackRate:1.8, radius:6,  color:'#e67e22', type:'rng', desc:'Ranged. Can hit aerial units.' },
-      { id:'w_knight',  name:'Knight',        icon:'🛡️', souls:16, bodies:5,  hp:130, speed:50, dmg:22, range:28,  aerial:false, isWorker:false, attackRate:0.9, radius:9,  color:'#95a5a6', type:'mel', desc:'Heavy armored melee powerhouse.' },
-      { id:'w_gryphon', name:'Gryphon',       icon:'🦅', souls:24, bodies:5,  hp:55,  speed:95, dmg:25, range:55,  aerial:true,  isWorker:false, attackRate:1.5, radius:8,  color:'#f1c40f', type:'air', desc:'Fast aerial unit. Ranged only can counter it.' },
+    id:'warriors', name:'Warriors', icon:'⚔️',
+    tagline:'The classic human army. Balanced offense and defense.',
+    passive:'Veterans: units gain +8% DMG for every 5s alive (max 2 stacks).',
+    pros:['Balanced costs','Solid ranged','Good aerial'],
+    cons:['No special mechanics','Average everything'],
+    startSouls:16, startBodies:6,
+    units:[
+      {id:'w_worker', name:'Peasant',  icon:'⛏️',souls:2,  bodies:0,hp:30, speed:55,dmg:0, range:0,  aerial:false,isWorker:true, attackRate:0,  radius:6, color:'#27ae60',type:'wrk',desc:'Collects bodies behind the base. Up to 3 active.'},
+      {id:'w_soldier',name:'Soldier',  icon:'🗡️',souls:8,  bodies:3,hp:65, speed:70,dmg:13,range:26, aerial:false,isWorker:false,attackRate:1.2,radius:7, color:'#e74c3c',type:'mel',desc:'Reliable melee fighter.'},
+      {id:'w_archer', name:'Archer',   icon:'🏹',souls:10, bodies:2,hp:35, speed:60,dmg:20,range:130,aerial:false,isWorker:false,attackRate:1.8,radius:6, color:'#e67e22',type:'rng',desc:'Ranged. Can hit aerial units.'},
+      {id:'w_knight', name:'Knight',   icon:'🛡️',souls:16, bodies:5,hp:130,speed:50,dmg:22,range:28, aerial:false,isWorker:false,attackRate:0.9,radius:9, color:'#95a5a6',type:'mel',desc:'Heavy armored melee powerhouse.'},
+      {id:'w_gryphon',name:'Gryphon',  icon:'🦅',souls:18, bodies:3,hp:90, speed:75,dmg:30,range:55, aerial:true, isWorker:false,attackRate:1.5,radius:8, color:'#f1c40f',type:'air',desc:'Tank aerial. Slow but hits hard.'},
     ]
   },
   {
-    id: 'summoners',
-    name: 'Summoners',
-    icon: '🔮',
-    tagline: 'Overwhelm with numbers. Summon weak units from your troops.',
-    pros: ['High unit count', 'Summoned units are free', 'Snowball potential'],
-    cons: ['Very soul-heavy costs', 'Summons are fragile', 'Few bodies needed'],
-    units: [
-      { id:'s_worker',   name:'Bone Hauler',  icon:'💀', souls:0,  bodies:0,  hp:25,  speed:55, dmg:0,  range:0,   aerial:false, isWorker:true,  attackRate:0,   radius:6,  color:'#95a5a6', type:'wrk', desc:'Collects bodies.', summons:null },
-      { id:'s_wraith',   name:'Wraith',       icon:'👻', souls:6,  bodies:1,  hp:30,  speed:85, dmg:8,  range:24,  aerial:false, isWorker:false, attackRate:1.5, radius:5,  color:'#8e44ad', type:'mel', desc:'Fast, cheap swarm unit.', summons:null },
-      { id:'s_bonearc',  name:'Bone Archer',  icon:'🦴', souls:9,  bodies:2,  hp:28,  range:120,speed:55,dmg:16, aerial:false, isWorker:false, attackRate:1.6, radius:6,  color:'#bdc3c7', type:'rng', desc:'Undead ranged. Counters aerial.', summons:null },
-      { id:'s_necro',    name:'Necromancer',  icon:'🧙', souls:18, bodies:3,  hp:40,  speed:45, dmg:12, range:100, aerial:false, isWorker:false, attackRate:0.8, radius:7,  color:'#9b59b6', type:'sum', desc:'Raises 2 Shades when it kills.', summons:'s_shade', summonCount:2 },
-      { id:'s_banshee',  name:'Banshee',      icon:'🌀', souls:20, bodies:3,  hp:40,  speed:80, dmg:20, range:70,  aerial:true,  isWorker:false, attackRate:1.4, radius:7,  color:'#1abc9c', type:'air', desc:'Aerial ranged summoner. On kill, spawns 1 Shade.', summons:'s_shade', summonCount:1 },
+    id:'summoners', name:'Summoners', icon:'🔮',
+    tagline:'Overwhelm with numbers. Death feeds your war machine.',
+    passive:'Death Frenzy: nearby allies gain +15% attack speed for 4s when a friendly dies.',
+    pros:['High unit count','Summons on kills','Snowball potential'],
+    cons:['Soul-heavy costs','Summons are fragile'],
+    startSouls:16, startBodies:6,
+    units:[
+      {id:'s_worker',  name:'Bone Hauler',icon:'💀',souls:2,  bodies:0,hp:25, speed:55,dmg:0, range:0,  aerial:false,isWorker:true, attackRate:0,  radius:6, color:'#95a5a6',type:'wrk',desc:'Collects bodies. Up to 3 active.'},
+      {id:'s_wraith',  name:'Wraith',     icon:'👻',souls:6,  bodies:1,hp:30, speed:85,dmg:8, range:24, aerial:false,isWorker:false,attackRate:1.5,radius:5, color:'#8e44ad',type:'mel',desc:'Fast cheap swarm unit.'},
+      {id:'s_bonearc', name:'Bone Archer',icon:'🦴',souls:9,  bodies:2,hp:28, speed:55,dmg:16,range:120,aerial:false,isWorker:false,attackRate:1.6,radius:6, color:'#bdc3c7',type:'rng',desc:'Undead ranged. Counters aerial.'},
+      {id:'s_necro',   name:'Necromancer',icon:'🧙',souls:18, bodies:3,hp:40, speed:45,dmg:12,range:100,aerial:false,isWorker:false,attackRate:0.8,radius:7, color:'#9b59b6',type:'sum',desc:'Summons 2 Shades on kill (max 8 Shades).', summons:'s_shade',summonCount:2},
+      {id:'s_banshee', name:'Banshee',    icon:'🌀',souls:20, bodies:3,hp:40, speed:80,dmg:20,range:70, aerial:true, isWorker:false,attackRate:1.4,radius:7, color:'#1abc9c',type:'air',desc:'Aerial. Summons 1 Shade on kill.',summons:'s_shade',summonCount:1},
     ],
-    extraUnits: [
-      { id:'s_shade',    name:'Shade',        icon:'🌑', souls:0,  bodies:0,  hp:15,  speed:90, dmg:7,  range:20,  aerial:false, isWorker:false, attackRate:1.8, radius:4,  color:'#636e72', type:'mel', desc:'Summoned unit. Cannot be manually spawned.', isSpawned:true },
+    extraUnits:[
+      {id:'s_shade',   name:'Shade',      icon:'🌑',souls:0,  bodies:0,hp:15, speed:90,dmg:7, range:20, aerial:false,isWorker:false,attackRate:1.8,radius:4, color:'#636e72',type:'mel',desc:'Summoned. Cannot be manually spawned.',isSpawned:true},
     ]
   },
   {
-    id: 'brutes',
-    name: 'Brutes',
-    icon: '💪',
-    tagline: 'Elite heavy soldiers. Each unit hits hard but costs dearly.',
-    pros: ['Massive damage', 'High HP pool', 'Good aerial unit'],
-    cons: ['Very expensive', 'Slow units', 'Small army size'],
-    units: [
-      { id:'b_worker',  name:'Scavenger',     icon:'🪦', souls:0,  bodies:0,  hp:35,  speed:55, dmg:0,  range:0,   aerial:false, isWorker:true,  attackRate:0,   radius:6,  color:'#d35400', type:'wrk', desc:'Collects bodies from the field.' },
-      { id:'b_brute',   name:'Grave Brute',   icon:'🦾', souls:14, bodies:5,  hp:140, speed:45, dmg:30, range:30,  aerial:false, isWorker:false, attackRate:0.7, radius:10, color:'#c0392b', type:'mel', desc:'Massively powerful melee tank.' },
-      { id:'b_thrower', name:'Bone Thrower',  icon:'🎯', souls:12, bodies:3,  hp:50,  speed:55, dmg:22, range:140, aerial:false, isWorker:false, attackRate:1.4, radius:7,  color:'#e67e22', type:'rng', desc:'Heavy ranged. Counters aerial.' },
-      { id:'b_warlord', name:'Warlord',       icon:'👹', souls:22, bodies:7,  hp:200, speed:40, dmg:40, range:32,  aerial:false, isWorker:false, attackRate:0.6, radius:12, color:'#8e44ad', type:'mel', desc:'Absolute melee destroyer.' },
-      { id:'b_dragon',  name:'Wyvern',        icon:'🐉', souls:28, bodies:6,  hp:75,  speed:80, dmg:30, range:80,  aerial:true,  isWorker:false, attackRate:1.2, radius:9,  color:'#e74c3c', type:'air', desc:'Powerful aerial dragon unit.' },
+    id:'brutes', name:'Brutes', icon:'💪',
+    tagline:'Elite soldiers. Fewer, slower, but utterly devastating.',
+    passive:'Fortify: a Brute unit standing still for 1s gains 30% damage reduction.',
+    pros:['Massive damage','High HP','Good aerial'],
+    cons:['Expensive','Slow','Small army size'],
+    startSouls:30, startBodies:15,
+    units:[
+      {id:'b_worker',  name:'Scavenger',  icon:'🪦',souls:2,  bodies:0,hp:35, speed:55,dmg:0, range:0,  aerial:false,isWorker:true, attackRate:0,  radius:6, color:'#d35400',type:'wrk',desc:'Collects bodies. Up to 3 active.'},
+      {id:'b_brute',   name:'Grave Brute',icon:'🦾',souls:14, bodies:3,hp:140,speed:45,dmg:30,range:30, aerial:false,isWorker:false,attackRate:0.7,radius:10,color:'#c0392b',type:'mel',desc:'Powerful melee tank.'},
+      {id:'b_thrower', name:'Bone Thrower',icon:'🎯',souls:12, bodies:3,hp:50, speed:55,dmg:22,range:140,aerial:false,isWorker:false,attackRate:1.4,radius:7, color:'#e67e22',type:'rng',desc:'Heavy ranged. Counters aerial.'},
+      {id:'b_warlord', name:'Warlord',    icon:'👹',souls:22, bodies:4,hp:200,speed:40,dmg:40,range:32, aerial:false,isWorker:false,attackRate:0.85,radius:12,color:'#8e44ad',type:'mel',desc:'Absolute destroyer. Devastating when it arrives.'},
+      {id:'b_dragon',  name:'Wyvern',     icon:'🐉',souls:28, bodies:4,hp:75, speed:80,dmg:30,range:80, aerial:true, isWorker:false,attackRate:1.2,radius:9, color:'#e74c3c',type:'air',desc:'Powerful aerial dragon.'},
     ]
   },
   {
-    id: 'spirits',
-    name: 'Spirits',
-    icon: '🌟',
-    tagline: 'Mystical ethereal forces. Excel in speed and soul generation.',
-    pros: ['Fastest units', 'Bonus souls from kills', 'Strong aerial unit'],
-    cons: ['Fragile units', 'Very body-light but soul-heavy', 'Low HP'],
-    units: [
-      { id:'sp_worker',  name:'Wisp',         icon:'✨', souls:0,  bodies:0,  hp:20,  speed:75, dmg:0,  range:0,   aerial:false, isWorker:true,  attackRate:0,   radius:5,  color:'#00cec9', type:'wrk', desc:'Collects bodies. Faster than others.' },
-      { id:'sp_specter', name:'Specter',       icon:'👁️', souls:7,  bodies:2,  hp:35,  speed:90, dmg:10, range:22,  aerial:false, isWorker:false, attackRate:1.6, radius:6,  color:'#74b9ff', type:'mel', desc:'Lightning fast melee specter.' },
-      { id:'sp_phantom', name:'Phantom',       icon:'🌊', souls:11, bodies:2,  hp:30,  speed:75, dmg:18, range:130, aerial:false, isWorker:false, attackRate:2.0, radius:6,  color:'#00b894', type:'rng', desc:'Fast ranged attacker. Counters aerial.' },
-      { id:'sp_revenant',name:'Revenant',      icon:'🧿', souls:16, bodies:3,  hp:60,  speed:65, dmg:18, range:28,  aerial:false, isWorker:false, attackRate:1.3, radius:7,  color:'#a29bfe', type:'mel', desc:'On kill: gains +3 souls for your team.' },
-      { id:'sp_soul',    name:'Soul Drake',    icon:'💫', souls:22, bodies:4,  hp:50,  speed:105,dmg:22, range:65,  aerial:true,  isWorker:false, attackRate:1.6, radius:7,  color:'#fd79a8', type:'air', desc:'Fastest aerial. Extremely hard to catch.' },
+    id:'spirits', name:'Spirits', icon:'🌟',
+    tagline:'Ethereal and fast. Kill aerial enemies for bonus soul rewards.',
+    passive:'Sky Bounty: killing an aerial unit grants +10 souls to your team.',
+    pros:['Fastest units','Strong aerial','Sky Bounty passive'],
+    cons:['Fragile','Low HP','Soul-heavy'],
+    startSouls:16, startBodies:6,
+    units:[
+      {id:'sp_worker',  name:'Wisp',     icon:'✨',souls:2,  bodies:0,hp:20, speed:75,dmg:0, range:0,  aerial:false,isWorker:true, attackRate:0,  radius:5, color:'#00cec9',type:'wrk',desc:'Collects bodies. Faster than others. Up to 3.'},
+      {id:'sp_specter', name:'Specter',  icon:'👁️',souls:7,  bodies:2,hp:35, speed:90,dmg:10,range:22, aerial:false,isWorker:false,attackRate:1.6,radius:6, color:'#74b9ff',type:'mel',desc:'Fast melee specter.'},
+      {id:'sp_phantom', name:'Phantom',  icon:'🌊',souls:14, bodies:2,hp:30, speed:75,dmg:18,range:130,aerial:false,isWorker:false,attackRate:1.4,radius:6, color:'#00b894',type:'rng',desc:'Ranged. Counters aerial.'},
+      {id:'sp_revenant',name:'Revenant', icon:'🧿',souls:16, bodies:3,hp:60, speed:65,dmg:18,range:28, aerial:false,isWorker:false,attackRate:1.3,radius:7, color:'#a29bfe',type:'mel',desc:'On kill: +3 souls for your team.',soulsOnKill:3},
+      {id:'sp_soul',    name:'Soul Drake',icon:'💫',souls:22, bodies:4,hp:50, speed:105,dmg:22,range:65, aerial:true, isWorker:false,attackRate:1.6,radius:7, color:'#fd79a8',type:'air',desc:'Fastest aerial. Extremely hard to catch.'},
     ]
   },
 ];
 
-// ════════════════════════════════════════════
-//  TUTORIAL STEPS
-// ════════════════════════════════════════════
-const TUT_STEPS = [
-  {
-    title: 'WELCOME',
-    sub: 'A quick guide to the battlefield',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div>
-        <div class="tut-sub">A local 2-player strategy battle game</div>
-        <div class="tut-body">
-          Two players clash on a battlefield. Deploy units, gather resources, and destroy the enemy base to win.<br><br>
-          Each player controls their army from the bottom panel. Units march automatically once spawned — your job is to choose <em>what</em> and <em>when</em> to spawn.
-        </div>
-        <div class="hl-box"><span class="hl-icon">🏰</span>Destroy the enemy base to win the battle!</div>`;
-    }
-  },
-  {
-    title: 'SOULS',
-    sub: 'Your primary currency',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">💀 SOULS</div>
-        <div class="tut-sub">Your primary resource for spawning units</div>
-        <div class="tut-body">You earn souls in three ways:</div>
-        <div class="tut-visual">
-          <div class="tstat"><div class="tstat-icon">⚔️</div><div class="tstat-name">KILL REWARD</div><div class="tstat-desc">Killing an enemy unit gives you souls based on its value</div></div>
-          <div class="tstat"><div class="tstat-icon">🏴</div><div class="tstat-name">MIDDLE POINT</div><div class="tstat-desc">Holding the middle gives passive souls every second</div></div>
-          <div class="tstat"><div class="tstat-icon">⏱️</div><div class="tstat-name">PASSIVE INCOME</div><div class="tstat-desc">A small trickle of souls arrives automatically over time</div></div>
-        </div>
-        <div class="hl-box">⚡ Bonus: If the enemy holds the middle, you earn <strong style="color:#f39c12">50% more souls</strong> from killing their units!</div>`;
-    }
-  },
-  {
-    title: 'BODIES',
-    sub: 'Your secondary resource',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">🦴 BODIES</div>
-        <div class="tut-sub">Required for most units — harder to come by</div>
-        <div class="tut-body">Bodies are collected by your <strong style="color:#27ae60">Workers</strong>. They walk off the edge of the battlefield to collect corpses and return with bodies for your army.</div>
-        <div class="tut-visual">
-          <div class="tstat"><div class="tstat-icon">⛏️</div><div class="tstat-name">WORKERS</div><div class="tstat-desc">Send workers out — each active worker increases your body income per minute</div></div>
-          <div class="tstat"><div class="tstat-icon">🎯</div><div class="tstat-name">MIDDLE FIELD</div><div class="tstat-desc">If you hold the middle, some workers will venture there to collect bodies — risky but rewarding!</div></div>
-        </div>
-        <div class="hl-box"><span class="hl-icon">⚠️</span>Workers carrying a body glow green. If killed while carrying, the bodies are lost!</div>`;
-    }
-  },
-  {
-    title: 'MIDDLE POINT',
-    sub: 'The key strategic objective',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">⚔ THE MIDDLE POINT</div>
-        <div class="tut-sub">Control it — or make your enemy pay more to hold it</div>
-        <div class="tut-body">The glowing circle in the center of the battlefield is the <strong style="color:#f39c12">Middle Point</strong>. Whoever has units near it controls it.</div>
-        <div class="tut-visual">
-          <div class="tstat"><div class="tstat-icon">🟠</div><div class="tstat-name">NEUTRAL</div><div class="tstat-desc">No one controls it. Small passive soul income only.</div></div>
-          <div class="tstat"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name">HELD</div><div class="tstat-desc">Controlling player earns bonus souls per second.</div></div>
-          <div class="tstat"><div class="tstat-icon">⚡</div><div class="tstat-name">KILL BONUS</div><div class="tstat-desc">Enemy who kills your units while YOU hold mid gets +50% souls per kill.</div></div>
-        </div>`;
-    }
-  },
-  {
-    title: 'AERIAL UNITS',
-    sub: 'Flying forces and how to counter them',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">🪽 AERIAL UNITS</div>
-        <div class="tut-sub">Ground melee can't touch them</div>
-        <div class="tut-body">Aerial units fly above the battlefield and <strong style="color:#e74c3c">cannot be hit by melee units</strong>. Only ranged units can reach them.</div>
-        <div class="tut-visual">
-          <div class="tstat"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Archers, Phantoms, Bone Throwers etc. can target and hit aerial units</div></div>
-          <div class="tstat"><div class="tstat-icon">🗡️</div><div class="tstat-name">MELEE</div><div class="tstat-desc">Soldiers, Brutes, Knights etc. <strong style="color:#e74c3c">CANNOT</strong> hit aerial units at all</div></div>
-        </div>
-        <div class="hl-box"><span class="hl-icon">💡</span>Always have at least one ranged unit in your army — or aerial units will freely destroy you!</div>`;
-    }
-  },
-  {
-    title: 'UNIT STATS',
-    sub: 'Understanding your troops',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">📊 UNIT STATS</div>
-        <div class="tut-sub">What each number means</div>
-        <div class="tut-visual">
-          <div class="tstat"><div class="tstat-icon">❤️</div><div class="tstat-name">HP</div><div class="tstat-desc">Hit Points. How much damage the unit can take before dying.</div></div>
-          <div class="tstat"><div class="tstat-icon">⚡</div><div class="tstat-name">SPEED</div><div class="tstat-desc">Movement speed across the battlefield.</div></div>
-          <div class="tstat"><div class="tstat-icon">⚔️</div><div class="tstat-name">DMG</div><div class="tstat-desc">Damage dealt per hit to enemies.</div></div>
-          <div class="tstat"><div class="tstat-icon">🎯</div><div class="tstat-name">RNG</div><div class="tstat-desc">Attack range. Higher = attacks from further away.</div></div>
-          <div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Soul cost to spawn the unit.</div></div>
-          <div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Body cost to spawn the unit.</div></div>
-        </div>`;
-    }
-  },
-  {
-    title: 'FACTIONS',
-    sub: 'Choose your playstyle',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">🏴 FACTIONS</div>
-        <div class="tut-sub">Four unique armies to choose from</div>
-        <div class="tut-visual">
-          <div class="tstat"><div class="tstat-icon">⚔️</div><div class="tstat-name">WARRIORS</div><div class="tstat-desc">Balanced human army. Good all-rounder.</div></div>
-          <div class="tstat"><div class="tstat-icon">🔮</div><div class="tstat-name">SUMMONERS</div><div class="tstat-desc">Swarm with numbers. Summon units from kills.</div></div>
-          <div class="tstat"><div class="tstat-icon">💪</div><div class="tstat-name">BRUTES</div><div class="tstat-desc">Expensive elite soldiers. Hit extremely hard.</div></div>
-          <div class="tstat"><div class="tstat-icon">🌟</div><div class="tstat-name">SPIRITS</div><div class="tstat-desc">Fast and agile. Bonus souls from kills.</div></div>
-        </div>
-        <div class="hl-box">Each faction has a <strong style="color:#f39c12">ranged unit</strong> and at least one <strong style="color:#1abc9c">aerial unit</strong>.</div>`;
-    }
-  },
-  {
-    title: 'CONTROLS',
-    sub: 'How to play',
-    render: d => {
-      d.innerHTML = `
-        <div class="tut-title">🎮 CONTROLS</div>
-        <div class="tut-sub">Navigate the unit grid and spawn troops</div>
-        <div class="tut-visual">
-          <div class="tstat">
-            <div class="tstat-icon" style="color:#c0392b">P1</div>
-            <div class="tstat-name">PLAYER 1</div>
-            <div class="tstat-desc"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> — Navigate grid<br><br><kbd>TAB</kbd> — Spawn unit</div>
-          </div>
-          <div class="tstat">
-            <div class="tstat-icon" style="color:#2471a3">P2</div>
-            <div class="tstat-name">PLAYER 2</div>
-            <div class="tstat-desc"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd> — Navigate grid<br><br><kbd>ENTER</kbd> — Spawn unit</div>
-          </div>
-        </div>
-        <div class="hl-box"><span class="hl-icon">💡</span>The highlighted card in your HUD is selected. Gray cards are ones you can't afford yet.</div>`;
-    }
-  },
+// ═══════════════════════════════════════════════
+//  TUTORIAL
+// ═══════════════════════════════════════════════
+const TUT = [
+  {render:d=>{d.innerHTML=`<div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div><div class="tut-sub">A local 2-player real-time strategy battle</div><div class="tut-body">Two players clash across a battlefield. Deploy units, gather resources, control the middle, and destroy the enemy base.<br><br>Units march automatically once spawned — your job is choosing <em>what</em> and <em>when</em> to field.</div><div class="hl-box"><span class="hl-icon">🏰</span>Reduce the enemy base HP to zero to win!</div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">💀 SOULS</div><div class="tut-sub">Your primary spawn resource</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">⚔️</div><div class="tstat-name">KILL REWARD</div><div class="tstat-desc">Killing enemies gives souls based on their value</div></div><div class="tstat"><div class="tstat-icon">🏴</div><div class="tstat-name">MIDDLE POINT</div><div class="tstat-desc">Holding the middle gives +1.5 souls/sec bonus</div></div><div class="tstat"><div class="tstat-icon">⏱️</div><div class="tstat-name">PASSIVE</div><div class="tstat-desc">A slow trickle arrives automatically</div></div></div><div class="hl-box">⚡ If the enemy holds middle, you earn <strong style="color:#f39c12">+50% souls from kills</strong> to help you come back!</div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">🦴 BODIES</div><div class="tut-sub">Required for most units — harder to get</div><div class="tut-body">Bodies come from <strong style="color:#27ae60">Workers</strong> (up to 3 per player). Workers go off-screen, collect corpses, and return.<br><br>If your team holds the Middle Point, some workers may venture there to collect <strong>3 extra bodies</strong> — but they can be killed while carrying!</div><div class="hl-box"><span class="hl-icon">⚠️</span>Workers glow green when carrying bodies. If killed while carrying, those bodies are LOST!</div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">⚔ THE MIDDLE POINT</div><div class="tut-sub">The most important strategic objective</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🟠</div><div class="tstat-name">NEUTRAL</div><div class="tstat-desc">Small passive income only</div></div><div class="tstat"><div class="tstat-icon">🔴</div><div class="tstat-name">HELD</div><div class="tstat-desc">+1.5 souls/sec for the holder</div></div><div class="tstat"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both players get +0.8 souls/sec</div></div></div><div class="hl-box">If you've lost mid for 15+ seconds, you start getting a <strong style="color:#e74c3c">Desperation Surge</strong> bonus to help you fight back!</div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">🪽 AERIAL UNITS</div><div class="tut-sub">Flying units and how to counter them</div><div class="tut-body">Aerial units fly above the field and <strong style="color:#e74c3c">cannot be hit by any melee unit</strong>. They can only be damaged by ranged units.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED COUNTERS</div><div class="tstat-desc">Archers, Phantoms, Bone Throwers, etc. target and destroy aerial units</div></div><div class="tstat"><div class="tstat-icon">🗡️</div><div class="tstat-name">MELEE CAN'T HIT</div><div class="tstat-desc">Soldiers, Brutes, Knights — <strong style="color:#e74c3c">completely unable</strong> to reach aerial units</div></div></div><div class="hl-box"><span class="hl-icon">💡</span>Always have at least one ranged unit available — or aerial units will shred you!</div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">📊 UNIT STATS</div><div class="tut-sub">What each number means</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">❤️</div><div class="tstat-name">HP</div><div class="tstat-desc">How much damage before dying</div></div><div class="tstat"><div class="tstat-icon">⚡</div><div class="tstat-name">SPEED</div><div class="tstat-desc">Movement across the field</div></div><div class="tstat"><div class="tstat-icon">⚔️</div><div class="tstat-name">DMG</div><div class="tstat-desc">Damage dealt per hit</div></div><div class="tstat"><div class="tstat-icon">🎯</div><div class="tstat-name">RNG</div><div class="tstat-desc">Attack range in pixels</div></div><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Soul cost to spawn</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Body cost to spawn</div></div></div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">🏴 FACTIONS</div><div class="tut-sub">Four armies, four playstyles</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">⚔️</div><div class="tstat-name">WARRIORS</div><div class="tstat-desc">Balanced. Veterans grow stronger over time.</div></div><div class="tstat"><div class="tstat-icon">🔮</div><div class="tstat-name">SUMMONERS</div><div class="tstat-desc">Swarm. Deaths power your allies.</div></div><div class="tstat"><div class="tstat-icon">💪</div><div class="tstat-name">BRUTES</div><div class="tstat-desc">Elite. Few but devastating. Start with more resources.</div></div><div class="tstat"><div class="tstat-icon">🌟</div><div class="tstat-name">SPIRITS</div><div class="tstat-desc">Speed. Rewards for killing aerial enemies.</div></div></div>`}},
+  {render:d=>{d.innerHTML=`<div class="tut-title">🎮 CONTROLS</div><div class="tut-sub">Navigate your unit grid and spawn troops</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon" style="color:#c0392b">P1</div><div class="tstat-name">PLAYER 1</div><div class="tstat-desc"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><br>Navigate grid<br><br><kbd>TAB</kbd><br>Spawn unit</div></div><div class="tstat"><div class="tstat-icon" style="color:#2471a3">P2</div><div class="tstat-name">PLAYER 2</div><div class="tstat-desc"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd><br>Navigate grid<br><br><kbd>ENTER</kbd><br>Spawn unit</div></div></div><div class="hl-box"><kbd>ESC</kbd> to pause at any time</div>`}},
 ];
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  GAME STATE
-// ════════════════════════════════════════════
-const canvas  = document.getElementById('battlefield');
-const ctx     = canvas.getContext('2d');
+// ═══════════════════════════════════════════════
+const canvas = document.getElementById('battlefield');
+const ctx = canvas.getContext('2d');
 let G = null;
 let P1_FACTION = null, P2_FACTION = null;
-
-// Selection cursor state: [row, col] for each player
-let P1_SEL = [0, 0];
-let P2_SEL = [0, 0];
-const GRID_COLS = 5, GRID_ROWS = 2;
-
-function getSelIndex(sel) { return sel[0] * GRID_COLS + sel[1]; }
+let P1_SEL = [0,0], P2_SEL = [0,0];
+const GCOLS=5, GROWS=1; // single row — no empty row
 
 function initGame() {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (AC.state === 'suspended') AC.resume();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('sc-game').classList.add('active');
 
-  const bw = canvas.parentElement.offsetWidth;
-  const bh = canvas.parentElement.offsetHeight - document.getElementById('hud').offsetHeight;
-  canvas.width  = canvas.parentElement.offsetWidth;
-  canvas.height = canvas.parentElement.offsetHeight;
+  canvas.width = 0; canvas.height = 0; // force clean reflow
+  const wrap = canvas.parentElement;
+  const hudH = document.getElementById('hud').offsetHeight;
+  const mbH  = document.getElementById('momentum-bar-wrap').offsetHeight;
+  canvas.width  = wrap.offsetWidth;
+  canvas.height = wrap.offsetHeight - hudH - mbH;
 
-  const BASE_W  = Math.max(55, Math.min(90, bw * 0.07));
-  const GROUND  = bh * 0.72;
-  const BACK_P1 = -BASE_W * 0.6; // off-screen left (P1 workers go here)
-  const BACK_P2 = bw + BASE_W * 0.6; // off-screen right (P2 workers go here)
-
-  // Get all units for each faction (including extra spawned units)
-  const p1Units = [...P1_FACTION.units, ...(P1_FACTION.extraUnits || [])];
-  const p2Units = [...P2_FACTION.units, ...(P2_FACTION.extraUnits || [])];
+  const BW = Math.max(55, Math.min(90, canvas.width * 0.07));
+  const GY = canvas.height * 0.72;
 
   G = {
-    bw, bh, groundY: GROUND, baseW: BASE_W,
-    backX: [BACK_P1, BACK_P2],
-    running: true, lastTime: null, dt: 0,
-    units: [], projectiles: [], particles: [],
+    w: canvas.width, h: canvas.height,
+    groundY: GY, baseW: BW,
+    running: true, paused: false,
+    lastTime: null, dt: 0,
+    units:[], projectiles:[], particles:[],
     nextId: 1,
-    midHolder: null, midX: bw / 2, midR: Math.max(35, bw * 0.04),
+    midHolder: null, midX: canvas.width/2, midR: Math.max(35, canvas.width*0.04),
     factions: [P1_FACTION, P2_FACTION],
-    unitDefs: [p1Units, p2Units],
-    players: [
-      { id:1, souls:20, bodies:10, baseX: BASE_W/2+8, baseHp:100, baseMaxHp:100, dir:1,  workers:0, bodyAccum:0, workersFree:true, soulBonus:0 },
-      { id:2, souls:20, bodies:10, baseX: bw-BASE_W/2-8, baseHp:100, baseMaxHp:100, dir:-1, workers:0, bodyAccum:0, workersFree:true, soulBonus:0 },
+    unitDefs: [
+      [...P1_FACTION.units, ...(P1_FACTION.extraUnits||[])],
+      [...P2_FACTION.units, ...(P2_FACTION.extraUnits||[])],
     ],
-    hudW: document.getElementById('hud').offsetHeight,
+    players: [
+      {id:1,souls:P1_FACTION.startSouls,bodies:P1_FACTION.startBodies,
+       baseX:BW/2+8,baseHp:100,baseMaxHp:100,dir:1,
+       workers:0,bodyAccum:0,workersFree:false,
+       kills:0,spawned:0,noMidTimer:0,despStacks:0,
+       soulsLast5:[],recentSoulRate:0,
+       econTimer:0,econBodies:0},
+      {id:2,souls:P2_FACTION.startSouls,bodies:P2_FACTION.startBodies,
+       baseX:canvas.width-BW/2-8,baseHp:100,baseMaxHp:100,dir:-1,
+       workers:0,bodyAccum:0,workersFree:false,
+       kills:0,spawned:0,noMidTimer:0,despStacks:0,
+       soulsLast5:[],recentSoulRate:0,
+       econTimer:0,econBodies:0},
+    ],
+    shadeCount: [0,0],
+    MAX_SHADES: 8,
+    gameStart: Date.now(),
+    siegeDecay: false,
+    passiveBPM: [0,0], // bodies per minute passive (scales with time)
   };
 
-  P1_SEL = [0,0];
-  P2_SEL = [0,0];
-
+  P1_SEL=[0,0]; P2_SEL=[0,0];
+  document.getElementById('pause-overlay').classList.remove('show');
+  document.getElementById('siege-indicator').style.opacity='0';
   buildHUD();
   updateHUD();
-
-  // Spawn initial free workers
-  spawnUnit(1, P1_FACTION.units[0].id, true);
-  spawnUnit(2, P2_FACTION.units[0].id, true);
-
   requestAnimationFrame(gameLoop);
 }
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  HUD
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function buildHUD() {
-  [1,2].forEach(pid => {
+  [1,2].forEach(pid=>{
     const grid = document.getElementById(`p${pid}-grid`);
-    grid.innerHTML = '';
-    const defs = G.factions[pid-1].units; // only spawnable units (not extraUnits)
-    defs.forEach((def, i) => {
-      if (def.isSpawned) return;
+    grid.innerHTML='';
+    const defs = G.factions[pid-1].units.filter(d=>!d.isSpawned);
+    defs.forEach((def,i)=>{
       const card = document.createElement('div');
-      card.className = 'ucard';
-      card.dataset.unit = def.id;
-      card.dataset.pid  = pid;
-      card.dataset.idx  = i;
-
-      const typeLabel = { mel:'MELEE', rng:'RANGED', air:'AERIAL', wrk:'WORKER', sum:'SUMMON' };
-      const typeCls   = { mel:'t-mel', rng:'t-rng', air:'t-air', wrk:'t-wrk', sum:'t-sum' };
-      card.innerHTML = `
-        <span class="utypetag ${typeCls[def.type]}">${typeLabel[def.type]}</span>
-        <span class="uicon">${def.icon}</span>
-        <span class="uname">${def.name}</span>
-        <div class="ucost">
-          <span class="ctag cs">💀${def.souls}</span>
-          <span class="ctag cb">🦴${def.bodies}</span>
-        </div>`;
-      card.addEventListener('click', () => trySpawn(pid, def.id));
-      card.addEventListener('mouseenter', e => showTT(e, def));
-      card.addEventListener('mouseleave', hideTT);
+      card.className='ucard';
+      card.dataset.unit=def.id; card.dataset.pid=pid; card.dataset.idx=i;
+      const TL={mel:'MELEE',rng:'RANGED',air:'AERIAL',wrk:'WORKER',sum:'SUMMON'};
+      const TC={mel:'t-mel',rng:'t-rng',air:'t-air',wrk:'t-wrk',sum:'t-sum'};
+      card.innerHTML=`<span class="utypetag ${TC[def.type]}">${TL[def.type]}</span><span class="uicon">${def.icon}</span><span class="uname">${def.name}</span><div class="ucost"><span class="ctag cs">💀${def.souls}</span><span class="ctag cb">🦴${def.bodies}</span></div>`;
+      card.addEventListener('click',()=>trySpawn(pid,def.id,card));
+      card.addEventListener('mouseenter',e=>showTT(e,def));
+      card.addEventListener('mouseleave',hideTT);
       grid.appendChild(card);
     });
   });
-  refreshSelHighlight(1);
-  refreshSelHighlight(2);
+  refreshSel(1); refreshSel(2);
 }
 
-function refreshSelHighlight(pid) {
-  const grid = document.getElementById(`p${pid}-grid`);
-  const cards = grid.querySelectorAll('.ucard');
-  const sel = pid===1 ? P1_SEL : P2_SEL;
-  const idx = getSelIndex(sel);
-  cards.forEach((c,i) => c.classList.toggle('sel', i===idx));
+function refreshSel(pid) {
+  const grid=document.getElementById(`p${pid}-grid`);
+  const cards=grid.querySelectorAll('.ucard');
+  const sel=pid===1?P1_SEL:P2_SEL;
+  const idx=sel[0]*GCOLS+sel[1];
+  cards.forEach((c,i)=>c.classList.toggle('sel',i===idx));
 }
 
 function updateHUD() {
   if (!G) return;
-  G.players.forEach(p => {
-    document.getElementById(`p${p.id}-souls`).textContent  = Math.floor(p.souls);
-    document.getElementById(`p${p.id}-bodies`).textContent = Math.floor(p.bodies);
-    const pct = (p.baseHp / p.baseMaxHp) * 100;
-    document.getElementById(`p${p.id}-hp-bar`).style.width = pct + '%';
-    document.getElementById(`p${p.id}-hp-txt`).textContent = Math.floor(p.baseHp);
-    const cards = document.querySelectorAll(`#p${p.id}-grid .ucard`);
-    cards.forEach(c => {
-      const def = G.factions[p.id-1].units.find(d => d.id === c.dataset.unit);
-      if (!def) return;
-      c.classList.toggle('cant', p.souls < def.souls || p.bodies < def.bodies);
+  G.players.forEach(p=>{
+    document.getElementById(`p${p.id}-souls`).textContent=Math.floor(p.souls);
+    document.getElementById(`p${p.id}-bodies`).textContent=Math.floor(p.bodies);
+    const pct=(p.baseHp/p.baseMaxHp)*100;
+    document.getElementById(`p${p.id}-hp-bar`).style.width=pct+'%';
+    document.getElementById(`p${p.id}-hp-txt`).textContent=Math.floor(p.baseHp);
+
+    const combatUnits = G.units.filter(u=>u.player===p.id&&!u.def.isWorker&&!u.offscreen);
+    document.getElementById(`p${p.id}-unit-count`).textContent=`⚔ ${combatUnits.length}`;
+    document.getElementById(`p${p.id}-worker-count`).textContent=`⛏ ${p.workers}/3`;
+
+    const desp=document.getElementById(`p${p.id}-desp`);
+    desp.style.display=p.despStacks>0?'inline':'none';
+
+    const econEl=document.getElementById(`p${p.id}-econ`);
+    econEl.textContent=p.workers>0?`+${(p.workers*4.5/60).toFixed(2)}🦴/s`:'';
+
+    const cards=document.querySelectorAll(`#p${p.id}-grid .ucard`);
+    cards.forEach(c=>{
+      const def=G.factions[p.id-1].units.find(d=>d.id===c.dataset.unit);
+      if(!def) return;
+      const workerCap = def.isWorker && p.workers >= 3;
+      c.classList.toggle('cant', p.souls<def.souls || p.bodies<def.bodies || workerCap);
     });
   });
+
+  // Momentum bar
+  const r1=G.players[0].recentSoulRate, r2=G.players[1].recentSoulRate;
+  const total=r1+r2||1;
+  const p1pct=(r1/total)*100;
+  document.getElementById('momentum-p1').style.width=p1pct+'%';
+  document.getElementById('momentum-p2').style.width=(100-p1pct)+'%';
 }
 
-function showTT(e, def) {
-  const tt = document.getElementById('tooltip');
-  document.getElementById('tt-name').textContent = def.name;
-  document.getElementById('tt-body').innerHTML =
-    `<span class="st">HP:</span> ${def.hp} &nbsp; <span class="st">SPD:</span> ${def.speed}<br>
-     <span class="st">DMG:</span> ${def.dmg} &nbsp; <span class="st">RNG:</span> ${def.range}<br>
+function showTT(e,def) {
+  const tt=document.getElementById('tooltip');
+  document.getElementById('tt-name').textContent=def.name;
+  document.getElementById('tt-body').innerHTML=
+    `<span class="st">HP:</span> ${def.hp} &nbsp;<span class="st">SPD:</span> ${def.speed}<br>
+     <span class="st">DMG:</span> ${def.dmg} &nbsp;<span class="st">RNG:</span> ${def.range}<br>
      <span class="st">Cost:</span> 💀${def.souls} 🦴${def.bodies}<br>
-     ${def.aerial ? '<div class="air">🪽 AERIAL — only ranged can hit</div>' : ''}
-     ${def.type==='rng' ? '<div class="air" style="color:var(--mid)">🏹 RANGED — can hit aerial</div>' : ''}
-     ${def.summons ? `<div class="air" style="color:#9b59b6">🔮 Summons ${def.summonCount} unit(s) on kill</div>` : ''}
+     ${def.aerial?'<div class="air">🪽 AERIAL — only ranged can hit</div>':''}
+     ${def.type==='rng'?'<div class="air" style="color:var(--mid)">🏹 RANGED — can hit aerial</div>':''}
+     ${def.summons?`<div class="air" style="color:#9b59b6">🔮 Summons ${def.summonCount} on kill</div>`:''}
+     ${def.soulsOnKill?`<div class="air" style="color:#9b59b6">✦ +${def.soulsOnKill} souls on kill</div>`:''}
      <br><em>${def.desc}</em>`;
-  tt.style.display = 'block';
-  tt.style.left = (e.clientX + 12) + 'px';
-  tt.style.top  = Math.min(e.clientY - 60, window.innerHeight - 180) + 'px';
+  tt.style.display='block';
+  const rect=tt.getBoundingClientRect();
+  let lx=e.clientX+12;
+  if (lx+250>window.innerWidth) lx=e.clientX-262;
+  tt.style.left=lx+'px';
+  tt.style.top=Math.min(e.clientY-60,window.innerHeight-200)+'px';
 }
-function hideTT() { document.getElementById('tooltip').style.display = 'none'; }
+function hideTT(){document.getElementById('tooltip').style.display='none';}
 
-// ════════════════════════════════════════════
-//  SPAWNING
-// ════════════════════════════════════════════
-function trySpawn(pid, unitId) {
-  if (!G || !G.running) return;
-  const p   = G.players[pid-1];
-  const def = G.factions[pid-1].units.find(d => d.id === unitId);
-  if (!def || def.isSpawned) return;
-
-  const free = def.isWorker && p.workersFree;
-  const costS = free ? 0 : def.souls;
-  const costB = free ? 0 : def.bodies;
-
-  if (p.souls < costS || p.bodies < costB) return;
-  p.souls  -= costS;
-  p.bodies -= costB;
-  if (free) p.workersFree = false;
-
-  spawnUnit(pid, unitId, free);
+// ═══════════════════════════════════════════════
+//  SPAWN
+// ═══════════════════════════════════════════════
+function trySpawn(pid, unitId, cardEl) {
+  if (!G||!G.running||G.paused) return;
+  const p=G.players[pid-1];
+  const def=G.factions[pid-1].units.find(d=>d.id===unitId);
+  if (!def||def.isSpawned) return;
+  if (def.isWorker && p.workers>=3) { shakeCard(cardEl); return; }
+  if (p.souls<def.souls||p.bodies<def.bodies) { shakeCard(cardEl); flashRes(pid,p.souls<def.souls?'souls':'bodies'); return; }
+  p.souls-=def.souls; p.bodies-=def.bodies;
+  p.spawned++;
+  spawnUnit(pid,unitId);
+  if (cardEl) { cardEl.classList.remove('spawn-flash'); void cardEl.offsetWidth; cardEl.classList.add('spawn-flash'); }
+  SFX.spawn();
   updateHUD();
 }
 
-function spawnUnit(pid, unitId, free=false) {
-  const p   = G.players[pid-1];
-  const allDefs = G.unitDefs[pid-1];
-  const def = allDefs.find(d => d.id === unitId);
-  if (!def) return;
-
-  const yOff = def.aerial ? -G.bh * 0.26 : 0;
-  const baseX = p.baseX;
-  const x = pid===1
-    ? baseX + G.baseW/2 + 10 + Math.random()*20
-    : baseX - G.baseW/2 - 10 - Math.random()*20;
-
-  const unit = {
-    id: G.nextId++,
-    player: pid,
-    defId: unitId,
-    def,
-    x, y: G.groundY + yOff,
-    hp: def.hp, maxHp: def.hp,
-    vx:0, vy:0,
-    attackCooldown: Math.random() * (1/Math.max(def.attackRate,0.1)),
-    target: null,
-    carrying: false,     // worker: carrying a body?
-    offscreen: false,    // worker: currently off-screen fetching?
-    offTimer: 0,         // worker: countdown until return
-    goToMid: false,      // worker: going to middle field?
-    animTimer: 0, animFrame: 0,
-    hitFlash: 0,
-  };
-
-  if (def.isWorker) p.workers++;
-  G.units.push(unit);
-  spawnParticles(x, G.groundY + yOff, def.color, 10);
+function shakeCard(el) {
+  if (!el) return;
+  el.classList.remove('no-afford-shake'); void el.offsetWidth; el.classList.add('no-afford-shake');
+}
+function flashRes(pid,type) {
+  const el=document.getElementById(`p${pid}-${type}-wrap`);
+  if (!el) return;
+  el.classList.remove('flash-red'); void el.offsetWidth; el.classList.add('flash-red');
+  setTimeout(()=>el.classList.remove('flash-red'),350);
 }
 
-// ════════════════════════════════════════════
+function spawnUnit(pid, unitId, isSummoned=false) {
+  const p=G.players[pid-1];
+  const def=G.unitDefs[pid-1].find(d=>d.id===unitId);
+  if (!def) return;
+  if (def.id.endsWith('_shade')||def.isSpawned) {
+    if (G.shadeCount[pid-1]>=G.MAX_SHADES) {
+      G.players[pid-1].souls+=4;
+      showPopup(p.baseX, G.groundY-60, '+4💀 (cap)', '#9b59b6', pid);
+      return;
+    }
+    G.shadeCount[pid-1]++;
+  }
+  const yOff=def.aerial?-G.h*0.26:0;
+  // Lane offset: stagger Y slightly to prevent stacking
+  const laneOff = (G.nextId % 4) * 8 - 12; // -12,-4,+4,+12
+  const x=pid===1?p.baseX+G.baseW/2+10+Math.random()*20:p.baseX-G.baseW/2-10-Math.random()*20;
+  const u={
+    id:G.nextId++,player:pid,defId:unitId,def,
+    x,y:G.groundY+yOff+laneOff,
+    hp:def.hp,maxHp:def.hp,
+    vx:0,vy:0,
+    attackCooldown:Math.random()*(1/Math.max(def.attackRate,0.1)),
+    target:null,
+    carrying:false,carryCount:0,
+    offscreen:false,offTimer:0,goToMid:false,
+    animTimer:0,animFrame:0,hitFlash:0,
+    aliveSecs:0,dmgMult:1,     // veteran bonus (Warriors)
+    veteranTimer:0,
+    stillTimer:0,fortified:false, // Brutes fortify
+    frenzyTimer:0,               // Summoners death frenzy
+    chargeTimer:0,               // melee charge bonus
+    wasMoving:false,
+  };
+  if (def.isWorker) p.workers++;
+  G.units.push(u);
+  spawnParticles(x,G.groundY+yOff,def.color,10);
+}
+
+// ═══════════════════════════════════════════════
 //  GAME LOOP
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function gameLoop(ts) {
-  if (!G || !G.running) return;
-  if (!G.lastTime) G.lastTime = ts;
-  G.dt = Math.min((ts - G.lastTime)/1000, 0.05);
-  G.lastTime = ts;
+  if (!G||!G.running) return;
+  if (G.paused) { requestAnimationFrame(gameLoop); return; }
+  if (!G.lastTime) G.lastTime=ts;
+  G.dt=Math.min((ts-G.lastTime)/1000,0.05);
+  G.lastTime=ts;
   update(G.dt);
   render();
   requestAnimationFrame(gameLoop);
 }
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  UPDATE
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function update(dt) {
-  updateResources(dt);
-  updateMidPoint();
+  const elapsed=(Date.now()-G.gameStart)/1000;
+
+  updateResources(dt,elapsed);
+  updateMid();
+  updateDesperation(dt);
+  updateSiegeDecay(dt,elapsed);
   updateUnits(dt);
   updateProjectiles(dt);
   updateParticles(dt);
@@ -751,307 +727,432 @@ function update(dt) {
   updateHUD();
 }
 
-function updateResources(dt) {
-  G.players.forEach(p => {
-    const bpm = p.workers * 1.8;
-    p.bodyAccum += bpm * dt / 60;
-    if (p.bodyAccum >= 1) {
-      const gained = Math.floor(p.bodyAccum);
-      p.bodies += gained;
-      p.bodyAccum -= gained;
+function updateResources(dt,elapsed) {
+  // Body income scales with time: every 60s adds 0.5 bpm
+  const timeBonusBPM = Math.floor(elapsed/60)*0.5;
+
+  G.players.forEach(p=>{
+    const bpm = p.workers*4.5 + timeBonusBPM;
+    p.bodyAccum += bpm*dt/60;
+    if (p.bodyAccum>=1){const g=Math.floor(p.bodyAccum);p.bodies+=g;p.bodyAccum-=g;}
+
+    // Mid income (nerfed from v2: 3.0→1.5, contested gives 0.8 each)
+    const n1=G.units.some(u=>u.player===1&&!u.def.isWorker&&!u.offscreen&&Math.abs(u.x-G.midX)<G.midR+u.def.radius);
+    const n2=G.units.some(u=>u.player===2&&!u.def.isWorker&&!u.offscreen&&Math.abs(u.x-G.midX)<G.midR+u.def.radius);
+    if (n1&&n2) { G.players[0].souls+=0.8*dt; G.players[1].souls+=0.8*dt; }
+    else if (G.midHolder===p.id) p.souls+=1.5*dt;
+
+    p.souls+=0.6*dt;
+
+    // Desperation surge
+    p.souls+=p.despStacks*0.2*dt;
+
+    // Track soul rate for momentum bar
+    p.soulsLast5.push({t:Date.now(),s:p.souls});
+    p.soulsLast5=p.soulsLast5.filter(e=>Date.now()-e.t<5000);
+    if (p.soulsLast5.length>=2){
+      const first=p.soulsLast5[0], last=p.soulsLast5[p.soulsLast5.length-1];
+      p.recentSoulRate=Math.max(0,(last.s-first.s)/((last.t-first.t)/1000));
     }
-    if (G.midHolder === p.id) p.souls += 3.0 * dt;
-    p.souls += 0.6 * dt;
   });
 }
 
-function updateMidPoint() {
-  const mx = G.midX, mr = G.midR;
-  let n1=false, n2=false;
-  G.units.forEach(u => {
-    if (u.def.isWorker || u.offscreen) return;
-    if (Math.abs(u.x - mx) < mr + u.def.radius) {
-      if (u.player===1) n1=true; else n2=true;
+function updateMid() {
+  const n1=G.units.some(u=>u.player===1&&!u.def.isWorker&&!u.offscreen&&Math.abs(u.x-G.midX)<G.midR+u.def.radius);
+  const n2=G.units.some(u=>u.player===2&&!u.def.isWorker&&!u.offscreen&&Math.abs(u.x-G.midX)<G.midR+u.def.radius);
+  G.midHolder=(n1&&!n2)?1:(!n1&&n2)?2:null;
+
+  const el=document.getElementById('mid-indicator');
+  if (G.midHolder===1){el.style.color='#c0392b';el.textContent='⚔ MIDDLE — PLAYER 1 ⚔';}
+  else if (G.midHolder===2){el.style.color='#2471a3';el.textContent='⚔ MIDDLE — PLAYER 2 ⚔';}
+  else if (n1&&n2){el.style.color='#f39c12';el.textContent='⚔ MIDDLE — CONTESTED ⚔';}
+  else{el.style.color='#f39c12';el.textContent='⚔ MIDDLE POINT ⚔';}
+}
+
+function updateDesperation(dt) {
+  G.players.forEach(p=>{
+    const notHolding = G.midHolder !== p.id;
+    if (notHolding) p.noMidTimer+=dt; else { p.noMidTimer=0; p.despStacks=0; }
+    if (p.noMidTimer>15) {
+      p.despStacks=Math.min(3,Math.floor((p.noMidTimer-15)/8)+1);
+      document.getElementById(`p${p.id}-desp`).style.display='inline';
+    } else {
+      document.getElementById(`p${p.id}-desp`).style.display='none';
     }
   });
-  G.midHolder = (n1&&!n2) ? 1 : (!n1&&n2) ? 2 : null;
+}
 
-  const el = document.getElementById('mid-indicator');
-  if      (G.midHolder===1) { el.style.color='#c0392b'; el.textContent='⚔ MIDDLE — PLAYER 1 ⚔'; }
-  else if (G.midHolder===2) { el.style.color='#2471a3'; el.textContent='⚔ MIDDLE — PLAYER 2 ⚔'; }
-  else if (n1&&n2)          { el.style.color='#f39c12'; el.textContent='⚔ MIDDLE — CONTESTED ⚔'; }
-  else                      { el.style.color='#f39c12'; el.textContent='⚔ MIDDLE POINT ⚔'; }
+function updateSiegeDecay(dt,elapsed) {
+  if (elapsed>180) { // 3 minutes
+    G.siegeDecay=true;
+    const rate = elapsed>360 ? 0.2 : 0.05;
+    G.players.forEach(p=>{ p.baseHp=Math.max(1,p.baseHp-rate*dt); });
+    document.getElementById('siege-indicator').style.opacity='1';
+  }
 }
 
 function updateUnits(dt) {
-  G.units.forEach(u => {
-    u.animTimer += dt;
-    if (u.animTimer > 0.15) { u.animTimer=0; u.animFrame=(u.animFrame+1)%4; }
-    if (u.hitFlash > 0) u.hitFlash -= dt*4;
-    u.attackCooldown = Math.max(0, u.attackCooldown - dt);
+  G.units.forEach(u=>{
+    u.animTimer+=dt; if(u.animTimer>.15){u.animTimer=0;u.animFrame=(u.animFrame+1)%4;}
+    if(u.hitFlash>0) u.hitFlash-=dt*4;
+    u.attackCooldown=Math.max(0,u.attackCooldown-dt);
+    u.aliveSecs+=dt;
 
-    if (u.def.isWorker) { updateWorker(u, dt); return; }
+    // Frenzy timer (Summoners passive)
+    if(u.frenzyTimer>0) u.frenzyTimer-=dt;
 
-    const enemy = findEnemy(u);
-    u.target = enemy;
-
-    if (enemy) {
-      const d = dist2d(u, enemy);
-      if (d <= u.def.range + 2) {
-        u.vx = 0; u.vy = 0;
-        if (u.attackCooldown <= 0) { doAttack(u, enemy); u.attackCooldown = 1/u.def.attackRate; }
-      } else {
-        const dx=enemy.x-u.x, dy=enemy.y-u.y, dd=Math.sqrt(dx*dx+dy*dy);
-        u.vx=(dx/dd)*u.def.speed; u.vy=(dy/dd)*u.def.speed;
-      }
-    } else {
-      const p = G.players[u.player-1];
-      u.vx = p.dir * u.def.speed;
-      u.vy = 0;
+    // Veteran bonus (Warriors)
+    if(G.factions[u.player-1].id==='warriors') {
+      u.veteranTimer+=dt;
+      if(u.veteranTimer>=5){u.veteranTimer=0;u.dmgMult=Math.min(1.16,u.dmgMult+0.08);}
     }
 
-    u.x += u.vx*dt;
-    u.y += u.vy*dt;
-    if (!u.def.aerial) u.y = G.groundY;
-    else u.y = Math.max(28, Math.min(G.groundY-18, u.y));
-    const p = G.players[u.player-1];
-    const minX = G.players[0].baseX + G.baseW/2;
-    const maxX = G.players[1].baseX - G.baseW/2;
-    u.x = Math.max(minX, Math.min(maxX, u.x));
+    if(u.def.isWorker){updateWorker(u,dt);return;}
+
+    const frenzyMult = u.frenzyTimer>0 ? 1.15 : 1;
+    const fortifyMult = u.fortified ? 0.7 : 1; // takes 30% less dmg
+
+    const enemy=findEnemy(u);
+    u.target=enemy;
+
+    // Brutes fortify when still
+    if(G.factions[u.player-1].id==='brutes'&&!u.def.isWorker) {
+      if(Math.abs(u.vx)<1&&Math.abs(u.vy)<1) u.stillTimer+=dt; else u.stillTimer=0;
+      u.fortified=u.stillTimer>=1.0;
+    }
+
+    if(enemy){
+      const d=dist2d(u,enemy);
+      if(d<=u.def.range+2){
+        // Melee charge boost
+        if(u.def.range<=60&&u.chargeTimer>0) { u.chargeTimer=0; }
+        u.vx=0;u.vy=0;
+        if(u.attackCooldown<=0){
+          doAttack(u,enemy,frenzyMult);
+          u.attackCooldown=(1/u.def.attackRate)/frenzyMult;
+        }
+      } else {
+        const dx=enemy.x-u.x,dy=enemy.y-u.y,dd=Math.sqrt(dx*dx+dy*dy);
+        // Melee charge: approaching enemy = build up charge timer
+        if(u.def.range<=60) {
+          u.chargeTimer+=dt;
+          const chargeBoost = u.chargeTimer>0.5 ? 1.4 : 1;
+          u.vx=(dx/dd)*u.def.speed*chargeBoost;
+        } else {
+          u.vx=(dx/dd)*u.def.speed;
+        }
+        u.vy=(dy/dd)*u.def.speed;
+      }
+    } else {
+      const p=G.players[u.player-1];
+      // Melee charge boost when marching across map
+      if(u.def.range<=60) { u.chargeTimer+=dt; const cb=u.chargeTimer>0.5?1.4:1; u.vx=p.dir*u.def.speed*cb; }
+      else u.vx=p.dir*u.def.speed;
+      u.vy=0;
+    }
+
+    // Ground Y with lane offset preserved
+    const laneOff = u.y - G.groundY;
+    u.x+=u.vx*dt; u.y+=u.vy*dt;
+    if(!u.def.aerial) u.y=G.groundY+(laneOff*0.95); // slight drift back to lane
+    else u.y=Math.max(28,Math.min(G.groundY-18,u.y));
+
+    const minX=G.players[0].baseX+G.baseW/2+2;
+    const maxX=G.players[1].baseX-G.baseW/2-2;
+    u.x=Math.max(minX,Math.min(maxX,u.x));
+
+    // Aerial "volley fire" soft counter: 3+ ground melee nearby deal 15% combined dmg/sec
+    if(u.def.aerial) {
+      const nearMelee=G.units.filter(e=>e.player!==u.player&&!e.def.aerial&&e.def.range<=60&&dist2d(u,e)<80);
+      if(nearMelee.length>=3) {
+        const combined=nearMelee.reduce((s,e)=>s+e.def.dmg*0.15,0);
+        u.hp-=combined*dt;
+      }
+    }
+
+    // Fortify damage reduction stored on unit (applied in doAttack/projectile hit)
+    u._fortifyMult = fortifyMult;
   });
 
-  // Handle deaths
-  const dead = G.units.filter(u => u.hp <= 0);
-  dead.forEach(u => {
-    const killerPid = u.player===1 ? 2 : 1;
-    const kp = G.players[killerPid-1];
-    let soulGain = u.def.souls * 0.5 + 2;
-    if (G.midHolder !== null && G.midHolder !== u.player) soulGain *= 1.5;
-    // Spirit faction bonus
-    if (G.factions[killerPid-1].id === 'spirits') soulGain += 3;
-    kp.souls += soulGain;
-    showPopup(u.x, u.y, `+${soulGain.toFixed(1)}💀`, '#9b59b6');
+  // Deaths
+  const dead=G.units.filter(u=>u.hp<=0);
+  dead.forEach(u=>{
+    const killerPid=u.player===1?2:1;
+    const kp=G.players[killerPid-1];
 
-    if (u.def.isWorker) G.players[u.player-1].workers = Math.max(0, G.players[u.player-1].workers-1);
+    // Soul reward — workers give based on carry value
+    let soulGain;
+    if(u.def.isSpawned||u.def.id?.endsWith('_shade')){ soulGain=0; }
+    else if(u.def.isWorker){ soulGain=2+(u.carrying?u.carryCount*1.5:0); }
+    else { soulGain=u.def.souls*0.5+2; }
 
-    // Summoner necromancer/banshee: spawn on kill (handled in doAttack, but also here as fallback)
-    spawnParticles(u.x, u.y, u.def.color, 14);
-    addKillFeed(killerPid, u.def.name);
+    if(G.midHolder!==null&&G.midHolder!==u.player) soulGain*=1.5;
+    kp.souls+=soulGain;
+    if(soulGain>0) showPopup(u.x,u.y,`+${soulGain.toFixed(0)}💀`,'#9b59b6',killerPid);
+
+    kp.kills++;
+    if(u.def.isWorker) G.players[u.player-1].workers=Math.max(0,G.players[u.player-1].workers-1);
+    if((u.def.id||'').endsWith('_shade')) G.shadeCount[u.player-1]=Math.max(0,G.shadeCount[u.player-1]-1);
+
+    // Spirits Sky Bounty: kill aerial enemy = +10 souls
+    if(u.def.aerial && G.factions[killerPid-1].id==='spirits') {
+      kp.souls+=10;
+      showPopup(u.x,u.y-20,'+10💀 SKY BOUNTY','#fd79a8',killerPid);
+    }
+
+    // Summoners Death Frenzy: nearby friendlies get frenzy
+    if(G.factions[u.player-1].id==='summoners'){
+      G.units.forEach(a=>{
+        if(a.player===u.player&&dist2d(a,u)<120) a.frenzyTimer=4;
+      });
+    }
+
+    spawnParticles(u.x,u.y,u.def.color,14);
+    addKillFeed(killerPid,u.def.name);
+    SFX.death();
   });
-  G.units = G.units.filter(u => u.hp > 0);
+  G.units=G.units.filter(u=>u.hp>0);
 }
 
-function updateWorker(u, dt) {
-  const p = G.players[u.player-1];
-  const pid = u.player;
-  const dir = p.dir; // 1=P1 (left base), -1=P2 (right base)
+function updateWorker(u,dt) {
+  const p=G.players[u.player-1];
+  const pid=u.player;
 
-  if (u.offscreen) {
-    u.offTimer -= dt;
-    if (u.offTimer <= 0) {
-      // Return with body
-      u.offscreen = false;
-      u.carrying = true;
-      u.x = pid===1 ? G.players[0].baseX - 30 : G.players[1].baseX + 30;
+  if(u.offscreen){
+    u.offTimer-=dt;
+    if(u.offTimer<=0){
+      u.offscreen=false;
+      u.carrying=true;
+      u.carryCount=2;
+      // Return to just outside base
+      u.x=pid===1?G.players[0].baseX+G.baseW+20:G.players[1].baseX-G.baseW-20;
     }
     return;
   }
 
-  if (!u.carrying) {
-    // Decide: go behind base or go to middle (if holding mid)
-    // Workers go to middle to collect bodies if their team holds mid (25% chance to decide each trip)
-    if (!u.goToMid) {
-      u.goToMid = G.midHolder === pid && Math.random() < 0.25;
-    }
+  if(!u.carrying){
+    // Decide destination
+    if(!u.goToMid) u.goToMid=G.midHolder===pid&&Math.random()<0.25;
 
-    if (u.goToMid) {
-      // Walk toward middle point
-      const dx = G.midX - u.x;
-      if (Math.abs(dx) < 10) {
-        // Reached middle, pick up bodies, but it's a risk zone — start returning
-        u.carrying = true;
-        u.goToMid = false;
-        p.bodies += 3; // bonus bodies from middle
-        showPopup(u.x, u.y - 20, '+3🦴', '#27ae60');
+    if(u.goToMid){
+      const dx=G.midX-u.x;
+      if(Math.abs(dx)<10){
+        // Arrived at mid — start carrying (risk: can be killed)
+        u.carrying=true; u.carryCount=3; u.goToMid=false;
       } else {
-        u.x += Math.sign(dx) * u.def.speed * dt;
+        u.x+=Math.sign(dx)*u.def.speed*dt;
       }
     } else {
-      // Walk off screen behind base
-      const offX = pid===1 ? -40 : G.bw + 40;
-      const dx = offX - u.x;
-      if (Math.abs(dx) < 10) {
-        // Go off-screen for 5-10 seconds
-        u.offscreen = true;
-        u.offTimer = 5 + Math.random()*5;
-        u.x = offX;
+      // Go off-screen
+      const offX=pid===1?-80:G.w+80;
+      const dx=offX-u.x;
+      if(Math.abs(dx)<10){
+        u.offscreen=true;
+        u.offTimer=5+Math.random()*5;
+        u.x=offX;
       } else {
-        u.x += Math.sign(dx) * u.def.speed * dt;
+        u.x+=Math.sign(dx)*u.def.speed*dt;
       }
     }
   } else {
     // Return to base
-    const dx = p.baseX - u.x;
-    if (Math.abs(dx) < 10) {
-      u.carrying = false;
-      p.bodies += 2;
-      showPopup(p.baseX, G.groundY - 60, '+2🦴', '#27ae60');
+    const dx=p.baseX-u.x;
+    if(Math.abs(dx)<12){
+      p.bodies+=u.carryCount;
+      showPopup(p.baseX,G.groundY-60,`+${u.carryCount}🦴`,'#27ae60',u.player);
+      u.carrying=false; u.carryCount=0;
     } else {
-      u.x += Math.sign(dx) * u.def.speed * 0.8 * dt;
+      u.x+=Math.sign(dx)*u.def.speed*0.8*dt;
     }
   }
-  u.y = G.groundY;
+  u.y=G.groundY;
 }
 
-function doAttack(attacker, target) {
-  const isRanged = attacker.def.range > 60;
-  if (isRanged) {
+function doAttack(attacker, target, frenzyMult=1) {
+  const dmg=(attacker.def.dmg*attacker.dmgMult*frenzyMult);
+  const fortify=target._fortifyMult||1;
+  const isRanged=attacker.def.range>60;
+
+  if(isRanged){
     G.projectiles.push({
-      x:attacker.x, y:attacker.y-5,
-      tx:target.x, ty:target.y-5,
-      targetId: target.id,
-      dmg: attacker.def.dmg,
-      player: attacker.player,
-      color: attacker.def.color,
-      speed: 290,
+      x:attacker.x,y:attacker.y-5,
+      tx:target.x,ty:target.y-5,
+      targetId:target.id,
+      dmg:dmg*fortify,
+      player:attacker.player,
+      sourceDefId:attacker.defId, // FIX: store sourceDefId not color
+      color:attacker.def.color,
+      speed:290,
     });
   } else {
-    target.hp -= attacker.def.dmg;
-    target.hitFlash = 1;
-    spawnParticles(target.x, target.y, '#fff', 4);
+    target.hp-=dmg*fortify;
+    target.hitFlash=1;
+    spawnParticles(target.x,target.y,'#fff',4);
+    SFX.hit();
+    handleKillSummon(attacker,target,dmg*fortify);
+  }
+}
 
-    // Check if kill for summoner
-    if (target.hp <= 0 && attacker.def.summons) {
-      for (let i=0; i<attacker.def.summonCount; i++) {
-        setTimeout(() => {
-          if (G && G.running) spawnUnit(attacker.player, attacker.def.summons);
-        }, i*100);
-      }
-    }
+function handleKillSummon(attacker, target, dmgDealt) {
+  // Only check if target would die
+  if(target.hp>0) return;
+  // Revenant soul bonus (Spirits) — only Revenant, not all units
+  if(attacker.defId==='sp_revenant'&&attacker.def.soulsOnKill) {
+    G.players[attacker.player-1].souls+=attacker.def.soulsOnKill;
+    showPopup(attacker.x,attacker.y-20,`+${attacker.def.soulsOnKill}💀`,'#a29bfe',attacker.player);
+  }
+  // Summoner melee on-kill summon
+  if(attacker.def.summons) {
+    for(let i=0;i<attacker.def.summonCount;i++)
+      setTimeout(()=>{if(G&&G.running)spawnUnit(attacker.player,attacker.def.summons,true);},i*100);
   }
 }
 
 function updateProjectiles(dt) {
-  G.projectiles.forEach(p => {
-    const t = G.units.find(u => u.id===p.targetId);
-    if (t) { p.tx=t.x; p.ty=t.y-5; }
-    const dx=p.tx-p.x, dy=p.ty-p.y, d=Math.sqrt(dx*dx+dy*dy);
-    if (d < 7) {
-      if (t) {
-        t.hp -= p.dmg;
-        t.hitFlash = 1;
-        spawnParticles(t.x, t.y, p.color, 5);
-        // Summoner banshee kill check
-        const attDef = G.unitDefs[p.player-1]?.find(d => d.color===p.color && d.summons);
-        if (t.hp<=0 && attDef?.summons) {
-          spawnUnit(p.player, attDef.summons);
+  G.projectiles.forEach(p=>{
+    const t=G.units.find(u=>u.id===p.targetId);
+    if(t){p.tx=t.x;p.ty=t.y-5;}
+    const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<7){
+      if(t){
+        const fortify=t._fortifyMult||1;
+        t.hp-=p.dmg*fortify;
+        t.hitFlash=1;
+        spawnParticles(t.x,t.y,p.color,5);
+        SFX.hit();
+        // Ranged summon-on-kill (FIX: use sourceDefId)
+        const attDef=G.unitDefs[p.player-1]?.find(d=>d.id===p.sourceDefId);
+        if(t.hp<=0&&attDef) {
+          if(attDef.soulsOnKill&&attDef.id==='sp_revenant') {
+            G.players[p.player-1].souls+=attDef.soulsOnKill;
+            showPopup(t.x,t.y-20,`+${attDef.soulsOnKill}💀`,'#a29bfe',p.player);
+          }
+          if(attDef.summons) {
+            for(let i=0;i<attDef.summonCount;i++)
+              setTimeout(()=>{if(G&&G.running)spawnUnit(p.player,attDef.summons,true);},i*100);
+          }
         }
       }
-      p.done = true;
+      p.done=true;
     } else {
-      p.x += (dx/d)*p.speed*dt;
-      p.y += (dy/d)*p.speed*dt;
+      p.x+=(dx/d)*p.speed*dt;
+      p.y+=(dy/d)*p.speed*dt;
     }
   });
-  G.projectiles = G.projectiles.filter(p=>!p.done);
+  G.projectiles=G.projectiles.filter(p=>!p.done);
 }
 
 function updateParticles(dt) {
-  G.particles.forEach(p => {
-    p.x+=p.vx*dt; p.y+=p.vy*dt;
-    p.vy+=110*dt; p.life-=dt;
-    p.alpha=Math.max(0,p.life/p.maxLife);
-  });
-  G.particles = G.particles.filter(p=>p.life>0);
+  G.particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=110*dt;p.life-=dt;p.alpha=Math.max(0,p.life/p.maxLife);});
+  G.particles=G.particles.filter(p=>p.life>0);
 }
 
 function checkBaseAttacks() {
-  G.units.forEach(u => {
-    if (u.def.isWorker) return;
-    const eBase = G.players[u.player===1?1:0];
-    const d = Math.abs(u.x - eBase.baseX);
-    if (d < G.baseW/2 + u.def.radius + 6 && u.attackCooldown <= 0) {
-      eBase.baseHp = Math.max(0, eBase.baseHp - u.def.dmg*0.14);
-      u.attackCooldown = 1/u.def.attackRate;
-      spawnParticles(eBase.baseX, G.groundY-35, '#e74c3c', 5);
+  G.units.forEach(u=>{
+    if(u.def.isWorker||u.offscreen) return;
+    const eBase=G.players[u.player===1?1:0];
+    const d=Math.abs(u.x-eBase.baseX);
+    // FIX BUG 6: Only attack base if NO living enemies within threshold radius
+    const nearbyEnemies=G.units.filter(e=>e.player!==u.player&&!e.offscreen&&dist2d(u,e)<u.def.range*3);
+    if(nearbyEnemies.length>0) return;
+    if(d<G.baseW/2+u.def.radius+6&&u.attackCooldown<=0){
+      eBase.baseHp=Math.max(0,eBase.baseHp-u.def.dmg*0.14);
+      u.attackCooldown=1/u.def.attackRate;
+      spawnParticles(eBase.baseX,G.groundY-35,'#e74c3c',5);
+      SFX.baseHit();
     }
   });
 }
 
 function checkWin() {
-  G.players.forEach(p => {
-    if (p.baseHp <= 0) { const w=p.id===1?2:1; endGame(w); }
+  G.players.forEach(p=>{
+    if(p.baseHp<=0){endGame(p.id===1?2:1);}
   });
 }
 
 function endGame(winner) {
-  G.running = false;
-  const sc = document.getElementById('sc-gameover');
-  document.getElementById('go-title').textContent  = `PLAYER ${winner} VICTORIOUS`;
-  document.getElementById('go-title').style.color  = winner===1?'#c0392b':'#2471a3';
-  document.getElementById('go-sub').textContent    = 'The enemy base has crumbled. The souls are yours.';
+  G.running=false;
+  SFX.victory();
+  const elapsed=Math.floor((Date.now()-G.gameStart)/1000);
+  const mm=Math.floor(elapsed/60), ss=elapsed%60;
+  const statsHtml=`
+    <div class="go-stat-col"><div class="go-stat-label">KILLS</div><div class="go-stat-val" style="color:var(--p1)">${G.players[0].kills}</div><div style="color:var(--p2);font-family:'Cinzel',serif;font-size:var(--fs-lg)">${G.players[1].kills}</div></div>
+    <div class="go-stat-col"><div class="go-stat-label">UNITS SPAWNED</div><div class="go-stat-val" style="color:var(--p1)">${G.players[0].spawned}</div><div style="color:var(--p2);font-family:'Cinzel',serif;font-size:var(--fs-lg)">${G.players[1].spawned}</div></div>
+    <div class="go-stat-col"><div class="go-stat-label">MATCH TIME</div><div class="go-stat-val" style="color:var(--gold)">${mm}:${ss.toString().padStart(2,'0')}</div></div>
+  `;
+  document.getElementById('go-stats').innerHTML=statsHtml;
+  document.getElementById('go-title').textContent=`PLAYER ${winner} VICTORIOUS`;
+  document.getElementById('go-title').style.color=winner===1?'#c0392b':'#2471a3';
+  document.getElementById('go-sub').textContent='The enemy base has crumbled. The souls are yours.';
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  sc.classList.add('active');
-  sc.style.display = 'flex';
+  const go=document.getElementById('sc-gameover');
+  go.classList.add('active'); go.style.display='flex';
 }
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  HELPERS
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function findEnemy(u) {
-  let best=null, bestD=Infinity;
-  // Aerial units can only be targeted by ranged; ground can be targeted by all
-  G.units.forEach(e => {
-    if (e.player===u.player || e.offscreen) return;
-    if (e.def.aerial && u.def.range <= 60) return; // melee can't hit aerial
-    if (e.def.isWorker) return; // skip workers unless no other target
-    const d = dist2d(u,e);
-    if (d < bestD) { best=e; bestD=d; }
+  let best=null,bestD=Infinity;
+  // First pass: non-worker enemies, aerial check
+  G.units.forEach(e=>{
+    if(e.player===u.player||e.offscreen) return;
+    if(e.def.aerial&&u.def.range<=60) return; // melee can't hit aerial
+    if(e.def.isWorker) return;
+    const d=dist2d(u,e);
+    if(d<bestD){best=e;bestD=d;}
   });
-  if (!best) {
-    G.units.forEach(e => {
-      if (e.player===u.player || e.offscreen) return;
-      if (e.def.aerial && u.def.range <= 60) return;
-      const d = dist2d(u,e);
-      if (d < bestD) { best=e; bestD=d; }
+  // Second pass: include workers if no combat target (FIX BUG 7: actually different filter)
+  if(!best){
+    G.units.forEach(e=>{
+      if(e.player===u.player||e.offscreen) return;
+      if(e.def.aerial&&u.def.range<=60) return;
+      // Workers are now valid last-resort targets
+      const d=dist2d(u,e);
+      if(d<bestD){best=e;bestD=d;}
     });
   }
   return best;
 }
 
-function dist2d(a,b) { const dx=a.x-b.x,dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
+function dist2d(a,b){const dx=a.x-b.x,dy=a.y-b.y;return Math.sqrt(dx*dx+dy*dy);}
 
-function spawnParticles(x,y,color,count) {
-  for (let i=0;i<count;i++) {
-    const a=Math.random()*Math.PI*2, spd=30+Math.random()*80;
+function spawnParticles(x,y,color,count){
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2,spd=30+Math.random()*80;
     G.particles.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-28,color,life:.35+Math.random()*.4,maxLife:.75,size:1.5+Math.random()*3,alpha:1});
   }
 }
 
-function showPopup(x, y, text, color) {
-  const el = document.createElement('div');
-  el.className = 'rpop';
-  el.textContent = text;
-  el.style.color  = color;
-  el.style.left   = x + 'px';
-  el.style.top    = (y - G.hudW + 10) + 'px';
+let _popupCount=0;
+function showPopup(x,y,text,color,pid) {
+  const el=document.createElement('div');
+  el.className='rpop';
+  el.textContent=text;
+  el.style.color=color;
+  el.style.left=x+'px';
+  el.style.top=(y-40)+'px'; // FIX BUG 4: simple offset, no HUD subtraction
   document.getElementById('popups').appendChild(el);
-  setTimeout(()=>el.remove(), 1500);
+  setTimeout(()=>el.remove(),1500);
 }
 
-function addKillFeed(kpid, name) {
-  const el = document.createElement('div');
-  el.className = 'kf-item';
-  el.style.color = kpid===1?'#e74c3c':'#3498db';
-  el.textContent = `P${kpid} ⚔ ${name}`;
-  document.getElementById('killfeed').appendChild(el);
-  setTimeout(()=>el.remove(), 2800);
+function addKillFeed(kpid,name){
+  const kf=document.getElementById('killfeed');
+  // FIX UX6: cap at 6 items
+  const items=kf.querySelectorAll('.kf-item');
+  if(items.length>=6) items[0].remove();
+  const el=document.createElement('div');
+  el.className='kf-item';
+  el.style.color=kpid===1?'#e74c3c':'#3498db';
+  el.textContent=`P${kpid} ⚔ ${name}`;
+  kf.appendChild(el);
+  setTimeout(()=>el.remove(),2800);
 }
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  RENDER
-// ════════════════════════════════════════════
-function render() {
+// ═══════════════════════════════════════════════
+function render(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   drawBG();
   drawMid();
@@ -1061,387 +1162,278 @@ function render() {
   drawParticles();
 }
 
-function drawBG() {
-  const g = ctx.createLinearGradient(0,0,0,G.groundY);
-  g.addColorStop(0,'#060610'); g.addColorStop(1,'#10101e');
-  ctx.fillStyle=g; ctx.fillRect(0,0,G.bw,canvas.height);
-
-  // Stars
-  ctx.fillStyle='rgba(255,255,255,0.35)';
-  for (let i=0;i<80;i++) {
-    const sx=(i*139.7)%G.bw, sy=(i*71.3)%(G.groundY*.85);
-    const ss=.4+(i%3)*.4;
-    ctx.beginPath(); ctx.arc(sx,sy,ss,0,Math.PI*2); ctx.fill();
-  }
-
-  // Ground
-  const gg = ctx.createLinearGradient(0,G.groundY,0,canvas.height);
-  gg.addColorStop(0,'#161628'); gg.addColorStop(1,'#0b0b16');
-  ctx.fillStyle=gg; ctx.fillRect(0,G.groundY,G.bw,canvas.height-G.groundY);
-
-  ctx.strokeStyle='#222238'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(0,G.groundY); ctx.lineTo(G.bw,G.groundY); ctx.stroke();
-
-  // Body field markers behind each base (subtle)
-  [G.players[0].baseX - G.baseW, G.players[1].baseX + G.baseW].forEach((fx, i) => {
-    ctx.fillStyle = 'rgba(39,174,96,0.04)';
-    ctx.fillRect(i===0 ? 0 : fx-G.baseW, G.groundY-10, G.baseW*2, 20);
-  });
+function drawBG(){
+  const g=ctx.createLinearGradient(0,0,0,G.groundY);
+  g.addColorStop(0,'#060610');g.addColorStop(1,'#10101e');
+  ctx.fillStyle=g;ctx.fillRect(0,0,G.w,G.h);
+  ctx.fillStyle='rgba(255,255,255,0.3)';
+  for(let i=0;i<90;i++){const sx=(i*139.7)%G.w,sy=(i*71.3)%(G.groundY*.85),ss=.4+(i%3)*.4;ctx.beginPath();ctx.arc(sx,sy,ss,0,Math.PI*2);ctx.fill();}
+  const gg=ctx.createLinearGradient(0,G.groundY,0,G.h);
+  gg.addColorStop(0,'#161628');gg.addColorStop(1,'#0b0b16');
+  ctx.fillStyle=gg;ctx.fillRect(0,G.groundY,G.w,G.h-G.groundY);
+  ctx.strokeStyle='#222238';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,G.groundY);ctx.lineTo(G.w,G.groundY);ctx.stroke();
 }
 
-function drawMid() {
-  const mx=G.midX, mr=G.midR, my=G.groundY;
-  let mc='rgba(243,156,18,.12)';
-  if (G.midHolder===1) mc='rgba(192,57,43,.12)';
-  if (G.midHolder===2) mc='rgba(36,113,163,.12)';
+function drawMid(){
+  const mx=G.midX,mr=G.midR,my=G.groundY;
+  let mc='rgba(243,156,18,.1)';
+  if(G.midHolder===1)mc='rgba(192,57,43,.1)';
+  if(G.midHolder===2)mc='rgba(36,113,163,.1)';
   const lg=ctx.createRadialGradient(mx,my*.5,0,mx,my*.5,mr*2);
-  lg.addColorStop(0,mc); lg.addColorStop(1,'transparent');
-  ctx.fillStyle=lg; ctx.fillRect(mx-mr*2,0,mr*4,my);
-
-  const gc = G.midHolder===1?'#c0392b':G.midHolder===2?'#2471a3':'#f39c12';
-  ctx.strokeStyle=gc; ctx.lineWidth=2; ctx.setLineDash([4,4]);
-  ctx.beginPath(); ctx.arc(mx,my,mr,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle=gc; ctx.shadowColor=gc; ctx.shadowBlur=14;
-  ctx.beginPath(); ctx.arc(mx,my-2,5,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+  lg.addColorStop(0,mc);lg.addColorStop(1,'transparent');
+  ctx.fillStyle=lg;ctx.fillRect(mx-mr*2,0,mr*4,my);
+  const gc=G.midHolder===1?'#c0392b':G.midHolder===2?'#2471a3':'#f39c12';
+  ctx.strokeStyle=gc;ctx.lineWidth=2;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.arc(mx,my,mr,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=gc;ctx.shadowColor=gc;ctx.shadowBlur=14;
+  ctx.beginPath();ctx.arc(mx,my-2,5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
 }
 
-function drawBases() {
-  G.players.forEach(p => {
-    const x=p.baseX, y=G.groundY, w=G.baseW;
-    const col = p.id===1?'#c0392b':'#2471a3';
-    const bg  = p.id===1?'#1e0807':'#071018';
-
-    // Body
-    ctx.fillStyle=bg;
-    ctx.fillRect(x-w/2, y-80, w, 80);
-    // Battlements
-    for (let i=0;i<4;i++) ctx.fillRect(x-w/2+i*(w/3), y-96, w/3.5, 18);
-    // Gate
-    ctx.fillStyle='#030308'; ctx.fillRect(x-10,y-34,20,34);
-    // Border glow
-    ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.shadowColor=col; ctx.shadowBlur=10;
-    ctx.strokeRect(x-w/2,y-80,w,80); ctx.shadowBlur=0;
-    // Banner flag
+function drawBases(){
+  G.players.forEach(p=>{
+    const x=p.baseX,y=G.groundY,w=G.baseW;
+    const col=p.id===1?'#c0392b':'#2471a3';
+    const bg=p.id===1?'#1e0807':'#071018';
+    ctx.fillStyle=bg;ctx.fillRect(x-w/2,y-80,w,80);
+    for(let i=0;i<4;i++)ctx.fillRect(x-w/2+i*(w/3),y-96,w/3.5,18);
+    ctx.fillStyle='#030308';ctx.fillRect(x-10,y-34,20,34);
+    ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.shadowColor=col;ctx.shadowBlur=10;
+    ctx.strokeRect(x-w/2,y-80,w,80);ctx.shadowBlur=0;
     ctx.fillStyle=col;
-    ctx.beginPath(); ctx.moveTo(x-2,y-100); ctx.lineTo(x-2,y-80); ctx.lineTo(x+13,y-90); ctx.closePath(); ctx.fill();
-    // HP bar above base
+    ctx.beginPath();ctx.moveTo(x-2,y-100);ctx.lineTo(x-2,y-80);ctx.lineTo(x+13,y-90);ctx.closePath();ctx.fill();
     const pct=p.baseHp/p.baseMaxHp;
-    ctx.fillStyle='#111128'; ctx.fillRect(x-w/2,y-90,w,5);
-    ctx.fillStyle=col; ctx.fillRect(x-w/2,y-90,w*pct,5);
+    ctx.fillStyle='#111128';ctx.fillRect(x-w/2,y-90,w,5);
+    ctx.fillStyle=col;ctx.fillRect(x-w/2,y-90,w*pct,5);
+    // Siege decay pulse
+    if(G.siegeDecay){
+      ctx.strokeStyle='rgba(231,76,60,0.3)';ctx.lineWidth=2;
+      ctx.strokeRect(x-w/2-2,y-82,w+4,82);
+    }
   });
 }
 
-function drawUnits() {
-  G.units.forEach(u => {
-    if (u.offscreen) return;
+function drawUnits(){
+  G.units.forEach(u=>{
+    if(u.offscreen) return;
     const pCol=u.player===1?'#c0392b':'#2471a3';
     const hit=u.hitFlash>0;
     ctx.save();
-    ctx.translate(u.x, u.y);
-
-    // Ground shadow
+    ctx.translate(u.x,u.y);
     ctx.fillStyle='rgba(0,0,0,.28)';
-    ctx.beginPath(); ctx.ellipse(0,3,u.def.radius*1.3,4,0,0,Math.PI*2); ctx.fill();
-
+    ctx.beginPath();ctx.ellipse(0,3,u.def.radius*1.3,4,0,0,Math.PI*2);ctx.fill();
     const r=u.def.radius;
     const bc=hit?'#ffffff':u.def.color;
+    const frenzyGlow=u.frenzyTimer>0;
 
-    // Draw shape by type
-    if (u.def.aerial) {
-      // Diamond floating shape
-      ctx.fillStyle=bc; ctx.shadowColor=u.def.color; ctx.shadowBlur=8;
+    if(u.def.aerial){
       const bob=Math.sin(u.animFrame*Math.PI*.5)*2;
-      ctx.beginPath();
-      ctx.moveTo(0,-r*1.5+bob); ctx.lineTo(r,0+bob); ctx.lineTo(0,r*.8+bob); ctx.lineTo(-r,0+bob);
-      ctx.closePath(); ctx.fill();
-      // Wings hint
-      ctx.fillStyle=u.def.color+'60';
-      ctx.beginPath(); ctx.ellipse(-r*1.8,0+bob,r*1.2,r*.4,-.3,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse( r*1.8,0+bob,r*1.2,r*.4, .3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=bc;ctx.shadowColor=u.def.color;ctx.shadowBlur=frenzyGlow?14:8;
+      ctx.beginPath();ctx.moveTo(0,-r*1.5+bob);ctx.lineTo(r,0+bob);ctx.lineTo(0,r*.8+bob);ctx.lineTo(-r,0+bob);ctx.closePath();ctx.fill();
+      ctx.fillStyle=u.def.color+'55';
+      ctx.beginPath();ctx.ellipse(-r*1.8,0+bob,r*1.2,r*.4,-.3,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(r*1.8,0+bob,r*1.2,r*.4,.3,0,Math.PI*2);ctx.fill();
       ctx.shadowBlur=0;
-    } else if (u.def.type==='mel' && u.def.radius >= 10) {
-      // Big brute
-      ctx.fillStyle=bc; ctx.shadowColor=u.def.color; ctx.shadowBlur=7;
+    } else if(r>=10){
+      ctx.fillStyle=bc;ctx.shadowColor=u.def.color;ctx.shadowBlur=frenzyGlow?14:7;
       ctx.fillRect(-r*1.4,-r*2.1,r*2.8,r*2.3);
-      ctx.beginPath(); ctx.arc(0,-r*2.5,r*1.0,0,Math.PI*2); ctx.fill();
+      ctx.beginPath();ctx.arc(0,-r*2.5,r*1.0,0,Math.PI*2);ctx.fill();
       ctx.shadowBlur=0;
-    } else {
-      // Standard humanoid
-      ctx.fillStyle=bc; ctx.shadowColor=u.def.color; ctx.shadowBlur=5;
-      ctx.fillRect(-r*.7,-r*1.8,r*1.4,r*1.2);
-      ctx.beginPath(); ctx.arc(0,-r*2.2,r*.85,0,Math.PI*2); ctx.fill();
-      // Weapon hint for melee
-      if (u.def.type==='mel') {
-        ctx.fillStyle=u.def.color+'bb';
-        ctx.fillRect(r*.6,-r*2.6,r*.28,r*1.4);
+      // Fortify visual
+      if(u.fortified){
+        ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=2;
+        ctx.strokeRect(-r*1.4,-r*2.1,r*2.8,r*2.3);
       }
+    } else {
+      ctx.fillStyle=bc;ctx.shadowColor=u.def.color;ctx.shadowBlur=frenzyGlow?12:5;
+      ctx.fillRect(-r*.7,-r*1.8,r*1.4,r*1.2);
+      ctx.beginPath();ctx.arc(0,-r*2.2,r*.85,0,Math.PI*2);ctx.fill();
+      if(u.def.type==='mel'){ctx.fillStyle=u.def.color+'bb';ctx.fillRect(r*.6,-r*2.6,r*.28,r*1.4);}
       ctx.shadowBlur=0;
     }
 
-    // Worker carry indicator — glowing dot + small body sprite
-    if (u.def.isWorker) {
-      if (u.carrying) {
-        // Bright green glow indicating body carried
-        ctx.fillStyle='#2ecc71';
-        ctx.shadowColor='#2ecc71'; ctx.shadowBlur=10;
-        ctx.beginPath(); ctx.arc(-r*.5,-r*.3,r*.6,0,Math.PI*2); ctx.fill();
-        // Small skull on back
-        ctx.fillStyle='#ecf0f1'; ctx.shadowBlur=0;
-        ctx.font=`${r*1.1}px serif`;
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText('💀',-r*.5,-r*.4);
-      } else if (u.goToMid) {
-        // Going to middle — orange indicator
-        ctx.fillStyle='#f39c12';
-        ctx.shadowColor='#f39c12'; ctx.shadowBlur=8;
-        ctx.beginPath(); ctx.arc(0,-r*3.2,r*.4,0,Math.PI*2); ctx.fill();
+    // Worker indicators
+    if(u.def.isWorker){
+      if(u.carrying){
+        ctx.fillStyle='#2ecc71';ctx.shadowColor='#2ecc71';ctx.shadowBlur=12;
+        ctx.beginPath();ctx.arc(-r*.5,-r*.4,r*.65,0,Math.PI*2);ctx.fill();
         ctx.shadowBlur=0;
+        ctx.fillStyle='#fff';ctx.font=`${r*1.0}px serif`;
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('💀',-r*.5,-r*.4);
+        // Carry count label
+        ctx.fillStyle='#27ae60';ctx.font=`bold ${r*.9}px Cinzel,serif`;
+        ctx.textAlign='center';
+        ctx.fillText(u.carryCount,r*.8,-r*2.2);
+      } else if(u.goToMid){
+        // Orange outer ring for mid-bound workers
+        ctx.strokeStyle='#f39c12';ctx.shadowColor='#f39c12';ctx.shadowBlur=10;ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(0,-r*1.5,r*1.2,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;
       }
     }
 
     // Team dot
-    ctx.fillStyle=pCol;
-    ctx.beginPath(); ctx.arc(0,-r*3.0,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=pCol;ctx.shadowColor=pCol;ctx.shadowBlur=4;
+    ctx.beginPath();ctx.arc(0,-r*3.0,3,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
 
-    // HP bar (if damaged)
-    if (u.hp < u.maxHp) {
-      const bw=r*2.8, by=-r*3.6;
-      ctx.fillStyle='#1a1a2e'; ctx.fillRect(-bw/2,by,bw,3);
+    // HP bar
+    if(u.hp<u.maxHp){
+      const bw=r*2.8,by=-r*3.6;
+      ctx.fillStyle='#1a1a2e';ctx.fillRect(-bw/2,by,bw,3);
       ctx.fillStyle=u.hp>u.maxHp*.5?'#2ecc71':'#e74c3c';
       ctx.fillRect(-bw/2,by,bw*(u.hp/u.maxHp),3);
     }
-
     ctx.restore();
   });
 }
 
-function drawProjectiles() {
-  G.projectiles.forEach(p => {
-    ctx.fillStyle=p.color; ctx.shadowColor=p.color; ctx.shadowBlur=7;
-    ctx.beginPath(); ctx.arc(p.x,p.y,3.5,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
-    // Trail
-    ctx.strokeStyle=p.color+'66'; ctx.lineWidth=2;
-    ctx.beginPath();
-    ctx.moveTo(p.x,p.y);
-    ctx.lineTo(p.x-(p.tx-p.x)*.18, p.y-(p.ty-p.y)*.18);
-    ctx.stroke();
+function drawProjectiles(){
+  G.projectiles.forEach(p=>{
+    ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=7;
+    ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    ctx.strokeStyle=p.color+'66';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x-(p.tx-p.x)*.18,p.y-(p.ty-p.y)*.18);ctx.stroke();
   });
 }
 
-function drawParticles() {
-  G.particles.forEach(p => {
-    ctx.globalAlpha=p.alpha;
-    ctx.fillStyle=p.color;
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
-  });
+function drawParticles(){
+  G.particles.forEach(p=>{ctx.globalAlpha=p.alpha;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
   ctx.globalAlpha=1;
 }
 
-// ════════════════════════════════════════════
-//  KEYBOARD INPUT
-// ════════════════════════════════════════════
-document.addEventListener('keydown', e => {
-  // Prevent page scroll on arrow/space keys during game
-  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
-    e.preventDefault();
+// ═══════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(e.key)) e.preventDefault();
+
+  // Pause
+  if(e.key==='Escape'&&G&&G.running){
+    G.paused=!G.paused;
+    document.getElementById('pause-overlay').classList.toggle('show',G.paused);
+    return;
   }
 
-  if (!G || !G.running) return;
-  const defs1 = G.factions[0].units.filter(d=>!d.isSpawned);
-  const defs2 = G.factions[1].units.filter(d=>!d.isSpawned);
+  if(!G||!G.running||G.paused) return;
+  const d1=G.factions[0].units.filter(d=>!d.isSpawned);
+  const d2=G.factions[1].units.filter(d=>!d.isSpawned);
 
-  // Player 1 — WASD + TAB
-  if (e.key === 'a' || e.key === 'A') {
-    P1_SEL[1] = (P1_SEL[1] - 1 + GRID_COLS) % GRID_COLS;
-    refreshSelHighlight(1);
-  } else if (e.key === 'd' || e.key === 'D') {
-    P1_SEL[1] = (P1_SEL[1] + 1) % GRID_COLS;
-    refreshSelHighlight(1);
-  } else if (e.key === 'w' || e.key === 'W') {
-    P1_SEL[0] = Math.max(0, P1_SEL[0] - 1);
-    refreshSelHighlight(1);
-  } else if (e.key === 's' || e.key === 'S') {
-    P1_SEL[0] = Math.min(GRID_ROWS-1, P1_SEL[0] + 1);
-    refreshSelHighlight(1);
-  } else if (e.key === 'Tab') {
-    const idx = getSelIndex(P1_SEL);
-    if (defs1[idx]) trySpawn(1, defs1[idx].id);
+  // P1 WASD+TAB
+  const k=e.key;
+  if(k==='a'||k==='A'){P1_SEL[1]=(P1_SEL[1]-1+GCOLS)%GCOLS;refreshSel(1);}
+  else if(k==='d'||k==='D'){P1_SEL[1]=(P1_SEL[1]+1)%GCOLS;refreshSel(1);}
+  else if(k==='w'||k==='W'){P1_SEL[0]=Math.max(0,P1_SEL[0]-1);refreshSel(1);}
+  else if(k==='s'||k==='S'){P1_SEL[0]=Math.min(GROWS-1,P1_SEL[0]+1);refreshSel(1);}
+  else if(k==='Tab'){
+    const idx=P1_SEL[0]*GCOLS+P1_SEL[1];
+    if(d1[idx]){
+      const card=document.querySelector(`#p1-grid .ucard[data-idx="${idx}"]`);
+      trySpawn(1,d1[idx].id,card);
+    }
   }
 
-  // Player 2 — Arrow keys + ENTER
-  if (e.key === 'ArrowLeft') {
-    P2_SEL[1] = (P2_SEL[1] - 1 + GRID_COLS) % GRID_COLS;
-    refreshSelHighlight(2);
-  } else if (e.key === 'ArrowRight') {
-    P2_SEL[1] = (P2_SEL[1] + 1) % GRID_COLS;
-    refreshSelHighlight(2);
-  } else if (e.key === 'ArrowUp') {
-    P2_SEL[0] = Math.max(0, P2_SEL[0] - 1);
-    refreshSelHighlight(2);
-  } else if (e.key === 'ArrowDown') {
-    P2_SEL[0] = Math.min(GRID_ROWS-1, P2_SEL[0] + 1);
-    refreshSelHighlight(2);
-  } else if (e.key === 'Enter') {
-    const idx = getSelIndex(P2_SEL);
-    if (defs2[idx]) trySpawn(2, defs2[idx].id);
+  // P2 Arrows+Enter
+  if(k==='ArrowLeft'){P2_SEL[1]=(P2_SEL[1]-1+GCOLS)%GCOLS;refreshSel(2);}
+  else if(k==='ArrowRight'){P2_SEL[1]=(P2_SEL[1]+1)%GCOLS;refreshSel(2);}
+  else if(k==='ArrowUp'){P2_SEL[0]=Math.max(0,P2_SEL[0]-1);refreshSel(2);}
+  else if(k==='ArrowDown'){P2_SEL[0]=Math.min(GROWS-1,P2_SEL[0]+1);refreshSel(2);}
+  else if(k==='Enter'){
+    const idx=P2_SEL[0]*GCOLS+P2_SEL[1];
+    if(d2[idx]){
+      const card=document.querySelector(`#p2-grid .ucard[data-idx="${idx}"]`);
+      trySpawn(2,d2[idx].id,card);
+    }
   }
 });
 
-window.addEventListener('resize', () => {
-  if (!G) return;
-  G.bw = canvas.parentElement.offsetWidth;
-  const hudH = document.getElementById('hud').offsetHeight;
-  G.bh = canvas.parentElement.offsetHeight - hudH;
-  canvas.width  = G.bw;
-  canvas.height = canvas.parentElement.offsetHeight;
-  G.groundY = G.bh * 0.72;
-  G.midX = G.bw/2;
-  G.players[0].baseX = G.baseW/2+8;
-  G.players[1].baseX = G.bw-G.baseW/2-8;
+window.addEventListener('resize',()=>{
+  if(!G) return;
+  canvas.width=0;canvas.height=0;
+  const hudH=document.getElementById('hud').offsetHeight;
+  const mbH=document.getElementById('momentum-bar-wrap').offsetHeight;
+  canvas.width=canvas.parentElement.offsetWidth;
+  canvas.height=canvas.parentElement.offsetHeight-hudH-mbH;
+  G.w=canvas.width;G.h=canvas.height;
+  G.groundY=G.h*0.72;G.midX=G.w/2;
+  G.players[0].baseX=G.baseW/2+8;
+  G.players[1].baseX=G.w-G.baseW/2-8;
 });
 
-// ════════════════════════════════════════════
-//  MENU CANVAS ANIMATION
-// ════════════════════════════════════════════
-(function menuAnim() {
-  const mc = document.getElementById('menu-canvas');
-  const mx = mc.getContext('2d');
-  const units = [];
-  function resize() { mc.width=window.innerWidth; mc.height=window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  for (let i=0;i<24;i++) {
-    units.push({
-      x: Math.random()*window.innerWidth,
-      y: window.innerHeight*.65 + Math.random()*30-15,
-      vx: (Math.random()*30+20)*(Math.random()<.5?1:-1),
-      color: Math.random()<.5?'#c0392b':'#2471a3',
-      r: 5+Math.random()*4
-    });
+// ═══════════════════════════════════════════════
+//  MENU ANIMATION
+// ═══════════════════════════════════════════════
+(function(){
+  const mc=document.getElementById('menu-canvas');
+  const mx=mc.getContext('2d');
+  const us=[];
+  function resize(){mc.width=window.innerWidth;mc.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<28;i++) us.push({x:Math.random()*window.innerWidth,y:window.innerHeight*.65+Math.random()*30-15,vx:(Math.random()*30+20)*(Math.random()<.5?1:-1),color:Math.random()<.5?'#c0392b':'#2471a3',r:5+Math.random()*4});
+  function loop(){
+    if(!document.getElementById('sc-menu').classList.contains('active')) return;
+    mc.width=mc.width;
+    us.forEach(u=>{u.x+=u.vx*.016;if(u.x<-20)u.x=mc.width+20;if(u.x>mc.width+20)u.x=-20;mx.fillStyle=u.color;mx.shadowColor=u.color;mx.shadowBlur=8;mx.beginPath();mx.arc(u.x,u.y,u.r,0,Math.PI*2);mx.fill();mx.shadowBlur=0;});
+    requestAnimationFrame(loop);
   }
-
-  function menuLoop() {
-    if (!document.getElementById('sc-menu').classList.contains('active')) return;
-    mc.width = mc.width;
-    units.forEach(u => {
-      u.x += u.vx * 0.016;
-      if (u.x < -20) u.x = mc.width+20;
-      if (u.x > mc.width+20) u.x = -20;
-      mx.fillStyle = u.color;
-      mx.shadowColor = u.color; mx.shadowBlur=8;
-      mx.beginPath(); mx.arc(u.x,u.y,u.r,0,Math.PI*2); mx.fill();
-      mx.shadowBlur=0;
-    });
-    requestAnimationFrame(menuLoop);
-  }
-  menuLoop();
+  loop();
 })();
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  TUTORIAL
-// ════════════════════════════════════════════
-let tutIdx = 0;
-function renderTut() {
-  const d = document.getElementById('tut-display');
-  TUT_STEPS[tutIdx].render(d);
-  document.getElementById('tut-count').textContent = `${tutIdx+1} / ${TUT_STEPS.length}`;
-  document.getElementById('btn-tut-prev').disabled = tutIdx===0;
-  document.getElementById('btn-tut-next').textContent = tutIdx===TUT_STEPS.length-1 ? 'DONE ✓' : 'NEXT →';
+// ═══════════════════════════════════════════════
+let tutIdx=0;
+function renderTut(){
+  TUT[tutIdx].render(document.getElementById('tut-display'));
+  document.getElementById('tut-count').textContent=`${tutIdx+1} / ${TUT.length}`;
+  document.getElementById('btn-tut-prev').disabled=tutIdx===0;
+  document.getElementById('btn-tut-next').textContent=tutIdx===TUT.length-1?'DONE ✓':'NEXT →';
 }
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  FACTION SELECT
-// ════════════════════════════════════════════
-let p1FactionId = null, p2FactionId = null;
-
-function buildFactionCards() {
-  [1,2].forEach(pid => {
-    const container = document.getElementById(`fcards-p${pid}`);
-    container.innerHTML = '';
-    FACTIONS.forEach(f => {
-      const card = document.createElement('div');
-      card.className = 'fcard';
-      card.dataset.faction = f.id;
-      card.dataset.pid = pid;
-      card.innerHTML = `
-        <div class="fcard-head">
-          <span class="fcard-icon">${f.icon}</span>
-          <span class="fcard-name">${f.name}</span>
-        </div>
-        <div class="fcard-tag">${f.tagline}</div>
-        <div class="fcard-units">
-          ${f.units.map(u=>`<span class="futag${u.type==='air'?' air':u.type==='rng'?' rng':''}">${u.icon}${u.name}</span>`).join('')}
-        </div>
-        <div class="fcard-pc">
-          ${f.pros.map(p=>`<span class="pro">✓ ${p}</span>`).join(' ')}
-          ${f.cons.map(c=>`<span class="con"> ✗ ${c}</span>`).join(' ')}
-        </div>`;
-      card.addEventListener('click', () => selectFaction(pid, f.id, card));
-      container.appendChild(card);
+// ═══════════════════════════════════════════════
+let p1Fid=null,p2Fid=null;
+function buildFactionCards(){
+  [1,2].forEach(pid=>{
+    const c=document.getElementById(`fcards-p${pid}`);
+    c.innerHTML='';
+    FACTIONS.forEach(f=>{
+      const card=document.createElement('div');
+      card.className='fcard';
+      card.innerHTML=`<div class="fcard-head"><span class="fcard-icon">${f.icon}</span><span class="fcard-name">${f.name}</span></div><div class="fcard-tag">${f.tagline}</div><div class="fcard-units">${f.units.map(u=>`<span class="futag${u.type==='air'?' air':u.type==='rng'?' rng':''}">${u.icon}${u.name}</span>`).join('')}</div><div class="fcard-pc">${f.pros.map(p=>`<span class="pro">✓ ${p}</span>`).join(' ')}${f.cons.map(c=>`<span class="con"> ✗ ${c}</span>`).join(' ')}</div>`;
+      card.addEventListener('click',()=>selectFaction(pid,f.id,card,c));
+      c.appendChild(card);
     });
   });
 }
-
-function selectFaction(pid, fid, card) {
-  const container = document.getElementById(`fcards-p${pid}`);
-  container.querySelectorAll('.fcard').forEach(c => {
-    c.classList.remove('sel1','sel2');
-  });
+function selectFaction(pid,fid,card,container){
+  container.querySelectorAll('.fcard').forEach(c=>c.classList.remove('sel1','sel2'));
   card.classList.add(pid===1?'sel1':'sel2');
-  if (pid===1) p1FactionId=fid; else p2FactionId=fid;
-  const f = FACTIONS.find(f=>f.id===fid);
-  document.getElementById(`fchosen-p${pid}`).textContent = `✓ ${f.name} selected`;
-  document.getElementById('btn-start').disabled = !(p1FactionId && p2FactionId);
+  if(pid===1)p1Fid=fid;else p2Fid=fid;
+  const f=FACTIONS.find(f=>f.id===fid);
+  document.getElementById(`fchosen-p${pid}`).textContent=`✓ ${f.name} — ${f.passive}`;
+  document.getElementById('btn-start').disabled=!(p1Fid&&p2Fid);
+  // Mirror warning
+  const mw=document.getElementById('mirror-warn');
+  mw.classList.toggle('show',p1Fid===p2Fid&&p1Fid!==null);
 }
 
-// ════════════════════════════════════════════
-//  SCREEN NAVIGATION
-// ════════════════════════════════════════════
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+// ═══════════════════════════════════════════════
+//  SCREEN NAV
+// ═══════════════════════════════════════════════
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-document.getElementById('btn-play').addEventListener('click', () => {
-  p1FactionId=null; p2FactionId=null;
-  buildFactionCards();
-  document.getElementById('fchosen-p1').textContent='— No faction chosen —';
-  document.getElementById('fchosen-p2').textContent='— No faction chosen —';
-  document.getElementById('btn-start').disabled=true;
-  showScreen('sc-faction');
-});
-
-document.getElementById('btn-tutorial').addEventListener('click', () => {
-  tutIdx=0; renderTut(); showScreen('sc-tutorial');
-});
-
-document.getElementById('btn-controls').addEventListener('click', () => showScreen('sc-controls'));
-
-document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
-
-document.getElementById('btn-start').addEventListener('click', () => {
-  P1_FACTION = FACTIONS.find(f=>f.id===p1FactionId);
-  P2_FACTION = FACTIONS.find(f=>f.id===p2FactionId);
-  initGame();
-});
-
-document.getElementById('btn-tut-prev').addEventListener('click', () => { if(tutIdx>0){tutIdx--;renderTut();} });
-document.getElementById('btn-tut-next').addEventListener('click', () => {
-  if (tutIdx<TUT_STEPS.length-1) { tutIdx++; renderTut(); }
-  else showScreen('sc-menu');
-});
-document.getElementById('btn-tut-skip').addEventListener('click', () => showScreen('sc-menu'));
-document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
-
-document.getElementById('btn-rematch').addEventListener('click', () => {
-  document.getElementById('sc-gameover').style.display='';
-  initGame();
-});
-document.getElementById('btn-to-menu').addEventListener('click', () => {
-  document.getElementById('sc-gameover').style.display='';
-  showScreen('sc-menu');
-});
+document.getElementById('btn-play').addEventListener('click',()=>{p1Fid=null;p2Fid=null;buildFactionCards();document.getElementById('fchosen-p1').textContent='— No faction chosen —';document.getElementById('fchosen-p2').textContent='— No faction chosen —';document.getElementById('btn-start').disabled=true;document.getElementById('mirror-warn').classList.remove('show');showScreen('sc-faction');});
+document.getElementById('btn-tutorial').addEventListener('click',()=>{tutIdx=0;renderTut();showScreen('sc-tutorial');});
+document.getElementById('btn-controls').addEventListener('click',()=>showScreen('sc-controls'));
+document.getElementById('btn-faction-back').addEventListener('click',()=>showScreen('sc-menu'));
+document.getElementById('btn-start').addEventListener('click',()=>{P1_FACTION=FACTIONS.find(f=>f.id===p1Fid);P2_FACTION=FACTIONS.find(f=>f.id===p2Fid);initGame();});
+document.getElementById('btn-tut-prev').addEventListener('click',()=>{if(tutIdx>0){tutIdx--;renderTut();}});
+document.getElementById('btn-tut-next').addEventListener('click',()=>{if(tutIdx<TUT.length-1){tutIdx++;renderTut();}else showScreen('sc-menu');});
+document.getElementById('btn-tut-skip').addEventListener('click',()=>showScreen('sc-menu'));
+document.getElementById('btn-ctrl-back').addEventListener('click',()=>showScreen('sc-menu'));
+document.getElementById('btn-rematch').addEventListener('click',()=>{document.getElementById('sc-gameover').style.display='';initGame();});
+document.getElementById('btn-to-menu').addEventListener('click',()=>{document.getElementById('sc-gameover').style.display='';showScreen('sc-menu');});
 </script>
 </body>
 </html>
