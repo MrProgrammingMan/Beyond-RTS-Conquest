@@ -2572,10 +2572,14 @@
 
     // LAST STAND
     function checkLastStand() {
+      const threshold = 30;
       G.players.forEach(p => {
-        if (p.lastStandUsed) return;
-        if (p.baseHp < 30 && p.baseHp > 0) {
-          p.lastStandUsed = true; p.souls += 40;
+        if (!p.lastStandUsed && p.baseHp <= threshold) {
+          p.lastStandUsed = true;
+          if (p.baseHp <= 0) {
+            p.baseHp = threshold;
+          }
+          p.souls += 40;
           const ov = document.getElementById('last-stand-overlay');
           document.getElementById('ls-title').textContent = `PLAYER ${p.id} — LAST STAND`;
           document.getElementById('ls-title').style.color = p.id === 1 ? '#c0392b' : '#2471a3';
