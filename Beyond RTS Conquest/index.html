@@ -649,12 +649,12 @@ function spawnUnit(pid,unitId,isSummoned=false){
     if(G.shadeCount[pid-1]>=G.MAX_SHADES){p.souls+=4;showPopup(p.baseX,G.groundY-60,'+4💀 (shade cap)','#9b59b6',pid);return;}
     G.shadeCount[pid-1]++;
   }
-  const yOff=def.aerial?-G.h*0.26:0;
-  const laneOff=((G.nextId)%4)*8-12;
+  // Aerial units float ~85px above ground; ground units spawn exactly on groundY
+  const yOff=def.aerial?-85:0;
   const x=pid===1?p.baseX+G.baseW/2+10+Math.random()*20:p.baseX-G.baseW/2-10-Math.random()*20;
   const u={
     id:G.nextId++,player:pid,defId:unitId,def:{...def},
-    x,y:G.groundY+yOff+laneOff,hp:def.hp,maxHp:def.hp,vx:0,vy:0,
+    x,y:G.groundY+yOff,hp:def.hp,maxHp:def.hp,vx:0,vy:0,
     attackCooldown:Math.random()*(1/Math.max(def.attackRate||1,0.1)),
     target:null,carrying:false,carryCount:0,offscreen:false,offTimer:0,goToMid:false,
     animFrame:0,animTimer:0,hitFlash:0,aliveSecs:0,
@@ -1090,12 +1090,21 @@ function updateUnits(dt){
     const enemy=findEnemy(u);
     u.target=enemy;
 
-    // Ranged retreat from melee
+    // For aerial units or when targeting aerial, use horizontal distance only
+    // This is the CORE FIX — aerial units float 85px above, so dist2d was always huge
+    const rangeDist=(enemy)=>{
+      if(u.def.aerial||( enemy&&enemy.def.aerial))return Math.abs(u.x-enemy.x);
+      return dist2d(u,enemy);
+    };
+
+    // Ranged retreat from melee (only if not already near own base wall)
     if(enemy&&u.def.range>60&&!enemy.def.aerial){
-      const d=dist2d(u,enemy);
-      if(d<u.def.range*0.55){
-        const dx=u.x-enemy.x,dy=u.y-enemy.y;const dd=Math.sqrt(dx*dx+dy*dy)||1;
-        u.vx=(dx/dd)*spd*0.6;
+      const d=rangeDist(enemy);
+      const ownBase=G.players[u.player-1].baseX;
+      const nearOwnBase=Math.abs(u.x-ownBase)<G.baseW*3;
+      if(d<u.def.range*0.6&&!nearOwnBase){
+        const dx=u.x-enemy.x;
+        u.vx=Math.sign(dx)*spd*0.65;
         if(u.attackCooldown<=0){
           const frenzyM=(u.frenzyTimer>0)?1.15:1;
           doAttack(u,enemy,frenzyM);
@@ -1105,15 +1114,17 @@ function updateUnits(dt){
         u.x+=u.vx*dt;
         const minX=G.players[0].baseX+G.baseW/2+2,maxX=G.players[1].baseX-G.baseW/2-2;
         u.x=Math.max(minX,Math.min(maxX,u.x));
-        u.vx*=0.9;
+        // Clamp ground Y
+        if(!u.def.aerial)u.y=G.groundY;
         continue;
       }
     }
 
     if(enemy){
-      const d=dist2d(u,enemy);
+      const d=rangeDist(enemy);
       if(d<=u.def.range){
-        u.vx*=0.85;
+        // In range — stand and attack
+        if(!u.def.aerial)u.vx*=0.7;
         u.attackCooldown-=dt;
         u.chargeTimer=0;
         if(u.attackCooldown<=0){
@@ -1121,49 +1132,39 @@ function updateUnits(dt){
           doAttack(u,enemy,frenzyM);
           u.attackCooldown=1/Math.max(u.def.attackRate*frenzyM*(u._berserkActive?2:1),0.1);
         }
-        // Volley fire: 3+ melee near aerial
+        // Volley fire: 3+ melee near aerial enemy
         if(u.def.type==='mel'&&!u.def.aerial){
           const nearbyMelee=G.units.filter(a=>a.player===u.player&&a!==u&&a.def.type==='mel'&&dist2d(u,a)<60);
           if(nearbyMelee.length>=2){
-            G.units.filter(e=>e.def.aerial&&e.player!==u.player&&dist2d(u,e)<u.def.range*1.5).forEach(ae=>{
+            G.units.filter(e=>e.def.aerial&&e.player!==u.player&&Math.abs(u.x-e.x)<u.def.range*1.5).forEach(ae=>{
               ae.hp-=u.def.dmg*0.05*dt;
             });
           }
         }
       } else {
-        // Move toward enemy
+        // Move toward enemy — aerial only moves in X (keeps its flight altitude)
         u.attackCooldown-=dt;
         u.chargeTimer=(u.chargeTimer||0)+dt;
         const chargeActive=u.chargeTimer>1.2;
-        const chargeMult=chargeActive?1.2:1.0; // reduced from 1.4
-        const dx=enemy.x-u.x,dy=enemy.y-u.y;const dd=Math.sqrt(dx*dx+dy*dy)||1;
+        const chargeMult=chargeActive?1.2:1.0;
+        const dx=enemy.x-u.x;
         const actualSpd=spd*chargeMult;
-        if(u.def.aerial){
-          u.x+=(dx/dd)*actualSpd*dt;u.y+=(dy/dd)*actualSpd*dt;
-        } else {
-          u.x+=(dx/dd)*actualSpd*dt;
-        }
-        u.vx=(dx/dd)*actualSpd;
+        u.x+=Math.sign(dx)*actualSpd*dt;
+        u.vx=Math.sign(dx)*actualSpd;
       }
     } else {
-      // No enemy: march toward enemy base
+      // No enemy — march toward enemy base
       u.chargeTimer=0;
       u.attackCooldown-=dt;
       const dir=u.player===1?1:-1;
-      if(!u.def.aerial){
-        u.x+=dir*spd*dt;
-      } else {
-        const ebaseX=u.player===1?G.players[1].baseX:G.players[0].baseX;
-        const dx=ebaseX-u.x;const dd=Math.abs(dx)||1;
-        u.x+=Math.sign(dx)*spd*dt;
-      }
-      // Attack base
+      u.x+=dir*spd*dt;
+      // Attack enemy base
       if(canAttackBase(u)){
         const ebase=G.players[u.player===1?1:0];
         const baseDist=Math.abs(u.x-ebase.baseX);
         if(baseDist<G.baseW*0.7+u.def.range){
           if(u.attackCooldown<=0){
-            ebase.baseHp-=u.def.dmg*(u.dmgMult||1)*(!u.def.aerial&&u.fortified?1:1);
+            ebase.baseHp-=u.def.dmg*(u.dmgMult||1);
             SFX.baseHit();
             spawnParticles(ebase.baseX,G.groundY-40,u.player===1?'#e74c3c':'#3498db',5);
             const frenzyM=(u.frenzyTimer>0)?1.15:1;
@@ -1173,11 +1174,16 @@ function updateUnits(dt){
       }
     }
 
-    // Clamp to map
+    // Clamp X to map bounds
     const minX=G.players[0].baseX+G.baseW/2+2,maxX=G.players[1].baseX-G.baseW/2-2;
-    if(!u.def.aerial){u.x=Math.max(minX,Math.min(maxX,u.x));}
-    // Aerial Y drift
-    if(u.def.aerial){u.y=G.groundY-G.h*0.25+(Math.sin(u.aliveSecs*1.2+u.id)*15);}
+    u.x=Math.max(minX,Math.min(maxX,u.x));
+    // Ground units: always sit on the ground line
+    // Aerial units: gentle bob at fixed flight altitude
+    if(u.def.aerial){
+      u.y=G.groundY-85+(Math.sin(u.aliveSecs*1.8+u.id*0.7)*8);
+    } else {
+      u.y=G.groundY;
+    }
   }
 }
 // ECONOMY UPDATE
@@ -1352,64 +1358,158 @@ function drawUnit(u){
   const r=u.def.radius;
   ctx.save();
   ctx.translate(u.x,u.y);
-  if(u.hitFlash>0){ctx.shadowColor='#fff';ctx.shadowBlur=12*u.hitFlash;}
-  if(u._hellfire){ctx.shadowBlur=(ctx.shadowBlur||0)+22;ctx.shadowColor='#e67e22';}
-  // Body
+
+  // Glow effects
+  if(u.hitFlash>0){ctx.shadowColor='#fff';ctx.shadowBlur=14*u.hitFlash;}
+  if(u._hellfire){ctx.shadowBlur=Math.max(ctx.shadowBlur||0,22);ctx.shadowColor='#e67e22';}
+  if(u.isGuard){ctx.shadowBlur=Math.max(ctx.shadowBlur||0,20);ctx.shadowColor='#f1c40f';}
+
   const col=u.def.color;
-  const isLarge=r>=13;const isAerial=u.def.aerial;
-  if(isAerial){
-    // Diamond
-    const rs=r*1.8;
-    ctx.fillStyle=col;ctx.globalAlpha=0.9;
-    ctx.beginPath();ctx.moveTo(0,-rs);ctx.lineTo(rs*0.7,0);ctx.lineTo(0,rs*0.6);ctx.lineTo(-rs*0.7,0);ctx.closePath();ctx.fill();
+  const teamCol=u.player===1?'#e74c3c':'#3498db';
+  const teamColBright=u.player===1?'#ff6b6b':'#64b5f6';
+
+  if(u.def.aerial){
+    // ── AERIAL: clear flying silhouette above ground line ──
+    // Draw a line down to show it's flying
+    ctx.strokeStyle=col+'40';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,85);ctx.stroke();
+    ctx.setLineDash([]);
+    // Shadow on ground
+    ctx.fillStyle='rgba(0,0,0,0.2)';
+    ctx.beginPath();ctx.ellipse(0,85,r*1.2,r*0.4,0,0,Math.PI*2);ctx.fill();
+    // Body: teardrop/bird shape
+    ctx.fillStyle=col;ctx.globalAlpha=0.95;
+    ctx.beginPath();
+    ctx.moveTo(0,-r*1.6);
+    ctx.quadraticCurveTo(r*1.2,-r*0.4,0,r*0.8);
+    ctx.quadraticCurveTo(-r*1.2,-r*0.4,0,-r*1.6);
+    ctx.fill();
     // Wings
-    ctx.globalAlpha=0.45;
-    ctx.fillStyle=col;
+    ctx.globalAlpha=0.55;
     [-1,1].forEach(side=>{
-      ctx.save();ctx.scale(side,1);
-      ctx.beginPath();ctx.ellipse(r*2.2,0,r*1.8,r*0.6,0.2,0,Math.PI*2);ctx.fill();
-      ctx.restore();
+      ctx.fillStyle=col;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.quadraticCurveTo(side*r*2.5,-r*0.8,side*r*2.8,r*0.2);
+      ctx.quadraticCurveTo(side*r*1.8,r*0.6,0,r*0.4);
+      ctx.fill();
     });
     ctx.globalAlpha=1;
-  } else if(isLarge){
+    // Team color eye dot
+    ctx.fillStyle=teamColBright;
+    ctx.beginPath();ctx.arc(0,-r*0.8,r*0.3,0,Math.PI*2);ctx.fill();
+
+  } else if(u.def.isWorker){
+    // ── WORKER: small, clearly civilian look ──
+    const wr=r*0.8;
+    // Body — small oval
     ctx.fillStyle=col;
-    ctx.fillRect(-r*1.6,-r*2.3,r*3.2,r*2.6);
+    ctx.beginPath();ctx.ellipse(0,-wr*0.8,wr*0.7,wr*1.0,0,0,Math.PI*2);ctx.fill();
+    // Head
+    ctx.fillStyle=col+'ee';
+    ctx.beginPath();ctx.arc(0,-wr*2.0,wr*0.65,0,Math.PI*2);ctx.fill();
+    // Pickaxe icon above
+    ctx.strokeStyle='#aaa';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(-wr*0.8,-wr*3.0);ctx.lineTo(wr*0.8,-wr*3.0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-wr*3.0);ctx.lineTo(0,-wr*2.7);ctx.stroke();
+    // Team dot
+    ctx.fillStyle=teamCol;
+    ctx.beginPath();ctx.arc(0,-wr*0.8,wr*0.3,0,Math.PI*2);ctx.fill();
+    // Carry glow
+    if(u._carryGlow){
+      ctx.strokeStyle='#2ecc71';ctx.lineWidth=2;ctx.shadowColor='#2ecc71';ctx.shadowBlur=12;
+      ctx.beginPath();ctx.arc(0,-wr,wr*1.8,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;
+    }
+    if(u._midRing){
+      ctx.strokeStyle='#f39c12';ctx.lineWidth=2;ctx.shadowColor='#f39c12';ctx.shadowBlur=10;
+      ctx.beginPath();ctx.arc(0,-wr,wr*2.2,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;
+    }
+
+  } else if(u.def.radius>=15){
+    // ── LARGE / TANK melee: big blocky shape ──
+    ctx.fillStyle=col;
+    ctx.fillRect(-r*1.4,-r*2.6,r*2.8,r*2.2);
+    // Helmet / head
     ctx.fillStyle=col+'cc';
-    ctx.beginPath();ctx.arc(0,-r*2.3,r*1.0,0,Math.PI*2);ctx.fill();
-  } else {
+    ctx.beginPath();ctx.arc(0,-r*2.6,r*1.1,Math.PI,0,false);ctx.fill();
+    // Armor shine
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    ctx.fillRect(-r*0.6,-r*2.4,r*0.5,r*1.6);
+    // Team stripe
+    ctx.fillStyle=teamCol;
+    ctx.fillRect(-r*1.4,-r*0.6,r*2.8,r*0.45);
+    // Eyes
+    ctx.fillStyle=teamColBright;
+    [-r*0.45,r*0.45].forEach(ex=>{ctx.beginPath();ctx.arc(ex,-r*2.55,r*0.22,0,Math.PI*2);ctx.fill();});
+
+  } else if(u.def.type==='rng'||u.def.type==='sum'){
+    // ── RANGED / CASTER: slimmer build, bow arc above head ──
     ctx.fillStyle=col;
-    ctx.fillRect(-r*.85,-r*2.0,r*1.7,r*1.4);
+    ctx.fillRect(-r*0.65,-r*1.9,r*1.3,r*1.3);
+    ctx.beginPath();ctx.arc(0,-r*1.9,r*0.85,0,Math.PI*2);ctx.fill();
+    // Team dot
+    ctx.fillStyle=teamCol;
+    ctx.beginPath();ctx.arc(0,-r*1.1,r*0.3,0,Math.PI*2);ctx.fill();
+    // Bow arc (ranged indicator — clearly shows ranged type)
+    ctx.strokeStyle=col;ctx.lineWidth=1.8;
+    ctx.beginPath();ctx.arc(0,-r*3.0,r*1.1,Math.PI*0.2,Math.PI*0.8);ctx.stroke();
+    // Bowstring
+    ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(Math.PI*0.2)*r*1.1,-r*3.0+Math.sin(Math.PI*0.2)*r*1.1);
+    ctx.lineTo(Math.cos(Math.PI*0.8)*r*1.1,-r*3.0+Math.sin(Math.PI*0.8)*r*1.1);
+    ctx.stroke();
+
+  } else {
+    // ── STANDARD MELEE: humanoid silhouette ──
+    // Body
+    ctx.fillStyle=col;
+    ctx.fillRect(-r*0.8,-r*1.9,r*1.6,r*1.3);
+    // Head
     ctx.fillStyle=col+'dd';
-    ctx.beginPath();ctx.arc(0,-r*2.0,r*1.0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(0,-r*1.9,r*0.9,0,Math.PI*2);ctx.fill();
+    // Helmet shine
+    ctx.fillStyle='rgba(255,255,255,0.15)';
+    ctx.beginPath();ctx.arc(-r*0.25,-r*2.1,r*0.4,0,Math.PI*2);ctx.fill();
+    // Team color belt/stripe
+    ctx.fillStyle=teamCol;
+    ctx.fillRect(-r*0.8,-r*0.75,r*1.6,r*0.38);
+    // Sword/weapon line
+    ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1.5;
+    const side=u.player===1?1:-1;
+    ctx.beginPath();ctx.moveTo(side*r*0.9,-r*1.7);ctx.lineTo(side*r*1.6,-r*2.5);ctx.stroke();
   }
-  // Team dot
-  ctx.fillStyle=u.player===1?'#c0392b':'#2471a3';
-  ctx.beginPath();ctx.arc(0,-r*0.3,r*0.35,0,Math.PI*2);ctx.fill();
-  // Worker glow
-  if(u.def.isWorker){
-    if(u._carryGlow){ctx.strokeStyle='#27ae60';ctx.lineWidth=2;ctx.shadowColor='#27ae60';ctx.shadowBlur=10;ctx.beginPath();ctx.arc(0,0,r+3,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;}
-    if(u._midRing){ctx.strokeStyle='#f39c12';ctx.lineWidth=2;ctx.shadowColor='#f39c12';ctx.shadowBlur=8;ctx.beginPath();ctx.arc(0,0,r+5,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;}
+
+  // Shared overlays (for all types except worker which handles its own)
+  if(!u.def.isWorker){
+    // Fortify shield ring
+    if(u.fortified){
+      ctx.strokeStyle='rgba(149,165,166,0.65)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(0,-r,r*2.0,0,Math.PI*2);ctx.stroke();
+    }
+    // Marked unit: gold ring (3+ kills)
+    if((u.killCount||0)>=3){
+      ctx.strokeStyle='#d4a843';ctx.lineWidth=2.5;
+      ctx.shadowColor='#d4a843';ctx.shadowBlur=14;
+      ctx.beginPath();ctx.arc(0,-r*1.0,r*2.2,0,Math.PI*2);ctx.stroke();
+      ctx.shadowBlur=0;
+    }
+    // Guard crown ring
+    if(u.isGuard){
+      ctx.strokeStyle='#f1c40f';ctx.lineWidth=2;ctx.shadowColor='#f1c40f';ctx.shadowBlur=18;
+      ctx.beginPath();ctx.arc(0,-r,r*2.4,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;
+    }
   }
-  // Fortify shield
-  if(u.fortified){ctx.strokeStyle='rgba(149,165,166,0.6)';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(0,-r,r*1.8,0,Math.PI*2);ctx.stroke();}
-  // Marked unit (3+ kills)
-  if((u.killCount||0)>=3){
-    ctx.strokeStyle='#d4a843';ctx.lineWidth=2.5;
-    ctx.shadowColor='#d4a843';ctx.shadowBlur=12;
-    ctx.beginPath();ctx.arc(0,-r*1.2,r*1.8,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;
-  }
-  // Guard glow
-  if(u.isGuard){
-    ctx.strokeStyle='#f1c40f';ctx.lineWidth=2;ctx.shadowColor='#f1c40f';ctx.shadowBlur=18;
-    ctx.beginPath();ctx.arc(0,-r,r*2.0,0,Math.PI*2);ctx.stroke();ctx.shadowBlur=0;
-  }
-  // HP bar
+
+  // HP bar (all non-full-HP units)
   if(u.hp<u.maxHp){
-    const bw=r*2.5,bh=3;
-    ctx.fillStyle='#111';ctx.fillRect(-bw/2,-r*3.0,bw,bh);
+    const bw=r*2.8,bh=3.5;
+    const barY=u.def.aerial?(-r*2.2):u.def.radius>=15?(-r*3.5):(-r*3.0);
+    ctx.fillStyle='#111';ctx.fillRect(-bw/2,barY,bw,bh);
     const hpCol=u.hp>u.maxHp*0.5?'#2ecc71':u.hp>u.maxHp*0.25?'#f39c12':'#e74c3c';
-    ctx.fillStyle=hpCol;ctx.fillRect(-bw/2,-r*3.0,bw*(u.hp/u.maxHp),bh);
+    ctx.fillStyle=hpCol;ctx.fillRect(-bw/2,barY,bw*(u.hp/u.maxHp),bh);
   }
+
   ctx.shadowBlur=0;ctx.restore();
 }
 // GAME LOOP
