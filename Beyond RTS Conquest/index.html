@@ -362,16 +362,20 @@
       display: flex;
       flex-direction: column;
       gap: 3px;
+      max-height: 7em;
+      overflow: hidden;
     }
 
     .pro {
       color: #2ecc71;
-      font-size: var(--fs-sm);
+      font-size: clamp(0.48rem, 0.75vw, 0.7rem);
+      line-height: 1.35;
     }
 
     .con {
       color: #e74c3c;
-      font-size: var(--fs-sm);
+      font-size: clamp(0.48rem, 0.75vw, 0.7rem);
+      line-height: 1.35;
     }
 
     .fcard-matchup {
@@ -1515,6 +1519,14 @@
       text-align: center;
     }
 
+    .bfcard-meta {
+      font-size: clamp(0.28rem, 0.5vw, 0.52rem);
+      color: var(--dim);
+      text-align: center;
+      line-height: 1.2;
+      opacity: 0.85;
+    }
+
     .bfcard-cost {
       font-family: 'Cinzel', serif;
       font-size: clamp(.62rem, .88vw, .82rem);
@@ -2034,9 +2046,9 @@
         extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 200, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
         guardUnit: 'w_guard',
         upgrades: [
-          { id: 'iron_discipline', name: 'Iron Discipline', cost: { souls: 25, bodies: 4 }, desc: 'All melee units gain +15% attack rate permanently.', effect: 'melee_atkrate', value: 0.15 },
-          { id: 'eagle_eye', name: 'Eagle Eye', cost: { souls: 30, bodies: 3 }, desc: 'All ranged units gain +20 attack range.', effect: 'ranged_range', value: 20 },
-          { id: 'mounted_command', name: 'Mounted Command', cost: { souls: 40, bodies: 5 }, desc: 'Gryphon Rider gains +40 HP and +15 speed.', effect: 'gryphon_buff', value: null },
+          { id: 'iron_discipline', name: 'Iron Discipline', cost: { souls: 55, bodies: 8 }, desc: 'All melee units gain +25% attack rate permanently.', effect: 'melee_atkrate', value: 0.15 },
+          { id: 'eagle_eye', name: 'Eagle Eye', cost: { souls: 55, bodies: 6 }, desc: 'All ranged units gain +35 attack range and +15% DMG.', effect: 'ranged_range', value: 20 },
+          { id: 'mounted_command', name: 'Mounted Command', cost: { souls: 75, bodies: 10 }, desc: 'Gryphon Rider gains +70 HP, +20 speed, and +8 DMG.', effect: 'gryphon_buff', value: null },
         ]
       },
 
@@ -2060,9 +2072,9 @@
         ],
         guardUnit: 'su_guard',
         upgrades: [
-          { id: 'dark_covenant', name: 'Dark Covenant', cost: { souls: 28, bodies: 3 }, desc: 'Raise Shade cap from 12 to 16.', effect: 'shade_cap', value: 4 },
-          { id: 'soul_drain', name: 'Soul Drain', cost: { souls: 35, bodies: 4 }, desc: 'Each Shade killed by your units gives +1 soul.', effect: 'shade_soul', value: 1 },
-          { id: 'undying_will', name: 'Undying Will', cost: { souls: 45, bodies: 5 }, desc: 'Death Frenzy aura radius doubles (80→160px).', effect: 'deathfrenzy_radius', value: 160 },
+          { id: 'dark_covenant', name: 'Dark Covenant', cost: { souls: 55, bodies: 6 }, desc: 'Raise Shade cap from 8 to 14. Shades gain +6 HP.', effect: 'shade_cap', value: 4 },
+          { id: 'soul_drain', name: 'Soul Drain', cost: { souls: 65, bodies: 7 }, desc: 'Each Shade killed gives +2 souls. Wraith kills give +1 soul.', effect: 'shade_soul', value: 1 },
+          { id: 'undying_will', name: 'Undying Will', cost: { souls: 85, bodies: 10 }, desc: 'Death Frenzy radius doubles (80→160px) and bonus increases to +25% attack rate.', effect: 'deathfrenzy_radius', value: 160 },
         ]
       },
 
@@ -2084,9 +2096,9 @@
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 280, speed: 40, dmg: 44, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
         upgrades: [
-          { id: 'warbrand', name: 'Warbrand', cost: { souls: 30, bodies: 6 }, desc: 'All melee units gain +10 base DMG.', effect: 'melee_dmg', value: 10 },
-          { id: 'siege_training', name: 'Siege Training', cost: { souls: 35, bodies: 5 }, desc: 'All units deal +20% damage directly to enemy base.', effect: 'base_dmg', value: 0.2 },
-          { id: 'armored_core', name: 'Armored Core', cost: { souls: 50, bodies: 8 }, desc: 'Warlord and Grave Brute gain +60 max HP.', effect: 'heavy_hp', value: 60 },
+          { id: 'warbrand', name: 'Warbrand', cost: { souls: 60, bodies: 12 }, desc: 'All melee units gain +18 base DMG.', effect: 'melee_dmg', value: 10 },
+          { id: 'siege_training', name: 'Siege Training', cost: { souls: 65, bodies: 10 }, desc: 'All units deal +35% damage to enemy base. Workers deal base damage.', effect: 'base_dmg', value: 0.2 },
+          { id: 'armored_core', name: 'Armored Core', cost: { souls: 90, bodies: 15 }, desc: 'Warlord and Grave Brute gain +100 max HP and +8 DMG.', effect: 'heavy_hp', value: 60 },
         ]
       },
 
@@ -2107,9 +2119,9 @@
         extraUnits: [{ id: 'sp_guard', name: 'Spirit Lord', icon: '✨', souls: 0, bodies: 0, hp: 180, speed: 85, dmg: 30, range: 60, aerial: true, isWorker: false, attackRate: 1.4, radius: 16, color: '#a29bfe', type: 'air', desc: 'Royal Guard. Aerial. Sky Bounty gives +18 souls. Despawns 30s.', isSpawned: true }],
         guardUnit: 'sp_guard',
         upgrades: [
-          { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 22, bodies: 3 }, desc: 'All Spirit units gain +12% movement speed.', effect: 'all_speed', value: 0.12 },
-          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 32, bodies: 3 }, desc: 'Sky Bounty aerial kills now grant +10 souls (was +6).', effect: 'sky_bounty', value: 10 },
-          { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 38, bodies: 4 }, desc: 'Phantom attack rate increases from 1.4 to 2.2.', effect: 'phantom_atkrate', value: 2.2 },
+          { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 50, bodies: 6 }, desc: 'All Spirit units gain +22% movement speed and +10% attack rate.', effect: 'all_speed', value: 0.12 },
+          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 60, bodies: 6 }, desc: 'Sky Bounty grants +12 souls per aerial kill (was +6).', effect: 'sky_bounty', value: 10 },
+          { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 75, bodies: 8 }, desc: 'Phantom attack rate increases to 2.0 and gains +6 DMG.', effect: 'phantom_atkrate', value: 2.2 },
         ]
       },
 
@@ -2130,9 +2142,9 @@
         extraUnits: [{ id: 've_guard', name: 'Ancient Oak', icon: '🌳', souls: 0, bodies: 0, hp: 250, speed: 35, dmg: 22, range: 35, aerial: false, isWorker: false, attackRate: 0.7, radius: 22, color: '#27ae60', type: 'mel', desc: 'Royal Guard. Massive HP. Adjacent allies gain +1 HP regen/sec. Despawns 30s.', isSpawned: true, guardRegen: 1 }],
         guardUnit: 've_guard',
         upgrades: [
-          { id: 'deeproots', name: 'Deep Roots', cost: { souls: 28, bodies: 5 }, desc: 'Regrowth regen increases from 1 to 2.5 HP/sec out of combat.', effect: 'regen_rate', value: 2.5 },
-          { id: 'poisonthorns', name: 'Poison Thorns', cost: { souls: 32, bodies: 4 }, desc: 'Thornwhip hits now also apply 3 DPS poison for 4 seconds.', effect: 'thornwhip_poison', value: null },
-          { id: 'ancient_fury', name: 'Ancient Fury', cost: { souls: 45, bodies: 6 }, desc: 'Grove Bear gains +30 HP and its slow aura expands to 90px.', effect: 'bear_buff', value: null },
+          { id: 'deeproots', name: 'Deep Roots', cost: { souls: 55, bodies: 10 }, desc: 'Regrowth regen increases to 4 HP/sec and now also works during combat at 1.5 HP/sec.', effect: 'regen_rate', value: 2.5 },
+          { id: 'poisonthorns', name: 'Poison Thorns', cost: { souls: 60, bodies: 8 }, desc: 'Thornwhip hits apply 5 DPS poison for 4 seconds. Poison spreads to adjacent units on death.', effect: 'thornwhip_poison', value: null },
+          { id: 'ancient_fury', name: 'Ancient Fury', cost: { souls: 85, bodies: 12 }, desc: 'Grove Bear gains +60 HP, slow aura expands to 110px, and slow strength increases to 40%.', effect: 'bear_buff', value: null },
         ]
       },
 
@@ -2153,9 +2165,9 @@
         extraUnits: [{ id: 'if_guard', name: 'Inferno Lord', icon: '🔥', souls: 0, bodies: 0, hp: 210, speed: 55, dmg: 40, range: 34, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#ff4500', type: 'mel', desc: 'Royal Guard. Hellfire on every spawn while active. Despawns 30s.', isSpawned: true, _hellfire: true }],
         guardUnit: 'if_guard',
         upgrades: [
-          { id: 'hellforge', name: 'Hellforge', cost: { souls: 30, bodies: 4 }, desc: 'Hellfire trigger reduced from 8th to 6th spawn — more frequent empowerment.', effect: 'hellfire_rate', value: 6 },
-          { id: 'inferno_chain', name: 'Inferno Chain', cost: { souls: 35, bodies: 4 }, desc: 'Burn damage increases to 8 DPS over 3 seconds.', effect: 'burn_buff', value: null },
-          { id: 'doom_surge', name: 'Doom Surge', cost: { souls: 42, bodies: 6 }, desc: 'Nightmare death explosion radius expands from 70 to 120px.', effect: 'nightmare_splash', value: 120 },
+          { id: 'hellforge', name: 'Hellforge', cost: { souls: 60, bodies: 8 }, desc: 'Hellfire triggers every 5th spawn (was 8th) and empowered units gain +30% DMG instead of +25%.', effect: 'hellfire_rate', value: 6 },
+          { id: 'inferno_chain', name: 'Inferno Chain', cost: { souls: 65, bodies: 8 }, desc: 'Burn damage increases to 8 DPS for 3s. Burn now stacks — units can burn from multiple sources.', effect: 'burn_buff', value: null },
+          { id: 'doom_surge', name: 'Doom Surge', cost: { souls: 80, bodies: 12 }, desc: 'Nightmare explosion radius expands to 130px and deals +8 splash DMG.', effect: 'nightmare_splash', value: 120 },
         ]
       },
 
@@ -2176,9 +2188,9 @@
         extraUnits: [{ id: 'gl_guard', name: 'Blizzard Queen', icon: '❄️', souls: 0, bodies: 0, hp: 190, speed: 50, dmg: 30, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#74b9ff', type: 'mel', desc: 'Royal Guard. Melee ice titan. All hits chill for 2.5s. Despawns 30s.', isSpawned: true, chillOnHit: true, chillDur: 2.5 }],
         guardUnit: 'gl_guard',
         upgrades: [
-          { id: 'deep_freeze', name: 'Deep Freeze', cost: { souls: 28, bodies: 4 }, desc: 'Chill duration on all units increased by +0.5s.', effect: 'chill_dur', value: 0.5 },
-          { id: 'cryo_storm', name: 'Cryo Storm', cost: { souls: 35, bodies: 5 }, desc: 'Ice Bolt AoE splash radius increases from 40 to 70px.', effect: 'icebolt_aoe', value: 70 },
-          { id: 'eternal_winter', name: 'Eternal Winter', cost: { souls: 45, bodies: 6 }, desc: 'Permafrost death freeze duration increases from 3s to 5s.', effect: 'permafrost_dur', value: 5 },
+          { id: 'deep_freeze', name: 'Deep Freeze', cost: { souls: 55, bodies: 8 }, desc: 'Chill duration increased by +1.5s and chill slow strength increases from 35% to 50%.', effect: 'chill_dur', value: 0.5 },
+          { id: 'cryo_storm', name: 'Cryo Storm', cost: { souls: 65, bodies: 10 }, desc: 'Ice Bolt AoE splash radius expands to 80px and splash DMG increases from 40% to 65%.', effect: 'icebolt_aoe', value: 70 },
+          { id: 'eternal_winter', name: 'Eternal Winter', cost: { souls: 85, bodies: 12 }, desc: 'Permafrost chill lasts 6s and also applies to a 60px radius around the dying unit.', effect: 'permafrost_dur', value: 5 },
         ]
       },
 
@@ -2199,9 +2211,9 @@
         extraUnits: [{ id: 'vb_guard', name: 'Thunder Titan', icon: '⚡', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 35, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Chain on every hit. 80px chain range. Despawns 30s.', isSpawned: true, alwaysChain: true, chainRange: 80 }],
         guardUnit: 'vb_guard',
         upgrades: [
-          { id: 'superconductor', name: 'Superconductor', cost: { souls: 28, bodies: 4 }, desc: 'Chain Lightning jumps twice instead of once.', effect: 'chain_jump', value: 2 },
-          { id: 'voltage_surge', name: 'Voltage Surge', cost: { souls: 33, bodies: 4 }, desc: 'Chain Lightning damage increases from 40% to 60% of base DMG.', effect: 'chain_dmg', value: 0.6 },
-          { id: 'overcharge', name: 'Overcharge', cost: { souls: 40, bodies: 5 }, desc: 'Shockblade stun chance increases from 20% to 35%.', effect: 'stun_chance', value: 0.35 },
+          { id: 'superconductor', name: 'Superconductor', cost: { souls: 55, bodies: 8 }, desc: 'Chain Lightning jumps up to 3 times and each jump deals 50% DMG (was 40%).', effect: 'chain_jump', value: 2 },
+          { id: 'voltage_surge', name: 'Voltage Surge', cost: { souls: 60, bodies: 8 }, desc: 'Chain Lightning damage increases to 70% of base DMG and stuns chain targets for 0.4s.', effect: 'chain_dmg', value: 0.6 },
+          { id: 'overcharge', name: 'Overcharge', cost: { souls: 80, bodies: 10 }, desc: 'Shockblade stun chance increases to 50% and stun duration increases from 1s to 1.8s.', effect: 'stun_chance', value: 0.35 },
         ]
       },
 
@@ -2222,9 +2234,9 @@
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
         guardUnit: 'bp_guard',
         upgrades: [
-          { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 28, bodies: 4 }, desc: 'Blood Tithe refund increases from 2 to 4 souls per spawn.', effect: 'blood_tithe', value: 4 },
-          { id: 'pack_alpha', name: 'Pack Alpha', cost: { souls: 35, bodies: 5 }, desc: 'Wolfborn grow-on-kill increased from +3 DMG to +5 DMG per kill.', effect: 'wolf_grow', value: 5 },
-          { id: 'death_rage', name: 'Death Rage', cost: { souls: 40, bodies: 5 }, desc: 'Berserk threshold on Bloodborn raises from 30% to 50% HP.', effect: 'berserk_thresh', value: 0.5 },
+          { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 55, bodies: 8 }, desc: 'Blood Tithe refund increases to 5 souls per spawn. Also refunds 1 body.', effect: 'blood_tithe', value: 4 },
+          { id: 'pack_alpha', name: 'Pack Alpha', cost: { souls: 65, bodies: 10 }, desc: 'Wolfborn grow-on-kill becomes +4 DMG per kill and max stacks increase from 5 to 8.', effect: 'wolf_grow', value: 5 },
+          { id: 'death_rage', name: 'Death Rage', cost: { souls: 75, bodies: 10 }, desc: 'Berserk threshold raises to 60% HP and Berserk now also grants +20% DMG.', effect: 'berserk_thresh', value: 0.5 },
         ]
       },
 
@@ -2245,9 +2257,9 @@
         extraUnits: [{ id: 'me_paladin', name: 'Grand Paladin', icon: '💚', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#00b894', type: 'mel', desc: 'Royal Guard. Regenerates 5 HP/sec. Despawns 30s.', isSpawned: true, regenPerSec: 5 }],
         guardUnit: 'me_paladin',
         upgrades: [
-          { id: 'rapid_recovery', name: 'Rapid Recovery', cost: { souls: 26, bodies: 4 }, desc: 'Retreat heal duration reduced by 3s (faster return to battle).', effect: 'heal_speed', value: 3 },
-          { id: 'battle_hymn', name: 'Battle Hymn', cost: { souls: 33, bodies: 4 }, desc: 'Cleric heal amount increases from 12 to 22 HP per projectile.', effect: 'cleric_heal', value: 22 },
-          { id: 'iron_faith', name: 'Iron Faith', cost: { souls: 40, bodies: 5 }, desc: 'Veteran return DMG bonus increases from +10% to +20% per return.', effect: 'veteran_bonus', value: 0.2 },
+          { id: 'rapid_recovery', name: 'Rapid Recovery', cost: { souls: 55, bodies: 8 }, desc: 'Retreat heal time reduced by 3s and retreating units gain +40% movement speed.', effect: 'heal_speed', value: 3 },
+          { id: 'battle_hymn', name: 'Battle Hymn', cost: { souls: 60, bodies: 8 }, desc: 'Cleric heal increases to 28 HP per shot and fires at 2 targets simultaneously.', effect: 'cleric_heal', value: 22 },
+          { id: 'iron_faith', name: 'Iron Faith', cost: { souls: 80, bodies: 10 }, desc: 'Veteran return DMG bonus increases to +25% per return and max stacks increase from 3 to 5.', effect: 'veteran_bonus', value: 0.2 },
         ]
       },
     ];
@@ -2379,7 +2391,8 @@
         RALLY_BUFFS.forEach((bf, i) => {
           const card = document.createElement('div');
           card.className = 'bfcard'; card.dataset.idx = i;
-          card.innerHTML = `<div class="bfcard-icon">${bf.icon}</div><div class="bfcard-name">${bf.name}</div><div class="bfcard-cost">💀${bf.souls}</div><div class="bfcard-cd-ring" id="p${pid}-bf-ring-${i}"></div>`;
+          const durLabel = bf.duration > 0 ? `${bf.duration}s` : 'Instant';
+          card.innerHTML = `<div class="bfcard-icon">${bf.icon}</div><div class="bfcard-name">${bf.name}</div><div class="bfcard-cost">💀${bf.cost}</div><div class="bfcard-meta">⏱${durLabel} · 🔄${bf.cooldown}s</div><div class="bfcard-cd-ring" id="p${pid}-bf-ring-${i}"></div>`;
           card.addEventListener('click', () => tryActivateBuff(pid, i, card));
           bufEl.appendChild(card);
         });
@@ -2840,7 +2853,7 @@
 
     function canAttackBase(u) {
       // Can attack base if no enemies are within 3x attack range
-      const enemies = G.units.filter(e => e.player !== u.player && !e.offscreen && !e.retreating && !e.def.isWorker);
+      const enemies = G.units.filter(e => e.player !== u.player && !e.offscreen && !e.def.isWorker);
       if (enemies.length === 0) return true;
       return !enemies.some(e => rangeDist(u, e) < Math.max(u.def.range * 2, 120));
     }
@@ -3387,7 +3400,7 @@
       let p1Near = false, p2Near = false;
       G.units.forEach(u => {
         if (u.offscreen || u.def.isWorker || u.retreating) return;
-        if (!u || u.dead || u.offscreen || u.def.isWorker || u.retreating) return;
+        if (!u || u.dead || u.offscreen || u.def.isWorker) return;
         if (Math.abs(u.x - midX) < midR) { if (u.player === 1) p1Near = true; else p2Near = true; }
       });
       const prevHolder = G.midHolder;
