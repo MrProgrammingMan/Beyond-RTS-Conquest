@@ -1640,47 +1640,16 @@
     }
 
     @keyframes towerCollapse {
-      0% {
-        transform: translateX(0) rotate(0deg);
-      }
-
-      5% {
-        transform: translateX(-6px) rotate(-3deg);
-      }
-
-      10% {
-        transform: translateX(8px) rotate(4deg);
-      }
-
-      15% {
-        transform: translateX(-10px) rotate(-5deg);
-      }
-
-      20% {
-        transform: translateX(12px) rotate(6deg);
-      }
-
-      25% {
-        transform: translateX(-8px) rotate(-4deg);
-      }
-
-      35% {
-        transform: translateX(20px) rotate(10deg);
-      }
-
-      50% {
-        transform: translateX(30px) rotate(20deg) scaleY(0.7);
-      }
-
-      70% {
-        transform: translateX(50px) rotate(35deg) scaleY(0.4);
-        opacity: 0.5;
-      }
-
-      100% {
-        transform: translateX(80px) rotate(55deg) scaleY(0);
-        opacity: 0;
-      }
+      0%  { transform: translateX(0) rotate(0deg); }
+      5%  { transform: translateX(-6px) rotate(-3deg); }
+      10% { transform: translateX(8px) rotate(4deg); }
+      15% { transform: translateX(-10px) rotate(-5deg); }
+      20% { transform: translateX(12px) rotate(6deg); }
+      25% { transform: translateX(-8px) rotate(-4deg); }
+      35% { transform: translateX(20px) rotate(10deg); }
+      50% { transform: translateX(30px) rotate(20deg) scaleY(0.7); }
+      70% { transform: translateX(50px) rotate(35deg) scaleY(0.4); opacity:0.5; }
+      100%{ transform: translateX(80px) rotate(55deg) scaleY(0); opacity:0; }
     }
 
     .go-title {
@@ -2049,7 +2018,7 @@
         startSouls: 22, startBodies: 8,
         units: [
           { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 0, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Collects bodies. Fragile but cheap.' },
-          { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 4, bodies: 1, hp: 35, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
+          { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 5, bodies: 1, hp: 35, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
           { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 2, hp: 35, speed: 60, dmg: 12, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
           { id: 'su_necro', name: 'Necromancer', icon: '🔮', souls: 14, bodies: 3, hp: 55, speed: 45, dmg: 18, range: 100, aerial: false, isWorker: false, attackRate: 0.8, radius: 12, color: '#8e44ad', type: 'sum', desc: 'Summons 2 Shades on kill. Passively summons 1 Shade every 12s.', summons: 's_shade', summonCount: 2, passiveSummon: 12 },
           { id: 'su_wraith2', name: 'Dark Wing', icon: '🦇', souls: 15, bodies: 3, hp: 55, speed: 95, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c3483', type: 'air', desc: 'Fast aerial harasser. Spawns a Shade on death.', deathSpawn: 's_shade' },
@@ -2079,6 +2048,7 @@
           { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 4, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. 180 HP. Fortify gives effective 257 HP. Devastating at close range.' },
           { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 6, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit in game. 160 HP, slow but crushing damage.' },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 16, bodies: 4, hp: 65, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
+          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 3, hp: 55, speed: 46, dmg: 20, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
         ],
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 280, speed: 40, dmg: 44, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
@@ -2091,23 +2061,23 @@
 
       {
         id: 'spirits', name: 'Spirits', icon: '✨', tagline: 'Swift sky hunters. Masters of aerial combat and soul gathering.',
-        passive: 'Sky Bounty: killing any aerial unit grants +10 souls instantly.',
+        passive: 'Sky Bounty: killing any aerial unit grants +6 souls instantly.',
         pros: ['Phantom ranged unit is the fastest-firing ranged in the game', 'Sky Bounty passive generates huge soul income against aerial-heavy factions', 'Specter aerial unit has the highest base speed of all aerial units'],
         cons: ['All units have lower HP than average — can be overwhelmed by heavy melee', 'No healing — once a unit is low, it will die', 'Sky Bounty only triggers on aerial kills — worthless vs ground-only factions'],
         matchup: 'Best against: aerial-heavy factions | Weak to: Brutes, Glacial',
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 0, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
-          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.4, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Best attack rate of all ranged.' },
-          { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 12, bodies: 3, hp: 60, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
+          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 2, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
+          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
+          { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 14, bodies: 3, hp: 60, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
           { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 18, bodies: 4, hp: 70, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 2× damage bonus vs aerial enemies.', aerialBonus: 2.0 },
         ],
         extraUnits: [{ id: 'sp_guard', name: 'Spirit Lord', icon: '✨', souls: 0, bodies: 0, hp: 180, speed: 85, dmg: 30, range: 60, aerial: true, isWorker: false, attackRate: 1.4, radius: 16, color: '#a29bfe', type: 'air', desc: 'Royal Guard. Aerial. Sky Bounty gives +18 souls. Despawns 30s.', isSpawned: true }],
         guardUnit: 'sp_guard',
         upgrades: [
           { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 22, bodies: 3 }, desc: 'All Spirit units gain +12% movement speed.', effect: 'all_speed', value: 0.12 },
-          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 32, bodies: 3 }, desc: 'Sky Bounty aerial kills now grant +18 souls (was +10).', effect: 'sky_bounty', value: 18 },
+          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 32, bodies: 3 }, desc: 'Sky Bounty aerial kills now grant +10 souls (was +6).', effect: 'sky_bounty', value: 10 },
           { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 38, bodies: 4 }, desc: 'Phantom attack rate increases from 1.4 to 2.2.', effect: 'phantom_atkrate', value: 2.2 },
         ]
       },
@@ -2123,7 +2093,7 @@
           { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 0, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Collects bodies. Carries extra body from mid-field.', groveMidBonus: true },
           { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 2, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
           { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
-          { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 12, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial unit. Kills heal nearby allies for 3 HP in 80px.', sylphHeal: 3 },
+          { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 14, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies for 8 HP in 110px.', sylphHeal: 8, sylphHealRange: 110 },
           { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 150, speed: 42, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
         ],
         extraUnits: [{ id: 've_guard', name: 'Ancient Oak', icon: '🌳', souls: 0, bodies: 0, hp: 250, speed: 35, dmg: 22, range: 35, aerial: false, isWorker: false, attackRate: 0.7, radius: 22, color: '#27ae60', type: 'mel', desc: 'Royal Guard. Massive HP. Adjacent allies gain +1 HP regen/sec. Despawns 30s.', isSpawned: true, guardRegen: 1 }],
@@ -2145,7 +2115,7 @@
         units: [
           { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 0, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Collects bodies. Very fragile — keep away from combat.' },
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 1, hp: 55, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
-          { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 5 DMG burn over 2 seconds.', burnOnHit: true, burnDur: 2, burnDmg: 5 },
+          { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
           { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 16, bodies: 4, hp: 60, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 70 },
           { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 5, hp: 130, speed: 44, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 8 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 8 },
         ],
@@ -2167,12 +2137,12 @@
         startSouls: 18, startBodies: 10,
         units: [
           { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 0, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Collects bodies. Carries an extra body from mid-field when you own it.', frostMidBonus: true },
-          { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 5, bodies: 2, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.5s chill on every melee hit.', chillOnHit: true, chillDur: 1.5 },
+          { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 2, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.5s chill on every melee hit.', chillOnHit: true, chillDur: 1.5 },
           { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.5, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
           { id: 'gl_snowhawk', name: 'Snowhawk', icon: '🦅', souls: 15, bodies: 3, hp: 55, speed: 85, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#dfe6e9', type: 'air', desc: 'Aerial unit. First hit on each enemy stuns for 0.8s.', firstHitStun: true, stunDur: 0.8 },
-          { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 200, speed: 36, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to slows and stuns. Applies AoE chill aura.', immuneDebuff: true, bearAura: true, chillOnHit: true, chillDur: 2.0 },
+          { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 200, speed: 36, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 2.0 },
         ],
-        extraUnits: [{ id: 'gl_guard', name: 'Blizzard Queen', icon: '❄️', souls: 0, bodies: 0, hp: 230, speed: 50, dmg: 30, range: 60, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#74b9ff', type: 'rng', desc: 'Royal Guard. Ranged. All hits chill for 2.5s. AoE splash. Despawns 30s.', isSpawned: true, chillOnHit: true, chillDur: 2.5, aoeShot: true, aoeSplashRange: 55, aoeSplashMult: 0.5 }],
+        extraUnits: [{ id: 'gl_guard', name: 'Blizzard Queen', icon: '❄️', souls: 0, bodies: 0, hp: 190, speed: 50, dmg: 30, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#74b9ff', type: 'mel', desc: 'Royal Guard. Melee ice titan. All hits chill for 2.5s. Despawns 30s.', isSpawned: true, chillOnHit: true, chillDur: 2.5 }],
         guardUnit: 'gl_guard',
         upgrades: [
           { id: 'deep_freeze', name: 'Deep Freeze', cost: { souls: 28, bodies: 4 }, desc: 'Chill duration on all units increased by +0.5s.', effect: 'chill_dur', value: 0.5 },
@@ -2213,10 +2183,10 @@
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 0, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 2, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +3 DMG permanently per kill (max 5 stacks). Wolf Frenzy on first attack.', growOnKill: 3, wolfFrenzy: true },
-          { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 8, bodies: 2, hp: 42, speed: 62, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS poison for 5 seconds.', poisonOnHit: true, poisonDur: 5, poisonDmg: 15 },
+          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 2, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 5 stacks).', growOnKill: 2 },
+          { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 8, bodies: 2, hp: 42, speed: 62, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
           { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 12, bodies: 3, hp: 90, speed: 58, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
-          { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 16, bodies: 3, hp: 58, speed: 88, dmg: 20, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12 },
+          { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 16, bodies: 3, hp: 58, speed: 88, dmg: 20, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
         ],
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
         guardUnit: 'bp_guard',
@@ -2236,10 +2206,10 @@
         startSouls: 18, startBodies: 8,
         units: [
           { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 0, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Collects bodies. Slightly faster when carrying.' },
-          { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 3, hp: 80, speed: 55, dmg: 10, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
-          { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 90, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
-          { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 35% HP, returns healed. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
-          { id: 'me_seraph', name: 'Seraph', icon: '🕊️', souls: 20, bodies: 3, hp: 50, speed: 90, dmg: 12, range: 55, aerial: true, isWorker: false, attackRate: 1.4, radius: 14, color: '#81ecec', type: 'air', desc: 'Aerial support. Each attack heals the lowest-HP nearby friendly for 6 HP.', seraphHeal: 6, seraphHealRange: 120 },
+          { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 3, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
+          { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 115, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
+          { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 35% HP, returns healed. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
+          { id: 'me_seraph', name: 'Seraph', icon: '🕊️', souls: 16, bodies: 3, hp: 50, speed: 90, dmg: 12, range: 55, aerial: true, isWorker: false, attackRate: 1.4, radius: 14, color: '#81ecec', type: 'air', desc: 'Aerial support. Each attack heals the lowest-HP nearby friendly for 6 HP.', seraphHeal: 6, seraphHealRange: 120 },
         ],
         extraUnits: [{ id: 'me_paladin', name: 'Grand Paladin', icon: '💚', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#00b894', type: 'mel', desc: 'Royal Guard. Regenerates 5 HP/sec. Despawns 30s.', isSpawned: true, regenPerSec: 5 }],
         guardUnit: 'me_paladin',
@@ -2312,7 +2282,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.4,
-            bloodTitheRefund: 2, skyBountyAmt: 10,
+            bloodTitheRefund: 2, skyBountyAmt: 6,
             chillSpeedMult: 0.65, chillDur: 2.0,
             guardTimerDisplay: 0,
           },
@@ -2327,12 +2297,12 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.4,
-            bloodTitheRefund: 2, skyBountyAmt: 10,
+            bloodTitheRefund: 2, skyBountyAmt: 6,
             chillSpeedMult: 0.65, chillDur: 2.0,
             guardTimerDisplay: 0,
           },
         ],
-        shadeCount: [0, 0], MAX_SHADES: 12,
+        shadeCount: [0, 0], MAX_SHADES: 8,
         gameStart: Date.now(), siegeDecay: false,
         capFlash: 0, capFlashPlayer: 0,
         lastCapAnnounce: 0,
@@ -2420,7 +2390,7 @@
         const panel = document.querySelector(`#p${pid}-hud .unit-stat-panel`);
         if (panel) panel.style.display = '';
         if (mode === 1) {
-          const upgrades = G.factions[pid - 1].upgrades || [];
+          const upgrades = G.factions[pid-1].upgrades || [];
           const up = upgrades[sel];
           if (up) {
             document.getElementById(`p${pid}-sp-name`).textContent = up.name;
@@ -2614,17 +2584,13 @@
       };
       switch (up.effect) {
         case 'melee_atkrate':
-          {
-            const v = up.val || up.value || 0.15;
-            liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.attackRate *= (1 + v); });
-            G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.attackRate *= (1 + v); }); break;
-          }
+          { const v = up.val || up.value || 0.15;
+          liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.attackRate *= (1 + v); });
+          G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.attackRate *= (1 + v); }); break; }
         case 'ranged_range':
-          {
-            const v = up.val || up.value || 20;
-            liveUnits.filter(u => u.def.type === 'rng').forEach(u => { u.def.range += v; });
-            G.unitDefs[pid - 1].filter(d => d.type === 'rng').forEach(d => { d.range += v; }); break;
-          }
+          { const v = up.val || up.value || 20;
+          liveUnits.filter(u => u.def.type === 'rng').forEach(u => { u.def.range += v; });
+          G.unitDefs[pid - 1].filter(d => d.type === 'rng').forEach(d => { d.range += v; }); break; }
         case 'unit_buff':
           const tgt = up.target;
           modDef(tgt, (def) => {
@@ -2655,11 +2621,9 @@
         case 'shade_soul_reward': p._shadeSoulReward = (p._shadeSoulReward || 0) + up.val; break;
         case 'death_frenzy_radius': p._frenzyRadius = up.val; break;
         case 'melee_dmg':
-          {
-            const v = up.val || up.value || 10;
-            liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.dmg += v; });
-            G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.dmg += v; }); break;
-          }
+          { const v = up.val || up.value || 10;
+          liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.dmg += v; });
+          G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.dmg += v; }); break; }
         case 'base_dmg_mult': p._baseDmgMult = (p._baseDmgMult || 1) + up.val; break;
         case 'heavy_hp':
           (up.targets || []).forEach(id => modDef(id, def => { def.hp += up.val; def.maxHp = (def.maxHp || def.hp) + up.val; }));
@@ -2723,7 +2687,7 @@
       setTimeout(() => el.classList.remove('flash-red'), 350);
     }
 
-    function spawnUnit(pid, unitId, isSummoned = false) {
+    function spawnUnit(pid, unitId, isSummoned = false, spawnX = null, spawnY = null) {
       const p = G.players[pid - 1];
       const def = G.unitDefs[pid - 1].find(d => d.id === unitId);
       if (!def) return;
@@ -2733,7 +2697,16 @@
         G.shadeCount[pid - 1]++;
       }
       const yOff = def.aerial ? -85 : 0;
-      const x = pid === 1 ? p.baseX + G.baseW / 2 + 10 + Math.random() * 20 : p.baseX - G.baseW / 2 - 10 - Math.random() * 20;
+      // Clamp rawX so shades can't appear inside bases
+      const minX = G.players[0].baseX + G.baseW;
+      const maxX = G.players[1].baseX - G.baseW;
+      let rawX;
+      if (spawnX !== null) {
+        rawX = spawnX + (Math.random() - 0.5) * 40;
+      } else {
+        rawX = pid === 1 ? p.baseX + G.baseW / 2 + 10 + Math.random() * 20 : p.baseX - G.baseW / 2 - 10 - Math.random() * 20;
+      }
+      const x = Math.max(minX, Math.min(maxX, rawX));
       const baseY = def.aerial ? G.groundY - 85 : G.groundY - (def.radius || 10);
       const u = {
         id: G.nextId++, player: pid, defId: unitId, def: { ...def },
@@ -2749,7 +2722,7 @@
         isGuard: false, guardTimer: 0, killCount: 0,
         lastHitById: null, lastHitByPlayer: null, _stunnedTargets: null,
         spawnProtectionTimer: isSummoned ? 0 : 1.8,
-        retreating: false, retreatTimer: 0, returnCount: 0,
+        retreating: false, retreatTimer: 0, returnCount: 0, retreatCooldown: 0, healingPhase: false,
         _warcryed: 0, _ironwalled: 0,
         passiveSummonTimer: def.passiveSummon || def.passiveSummonInterval || 0,
       };
@@ -2837,7 +2810,8 @@
 
     function doAttack(attacker, target, frenzyMult) {
       const isRanged = attacker.def.range > 60;
-      let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0);
+      const berserkHPMult = (attacker.def.berserkHPThresh && attacker.hp < attacker.maxHp * attacker.def.berserkHPThresh) ? 2.0 : 1.0;
+      let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0) * berserkHPMult;
       if (isRanged && target.def.aerial) dmg *= 2.2;
       if (isRanged && target.def.hp >= 120) dmg *= 1.3;
 
@@ -2893,7 +2867,9 @@
           x: attacker.x, y: attacker.y, vx: (dx / d) * speed, vy: (dy / d) * speed,
           targetId: target.id, dmg, player: attacker.player,
           col: attacker.def.color, sourceDefId: attacker.defId,
-          attackerId: attacker.id, tx: target.x, ty: target.y, life: 1.5,
+          attackerId: attacker.id, tx: target.x, ty: target.y, life: 1,
+          chillOnHit: attacker.def.chillOnHit, chillDur: attacker.def.chillDur || 1.5,
+          aoeShot: attacker.def.aoeShot, aoeSplashRange: attacker.def.aoeSplashRange, aoeSplashMult: attacker.def.aoeSplashMult || 0.4,
           blocked: false,
         });
       } else {
@@ -2903,7 +2879,7 @@
         if (target.spawnProtectionTimer > 0) actualDmg = 0;// spawn protect
         else {
           target.hp -= actualDmg; target.lastHitTime = Date.now();
-          if (actualDmg > 0) G.players[attacker.player - 1].dmgDealt = (G.players[attacker.player - 1].dmgDealt || 0) + actualDmg;
+          if (actualDmg > 0) G.players[attacker.player-1].dmgDealt = (G.players[attacker.player-1].dmgDealt||0) + actualDmg;
         }
         target.hitFlash = 1; SFX.hit();
         // Melee slow on hit (Balance 4)
@@ -2920,10 +2896,11 @@
         if (attacker.def.lifeSteal) attacker.hp = Math.min(attacker.maxHp, attacker.hp + actualDmg * attacker.def.lifeSteal);
         // Chain lightning (melee)
         attacker._attackCount = (attacker._attackCount || 0) + 1;
-        const crate = G.players[attacker.player - 1].chainRate || 10;
+        const crate = attacker.def.alwaysChain ? 1 : (attacker.def.chainRate || G.players[attacker.player - 1].chainRate || 10);
         if ((G.factions[attacker.player - 1].id === 'voltborn' || attacker.def.alwaysChain) && attacker._attackCount % crate === 0) {
           const cdmg = G.players[attacker.player - 1].chainDmgMult || 0.4;
-          const ct = G.units.filter(e => e.player !== attacker.player && e !== target && !e.offscreen && dist2d(attacker, e) < 100);
+          const chainR = attacker.def.chainRange || 100;
+          const ct = G.units.filter(e => e.player !== attacker.player && e !== target && !e.offscreen && dist2d(attacker, e) < chainR);
           if (ct.length > 0) { const c = ct[0]; c.hp -= attacker.def.dmg * cdmg; c.hitFlash = 1; spawnParticles(c.x, c.y, '#fdcb6e', 6); }
         }
         // Seraph heal on attack
@@ -2950,26 +2927,34 @@
       if (killer && G.midOwner && G.midOwner !== killer.player) soulReward = Math.floor(soulReward * 1.5);
       if (kp) kp.souls += soulReward;
       if (kp) { kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward }); }
+      // soulsOnKill (e.g. Revenant)
+      if (killer && killer.def.soulsOnKill && kp) {
+        kp.souls += killer.def.soulsOnKill;
+        showPopup(u.x, u.y - 30, `+${killer.def.soulsOnKill}💀`, '#a29bfe', killer.player);
+      }
       // Sky Bounty
       if (u.def.aerial && killer && G.factions[killer.player - 1].id === 'spirits') {
-        const bonus = kp.skyBountyAmt || 10;
+        const bonus = kp.skyBountyAmt || 6;
         kp.souls += bonus; showPopup(u.x, u.y - 30, `✦ SKY BOUNTY +${bonus}💀`, '#fd79a8', killer.player);
       }
       // Summoner summons on kill
       if (killer && killer.def.summons && !killer.def.isSpawned) {
         const cap = G.MAX_SHADES;
         for (let i = 0; i < (killer.def.summonCount || 1); i++) {
-          if (G.shadeCount[killer.player - 1] < cap) spawnUnit(killer.player, killer.def.summons, true);
+          if (G.shadeCount[killer.player - 1] < cap) {
+            spawnUnit(killer.player, killer.def.summons, true, u.x, G.groundY);
+            spawnParticles(u.x, u.y, '#9b59b6', 10);
+          }
         }
       }
       // Infernal death explosion
       if (u.def.deathSplash) {
         G.units.forEach(e => {
-          if (e.player !== u.player && dist2d(e, u) < u.def.deathSplashRange) {
-            // can also hit own units (by design)
-            if (Math.random() < 0.3) e.hp -= u.def.deathSplashDmg * 0.5; // friendly fire at 50%
-            else { e.hp -= u.def.deathSplashDmg; }
-            e.hitFlash = 1;
+          if (e === u || e.offscreen) return;
+          if (dist2d(e, u) < u.def.deathSplashRange) {
+            const isFriendly = e.player === u.player;
+            const dmg = isFriendly ? u.def.deathSplashDmg * 0.4 : u.def.deathSplashDmg;
+            if (!isFriendly || !e.def.isWorker) { e.hp -= dmg; e.hitFlash = 1; if (e.hp <= 0) handleDeath(e, null); }
           }
         });
         spawnParticles(u.x, u.y, '#e74c3c', 25);
@@ -2983,11 +2968,14 @@
       // Summoner Death Frenzy
       if (G.factions[u.player - 1].id === 'summoners') {
         const rad = G.players[u.player - 1]._frenzyRadius || 80;
-        G.units.filter(a => a.player === u.player && dist2d(a, u) < rad).forEach(a => { a.frenzyTimer = Math.max(a.frenzyTimer || 0, 4); });
+        G.units.filter(a => a.player === u.player && dist2d(a, u) < rad && !(a._deathFrenzyCD > 0))
+          .forEach(a => { a.frenzyTimer = Math.max(a.frenzyTimer || 0, 4); a._deathFrenzyCD = 3.0; });
       }
       // Sylph heal on kill
       if (killer && killer.def.sylphHeal) {
-        G.units.filter(a => a.player === killer.player && dist2d(a, killer) < 80).forEach(a => { a.hp = Math.min(a.maxHp, a.hp + 3); });
+        const healR = killer.def.sylphHealRange || 80;
+        G.units.filter(a => a.player === killer.player && dist2d(a, killer) < healR)
+          .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + killer.def.sylphHeal); });
       }
       // Bloodpact grow on kill
       if (killer && killer.def.growOnKill) killer.def.dmg += killer.def.growOnKill;
@@ -2999,6 +2987,13 @@
       const killerCol = killer ? killer.player === 1 ? '#e8a0a0' : '#a0c0e8' : '#888';
       addKillFeed(`${killerNum}${u.def.icon} ${u.def.name}`, killerCol);
       if (u.def.isWorker) G.players[u.player - 1].workers = Math.max(0, G.players[u.player - 1].workers - 1);
+      // deathSpawn (e.g. Dark Wing) — spawn shade at death position
+      if (u.def.deathSpawn) {
+        if (G.shadeCount[u.player - 1] < G.MAX_SHADES) {
+          spawnUnit(u.player, u.def.deathSpawn, true, u.x, G.groundY);
+          spawnParticles(u.x, u.y, '#6c3483', 12);
+        }
+      }
       const idx = G.units.indexOf(u);
       if (idx !== -1) G.units.splice(idx, 1);
       updateHUD();
@@ -3016,7 +3011,7 @@
         if (u.offTimer <= 0) {
           u.offscreen = false; u.carrying = true;
           u.carryCount = u.goToMid ? 4 : 3;
-          u.goToMid = false; u.x = offX; u.y = G.groundY - (u.def.radius || 10);
+          u.goToMid = false; u.x = offX; u.y = G.groundY - (u.def.radius||10);
         }
         return;
       }
@@ -3088,7 +3083,7 @@
           let dmg = p.dmg;
           if (t._ironwalled > 0) dmg *= 0.6;
           if (t.spawnProtectionTimer > 0) dmg = 0;
-          else { t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg; }
+          else { t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg>0 && p.player) G.players[p.player-1].dmgDealt=(G.players[p.player-1].dmgDealt||0)+dmg; }
           t.hitFlash = 1; SFX.hit();
           t.lastHitById = p.attackerId; t.lastHitByPlayer = p.player;
           const atk = G.units.find(u => u.id === p.attackerId);
@@ -3097,7 +3092,13 @@
           if (atkDef && atkDef.aoeShot) {
             G.units.forEach(e => {
               if (e.player !== p.player && e !== t && !e.offscreen && dist2d({ x: p.x, y: p.y }, e) < atkDef.aoeSplashRange) {
-                e.hp -= dmg * atkDef.aoeSplashMult; e.hitFlash = 1;
+                e.hp -= dmg * (atkDef.aoeSplashMult || 0.4); e.hitFlash = 1;
+                // Apply chill on AoE splash too
+                if (atkDef.chillOnHit && !e.def.immuneStun) {
+                  e.slowTimer = Math.max(e.slowTimer || 0, atkDef.chillDur || 1.5);
+                  e._speedMult = Math.min(e._speedMult || 1, 0.7);
+                }
+                if (e.hp <= 0) handleDeath(e, atk || null);
               }
             });
           }
@@ -3116,10 +3117,11 @@
           // Chain lightning (ranged)
           if (atk) {
             atk._attackCount = (atk._attackCount || 0) + 1;
-            const crate = G.players[atk.player - 1].chainRate || 10;
+            const crate = atk.def.alwaysChain ? 1 : (atk.def.chainRate || G.players[atk.player - 1].chainRate || 10);
             if ((G.factions[atk.player - 1].id === 'voltborn' || atk.def.alwaysChain) && atk._attackCount % crate === 0) {
               const cdmg = G.players[atk.player - 1].chainDmgMult || 0.4;
-              const ct2 = G.units.filter(e => e.player !== atk.player && e !== t && !e.offscreen && dist2d(atk, e) < 100);
+              const chainR2 = atk.def.chainRange || 100;
+              const ct2 = G.units.filter(e => e.player !== atk.player && e !== t && !e.offscreen && dist2d(atk, e) < chainR2);
               if (ct2.length > 0) { const c2 = ct2[0]; c2.hp -= atk.def.dmg * cdmg; c2.hitFlash = 1; spawnParticles(c2.x, c2.y, '#fdcb6e', 6); }
             }
             // Seraph heal on ranged
@@ -3160,6 +3162,8 @@
         if (u.def.immuneDebuff) { u.slowTimer = 0; u._speedMult = 1.0; }
         // Slow timer
         if (u.slowTimer > 0) { u.slowTimer = Math.max(0, u.slowTimer - dt); if (u.slowTimer <= 0) u._speedMult = 1.0; }
+        if (u.retreatCooldown > 0) u.retreatCooldown -= dt;
+        if (u._deathFrenzyCD > 0) u._deathFrenzyCD -= dt;
         // Burn
         if (u.burnTimer > 0) { u.burnTimer -= dt; u.hp -= (u.burnDmgTotal / 2) * dt; if (u.hp <= 0) { handleDeath(u, null); continue; } }
         // Poison
@@ -3171,24 +3175,38 @@
         if (u.def.isWorker) { updateWorker(u, dt); continue; }
         // ─── Mender retreat ───
         if (u.def.menderRetreat) {
-          if (!u.retreating && u.hp < u.maxHp * 0.35) {
-            u.retreating = true; u.retreatTimer = u.def.healDuration || 8;
+          // Retreat trigger: only if cooldown expired
+          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.35) {
+            u.retreating = true;
           }
+          // Retreating: walk to base
           if (u.retreating) {
-            u.retreatTimer -= dt;
             const p = G.players[u.player - 1];
-            const retSpd = u.def.speed * (u.def._retreatSpeed || 1.3);
+            const retSpd = u.def.speed * 1.3 * (u._speedMult || 1);
             u.x += (u.player === 1 ? -1 : 1) * retSpd * dt;
-            u.y = G.groundY - (u.def.radius || 10);
-            const atBase = (u.player === 1 && u.x < p.baseX) || (u.player === 2 && u.x > p.baseX);
-            if (u.retreatTimer <= 0 || atBase) {
-              u.hp = u.maxHp; u.retreating = false; u.retreatTimer = 0;
-              if (u.def.returnDmgBonus && u.returnCount < 3) {
+            u.y = G.groundY - (u.def.radius||10);
+            const atBase = (u.player === 1 && u.x < p.baseX + 60) || (u.player === 2 && u.x > p.baseX - 60);
+            if (atBase) {
+              u.retreating = false;
+              u.healingPhase = true;
+              u.healDuration = u.def.healDuration || 6;
+              u.healRatePerSec = (u.maxHp - u.hp) / u.healDuration;
+            }
+            continue;
+          }
+          // Heal-over-time at base — vulnerable to attack
+          if (u.healingPhase) {
+            u.hp = Math.min(u.maxHp, u.hp + (u.healRatePerSec || u.maxHp / 6) * dt);
+            if (u.hp >= u.maxHp) {
+              u.healingPhase = false;
+              u.retreatCooldown = 18;
+              u.returnCount = (u.returnCount || 0) + 1;
+              if (u.def.returnDmgBonus && u.returnCount <= 3) {
                 u.def.dmg = Math.round(u.def.dmg * (1 + u.def.returnDmgBonus));
-                u.returnCount = (u.returnCount || 0) + 1;
                 showPopup(u.x, u.y - 40, `+${Math.round(u.def.returnDmgBonus * 100)}% DMG`, '#2ecc71', u.player);
               }
               spawnParticles(u.x, u.y, '#2ecc71', 15);
+              showPopup(u.x, u.y - 40, '💚 READY', '#a8e063', u.player);
             }
             continue;
           }
@@ -3199,7 +3217,7 @@
           if (u.passiveSummonTimer <= 0) {
             u.passiveSummonTimer = u.def.passiveSummon || u.def.passiveSummonInterval || 12;
             if (G.shadeCount[u.player - 1] < G.MAX_SHADES) {
-              spawnUnit(u.player, 's_shade', true);
+              spawnUnit(u.player, 's_shade', true, u.x, G.groundY);
               spawnParticles(u.x, u.y, '#9b59b6', 12);
               showPopup(u.x, u.y - 40, '🔮 SUMMON', '#9b59b6', u.player);
             }
@@ -3237,7 +3255,8 @@
             u.attackCooldown -= dt; u.chargeTimer = 0;
             if (u.attackCooldown <= 0) {
               const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
-              const berserkM = u._berserkActive ? 2.0 : 1.0;
+              const berserkHPM = (u.def.berserkHPThresh && u.hp < u.maxHp * u.def.berserkHPThresh) ? 2.0 : 1.0;
+        const berserkM = u._berserkActive ? 2.0 : 1.0;
               const warcryAtkM = u._warcryed > 0 ? 1.15 : 1.0;
               doAttack(u, enemy, frenzyM);
               u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM * berserkM * warcryAtkM, .1);
@@ -3251,7 +3270,7 @@
             // Aerial: move ahead of target to intercept, not just chase
             if (u.def.aerial) {
               // Move to the OPTIMAL attack position: slightly ahead in enemy's movement direction
-              const interceptX = enemy.x + (enemy.vx || 0) * 0.3;
+              const interceptX = enemy.x + (enemy.vx||0) * 0.3;
               const interceptDx = interceptX - u.x;
               u.x += Math.sign(interceptDx) * actualSpd * dt;
             } else {
@@ -3376,8 +3395,8 @@
     function updateMidIndicator() {
       const ind = document.getElementById('mid-indicator');
       // Check if truly contested (both players have units in mid)
-      const p1InMid = G.units.some(u => u.player === 1 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x - G.midX) < G.midR);
-      const p2InMid = G.units.some(u => u.player === 2 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x - G.midX) < G.midR);
+      const p1InMid = G.units.some(u => u.player===1 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x-G.midX)<G.midR);
+      const p2InMid = G.units.some(u => u.player===2 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x-G.midX)<G.midR);
       const contested = p1InMid && p2InMid;
       if (contested) {
         ind.textContent = '⚔ MIDDLE — CONTESTED'; ind.style.color = '#f39c12';
@@ -3498,8 +3517,8 @@
         const cx2 = x; const cy2 = G.groundY;
         ctx.translate(cx2, cy2);
         const prog = Math.min(colT / 1.5, 1);
-        ctx.rotate(prog * (p.id === 1 ? -0.6 : 0.6));
-        ctx.translate(-cx2 + shakeX * (1 + prog * 4), -cy2 + prog * 40);
+        ctx.rotate(prog * (p.id===1 ? -0.6 : 0.6));
+        ctx.translate(-cx2 + shakeX * (1+prog*4), -cy2 + prog * 40);
       } else { ctx.translate(shakeX, 0); }
       // Base wall
       const wallH = gy * 0.32;
@@ -3652,13 +3671,13 @@
         // Staff
         ctx.strokeStyle = 'rgba(155,89,182,0.9)'; ctx.lineWidth = 2.5;
         const staffDir = u.player === 1 ? 1 : -1;
-        ctx.beginPath(); ctx.moveTo(x + staffDir * r * .4, y + r); ctx.lineTo(x + staffDir * r * .4, y - r * 2.2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x + staffDir*r*.4, y + r); ctx.lineTo(x + staffDir*r*.4, y - r*2.2); ctx.stroke();
         // Staff orb
         ctx.fillStyle = '#9b59b6'; ctx.shadowBlur = 8; ctx.shadowColor = '#9b59b6';
-        ctx.beginPath(); ctx.arc(x + staffDir * r * .4, y - r * 2.2, r * .45, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x + staffDir*r*.4, y - r*2.2, r*.45, 0, Math.PI*2); ctx.fill();
         ctx.shadowBlur = 0;
         // Robe stripes
-        ctx.fillStyle = 'rgba(155,89,182,0.4)'; ctx.fillRect(x - r * .3, y - r * .5, r * .15, r);
+        ctx.fillStyle = 'rgba(155,89,182,0.4)'; ctx.fillRect(x - r*.3, y - r*.5, r*.15, r); 
       }
       // ── RANGED / HEALER ──
       else if (u.def.type === 'rng') {
@@ -3735,8 +3754,8 @@
         ctx.fillRect(bx, by, bw * hpPct, bh);
       }
       // Necromancer passive summon bar
-      if ((u.def.passiveSummonInterval || u.def.passiveSummon) && u.passiveSummonTimer > 0) {
-        const pct = 1 - (u.passiveSummonTimer / (u.def.passiveSummonInterval || u.def.passiveSummon));
+      if ((u.def.passiveSummonInterval||u.def.passiveSummon) && u.passiveSummonTimer > 0) {
+        const pct = 1 - (u.passiveSummonTimer / (u.def.passiveSummonInterval||u.def.passiveSummon));
         const sBy = by - 5;
         ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(bx, sBy, bw, 2);
         ctx.fillStyle = '#9b59b6'; ctx.fillRect(bx, sBy, bw * pct, 2);
@@ -3767,7 +3786,7 @@
       if (!G) return;
       if (!G.running) {
         // collapse animation for 1.5s after game ends
-        G.collapseTime = (G.collapseTime || 0) + 0.016;
+        G.collapseTime = (G.collapseTime||0) + 0.016;
         if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
         return;
       }
@@ -3807,9 +3826,9 @@
       <div class="go-stat-val" style="color:${p.id === 1 ? '#c0392b' : '#2471a3'}">${G.factions[p.id - 1].icon} ${G.factions[p.id - 1].name}</div>
       <div style="margin-top:8px;font-size:var(--fs-sm);color:var(--dim)">Kills: <b style="color:var(--text)">${p.kills}</b></div>
       <div style="font-size:var(--fs-sm);color:var(--dim)">Units Spawned: <b style="color:var(--text)">${p.spawned}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Dmg Dealt: <b style="color:var(--text)">${Math.round(p.dmgDealt || 0)}</b></div>
+      <div style="font-size:var(--fs-sm);color:var(--dim)">Dmg Dealt: <b style="color:var(--text)">${Math.round(p.dmgDealt||0)}</b></div>
       <div style="font-size:var(--fs-sm);color:var(--dim)">Upgrades: <b style="color:var(--text)">${p.ownedUpgrades.size}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Base HP Left: <b style="color:${p.baseHp > 0 ? '#2ecc71' : '#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
+      <div style="font-size:var(--fs-sm);color:var(--dim)">Base HP Left: <b style="color:${p.baseHp > 0 ? '#2ecc71':'#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
     </div>`).join('');
       SFX.victory();
     }
@@ -3818,12 +3837,12 @@
     document.addEventListener('keydown', e => {
       if (e.code === 'Escape') {
         if (!G) return;
-        if (!G.running) {
-          // collapse animation for 1.5s after game ends
-          G.collapseTime = (G.collapseTime || 0) + 0.016;
-          if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
-          return;
-        }
+      if (!G.running) {
+        // collapse animation for 1.5s after game ends
+        G.collapseTime = (G.collapseTime||0) + 0.016;
+        if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
+        return;
+      }
         G.paused = !G.paused;
         document.getElementById('pause-overlay').classList.toggle('show', G.paused);
         return;
@@ -4003,7 +4022,7 @@
       document.getElementById('btn-start').textContent = 'START BATTLE →';
       document.getElementById('fchosen-p1').textContent = '— No faction chosen —';
       document.getElementById('fchosen-p2').textContent = '— No faction chosen —';
-      document.querySelectorAll('.fcard').forEach(c => c.classList.remove('sel1', 'sel2'));
+      document.querySelectorAll('.fcard').forEach(c => c.classList.remove('sel1','sel2'));
       showScreen('sc-faction');
     });
     document.getElementById('btn-to-menu').addEventListener('click', () => {
