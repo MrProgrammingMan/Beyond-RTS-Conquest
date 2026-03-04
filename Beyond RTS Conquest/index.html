@@ -3882,20 +3882,28 @@
       let p1Near = false, p2Near = false;
       G.units.forEach(u => {
         if (u.offscreen || u.def.isWorker || u.retreating) return;
+        if (!u || u.dead || u.offscreen || u.def.isWorker || u.retreating) return;
         if (Math.abs(u.x - midX) < midR) { if (u.player === 1) p1Near = true; else p2Near = true; }
       });
       const prevHolder = G.midHolder;
       if (p1Near && !p2Near) G.midHolder = 1;
       else if (p2Near && !p1Near) G.midHolder = 2;
       else if (p1Near && p2Near) G.midHolder = null;
+      else G.midHolder = null;
       // else midHolder stays as is (no units = no change to holder)
       // Capture mechanic
       if (G.midHolder !== null && G.midHolder !== G.midOwner) {
         if (G.midCapPlayer === G.midHolder) {
           G.midCapTimer += dt;
-          if (G.midCapTimer >= 2.0) {
-            G.midOwner = G.midHolder; G.midCapTimer = 0; G.midCapPlayer = null;
-            SFX.capture();
+          if (G.midCapTimer >= 2.0 && G.midOwner !== G.midHolder) {
+            G.midOwner = G.midHolder;
+
+            // reset capture state
+            G.midCapTimer = 0;
+            G.midCapPlayer = null;
+            G.midHolder = null;
+
+            // SFX.capture();
             spawnParticles(G.midX, G.groundY, G.midOwner === 1 ? '#c0392b' : '#2471a3', 20);
           }
         } else {
