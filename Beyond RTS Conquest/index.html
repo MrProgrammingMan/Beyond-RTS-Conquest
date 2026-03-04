@@ -9,11 +9,11 @@
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&display=swap');
 
     :root {
-      --p1: #c0392b;
-      --p1d: #7b241c;
-      --p1g: rgba(192, 57, 43, .5);
-      --p2: #2471a3;
-      --p2d: #1a4f72;
+      --p1: #2471a3;
+      --p1d: #1a4f72;
+      --p1g: rgba(36, 113, 163, .5);
+      --p2: #c0392b;
+      --p2d: #7b241c;
       --p2g: rgba(36, 113, 163, .5);
       --gold: #d4a843;
       --soul: #9b59b6;
@@ -290,13 +290,13 @@
 
     .fcard.sel1 {
       border-color: var(--p1) !important;
-      background: rgba(192, 57, 43, .1) !important;
+      background: rgba(36, 113, 163, .1) !important;
       box-shadow: 0 0 12px var(--p1g);
     }
 
     .fcard.sel2 {
       border-color: var(--p2) !important;
-      background: rgba(36, 113, 163, .1) !important;
+      background: rgba(192, 57, 43, .1) !important;
       box-shadow: 0 0 12px var(--p2g);
     }
 
@@ -1061,11 +1061,11 @@
     }
 
     .hp1 {
-      background: linear-gradient(90deg, #7b241c, var(--p1));
+      background: linear-gradient(90deg, #1a4f72, var(--p1));
     }
 
     .hp2 {
-      background: linear-gradient(90deg, var(--p2), #1a4f72);
+      background: linear-gradient(90deg, var(--p2), #7b241c);
     }
 
     .hp-txt {
@@ -1196,13 +1196,13 @@
 
     #p1-hud .ucard:hover {
       border-color: var(--p1);
-      background: rgba(192, 57, 43, .12);
+      background: rgba(36, 113, 163, .12);
       box-shadow: 0 0 10px var(--p1g);
     }
 
     #p2-hud .ucard:hover {
       border-color: var(--p2);
-      background: rgba(36, 113, 163, .12);
+      background: rgba(192, 57, 43, .12);
       box-shadow: 0 0 10px var(--p2g);
     }
 
@@ -1212,13 +1212,13 @@
 
     #p1-hud .ucard.sel {
       border-color: var(--p1);
-      background: rgba(192, 57, 43, .18);
+      background: rgba(36, 113, 163, .18);
       box-shadow: 0 0 16px var(--p1g);
     }
 
     #p2-hud .ucard.sel {
       border-color: var(--p2);
-      background: rgba(36, 113, 163, .18);
+      background: rgba(192, 57, 43, .18);
       box-shadow: 0 0 16px var(--p2g);
     }
 
@@ -1384,7 +1384,6 @@
       gap: var(--gap);
       flex: 1;
       min-height: 0;
-      margin-right: clamp(90px, 11vw, 138px);
     }
 
     .upcard {
@@ -1409,13 +1408,13 @@
 
     #p1-hud .upcard.sel {
       border-color: var(--p1);
-      background: rgba(192, 57, 43, .15);
+      background: rgba(36, 113, 163, .15);
       box-shadow: 0 0 12px var(--p1g);
     }
 
     #p2-hud .upcard.sel {
       border-color: var(--p2);
-      background: rgba(36, 113, 163, .15);
+      background: rgba(192, 57, 43, .15);
       box-shadow: 0 0 12px var(--p2g);
     }
 
@@ -1553,7 +1552,8 @@
       right: clamp(4px, .5vw, 8px);
       top: 50%;
       transform: translateY(-50%);
-      width: clamp(100px, 12vw, 150px);
+      width: clamp(100px, 11vw, 140px);
+      pointer-events: none;
       background: rgba(0, 0, 0, .5);
       border: 1px solid var(--border);
       border-radius: 5px;
@@ -1616,6 +1616,131 @@
       margin-top: 2px;
       border-top: 1px solid var(--border);
       padding-top: 2px;
+    }
+
+    .dev-section {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dev-head {
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+    }
+
+    .dev-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: .7rem;
+    }
+
+    .dev-row span {
+      color: #aaa;
+    }
+
+    .dev-btn {
+      font-family: Cinzel, serif;
+      font-size: .62rem;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid #555;
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .dev-btn:hover {
+      background: rgba(243, 156, 18, .2);
+      border-color: #f39c12;
+    }
+
+    .dev-inp {
+      font-family: Cinzel, serif;
+      font-size: .65rem;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 3px;
+      width: 70px;
+      text-align: right;
+    }
+
+    .rebind-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(10px, 2vh, 20px);
+      width: min(500px, 90vw);
+    }
+
+    .rebind-note {
+      font-size: var(--fs-xs);
+      color: var(--dim);
+      text-align: center;
+    }
+
+    .rebind-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(8px, 2vw, 24px);
+      width: 100%;
+    }
+
+    .rebind-col {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rebind-head {
+      font-family: 'Cinzel', serif;
+      font-size: var(--fs-md);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .rebind-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--fs-sm);
+    }
+
+    .rkey {
+      font-family: 'Cinzel', serif;
+      font-size: var(--fs-xs);
+      background: rgba(255, 255, 255, .07);
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      padding: 4px 10px;
+      cursor: pointer;
+      min-width: 60px;
+      transition: all .15s;
+    }
+
+    .rkey:hover {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, .1);
+    }
+
+    .rkey.rebinding {
+      border-color: var(--gold);
+      color: var(--gold);
+      animation: pulse 0.6s infinite;
     }
 
     /* GAMEOVER */
@@ -1709,6 +1834,41 @@
       letter-spacing: .12em;
     }
 
+    .go-time-row {
+      font-family: 'Cinzel', serif;
+      font-size: var(--fs-md);
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: .08em;
+    }
+
+    .go-stat-section {
+      border-top: 1px solid var(--border);
+      padding-top: 4px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .go-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: var(--fs-xs);
+      color: var(--dim);
+    }
+
+    .go-row b {
+      color: var(--text);
+    }
+
+    .go-stat-col {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+
     .go-stats {
       display: flex;
       gap: clamp(14px, 2.5vw, 40px);
@@ -1791,6 +1951,7 @@
       </div>
       <div class="menu-btns">
         <button class="btn primary" id="btn-play">⚔ PLAY</button>
+        <button class="btn" id="btn-rebind">⌨️ KEY BINDINGS</button>
         <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
         <button class="btn" id="btn-controls">🎮 CONTROLS</button>
       </div>
@@ -1823,6 +1984,67 @@
       <button class="btn" id="btn-faction-back">← BACK</button>
       <span class="mirror-warn" id="mirror-warn">⚠ Mirror Match</span>
       <button class="btn primary" id="btn-start" disabled>START BATTLE →</button>
+    </div>
+  </div>
+  <!-- DEV PANEL -->
+  <div id="dev-overlay"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+    <div style="font-family:Cinzel,serif;font-size:1.4rem;color:#f39c12;letter-spacing:.1em;">🔒 DEV ACCESS</div>
+    <div style="font-size:.75rem;color:#888;">Enter password to unlock dev panel</div>
+    <input id="dev-pw-input" type="password" placeholder="password"
+      style="font-family:Cinzel,serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:200px;">
+    <div id="dev-pw-err" style="color:#e74c3c;font-size:.75rem;min-height:1em;"></div>
+    <div style="display:flex;gap:8px;"><button onclick="checkDevPW()"
+        style="font-family:Cinzel,serif;background:#f39c12;color:#000;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-weight:700;">ENTER</button><button
+        onclick="document.getElementById('dev-overlay').style.display='none'"
+        style="font-family:Cinzel,serif;background:#333;color:#fff;border:1px solid #555;padding:7px 20px;border-radius:4px;cursor:pointer;">CANCEL</button>
+    </div>
+  </div>
+  <div id="dev-panel"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9998;overflow-y:auto;padding:20px;font-family:Cinzel,serif;">
+    <div
+      style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #333;padding-bottom:8px;">
+      <span style="color:#f39c12;font-size:1.2rem;letter-spacing:.08em;">⚡ DEV PANEL</span>
+      <button onclick="document.getElementById('dev-panel').style.display='none'"
+        style="background:#333;color:#fff;border:1px solid #555;padding:5px 14px;border-radius:4px;cursor:pointer;font-family:Cinzel,serif;">✕
+        CLOSE</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px;margin:0 auto;">
+      <div class="dev-section" id="dev-p1-section">
+        <div class="dev-head" style="color:#2471a3">PLAYER 1</div>
+      </div>
+      <div class="dev-section" id="dev-p2-section">
+        <div class="dev-head" style="color:#c0392b">PLAYER 2</div>
+      </div>
+      <div class="dev-section" id="dev-game-section">
+        <div class="dev-head" style="color:#f39c12">GAME STATE</div>
+      </div>
+    </div>
+  </div>
+  <!-- REBIND -->
+  <div id="sc-rebind" class="screen">
+    <div class="rebind-wrap">
+      <div class="sc-title">KEY BINDINGS</div>
+      <div class="rebind-note">Click any key to rebind it. Press ESC to cancel. Bindings last until page refresh.</div>
+      <div class="rebind-grid">
+        <div class="rebind-col">
+          <div class="rebind-head p1l">PLAYER 1</div>
+          <div class="rebind-row"><span>Move Left</span><button class="rkey" id="rk-p1Left"></button></div>
+          <div class="rebind-row"><span>Move Right</span><button class="rkey" id="rk-p1Right"></button></div>
+          <div class="rebind-row"><span>Mode Up</span><button class="rkey" id="rk-p1Up"></button></div>
+          <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p1Down"></button></div>
+          <div class="rebind-row"><span>Activate</span><button class="rkey" id="rk-p1Act"></button></div>
+        </div>
+        <div class="rebind-col">
+          <div class="rebind-head p2l">PLAYER 2</div>
+          <div class="rebind-row"><span>Move Left</span><button class="rkey" id="rk-p2Left"></button></div>
+          <div class="rebind-row"><span>Move Right</span><button class="rkey" id="rk-p2Right"></button></div>
+          <div class="rebind-row"><span>Mode Up</span><button class="rkey" id="rk-p2Up"></button></div>
+          <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p2Down"></button></div>
+          <div class="rebind-row"><span>Activate</span><button class="rkey" id="rk-p2Act"></button></div>
+        </div>
+      </div>
+      <button class="btn" id="btn-rebind-back">← BACK</button>
     </div>
   </div>
   <!-- TUTORIAL -->
@@ -2266,6 +2488,23 @@
     ];
 
     // ── RALLY BUFFS ──
+    // ─── KEY BINDINGS ────────────────────────────────────────────────────────────
+    let KEYS = {
+      p1Left: 'KeyA', p1Right: 'KeyD', p1Up: 'KeyW', p1Down: 'KeyS', p1Act: 'Tab',
+      p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
+    };
+    let _rebinding = null; // { key: 'p1Left', el: element }
+
+    function startRebind(keyName, el) {
+      _rebinding = { key: keyName, el };
+      el.textContent = '...';
+      el.classList.add('rebinding');
+    }
+
+    function formatKey(code) {
+      return code.replace('Key', '').replace('Arrow', '').replace('Numpad', 'NP').replace('Enter', 'ENTER').replace('Tab', 'TAB');
+    }
+
     const RALLY_BUFFS = [
       { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 15, duration: 6, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 6s.' },
       { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 12, duration: 8, cooldown: 50, desc: 'All units take 40% less damage for 8s.' },
@@ -2308,7 +2547,8 @@
       const GY = canvas.height * 0.65;
       G = {
         w: canvas.width, h: canvas.height, groundY: GY, baseW: BW,
-        running: true, paused: false, lastTime: null, dt: 0,
+        running: true, paused: false, lastTime: null, dt: 0, elapsed: 0,
+        shake: 0, shakeX: 0, shakeY: 0,
         units: [], projectiles: [], particles: [], nextId: 1,
         midHolder: null, midOwner: null, midCapTimer: 0, midCapPlayer: null,
         midX: canvas.width / 2, midR: Math.max(35, canvas.width * 0.04),
@@ -2329,6 +2569,10 @@
             bloodTitheRefund: 2, skyBountyAmt: 6,
             chillSpeedMult: 0.65, chillDur: 2.0,
             guardTimerDisplay: 0,
+            totalSoulsEarned: 0, totalBodiesEarned: 0,
+            soulsSpent: 0, bodiesSpent: 0,
+            maxKillStreak: 0, _killStreak: 0,
+            buffUsed: 0, midCaptures: 0,
           },
           {
             id: 2, souls: P2_FACTION.startSouls, bodies: P2_FACTION.startBodies,
@@ -2344,6 +2588,10 @@
             bloodTitheRefund: 2, skyBountyAmt: 6,
             chillSpeedMult: 0.65, chillDur: 2.0,
             guardTimerDisplay: 0,
+            totalSoulsEarned: 0, totalBodiesEarned: 0,
+            soulsSpent: 0, bodiesSpent: 0,
+            maxKillStreak: 0, _killStreak: 0,
+            buffUsed: 0, midCaptures: 0,
           },
         ],
         shadeCount: [0, 0], MAX_SHADES: 8,
@@ -2596,6 +2844,7 @@
       if (def.isWorker && p.workers >= 3) { shakeCard(cardEl); return; }
       if (p.souls < def.souls || p.bodies < def.bodies) { shakeCard(cardEl); flashRes(pid, p.souls < def.souls ? 'souls' : 'bodies'); return; }
       p.souls -= def.souls; p.bodies -= def.bodies; p.spawned++;
+      p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + def.bodies;
       // Blood Tithe refund
       if (G.factions[pid - 1].id === 'bloodpact') p.souls += p.bloodTitheRefund || 2;
       spawnUnit(pid, unitId, false);
@@ -2713,6 +2962,7 @@
       if (p.souls < bf.cost) { shakeCard(cardEl); flashRes(pid, 'souls'); return; }
       p.souls -= bf.cost;
       p.buffCooldowns[idx] = bf.cooldown;
+      p.buffUsed = (p.buffUsed || 0) + 1;
       if (bf.id === 'warcry') {
         p.activeBuffs.warcry = bf.duration;
         G.units.filter(u => u.player === pid && !u.def.isWorker).forEach(u => { u._warcryed = bf.duration; });
@@ -2945,6 +3195,12 @@
           spawnParticles(target.x, target.y, '#95a5a6', 3);
         }
         if (attacker.def.lifeSteal) attacker.hp = Math.min(attacker.maxHp, attacker.hp + actualDmg * attacker.def.lifeSteal);
+        // Knockback
+        const kbDir = target.x > attacker.x ? 1 : -1;
+        const kbForce = Math.min(3.5, actualDmg * 0.08);
+        target.vx = (target.vx || 0) + kbDir * kbForce;
+        if (actualDmg > 15) G.shake = Math.max(G.shake || 0, 0.18);
+        else if (actualDmg > 8) G.shake = Math.max(G.shake || 0, 0.08);
         // Chain lightning (melee)
         attacker._attackCount = (attacker._attackCount || 0) + 1;
         const crate = attacker.def.alwaysChain ? 1 : (attacker.def.chainRate || G.players[attacker.player - 1].chainRate || 10);
@@ -2976,8 +3232,15 @@
       if (isShade && kp) soulReward += (kp._shadeSoulReward || 0);
       if ((u.killCount || 0) >= 3) soulReward = Math.floor(soulReward * 1.5);
       if (killer && G.midOwner && G.midOwner !== killer.player) soulReward = Math.floor(soulReward * 1.5);
-      if (kp) kp.souls += soulReward;
-      if (kp) { kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward }); }
+      if (kp) { kp.souls += soulReward; kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + soulReward; }
+      if (kp) {
+        kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward });
+        kp._killStreak = (kp._killStreak || 0) + 1;
+        kp.maxKillStreak = Math.max(kp.maxKillStreak || 0, kp._killStreak);
+      }
+      // reset loser streak
+      const losingP = G.players.find(p => p.id !== (kp ? kp.id : -1) && G.units.some(u2 => u2.id === u.id));
+      // (streak reset on taking a kill, not dying)
       // soulsOnKill (e.g. Revenant)
       if (killer && killer.def.soulsOnKill && kp) {
         kp.souls += killer.def.soulsOnKill;
@@ -3033,7 +3296,8 @@
       if (killer) killer.killCount = (killer.killCount || 0) + 1;
       // Shade count
       if (isShade) G.shadeCount[u.player - 1] = Math.max(0, G.shadeCount[u.player - 1] - 1);
-      spawnParticles(u.x, u.y, u.def.color, 15);
+      spawnParticles(u.x, u.y, u.def.color, 20);
+      spawnParticles(u.x, u.y - 10, '#ffffff', 4);
       const killerNum = killer ? `P${killer.player} ⚔ ` : '';
       const killerCol = killer ? killer.player === 1 ? '#e8a0a0' : '#a0c0e8' : '#888';
       addKillFeed(`${killerNum}${u.def.icon} ${u.def.name}`, killerCol);
@@ -3302,7 +3566,7 @@
           // BUG2: slowed units near target still engage; aerial units have wider engagement
           const effectiveRange = u.slowTimer > 0 ? u.def.range * 1.8 : u.def.aerial ? u.def.range * 1.3 : u.def.range;
           if (d <= effectiveRange) {
-            if (!u.def.aerial) u.vx *= 0.8;
+            if (!u.def.aerial) { u.vx = (u.vx || 0) * 0.75; if (Math.abs(u.vx) < 0.2) u.vx = 0; }
             u.attackCooldown -= dt; u.chargeTimer = 0;
             if (u.attackCooldown <= 0) {
               const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
@@ -3347,7 +3611,7 @@
               if (u.attackCooldown <= 0) {
                 const baseMult = G.players[u.player - 1]._baseDmgMult || 1;
                 ebase.baseHp -= u.def.dmg * (u.dmgMult || 1) * baseMult;
-                SFX.baseHit();
+                SFX.baseHit(); G.shake = Math.max(G.shake || 0, 0.35);
                 spawnParticles(ebase.baseX, G.groundY - 40, u.player === 1 ? '#e74c3c' : '#3498db', 5);
                 const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
                 u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM, .1);
@@ -3367,8 +3631,10 @@
       const gameSec = (Date.now() - G.gameStart) / 1000;
       G.players.forEach(p => {
         const soulsBefore = p.souls;
-        p.souls += 0.45 * dt;
-        if (G.midOwner === p.id) p.souls += 1.2 * dt;
+        const soulTick = (0.45 + (G.midOwner === p.id ? 1.2 : 0) + (p.despStacks * 0.4)) * dt;
+        p.souls += soulTick;
+        p.totalSoulsEarned = (p.totalSoulsEarned || 0) + soulTick;
+        if (G.midOwner === p.id) p.midCaptures = (p.midCaptures || 0); // already incremented elsewhere
         if (p.despStacks > 0) p.souls += p.despStacks * 0.4 * dt;
         if (p.noMidTimer > 25) {
           p.bodyDespTimer = (p.bodyDespTimer || 0) + dt;
@@ -3376,7 +3642,7 @@
         }
         const bodyRate = 4.5 + Math.floor(gameSec / 60) * .5;
         p.bodyAccum += bodyRate / 60 * dt;
-        if (p.bodyAccum >= 1) { p.bodies += Math.floor(p.bodyAccum); p.bodyAccum %= 1; }
+        if (p.bodyAccum >= 1) { const bodyGain = Math.floor(p.bodyAccum); p.bodies += bodyGain; p.totalBodiesEarned = (p.totalBodiesEarned || 0) + bodyGain; p.bodyAccum %= 1; }
         // Unit cap scaling
         const newCap = Math.min(24, 12 + Math.floor(gameSec / 90) * 2);
         if (newCap > p.unitCap) {
@@ -3415,6 +3681,7 @@
         if (G.midCapPlayer === G.midHolder) {
           G.midCapTimer += dt;
           if (G.midCapTimer >= 2.0 && G.midOwner !== G.midHolder) {
+            if (G.midHolder && G.midHolder !== G.midOwner) { const mp = G.players[G.midHolder - 1]; if (mp) mp.midCaptures = (mp.midCaptures || 0) + 1; }
             G.midOwner = G.midHolder;
 
             // reset capture state
@@ -3485,7 +3752,7 @@
           p.souls += 40;
           const ov = document.getElementById('last-stand-overlay');
           document.getElementById('ls-title').textContent = `PLAYER ${p.id} — LAST STAND`;
-          document.getElementById('ls-title').style.color = p.id === 1 ? '#c0392b' : '#2471a3';
+          document.getElementById('ls-title').style.color = p.id === 1 ? '#2471a3' : '#c0392b';
           ov.classList.add('show'); setTimeout(() => ov.classList.remove('show'), 3000);
           SFX.lastStand();
           showPopup(p.baseX, G.groundY - 80, '+40💀 LAST STAND', '#d4a843', p.id);
@@ -3509,7 +3776,14 @@
     }
     // ─── DRAWING ─────────────────────────────────────────────────────────────────
     function drawGame() {
+      if (G && G.shake > 0) {
+        G.shake = Math.max(0, G.shake - 0.025);
+        G.shakeX = (Math.random() - 0.5) * G.shake * 14;
+        G.shakeY = (Math.random() - 0.5) * G.shake * 8;
+      } else if (G) { G.shakeX = 0; G.shakeY = 0; }
       ctx.clearRect(0, 0, G.w, G.h);
+      ctx.save();
+      ctx.translate((G && G.shakeX) || 0, (G && G.shakeY) || 0);
       // Sky gradient
       const sky = ctx.createLinearGradient(0, 0, 0, G.h);
       sky.addColorStop(0, '#050510'); sky.addColorStop(0.7, '#0a0a1f'); sky.addColorStop(1, '#131328');
@@ -3553,11 +3827,12 @@
           ctx.restore();
         }
       });
+      ctx.restore(); // screen shake
     }
 
     function drawBase(p) {
       const x = p.baseX, bw = G.baseW, h = G.h, gy = G.groundY;
-      const col = p.id === 1 ? '#c0392b' : '#2471a3';
+      const col = p.id === 1 ? '#2471a3' : '#c0392b';
       const colD = p.id === 1 ? '#7b241c' : '#1a4f72';
       // Siege shake / collapse
       const isLoser = !G.running && p.baseHp <= 0;
@@ -3568,8 +3843,10 @@
         const cx2 = x; const cy2 = G.groundY;
         ctx.translate(cx2, cy2);
         const prog = Math.min(colT / 1.5, 1);
-        ctx.rotate(prog * (p.id === 1 ? -0.6 : 0.6));
-        ctx.translate(-cx2 + shakeX * (1 + prog * 4), -cy2 + prog * 40);
+        const violentShake = Math.sin(Date.now() / 30) * prog * 10 * (1 - prog * 0.3);
+        ctx.rotate(prog * (p.id === 1 ? -0.7 : 0.7));
+        ctx.translate(-cx2 + violentShake, -cy2 + prog * 50 + Math.sin(Date.now() / 40) * prog * 5);
+        ctx.globalAlpha = Math.max(0.1, 1 - prog * 0.9);
       } else { ctx.translate(shakeX, 0); }
       // Base wall
       const wallH = gy * 0.32;
@@ -3599,21 +3876,21 @@
       const mx = G.midX, my = G.groundY, mr = G.midR;
       // Owner pulse ring
       if (G.midOwner) {
-        const oc = G.midOwner === 1 ? 'rgba(192,57,43,' : 'rgba(36,113,163,';
+        const oc = G.midOwner === 1 ? 'rgba(36,113,163,' : 'rgba(192,57,43,';
         const pulse = 0.15 + Math.sin(Date.now() / 600) * .08;
         ctx.strokeStyle = oc + pulse + ')'; ctx.lineWidth = 3;
         ctx.beginPath(); ctx.arc(mx, my, mr + 6, 0, Math.PI * 2); ctx.stroke();
       }
       // Mid circle base
       ctx.strokeStyle = G.midHolder === null && G.midOwner ? '#f39c12' :
-        G.midOwner === 1 ? 'rgba(192,57,43,.6)' :
-          G.midOwner === 2 ? 'rgba(36,113,163,.6)' : 'rgba(255,255,255,.2)';
+        G.midOwner === 1 ? 'rgba(36,113,163,.6)' :
+          G.midOwner === 2 ? 'rgba(192,57,43,.6)' : 'rgba(255,255,255,.2)';
       ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.stroke();
       // Capture arc
       if (G.midCapPlayer && G.midCapTimer > 0) {
         const pct = G.midCapTimer / 2.0;
-        const capCol = G.midCapPlayer === 1 ? '#c0392b' : '#2471a3';
+        const capCol = G.midCapPlayer === 1 ? '#2471a3' : '#c0392b';
         ctx.strokeStyle = capCol; ctx.lineWidth = 4;
         ctx.beginPath(); ctx.arc(mx, my, mr, -.5 * Math.PI, -.5 * Math.PI + pct * 2 * Math.PI); ctx.stroke();
       }
@@ -3838,7 +4115,14 @@
       if (!G.running) {
         // collapse animation for 1.5s after game ends
         G.collapseTime = (G.collapseTime || 0) + 0.016;
-        if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
+        if (G.collapseTime < 1.5) {
+          if (Math.random() < 0.4) {
+            const loser = G.players.find(p => p.baseHp <= 0);
+            if (loser) spawnParticles(loser.baseX + (Math.random() - 0.5) * G.baseW * 1.5, G.groundY - Math.random() * 80, '#e74c3c', 5);
+          }
+          G.shake = Math.max(G.shake || 0, 0.4);
+          drawGame(); requestAnimationFrame(gameLoop);
+        }
         return;
       }
       if (!G.lastTime) G.lastTime = ts;
@@ -3870,23 +4154,64 @@
       sc.classList.add('active');
       const gt = document.getElementById('go-title');
       gt.textContent = `PLAYER ${winner.id} WINS`;
-      gt.style.color = winner.id === 1 ? '#c0392b' : '#2471a3';
-      document.getElementById('go-stats').innerHTML = G.players.map(p => `
-    <div class="go-stat-col">
-      <div class="go-stat-label" style="color:${p.id === 1 ? '#c0392b' : '#2471a3'}">PLAYER ${p.id}</div>
-      <div class="go-stat-val" style="color:${p.id === 1 ? '#c0392b' : '#2471a3'}">${G.factions[p.id - 1].icon} ${G.factions[p.id - 1].name}</div>
-      <div style="margin-top:8px;font-size:var(--fs-sm);color:var(--dim)">Kills: <b style="color:var(--text)">${p.kills}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Units Spawned: <b style="color:var(--text)">${p.spawned}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Dmg Dealt: <b style="color:var(--text)">${Math.round(p.dmgDealt || 0)}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Upgrades: <b style="color:var(--text)">${p.ownedUpgrades.size}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Base HP Left: <b style="color:${p.baseHp > 0 ? '#2ecc71' : '#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
-    </div>`).join('');
+      gt.style.color = winner.id === 1 ? '#2471a3' : '#c0392b';
+      const gameMin = Math.floor((G.elapsed || 0) / 60), gameSec = Math.floor((G.elapsed || 0) % 60);
+      const timeStr = `${gameMin}m ${String(gameSec).padStart(2, '0')}s`;
+      document.getElementById('go-stats').innerHTML = `<div class="go-time-row">⏱ Match Time: <b>${timeStr}</b></div>` +
+        G.players.map(p => {
+          const pc = p.id === 1 ? '#2471a3' : '#c0392b';
+          const isW = p.baseHp > 0;
+          const kdr = p.kills > 0 ? (p.kills / Math.max(1, G.players[p.id === 1 ? 1 : 0].kills)).toFixed(2) : '—';
+          const dpe = p.spawned > 0 ? Math.round((p.dmgDealt || 0) / p.spawned) : 0;
+          return `<div class="go-stat-col" style="border-color:${pc}">
+            <div class="go-stat-label" style="color:${pc}">${isW ? '🏆 ' : '💀 '}PLAYER ${p.id}</div>
+            <div class="go-stat-val" style="color:${pc}">${G.factions[p.id - 1].icon} ${G.factions[p.id - 1].name}</div>
+            <div class="go-stat-section">
+              <div class="go-row"><span>Kills</span><b>${p.kills}</b></div>
+              <div class="go-row"><span>Units Spawned</span><b>${p.spawned}</b></div>
+              <div class="go-row"><span>Dmg Dealt</span><b>${Math.round(p.dmgDealt || 0)}</b></div>
+              <div class="go-row"><span>Dmg/Unit</span><b>${dpe}</b></div>
+            </div>
+            <div class="go-stat-section">
+              <div class="go-row"><span>💀 Souls Earned</span><b>${Math.round(p.totalSoulsEarned || 0)}</b></div>
+              <div class="go-row"><span>💀 Souls Spent</span><b>${p.soulsSpent || 0}</b></div>
+              <div class="go-row"><span>🦴 Bodies Earned</span><b>${p.totalBodiesEarned || 0}</b></div>
+            </div>
+            <div class="go-stat-section">
+              <div class="go-row"><span>Kill Streak</span><b>${p.maxKillStreak || 0}</b></div>
+              <div class="go-row"><span>Mid Captures</span><b>${p.midCaptures || 0}</b></div>
+              <div class="go-row"><span>Buffs Used</span><b>${p.buffUsed || 0}</b></div>
+              <div class="go-row"><span>Upgrades</span><b>${p.ownedUpgrades.size}/3</b></div>
+              <div class="go-row"><span>Base HP Left</span><b style="color:${p.baseHp > 0 ? '#2ecc71' : '#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
+            </div>
+          </div>`;
+        }).join('');
       SFX.victory();
     }
 
     // ─── INPUT ───────────────────────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
+      // Rebinding intercept
+      if (_rebinding) {
+        if (e.code === 'Escape') { _rebinding.el.textContent = formatKey(KEYS[_rebinding.key]); _rebinding.el.classList.remove('rebinding'); _rebinding = null; return; }
+        KEYS[_rebinding.key] = e.code;
+        _rebinding.el.textContent = formatKey(e.code);
+        _rebinding.el.classList.remove('rebinding');
+        _rebinding = null;
+        e.preventDefault(); return;
+      }
       if (e.code === 'Escape') {
+        _escCount = (_escCount || 0) + 1;
+        clearTimeout(_escTimer);
+        _escTimer = setTimeout(() => _escCount = 0, 1500);
+        if (_escCount >= 7 && !document.getElementById('dev-overlay').style.display.includes('flex')) {
+          _escCount = 0;
+          document.getElementById('dev-pw-input').value = '';
+          document.getElementById('dev-pw-err').textContent = '';
+          document.getElementById('dev-overlay').style.display = 'flex';
+          document.getElementById('dev-pw-input').focus();
+          return;
+        }
         if (!G) return;
         if (!G.running) {
           // collapse animation for 1.5s after game ends
@@ -3901,17 +4226,17 @@
       if (!G || !G.running || G.paused) return;
 
       // P1 controls
-      if (e.code === 'KeyA') { e.preventDefault(); navigate(1, -1); }
-      else if (e.code === 'KeyD') { e.preventDefault(); navigate(1, 1); }
-      else if (e.code === 'KeyW') { e.preventDefault(); cycleMode(1, 1); }
-      else if (e.code === 'KeyS') { e.preventDefault(); cycleMode(1, -1); }
-      else if (e.code === 'Tab') { e.preventDefault(); activate(1); }
+      if (e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
+      else if (e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
+      else if (e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
+      else if (e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
+      else if (e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
       // P2 controls
-      else if (e.code === 'ArrowLeft') { e.preventDefault(); navigate(2, -1); }
-      else if (e.code === 'ArrowRight') { e.preventDefault(); navigate(2, 1); }
-      else if (e.code === 'ArrowUp') { e.preventDefault(); cycleMode(2, 1); }
-      else if (e.code === 'ArrowDown') { e.preventDefault(); cycleMode(2, -1); }
-      else if (e.code === 'Enter' || e.code === 'NumpadEnter') { e.preventDefault(); activate(2); }
+      else if (e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
+      else if (e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
+      else if (e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
+      else if (e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
+      else if (e.code === KEYS.p2Act || e.code === 'NumpadEnter') { e.preventDefault(); activate(2); }
     });
 
     function cycleMode(pid, dir) {
@@ -4081,6 +4406,73 @@
     });
 
     // ─── BOOT ─────────────────────────────────────────────────────────────────────
+    // Wire rebind screen
+    function refreshRebindUI() {
+      Object.keys(KEYS).forEach(k => {
+        const el = document.getElementById('rk-' + k);
+        if (el) { el.textContent = formatKey(KEYS[k]); el.onclick = () => startRebind(k, el); }
+      });
+    }
+    refreshRebindUI();
+    document.getElementById('btn-rebind').addEventListener('click', () => { refreshRebindUI(); showScreen('sc-rebind'); });
+    document.getElementById('btn-rebind-back').addEventListener('click', () => showScreen('sc-main'));
+
+    let _escCount = 0, _escTimer = null;
+
+    function checkDevPW() {
+      const val = document.getElementById('dev-pw-input').value;
+      // Password is k0ngb4se
+      const pw = atob('azBuZ2I0c2U=');
+      if (val === pw) {
+        document.getElementById('dev-overlay').style.display = 'none';
+        openDevPanel();
+      } else {
+        document.getElementById('dev-pw-err').textContent = 'Invalid password';
+        document.getElementById('dev-pw-input').value = '';
+        document.getElementById('dev-pw-input').focus();
+      }
+    }
+    document.getElementById('dev-pw-input').addEventListener('keydown', e => { if (e.code === 'Enter') checkDevPW(); if (e.code === 'Escape') { document.getElementById('dev-overlay').style.display = 'none'; } e.stopPropagation(); });
+
+    function devRow(label, content) {
+      return `<div class="dev-row"><span>${label}</span>${content}</div>`;
+    }
+    function devBtn(label, onclick) {
+      return `<button class="dev-btn" onclick="${onclick}">${label}</button>`;
+    }
+    function devInp(id, val, onchange) {
+      return `<input class="dev-inp" id="${id}" type="number" value="${val}" onchange="${onchange}">`;
+    }
+
+    function openDevPanel() {
+      const panel = document.getElementById('dev-panel');
+      panel.style.display = 'block';
+      if (!G) { document.getElementById('dev-p1-section').innerHTML += '<div style="color:#e74c3c;font-size:.75rem;">No active game</div>'; return; }
+      [1, 2].forEach(pid => {
+        const p = G.players[pid - 1];
+        const sec = document.getElementById(`dev-p${pid}-section`);
+        sec.innerHTML = `<div class="dev-head" style="color:${pid === 1 ? '#2471a3' : '#c0392b'}">PLAYER ${pid} — ${G.factions[pid - 1].name}</div>
+          ${devRow('Souls', devInp(`d-p${pid}-souls`, Math.floor(p.souls), `G.players[${pid - 1}].souls=+this.value;updateHUD()`) + devBtn('+500', `G.players[${pid - 1}].souls+=500;updateHUD();openDevPanel()`))}
+          ${devRow('Bodies', devInp(`d-p${pid}-bodies`, p.bodies, `G.players[${pid - 1}].bodies=+this.value;updateHUD()`) + devBtn('+50', `G.players[${pid - 1}].bodies+=50;updateHUD();openDevPanel()`))}
+          ${devRow('Base HP', devInp(`d-p${pid}-hp`, Math.ceil(p.baseHp), `G.players[${pid - 1}].baseHp=+this.value;G.players[${pid - 1}].baseMaxHp=Math.max(G.players[${pid - 1}].baseMaxHp,+this.value);updateHUD()`))}
+          ${devRow('Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `G.players[${pid - 1}].unitCap=+this.value`))}
+          ${devRow('Kill Enemy Base', devBtn('DESTROY', `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`))}
+          ${devRow('Kill All Enemies', devBtn('KILL ALL', `G.units.filter(u=>u.player!==${pid}).forEach(u=>{u.hp=0;handleDeath(u,null)});`))}
+          ${devRow('Spawn Guard', devBtn('SPAWN', `G.players[${pid - 1}].lastStandUsed=false;G.players[${pid - 1}].souls=9999;tryActivateBuff(${pid},0,null)`))}
+          ${devRow('Win Instantly', devBtn('WIN', `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`))}`;
+      });
+      const gs = document.getElementById('dev-game-section');
+      gs.innerHTML = `<div class="dev-head" style="color:#f39c12">GAME STATE</div>
+        ${devRow('Game Time', `<span style="color:#fff">${Math.floor(G.elapsed || 0)}s</span>`)}
+        ${devRow('Units on field', `<span style="color:#fff">${G.units.length}</span>`)}
+        ${devRow('Particles', `<span style="color:#fff">${G.particles.length}</span>`)}
+        ${devRow('Speed Multiplier', devInp('d-gamespeed', '1', 'G._speedMult=+this.value') + '<span style="color:#888;font-size:.6rem">sets G._speedMult</span>')}
+        ${devRow('Siege Decay', devBtn(G.siegeDecay ? 'ACTIVE' : 'INACTIVE', 'G.siegeDecay=!G.siegeDecay;openDevPanel()'))}
+        ${devRow('Mid Owner', devBtn('P1', "G.midOwner=1;G.midHolder=1;") + devBtn('P2', "G.midOwner=2;G.midHolder=2;") + devBtn('NONE', "G.midOwner=null;G.midHolder=null;"))}
+        ${devRow('Spawn Particles', devBtn('BURST', "spawnParticles(G.midX,G.groundY-50,'#f39c12',80)"))}
+        ${devRow('Close Panel', devBtn('✕ CLOSE', "document.getElementById('dev-panel').style.display='none'"))}`;
+    }
+
     buildFactionCards();
     renderTut();
     animMenuCanvas();
