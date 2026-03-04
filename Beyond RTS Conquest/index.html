@@ -14,7 +14,7 @@
       --p1g: rgba(36, 113, 163, .5);
       --p2: #c0392b;
       --p2d: #7b241c;
-      --p2g: rgba(36, 113, 163, .5);
+      --p2g: rgba(192, 57, 43, .5);
       --gold: #d4a843;
       --soul: #9b59b6;
       --bodyc: #27ae60;
@@ -231,13 +231,13 @@
     .p1l {
       color: var(--p1);
       border: 1px solid var(--p1d);
-      background: rgba(192, 57, 43, .08);
+      background: rgba(36, 113, 163, .08);
     }
 
     .p2l {
       color: var(--p2);
       border: 1px solid var(--p2d);
-      background: rgba(36, 113, 163, .08);
+      background: rgba(192, 57, 43, .08);
     }
 
     .faction-scroll-wrap {
@@ -1154,13 +1154,13 @@
     .hud-tab.active1 {
       color: var(--p1);
       border-color: var(--p1);
-      background: rgba(192, 57, 43, .12);
+      background: rgba(36, 113, 163, .12);
     }
 
     .hud-tab.active2 {
       color: var(--p2);
       border-color: var(--p2);
-      background: rgba(36, 113, 163, .12);
+      background: rgba(192, 57, 43, .12);
     }
 
     /* UNIT GRID */
@@ -1170,7 +1170,6 @@
       gap: var(--gap);
       flex: 1;
       min-height: 0;
-      margin-right: clamp(90px, 11vw, 138px);
     }
 
     .ucard {
@@ -1471,7 +1470,6 @@
       gap: var(--gap);
       flex: 1;
       min-height: 0;
-      margin-right: clamp(90px, 11vw, 138px);
     }
 
     .bfcard {
@@ -1743,6 +1741,38 @@
       animation: pulse 0.6s infinite;
     }
 
+    .rkey.unassigned {
+      opacity: 0.4;
+      font-style: italic;
+    }
+
+    .rkey-clear {
+      font-size: .55rem;
+      background: rgba(231, 76, 60, .15);
+      border: 1px solid rgba(231, 76, 60, .4);
+      border-radius: 3px;
+      color: #e74c3c;
+      padding: 3px 6px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .rkey-clear:hover {
+      background: rgba(231, 76, 60, .35);
+    }
+
+    .rebind-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: var(--fs-sm);
+      color: var(--gold);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 0;
+      width: 100%;
+      text-align: center;
+      margin: 4px 0;
+    }
+
     /* GAMEOVER */
     #sc-gameover {
       background: rgba(0, 0, 0, .93);
@@ -1946,7 +1976,7 @@
     <div class="menu-overlay"></div>
     <div class="menu-content">
       <div>
-        <div class="menu-eyebrow">A REALM OF SOULS AND BONE</div>
+        <div class="menu-eyebrow">A REALM OF PERPETUAL WAR</div>
         <h1 class="menu-title">BEYOND KINGS'<br>CONQUEST</h1>
       </div>
       <div class="menu-btns">
@@ -2023,25 +2053,57 @@
   </div>
   <!-- REBIND -->
   <div id="sc-rebind" class="screen">
-    <div class="rebind-wrap">
+    <div class="rebind-wrap" style="max-width:720px;">
       <div class="sc-title">KEY BINDINGS</div>
-      <div class="rebind-note">Click any key to rebind it. Press ESC to cancel. Bindings last until page refresh.</div>
+      <div class="rebind-note">Click any key button to rebind it. Press <kbd>ESC</kbd> to cancel. Resets on refresh.
+      </div>
       <div class="rebind-grid">
         <div class="rebind-col">
-          <div class="rebind-head p1l">PLAYER 1</div>
-          <div class="rebind-row"><span>Move Left</span><button class="rkey" id="rk-p1Left"></button></div>
-          <div class="rebind-row"><span>Move Right</span><button class="rkey" id="rk-p1Right"></button></div>
+          <div class="rebind-head p1l">PLAYER 1 — NAVIGATION</div>
+          <div class="rebind-row"><span>Navigate Left</span><button class="rkey" id="rk-p1Left"></button></div>
+          <div class="rebind-row"><span>Navigate Right</span><button class="rkey" id="rk-p1Right"></button></div>
           <div class="rebind-row"><span>Mode Up</span><button class="rkey" id="rk-p1Up"></button></div>
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p1Down"></button></div>
-          <div class="rebind-row"><span>Activate</span><button class="rkey" id="rk-p1Act"></button></div>
+          <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p1Act"></button></div>
         </div>
         <div class="rebind-col">
-          <div class="rebind-head p2l">PLAYER 2</div>
-          <div class="rebind-row"><span>Move Left</span><button class="rkey" id="rk-p2Left"></button></div>
-          <div class="rebind-row"><span>Move Right</span><button class="rkey" id="rk-p2Right"></button></div>
+          <div class="rebind-head p2l">PLAYER 2 — NAVIGATION</div>
+          <div class="rebind-row"><span>Navigate Left</span><button class="rkey" id="rk-p2Left"></button></div>
+          <div class="rebind-row"><span>Navigate Right</span><button class="rkey" id="rk-p2Right"></button></div>
           <div class="rebind-row"><span>Mode Up</span><button class="rkey" id="rk-p2Up"></button></div>
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p2Down"></button></div>
-          <div class="rebind-row"><span>Activate</span><button class="rkey" id="rk-p2Act"></button></div>
+          <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p2Act"></button></div>
+        </div>
+      </div>
+      <div class="rebind-section-title">⚡ DIRECT SPAWN HOTKEYS <span
+          style="font-size:.65rem;color:var(--dim);font-family:sans-serif;font-weight:normal;margin-left:8px;">Optional
+          — press a key to assign, click CLEAR to remove</span></div>
+      <div class="rebind-grid">
+        <div class="rebind-col">
+          <div class="rebind-head p1l">PLAYER 1 — UNIT SLOTS</div>
+          <div class="rebind-row"><span id="rk-p1Slot0-label">Unit Slot 1</span><button class="rkey slot-key"
+              id="rk-p1Slot0"></button><button class="rkey-clear" onclick="clearSlot('p1Slot0')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p1Slot1-label">Unit Slot 2</span><button class="rkey slot-key"
+              id="rk-p1Slot1"></button><button class="rkey-clear" onclick="clearSlot('p1Slot1')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p1Slot2-label">Unit Slot 3</span><button class="rkey slot-key"
+              id="rk-p1Slot2"></button><button class="rkey-clear" onclick="clearSlot('p1Slot2')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p1Slot3-label">Unit Slot 4</span><button class="rkey slot-key"
+              id="rk-p1Slot3"></button><button class="rkey-clear" onclick="clearSlot('p1Slot3')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p1Slot4-label">Unit Slot 5</span><button class="rkey slot-key"
+              id="rk-p1Slot4"></button><button class="rkey-clear" onclick="clearSlot('p1Slot4')">✕</button></div>
+        </div>
+        <div class="rebind-col">
+          <div class="rebind-head p2l">PLAYER 2 — UNIT SLOTS</div>
+          <div class="rebind-row"><span id="rk-p2Slot0-label">Unit Slot 1</span><button class="rkey slot-key"
+              id="rk-p2Slot0"></button><button class="rkey-clear" onclick="clearSlot('p2Slot0')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p2Slot1-label">Unit Slot 2</span><button class="rkey slot-key"
+              id="rk-p2Slot1"></button><button class="rkey-clear" onclick="clearSlot('p2Slot1')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p2Slot2-label">Unit Slot 3</span><button class="rkey slot-key"
+              id="rk-p2Slot2"></button><button class="rkey-clear" onclick="clearSlot('p2Slot2')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p2Slot3-label">Unit Slot 4</span><button class="rkey slot-key"
+              id="rk-p2Slot3"></button><button class="rkey-clear" onclick="clearSlot('p2Slot3')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p2Slot4-label">Unit Slot 5</span><button class="rkey slot-key"
+              id="rk-p2Slot4"></button><button class="rkey-clear" onclick="clearSlot('p2Slot4')">✕</button></div>
         </div>
       </div>
       <button class="btn" id="btn-rebind-back">← BACK</button>
@@ -2064,22 +2126,18 @@
     <div class="ctrl-wrap">
       <div class="sc-title">CONTROLS</div>
       <div class="ctrl-grid">
-        <div class="ctrl-panel ctrl-p1">
+        <div class="ctrl-panel ctrl-p1" id="ctrl-p1-panel">
           <h3>PLAYER 1</h3>
-          <div class="ctrl-row"><kbd>A</kbd><kbd>D</kbd> Navigate options</div>
-          <div class="ctrl-row"><kbd>W</kbd><kbd>S</kbd> Cycle menu mode</div>
-          <div class="ctrl-row"><kbd>TAB</kbd> Spawn / Activate</div>
         </div>
-        <div class="ctrl-panel ctrl-p2">
+        <div class="ctrl-panel ctrl-p2" id="ctrl-p2-panel">
           <h3>PLAYER 2</h3>
-          <div class="ctrl-row"><kbd>←</kbd><kbd>→</kbd> Navigate options</div>
-          <div class="ctrl-row"><kbd>↑</kbd><kbd>↓</kbd> Cycle menu mode</div>
-          <div class="ctrl-row"><kbd>ENTER</kbd> Spawn / Activate</div>
         </div>
         <div class="ctrl-panel" style="text-align:center;">
-          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause</div>
+          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause / Dev Panel</div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);">Modes: UNITS →
             UPGRADES → BUFFS</div>
+          <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);margin-top:4px;">
+            Go to Key Bindings to<br>set direct-spawn hotkeys</div>
         </div>
       </div>
       <button class="btn" id="btn-ctrl-back">← BACK</button>
@@ -2492,6 +2550,9 @@
     let KEYS = {
       p1Left: 'KeyA', p1Right: 'KeyD', p1Up: 'KeyW', p1Down: 'KeyS', p1Act: 'Tab',
       p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
+      // Optional direct-spawn hotkeys (null = unassigned)
+      p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null,
+      p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null,
     };
     let _rebinding = null; // { key: 'p1Left', el: element }
 
@@ -2518,8 +2579,8 @@
       { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows over time.'], ['⛏ Workers', 'Active workers. Max 3. More workers = faster body income.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and bring back 3 bodies per trip. Deploy up to 3 workers — more workers means faster body income.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +1.2/s more<br>Each desp stack: +0.4/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Worker trips: +3 per trip<br>1 worker ≈ +4.5/min<br>3 workers ≈ +13.5/min</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it for <b>2 uncontested seconds</b> captures it. The owner earns <b>+1.5 souls/sec</b> passively, even if they walk away.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No owner. No mid bonus for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">🔴</div><div class="tstat-name">OWNED</div><div class="tstat-desc">Owner earns +1.5💀/s. A capture ring shows progress.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold for 2s to capture.</div></div></div><div class="tut-body" style="margin-top:8px;">If you lose mid for 15+ seconds, you gain Desperation stacks which increase your soul income to compensate.</div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades cost a significant amount of both Souls and Bodies — time your purchase for maximum impact.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀15 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀12 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">SOUL SURGE</div><div class="tstat-desc">💀20 · Instant · 60s CD<br>+18 souls, +3 bodies instantly</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body">Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name">MELEE</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT INTERACTIONS</div><div class="tut-sub">THE COMBAT TRIANGLE</div><div class="tut-body">Combat has built-in counters. Exploit them to win:<br><br>🦅 <b>AERIAL beats MELEE</b> — ground melee units can't target aerial at all. Aerial units move freely over a melee wall.<br><br>🏹 <b>RANGED beats AERIAL</b> — ranged units deal 2.2× damage to aerial. One archer is worth two swords against a Gryphon.<br><br>🗡️ <b>MELEE beats RANGED</b> — every melee hit slows the target's movement. Ranged units can't permanently kite melee — once slowed, they get caught.</div><div class="tut-visual"><div class="hl-box" style="font-size:var(--fs-md);">🦅 → 🗡️ → 🏹 → 🦅<br><span style="font-size:var(--fs-xs);color:var(--dim);">Counter in this direction</span></div></div>`; } },
@@ -2530,7 +2591,10 @@
       { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers active at once</b>. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Worker → off-screen → returns with 3 bodies<br>Mid-owned worker → returns with 4 bodies</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">FACTIONS</div><div class="tut-sub">10 FACTIONS — EACH PLAYS DIFFERENTLY</div><div class="tut-body">Choose your faction before each battle. Each faction has:</div><div class="tut-visual" style="flex-direction:column;gap:8px;text-align:left;max-width:600px;margin:0 auto;">${[['Unique Passive', 'A powerful ability that triggers automatically based on how you play.'], ['5 Units', 'Workers, melee, ranged, aerial, and special units unique to your faction.'], ['3 Upgrades', 'Permanent army improvements bought mid-game. High cost, major reward.'], ['Royal Guard', '3 powerful temporary units summoned during Last Stand.'], ['Matchup Notes', 'Each faction has natural advantages and disadvantages against others.']].map(([k, v]) => `<div style="display:flex;gap:10px;"><div style="min-width:140px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SUMMONER FACTION</div><div class="tut-sub">UNIQUE: PASSIVE SHADE SUMMONING</div><div class="tut-body">The Necromancer unit has two ways to summon Shades:<br><br>• <b>On kill:</b> Summons 2 Shades when it lands the killing blow<br>• <b>Passive:</b> Every 12 seconds, automatically summons 1 Shade (shown as a purple bar under the unit's HP bar on screen)<br><br>Shades have a cap (12 by default, raised to 16 with Dark Covenant upgrade). The Death Frenzy passive gives all nearby allies a +15% attack speed boost whenever any friendly unit dies.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🔮</span>Necromancer: passive summon every 12s<br><span style="font-size:var(--fs-xs);color:var(--dim);">Purple bar below HP = summon countdown</span></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">MENDERS FACTION</div><div class="tut-sub">UNIQUE: RETREAT AND RETURN</div><div class="tut-body">The Menders have a unique mechanic — their units retreat when damaged instead of dying:<br><br>• Units below <b>35% HP</b> automatically turn and run back to base<br>• After their heal duration (8–10 seconds), they return at <b>full HP</b><br>• Veteran units gain a permanent <b>+10% DMG</b> each time they successfully retreat and return (max 3 times)<br><br>The Cleric fires healing projectiles at the lowest-HP friendly unit. The Seraph heals nearby allies on every attack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💚</span>Unit below 35% HP → retreats<br>Heals fully → returns stronger</div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">MENDERS FACTION</div><div class="tut-sub">UNIQUE: RETREAT AND RETURN</div><div class="tut-body">The Menders have a unique mechanic — their units retreat when damaged instead of dying:<br><br>• Units below <b>35% HP</b> automatically turn and run back to base<br>• At base, they heal gradually over 6 seconds (vulnerable during this time!)<br>• After fully healed, they rejoin the fight and a <b>18s retreat cooldown</b> begins<br>• Veteran units gain a permanent <b>+10% DMG</b> each time they successfully retreat and return (max 3 times)<br><br>The Cleric fires healing projectiles at the lowest-HP friendly unit. The Seraph heals nearby allies on every attack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💚</span>Unit below 35% HP → retreats<br>Heals fully → returns stronger</div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">KEY BINDINGS &amp; HOTKEYS</div><div class="tut-sub">CUSTOMISE YOUR CONTROLS</div><div class="tut-body">All controls can be rebound from the main menu's <b>⌨️ KEY Bindings</b> screen.<br><br>You can also assign <b>Direct Spawn Hotkeys</b> — optional keys that instantly spawn a specific unit slot without navigating the menu. For example, bind <kbd>Q</kbd> to Unit Slot 1 and tap it to immediately spawn your first unit.<br><br>Slot labels show the actual unit names if you've already picked a faction. Hotkeys are unassigned by default and reset on page refresh.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⌨️</span>Navigate = WASD / Arrow Keys<br>Direct spawn = any key (optional)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Controls screen updates live with your bindings</span></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">JUICY COMBAT</div><div class="tut-sub">KNOCKBACK · SCREEN SHAKE · PARTICLES</div><div class="tut-body">Combat is designed to <b>feel impactful</b>:<br><br>• Every melee hit <b>knocks the target back</b> slightly — heavier hits push further<br>• The screen <b>shakes</b> on powerful attacks, base hits, and the tower collapse<br>• Units burst into coloured particles on death<br>• The losing tower shakes violently before toppling and collapsing in a shower of debris<br><br>These details are all real gameplay mechanics — knockback slightly delays enemy advance and can separate units from a pack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💥</span>Big hit → knockback + shake<br>Base hit → heavy shake<br>Tower death → violent collapse</div></div>`; } },
     ];
     // ─── INIT ─────────────────────────────────────────────────────────────────────
     function initGame() {
@@ -3833,7 +3897,7 @@
     function drawBase(p) {
       const x = p.baseX, bw = G.baseW, h = G.h, gy = G.groundY;
       const col = p.id === 1 ? '#2471a3' : '#c0392b';
-      const colD = p.id === 1 ? '#7b241c' : '#1a4f72';
+      const colD = p.id === 1 ? '#1a4f72' : '#7b241c';
       // Siege shake / collapse
       const isLoser = !G.running && p.baseHp <= 0;
       const colT = G.collapseTime || 0;
@@ -3895,7 +3959,7 @@
         ctx.beginPath(); ctx.arc(mx, my, mr, -.5 * Math.PI, -.5 * Math.PI + pct * 2 * Math.PI); ctx.stroke();
       }
       // Center dot
-      ctx.fillStyle = G.midOwner === 1 ? 'rgba(192,57,43,.4)' : G.midOwner === 2 ? 'rgba(36,113,163,.4)' : 'rgba(255,255,255,.08)';
+      ctx.fillStyle = G.midOwner === 1 ? 'rgba(36,113,163,.4)' : G.midOwner === 2 ? 'rgba(192,57,43,.4)' : 'rgba(255,255,255,.08)';
       ctx.beginPath(); ctx.arc(mx, my, 6, 0, Math.PI * 2); ctx.fill();
     }
 
@@ -4200,21 +4264,17 @@
         _rebinding = null;
         e.preventDefault(); return;
       }
+      if (e.code === 'F1') {
+        e.preventDefault();
+        document.getElementById('dev-pw-input').value = '';
+        document.getElementById('dev-pw-err').textContent = '';
+        document.getElementById('dev-overlay').style.display = 'flex';
+        document.getElementById('dev-pw-input').focus();
+        return;
+      }
       if (e.code === 'Escape') {
-        _escCount = (_escCount || 0) + 1;
-        clearTimeout(_escTimer);
-        _escTimer = setTimeout(() => _escCount = 0, 1500);
-        if (_escCount >= 7 && !document.getElementById('dev-overlay').style.display.includes('flex')) {
-          _escCount = 0;
-          document.getElementById('dev-pw-input').value = '';
-          document.getElementById('dev-pw-err').textContent = '';
-          document.getElementById('dev-overlay').style.display = 'flex';
-          document.getElementById('dev-pw-input').focus();
-          return;
-        }
         if (!G) return;
         if (!G.running) {
-          // collapse animation for 1.5s after game ends
           G.collapseTime = (G.collapseTime || 0) + 0.016;
           if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
           return;
@@ -4237,7 +4297,27 @@
       else if (e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
       else if (e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
       else if (e.code === KEYS.p2Act || e.code === 'NumpadEnter') { e.preventDefault(); activate(2); }
+      // Direct-spawn hotkeys
+      else {
+        for (let s = 0; s < 5; s++) {
+          if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
+          if (KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
+        }
+      }
     });
+
+    function directSpawnSlot(pid, slotIdx) {
+      if (!G || !G.running || G.paused) return;
+      const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
+      const def = defs[slotIdx];
+      if (!def) return;
+      // Switch to units mode, select the slot, and spawn
+      if (pid === 1) { P1_MODE = 0; P1_SEL = slotIdx; } else { P2_MODE = 0; P2_SEL = slotIdx; }
+      switchMode(pid, 0);
+      refreshSel(pid);
+      const cardEl = document.querySelector(`#p${pid}-grid .ucard[data-idx='${slotIdx}']`);
+      trySpawn(pid, def.id, cardEl);
+    }
 
     function cycleMode(pid, dir) {
       const cur = pid === 1 ? P1_MODE : P2_MODE;
@@ -4374,7 +4454,29 @@
     // ─── BUTTON WIRING ───────────────────────────────────────────────────────────
     document.getElementById('btn-play').addEventListener('click', () => showScreen('sc-faction'));
     document.getElementById('btn-tutorial').addEventListener('click', () => { tutIdx = 0; renderTut(); showScreen('sc-tutorial'); });
-    document.getElementById('btn-controls').addEventListener('click', () => showScreen('sc-controls'));
+    document.getElementById('btn-controls').addEventListener('click', () => { refreshControlsPanel(); showScreen('sc-controls'); });
+    function refreshControlsPanel() {
+      function kbdRow(label, keyName) {
+        const val = KEYS[keyName] ? formatKey(KEYS[keyName]) : '—';
+        return `<div class='ctrl-row'><kbd>${val}</kbd> ${label}</div>`;
+      }
+      function slotRows(pid) {
+        let rows = '';
+        for (let s = 0; s < 5; s++) {
+          const k = `p${pid}Slot${s}`;
+          if (KEYS[k]) rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> Spawn Unit ${s + 1}</div>`;
+        }
+        return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Cinzel,serif;'>DIRECT SPAWN</div>${rows}` : '';
+      }
+      document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>
+        ${kbdRow('Navigate Left', 'p1Left')}${kbdRow('Navigate Right', 'p1Right')}
+        ${kbdRow('Mode Up', 'p1Up')}${kbdRow('Mode Down', 'p1Down')}
+        ${kbdRow('Spawn / Activate', 'p1Act')}${slotRows(1)}`;
+      document.getElementById('ctrl-p2-panel').innerHTML = `<h3>PLAYER 2</h3>
+        ${kbdRow('Navigate Left', 'p2Left')}${kbdRow('Navigate Right', 'p2Right')}
+        ${kbdRow('Mode Up', 'p2Up')}${kbdRow('Mode Down', 'p2Down')}
+        ${kbdRow('Spawn / Activate', 'p2Act')}${slotRows(2)}`;
+    }
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-tut-prev').addEventListener('click', tutPrev);
@@ -4407,22 +4509,46 @@
 
     // ─── BOOT ─────────────────────────────────────────────────────────────────────
     // Wire rebind screen
+    function clearSlot(keyName) {
+      KEYS[keyName] = null;
+      refreshRebindUI();
+    }
+
     function refreshRebindUI() {
-      Object.keys(KEYS).forEach(k => {
+      // Navigation keys
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act'].forEach(k => {
         const el = document.getElementById('rk-' + k);
-        if (el) { el.textContent = formatKey(KEYS[k]); el.onclick = () => startRebind(k, el); }
+        if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
+      });
+      // Slot keys — show unit names if faction selected, else generic label
+      [1, 2].forEach(pid => {
+        const faction = typeof fSelected !== 'undefined' ? FACTIONS[fSelected[pid - 1]] : null;
+        const units = faction ? faction.units.filter(u => !u.isSpawned && !u.isWorker) : [];
+        for (let s = 0; s < 5; s++) {
+          const k = `p${pid}Slot${s}`;
+          const el = document.getElementById('rk-' + k);
+          const lbl = document.getElementById('rk-' + k + '-label');
+          if (el) {
+            const assigned = KEYS[k];
+            el.textContent = assigned ? formatKey(assigned) : '—';
+            el.className = 'rkey slot-key' + (assigned ? '' : ' unassigned');
+            el.onclick = () => startRebind(k, el);
+          }
+          if (lbl) {
+            lbl.textContent = units[s] ? `${units[s].icon} ${units[s].name}` : `Unit Slot ${s + 1}`;
+          }
+        }
       });
     }
     refreshRebindUI();
     document.getElementById('btn-rebind').addEventListener('click', () => { refreshRebindUI(); showScreen('sc-rebind'); });
-    document.getElementById('btn-rebind-back').addEventListener('click', () => showScreen('sc-main'));
+    document.getElementById('btn-rebind-back').addEventListener('click', () => showScreen('sc-menu'));
 
     let _escCount = 0, _escTimer = null;
 
     function checkDevPW() {
       const val = document.getElementById('dev-pw-input').value;
-      // Password is k0ngb4se
-      const pw = atob('azBuZ2I0c2U=');
+      const pw = atob('SUxvdmVCbGFja1Blb3BsZQ==');
       if (val === pw) {
         document.getElementById('dev-overlay').style.display = 'none';
         openDevPanel();
