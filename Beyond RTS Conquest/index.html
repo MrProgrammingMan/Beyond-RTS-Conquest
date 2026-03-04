@@ -1640,16 +1640,47 @@
     }
 
     @keyframes towerCollapse {
-      0%  { transform: translateX(0) rotate(0deg); }
-      5%  { transform: translateX(-6px) rotate(-3deg); }
-      10% { transform: translateX(8px) rotate(4deg); }
-      15% { transform: translateX(-10px) rotate(-5deg); }
-      20% { transform: translateX(12px) rotate(6deg); }
-      25% { transform: translateX(-8px) rotate(-4deg); }
-      35% { transform: translateX(20px) rotate(10deg); }
-      50% { transform: translateX(30px) rotate(20deg) scaleY(0.7); }
-      70% { transform: translateX(50px) rotate(35deg) scaleY(0.4); opacity:0.5; }
-      100%{ transform: translateX(80px) rotate(55deg) scaleY(0); opacity:0; }
+      0% {
+        transform: translateX(0) rotate(0deg);
+      }
+
+      5% {
+        transform: translateX(-6px) rotate(-3deg);
+      }
+
+      10% {
+        transform: translateX(8px) rotate(4deg);
+      }
+
+      15% {
+        transform: translateX(-10px) rotate(-5deg);
+      }
+
+      20% {
+        transform: translateX(12px) rotate(6deg);
+      }
+
+      25% {
+        transform: translateX(-8px) rotate(-4deg);
+      }
+
+      35% {
+        transform: translateX(20px) rotate(10deg);
+      }
+
+      50% {
+        transform: translateX(30px) rotate(20deg) scaleY(0.7);
+      }
+
+      70% {
+        transform: translateX(50px) rotate(35deg) scaleY(0.4);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateX(80px) rotate(55deg) scaleY(0);
+        opacity: 0;
+      }
     }
 
     .go-title {
@@ -2390,7 +2421,7 @@
         const panel = document.querySelector(`#p${pid}-hud .unit-stat-panel`);
         if (panel) panel.style.display = '';
         if (mode === 1) {
-          const upgrades = G.factions[pid-1].upgrades || [];
+          const upgrades = G.factions[pid - 1].upgrades || [];
           const up = upgrades[sel];
           if (up) {
             document.getElementById(`p${pid}-sp-name`).textContent = up.name;
@@ -2584,13 +2615,17 @@
       };
       switch (up.effect) {
         case 'melee_atkrate':
-          { const v = up.val || up.value || 0.15;
-          liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.attackRate *= (1 + v); });
-          G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.attackRate *= (1 + v); }); break; }
+          {
+            const v = up.val || up.value || 0.15;
+            liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.attackRate *= (1 + v); });
+            G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.attackRate *= (1 + v); }); break;
+          }
         case 'ranged_range':
-          { const v = up.val || up.value || 20;
-          liveUnits.filter(u => u.def.type === 'rng').forEach(u => { u.def.range += v; });
-          G.unitDefs[pid - 1].filter(d => d.type === 'rng').forEach(d => { d.range += v; }); break; }
+          {
+            const v = up.val || up.value || 20;
+            liveUnits.filter(u => u.def.type === 'rng').forEach(u => { u.def.range += v; });
+            G.unitDefs[pid - 1].filter(d => d.type === 'rng').forEach(d => { d.range += v; }); break;
+          }
         case 'unit_buff':
           const tgt = up.target;
           modDef(tgt, (def) => {
@@ -2621,9 +2656,11 @@
         case 'shade_soul_reward': p._shadeSoulReward = (p._shadeSoulReward || 0) + up.val; break;
         case 'death_frenzy_radius': p._frenzyRadius = up.val; break;
         case 'melee_dmg':
-          { const v = up.val || up.value || 10;
-          liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.dmg += v; });
-          G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.dmg += v; }); break; }
+          {
+            const v = up.val || up.value || 10;
+            liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.dmg += v; });
+            G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.dmg += v; }); break;
+          }
         case 'base_dmg_mult': p._baseDmgMult = (p._baseDmgMult || 1) + up.val; break;
         case 'heavy_hp':
           (up.targets || []).forEach(id => modDef(id, def => { def.hp += up.val; def.maxHp = (def.maxHp || def.hp) + up.val; }));
@@ -2879,7 +2916,7 @@
         if (target.spawnProtectionTimer > 0) actualDmg = 0;// spawn protect
         else {
           target.hp -= actualDmg; target.lastHitTime = Date.now();
-          if (actualDmg > 0) G.players[attacker.player-1].dmgDealt = (G.players[attacker.player-1].dmgDealt||0) + actualDmg;
+          if (actualDmg > 0) G.players[attacker.player - 1].dmgDealt = (G.players[attacker.player - 1].dmgDealt || 0) + actualDmg;
         }
         target.hitFlash = 1; SFX.hit();
         // Melee slow on hit (Balance 4)
@@ -3011,7 +3048,7 @@
         if (u.offTimer <= 0) {
           u.offscreen = false; u.carrying = true;
           u.carryCount = u.goToMid ? 4 : 3;
-          u.goToMid = false; u.x = offX; u.y = G.groundY - (u.def.radius||10);
+          u.goToMid = false; u.x = offX; u.y = G.groundY - (u.def.radius || 10);
         }
         return;
       }
@@ -3083,7 +3120,7 @@
           let dmg = p.dmg;
           if (t._ironwalled > 0) dmg *= 0.6;
           if (t.spawnProtectionTimer > 0) dmg = 0;
-          else { t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg>0 && p.player) G.players[p.player-1].dmgDealt=(G.players[p.player-1].dmgDealt||0)+dmg; }
+          else { t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg; }
           t.hitFlash = 1; SFX.hit();
           t.lastHitById = p.attackerId; t.lastHitByPlayer = p.player;
           const atk = G.units.find(u => u.id === p.attackerId);
@@ -3184,7 +3221,7 @@
             const p = G.players[u.player - 1];
             const retSpd = u.def.speed * 1.3 * (u._speedMult || 1);
             u.x += (u.player === 1 ? -1 : 1) * retSpd * dt;
-            u.y = G.groundY - (u.def.radius||10);
+            u.y = G.groundY - (u.def.radius || 10);
             const atBase = (u.player === 1 && u.x < p.baseX + 60) || (u.player === 2 && u.x > p.baseX - 60);
             if (atBase) {
               u.retreating = false;
@@ -3256,7 +3293,7 @@
             if (u.attackCooldown <= 0) {
               const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
               const berserkHPM = (u.def.berserkHPThresh && u.hp < u.maxHp * u.def.berserkHPThresh) ? 2.0 : 1.0;
-        const berserkM = u._berserkActive ? 2.0 : 1.0;
+              const berserkM = u._berserkActive ? 2.0 : 1.0;
               const warcryAtkM = u._warcryed > 0 ? 1.15 : 1.0;
               doAttack(u, enemy, frenzyM);
               u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM * berserkM * warcryAtkM, .1);
@@ -3270,7 +3307,7 @@
             // Aerial: move ahead of target to intercept, not just chase
             if (u.def.aerial) {
               // Move to the OPTIMAL attack position: slightly ahead in enemy's movement direction
-              const interceptX = enemy.x + (enemy.vx||0) * 0.3;
+              const interceptX = enemy.x + (enemy.vx || 0) * 0.3;
               const interceptDx = interceptX - u.x;
               u.x += Math.sign(interceptDx) * actualSpd * dt;
             } else {
@@ -3395,8 +3432,8 @@
     function updateMidIndicator() {
       const ind = document.getElementById('mid-indicator');
       // Check if truly contested (both players have units in mid)
-      const p1InMid = G.units.some(u => u.player===1 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x-G.midX)<G.midR);
-      const p2InMid = G.units.some(u => u.player===2 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x-G.midX)<G.midR);
+      const p1InMid = G.units.some(u => u.player === 1 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x - G.midX) < G.midR);
+      const p2InMid = G.units.some(u => u.player === 2 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x - G.midX) < G.midR);
       const contested = p1InMid && p2InMid;
       if (contested) {
         ind.textContent = '⚔ MIDDLE — CONTESTED'; ind.style.color = '#f39c12';
@@ -3517,8 +3554,8 @@
         const cx2 = x; const cy2 = G.groundY;
         ctx.translate(cx2, cy2);
         const prog = Math.min(colT / 1.5, 1);
-        ctx.rotate(prog * (p.id===1 ? -0.6 : 0.6));
-        ctx.translate(-cx2 + shakeX * (1+prog*4), -cy2 + prog * 40);
+        ctx.rotate(prog * (p.id === 1 ? -0.6 : 0.6));
+        ctx.translate(-cx2 + shakeX * (1 + prog * 4), -cy2 + prog * 40);
       } else { ctx.translate(shakeX, 0); }
       // Base wall
       const wallH = gy * 0.32;
@@ -3671,13 +3708,13 @@
         // Staff
         ctx.strokeStyle = 'rgba(155,89,182,0.9)'; ctx.lineWidth = 2.5;
         const staffDir = u.player === 1 ? 1 : -1;
-        ctx.beginPath(); ctx.moveTo(x + staffDir*r*.4, y + r); ctx.lineTo(x + staffDir*r*.4, y - r*2.2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x + staffDir * r * .4, y + r); ctx.lineTo(x + staffDir * r * .4, y - r * 2.2); ctx.stroke();
         // Staff orb
         ctx.fillStyle = '#9b59b6'; ctx.shadowBlur = 8; ctx.shadowColor = '#9b59b6';
-        ctx.beginPath(); ctx.arc(x + staffDir*r*.4, y - r*2.2, r*.45, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x + staffDir * r * .4, y - r * 2.2, r * .45, 0, Math.PI * 2); ctx.fill();
         ctx.shadowBlur = 0;
         // Robe stripes
-        ctx.fillStyle = 'rgba(155,89,182,0.4)'; ctx.fillRect(x - r*.3, y - r*.5, r*.15, r); 
+        ctx.fillStyle = 'rgba(155,89,182,0.4)'; ctx.fillRect(x - r * .3, y - r * .5, r * .15, r);
       }
       // ── RANGED / HEALER ──
       else if (u.def.type === 'rng') {
@@ -3754,8 +3791,8 @@
         ctx.fillRect(bx, by, bw * hpPct, bh);
       }
       // Necromancer passive summon bar
-      if ((u.def.passiveSummonInterval||u.def.passiveSummon) && u.passiveSummonTimer > 0) {
-        const pct = 1 - (u.passiveSummonTimer / (u.def.passiveSummonInterval||u.def.passiveSummon));
+      if ((u.def.passiveSummonInterval || u.def.passiveSummon) && u.passiveSummonTimer > 0) {
+        const pct = 1 - (u.passiveSummonTimer / (u.def.passiveSummonInterval || u.def.passiveSummon));
         const sBy = by - 5;
         ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(bx, sBy, bw, 2);
         ctx.fillStyle = '#9b59b6'; ctx.fillRect(bx, sBy, bw * pct, 2);
@@ -3786,7 +3823,7 @@
       if (!G) return;
       if (!G.running) {
         // collapse animation for 1.5s after game ends
-        G.collapseTime = (G.collapseTime||0) + 0.016;
+        G.collapseTime = (G.collapseTime || 0) + 0.016;
         if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
         return;
       }
@@ -3826,9 +3863,9 @@
       <div class="go-stat-val" style="color:${p.id === 1 ? '#c0392b' : '#2471a3'}">${G.factions[p.id - 1].icon} ${G.factions[p.id - 1].name}</div>
       <div style="margin-top:8px;font-size:var(--fs-sm);color:var(--dim)">Kills: <b style="color:var(--text)">${p.kills}</b></div>
       <div style="font-size:var(--fs-sm);color:var(--dim)">Units Spawned: <b style="color:var(--text)">${p.spawned}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Dmg Dealt: <b style="color:var(--text)">${Math.round(p.dmgDealt||0)}</b></div>
+      <div style="font-size:var(--fs-sm);color:var(--dim)">Dmg Dealt: <b style="color:var(--text)">${Math.round(p.dmgDealt || 0)}</b></div>
       <div style="font-size:var(--fs-sm);color:var(--dim)">Upgrades: <b style="color:var(--text)">${p.ownedUpgrades.size}</b></div>
-      <div style="font-size:var(--fs-sm);color:var(--dim)">Base HP Left: <b style="color:${p.baseHp > 0 ? '#2ecc71':'#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
+      <div style="font-size:var(--fs-sm);color:var(--dim)">Base HP Left: <b style="color:${p.baseHp > 0 ? '#2ecc71' : '#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
     </div>`).join('');
       SFX.victory();
     }
@@ -3837,12 +3874,12 @@
     document.addEventListener('keydown', e => {
       if (e.code === 'Escape') {
         if (!G) return;
-      if (!G.running) {
-        // collapse animation for 1.5s after game ends
-        G.collapseTime = (G.collapseTime||0) + 0.016;
-        if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
-        return;
-      }
+        if (!G.running) {
+          // collapse animation for 1.5s after game ends
+          G.collapseTime = (G.collapseTime || 0) + 0.016;
+          if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
+          return;
+        }
         G.paused = !G.paused;
         document.getElementById('pause-overlay').classList.toggle('show', G.paused);
         return;
@@ -4022,7 +4059,7 @@
       document.getElementById('btn-start').textContent = 'START BATTLE →';
       document.getElementById('fchosen-p1').textContent = '— No faction chosen —';
       document.getElementById('fchosen-p2').textContent = '— No faction chosen —';
-      document.querySelectorAll('.fcard').forEach(c => c.classList.remove('sel1','sel2'));
+      document.querySelectorAll('.fcard').forEach(c => c.classList.remove('sel1', 'sel2'));
       showScreen('sc-faction');
     });
     document.getElementById('btn-to-menu').addEventListener('click', () => {
