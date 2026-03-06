@@ -251,7 +251,7 @@
       flex-direction: column;
       gap: clamp(5px, .8vw, 10px);
       overflow-y: auto;
-      max-height: clamp(280px, 50vh, 560px);
+      max-height: clamp(400px, 72vh, 800px);
       padding-right: 4px;
     }
 
@@ -292,6 +292,11 @@
       border-color: var(--p1) !important;
       background: rgba(36, 113, 163, .1) !important;
       box-shadow: 0 0 12px var(--p1g);
+    }
+
+    .fcard.fkey-cursor {
+      outline: 2px dashed rgba(255, 255, 255, .45);
+      outline-offset: -2px;
     }
 
     .fcard.sel2 {
@@ -622,7 +627,7 @@
       flex: 1;
       display: block;
       width: 100%;
-      min-height: 0;
+      height: 100%;
     }
 
     #momentum-bar-wrap {
@@ -906,6 +911,7 @@
     /* HUD */
     #hud {
       height: var(--hud);
+      width: 100%;
       display: flex;
       flex-shrink: 0;
       background: var(--panel);
@@ -919,6 +925,7 @@
       display: flex;
       flex-direction: column;
       padding: clamp(4px, .6vh, 9px) clamp(5px, .7vw, 12px);
+      padding-right: calc(clamp(110px, 13vw, 160px) + clamp(5px, .7vw, 12px));
       gap: clamp(3px, .4vh, 6px);
       position: relative;
       overflow: hidden;
@@ -954,7 +961,7 @@
 
     .pname {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-md);
+      font-size: clamp(.9rem, 1.5vw, 1.4rem);
       font-weight: 700;
       letter-spacing: .18em;
       flex-shrink: 0;
@@ -1007,7 +1014,7 @@
     }
 
     .rlabel {
-      font-size: var(--fs-xs);
+      font-size: clamp(.55rem, .8vw, .72rem);
       color: var(--dim);
       letter-spacing: .07em;
       line-height: 1;
@@ -1015,7 +1022,7 @@
 
     .rval {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-lg);
+      font-size: clamp(1.2rem, 2.2vw, 2rem);
       font-weight: 700;
       line-height: 1.1;
     }
@@ -1029,7 +1036,7 @@
     }
 
     .income-rate {
-      font-size: var(--fs-xs);
+      font-size: clamp(.6rem, .9vw, .82rem);
       color: var(--dim);
       letter-spacing: .04em;
       padding-left: 2px;
@@ -1070,7 +1077,7 @@
 
     .hp-txt {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-sm);
+      font-size: clamp(.85rem, 1.3vw, 1.2rem);
       font-weight: 700;
       min-width: 2.2em;
       text-align: right;
@@ -1079,7 +1086,7 @@
 
     .guard-timer {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-xs);
+      font-size: clamp(.68rem, 1vw, .9rem);
       color: var(--gold);
       display: none;
     }
@@ -1095,8 +1102,8 @@
     .unit-count,
     .worker-count {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-xs);
-      padding: 2px 5px;
+      font-size: clamp(.68rem, 1vw, .9rem);
+      padding: 3px 7px;
       border-radius: 3px;
       border: 1px solid var(--border2);
       background: rgba(0, 0, 0, .35);
@@ -1135,15 +1142,15 @@
     /* HUD MODE TABS */
     .hud-mode-tabs {
       display: flex;
-      gap: 3px;
+      gap: 5px;
       flex-shrink: 0;
-      margin-bottom: 1px;
+      margin-bottom: 2px;
     }
 
     .hud-tab {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.6rem, .85vw, .78rem);
-      padding: 2px 5px;
+      font-size: clamp(.78rem, 1.1vw, 1rem);
+      padding: 4px 10px;
       border-radius: 2px;
       border: 1px solid var(--border2);
       color: var(--dim);
@@ -1170,6 +1177,8 @@
       gap: var(--gap);
       flex: 1;
       min-height: 0;
+      overflow-y: auto;
+      align-content: start;
     }
 
     .ucard {
@@ -1186,7 +1195,7 @@
       position: relative;
       overflow: hidden;
       min-width: 0;
-      min-height: clamp(68px, 9.5vh, 110px);
+      min-height: clamp(90px, 12vh, 140px);
     }
 
     .ucard:hover {
@@ -1297,14 +1306,14 @@
     }
 
     .uicon {
-      font-size: clamp(1.1rem, 2.2vh, 2rem);
+      font-size: clamp(1.6rem, 3.5vh, 3rem);
       line-height: 1;
     }
 
     .uname {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-sm);
-      color: #bbb;
+      font-size: clamp(.72rem, 1.1vw, 1rem);
+      color: #ccc;
       text-align: center;
       line-height: 1.2;
     }
@@ -1318,7 +1327,7 @@
 
     .ctag {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-sm);
+      font-size: clamp(.68rem, 1vw, .9rem);
       padding: 1px clamp(2px, .3vw, 4px);
       border-radius: 2px;
     }
@@ -1339,8 +1348,8 @@
       position: absolute;
       top: 2px;
       left: 3px;
-      font-size: clamp(.28rem, .45vw, .42rem);
-      padding: 1px 3px;
+      font-size: clamp(.5rem, .7vw, .65rem);
+      padding: 2px 5px;
       border-radius: 2px;
       font-family: 'Cinzel', serif;
       opacity: .85;
@@ -1386,7 +1395,7 @@
     }
 
     .upcard {
-      min-height: clamp(68px, 9.5vh, 110px);
+      min-height: clamp(90px, 12vh, 140px);
       background: rgba(0, 0, 0, .45);
       border: 1.5px solid var(--border);
       border-radius: 5px;
@@ -1428,14 +1437,14 @@
 
     .upcard-name {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-sm);
+      font-size: clamp(.85rem, 1.3vw, 1.1rem);
       color: var(--gold);
       letter-spacing: .06em;
       line-height: 1.2;
     }
 
     .upcard-desc {
-      font-size: clamp(.62rem, .88vw, .8rem);
+      font-size: clamp(.7rem, 1vw, .9rem);
       color: var(--dim);
       line-height: 1.4;
       margin-top: 2px;
@@ -1453,7 +1462,7 @@
       position: absolute;
       top: 3px;
       right: 4px;
-      font-size: clamp(.28rem, .44vw, .4rem);
+      font-size: clamp(.55rem, .75vw, .68rem);
       color: #2ecc71;
       font-family: 'Cinzel', serif;
     }
@@ -1479,12 +1488,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: clamp(4px, .6vh, 8px) clamp(3px, .4vw, 5px);
+      justify-content: center;
+      gap: 4px;
+      padding: clamp(6px, 1vh, 12px) clamp(4px, .5vw, 8px);
       cursor: pointer;
       transition: border-color .14s;
       position: relative;
       overflow: hidden;
       min-width: 0;
+      min-height: clamp(80px, 12vh, 130px);
     }
 
     .bfcard:hover {
@@ -1505,20 +1517,20 @@
     }
 
     .bfcard-icon {
-      font-size: clamp(1.2rem, 2.2vh, 1.8rem);
+      font-size: clamp(2.5rem, 5.5vh, 4.5rem);
       line-height: 1;
     }
 
     .bfcard-name {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.62rem, .88vw, .82rem);
+      font-size: clamp(1rem, 1.5vw, 1.3rem);
       color: var(--gold);
       letter-spacing: .05em;
       text-align: center;
     }
 
     .bfcard-meta {
-      font-size: clamp(0.28rem, 0.5vw, 0.52rem);
+      font-size: clamp(0.6rem, 0.85vw, 0.78rem);
       color: var(--dim);
       text-align: center;
       line-height: 1.2;
@@ -1527,7 +1539,7 @@
 
     .bfcard-cost {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.62rem, .88vw, .82rem);
+      font-size: clamp(1rem, 1.4vw, 1.2rem);
       color: var(--soul);
     }
 
@@ -1547,24 +1559,24 @@
     /* STAT PANEL */
     .unit-stat-panel {
       position: absolute;
-      right: clamp(4px, .5vw, 8px);
-      top: 50%;
-      transform: translateY(-50%);
-      width: clamp(100px, 11vw, 140px);
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: clamp(110px, 13vw, 160px);
       pointer-events: none;
-      background: rgba(0, 0, 0, .5);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: clamp(4px, .6vh, 8px);
+      background: rgba(5, 5, 20, .92);
+      border-left: 1px solid var(--border);
+      padding: clamp(6px, 1vh, 14px) clamp(6px, .8vw, 12px);
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
       z-index: 2;
+      transition: all .2s;
     }
 
     .usp-name {
       font-family: 'Cinzel', serif;
-      font-size: var(--fs-xs);
+      font-size: clamp(.75rem, 1.2vw, 1.1rem);
       color: var(--gold);
       letter-spacing: .06em;
       text-align: center;
@@ -1584,20 +1596,20 @@
 
     .usp-label {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.52rem, .8vw, .72rem);
+      font-size: clamp(.68rem, 1.1vw, .95rem);
       color: var(--dim);
       letter-spacing: .07em;
     }
 
     .usp-val {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.52rem, .8vw, .72rem);
+      font-size: clamp(.68rem, 1.1vw, .95rem);
       color: var(--text);
       font-weight: 700;
     }
 
     .usp-special {
-      font-size: clamp(.38rem, .6vw, .54rem);
+      font-size: clamp(.6rem, .9vw, .8rem);
       color: #9b59b6;
       line-height: 1.4;
       margin-top: 3px;
@@ -1606,9 +1618,13 @@
       white-space: pre-line;
     }
 
+    .player-hud:hover .unit-stat-panel {
+      width: clamp(150px, 18vw, 220px);
+    }
+
     .usp-cost {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.4rem, .65vw, .58rem);
+      font-size: clamp(.62rem, .95vw, .85rem);
       color: var(--gold);
       text-align: center;
       margin-top: 2px;
@@ -1633,6 +1649,25 @@
       margin-bottom: 6px;
       border-bottom: 1px solid #333;
       padding-bottom: 6px;
+    }
+
+    .dev-btn-active {
+      background: rgba(243, 156, 18, .2) !important;
+      border-color: #f39c12 !important;
+      color: #f39c12 !important;
+    }
+
+    .dev-row-label {
+      color: #aaa;
+      font-size: .68rem;
+      min-width: 90px;
+    }
+
+    .dev-row-controls {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .dev-row {
@@ -1661,6 +1696,10 @@
     .dev-btn:hover {
       background: rgba(243, 156, 18, .2);
       border-color: #f39c12;
+    }
+
+    [title] {
+      cursor: help;
     }
 
     .dev-inp {
@@ -1780,6 +1819,8 @@
     }
 
     .go-wrap {
+      overflow-y: auto;
+      max-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1865,6 +1906,7 @@
     }
 
     .go-time-row {
+      text-align: center;
       font-family: 'Cinzel', serif;
       font-size: var(--fs-md);
       color: var(--gold);
@@ -1885,7 +1927,7 @@
     .go-row {
       display: flex;
       justify-content: space-between;
-      font-size: var(--fs-xs);
+      font-size: clamp(.7rem, 1vw, .9rem);
       color: var(--dim);
     }
 
@@ -1912,7 +1954,7 @@
       border-radius: 6px;
       padding: clamp(10px, 1.8vh, 20px) clamp(14px, 2.5vw, 32px);
       text-align: center;
-      min-width: clamp(120px, 14vw, 180px);
+      min-width: clamp(180px, 22vw, 280px);
     }
 
     .go-stat-label {
@@ -1993,7 +2035,7 @@
     <div class="sc-sub">10 factions — scroll each panel to see all</div>
     <div class="faction-layout">
       <div class="faction-side">
-        <div class="faction-plabel p1l">PLAYER 1<span>W/S cycle modes · A/D navigate · TAB spawn</span></div>
+        <div class="faction-plabel p1l" id="faction-hint-p1">PLAYER 1<span></span></div>
         <div class="faction-scroll-wrap">
           <div class="faction-cards" id="fcards-p1"></div>
           <div class="faction-scroll-count" id="fscroll-p1"></div>
@@ -2002,7 +2044,7 @@
       </div>
       <div class="faction-vs">VS</div>
       <div class="faction-side">
-        <div class="faction-plabel p2l">PLAYER 2<span>↑/↓ cycle modes · ←/→ navigate · ENTER spawn</span></div>
+        <div class="faction-plabel p2l" id="faction-hint-p2">PLAYER 2<span></span></div>
         <div class="faction-scroll-wrap">
           <div class="faction-cards" id="fcards-p2"></div>
           <div class="faction-scroll-count" id="fscroll-p2"></div>
@@ -2017,37 +2059,45 @@
     </div>
   </div>
   <!-- DEV PANEL -->
-  <div id="dev-overlay"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
-    <div style="font-family:Cinzel,serif;font-size:1.4rem;color:#f39c12;letter-spacing:.1em;">🔒 DEV ACCESS</div>
-    <div style="font-size:.75rem;color:#888;">Enter password to unlock dev panel</div>
-    <input id="dev-pw-input" type="password" placeholder="password"
-      style="font-family:Cinzel,serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:200px;">
-    <div id="dev-pw-err" style="color:#e74c3c;font-size:.75rem;min-height:1em;"></div>
-    <div style="display:flex;gap:8px;"><button onclick="checkDevPW()"
-        style="font-family:Cinzel,serif;background:#f39c12;color:#000;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-weight:700;">ENTER</button><button
-        onclick="document.getElementById('dev-overlay').style.display='none'"
-        style="font-family:Cinzel,serif;background:#333;color:#fff;border:1px solid #555;padding:7px 20px;border-radius:4px;cursor:pointer;">CANCEL</button>
-    </div>
+  <!-- Dev overlay is now just a small keep-alive element for legacy refs -->
+  <div id="dev-overlay" style="display:none;"></div>
+
+  <!-- Dev tip box -->
+  <div id="dev-tip-box"
+    style="display:none;position:fixed;z-index:10001;background:#1a1a2e;border:1px solid #f39c12;color:#fff;font-family:Cinzel,serif;font-size:.72rem;padding:5px 9px;border-radius:4px;max-width:220px;pointer-events:none;">
   </div>
   <div id="dev-panel"
-    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9998;overflow-y:auto;padding:20px;font-family:Cinzel,serif;">
-    <div
-      style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #333;padding-bottom:8px;">
-      <span style="color:#f39c12;font-size:1.2rem;letter-spacing:.08em;">⚡ DEV PANEL</span>
-      <button onclick="document.getElementById('dev-panel').style.display='none'"
-        style="background:#333;color:#fff;border:1px solid #555;padding:5px 14px;border-radius:4px;cursor:pointer;font-family:Cinzel,serif;">✕
-        CLOSE</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px;margin:0 auto;">
-      <div class="dev-section" id="dev-p1-section">
-        <div class="dev-head" style="color:#2471a3">PLAYER 1</div>
+    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:340px;min-height:200px;background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Cinzel,serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:visible;flex-direction:column;">
+    <!-- Drag handle -->
+    <div id="dev-drag-bar"
+      style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#12120a;border-bottom:1px solid #333;cursor:grab;user-select:none;">
+      <span style="color:#f39c12;font-size:.9rem;letter-spacing:.08em;">⚡ DEV PANEL <span id="dev-paused-badge"
+          style="display:none;color:#e74c3c;margin-left:8px;">● PAUSED</span></span>
+      <div style="display:flex;gap:6px;">
+        <button
+          onclick="if(G){G.paused=!G.paused;document.getElementById('pause-overlay').classList.toggle('show',G.paused);document.getElementById('dev-paused-badge').style.display=G.paused?'inline':'none';}"
+          style="background:#222;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Cinzel,serif;font-size:.7rem;"
+          title="Toggle game pause">⏸ PAUSE</button>
+        <button onclick="document.getElementById('dev-panel').style.display='none'"
+          style="background:#333;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Cinzel,serif;font-size:.7rem;">✕</button>
       </div>
-      <div class="dev-section" id="dev-p2-section">
-        <div class="dev-head" style="color:#c0392b">PLAYER 2</div>
+    </div>
+    <div style="overflow-y:auto;padding:14px;flex:1;display:flex;flex-direction:column;gap:12px;overflow-x:hidden;"
+      id="dev-panel-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="dev-section" id="dev-p1-section">
+          <div class="dev-head" style="color:#2471a3">PLAYER 1</div>
+        </div>
+        <div class="dev-section" id="dev-p2-section">
+          <div class="dev-head" style="color:#c0392b">PLAYER 2</div>
+        </div>
       </div>
       <div class="dev-section" id="dev-game-section">
         <div class="dev-head" style="color:#f39c12">GAME STATE</div>
+      </div>
+      <div class="dev-section" id="dev-units-section" style="display:none;">
+        <div class="dev-head" style="color:#9b59b6">UNIT EDITOR</div>
+        <div id="dev-unit-list"></div>
       </div>
     </div>
   </div>
@@ -2115,7 +2165,7 @@
       <div class="tut-display" id="tut-display"></div>
       <div class="tut-nav">
         <button class="btn" id="btn-tut-prev">← PREV</button>
-        <span class="tut-count" id="tut-count">1/24</span>
+        <span class="tut-count" id="tut-count">1/20</span>
         <button class="btn primary" id="btn-tut-next">NEXT →</button>
       </div>
       <button class="btn" style="font-size:var(--fs-xs);opacity:.5;padding:5px 12px;" id="btn-tut-skip">SKIP</button>
@@ -2133,7 +2183,7 @@
           <h3>PLAYER 2</h3>
         </div>
         <div class="ctrl-panel" style="text-align:center;">
-          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause / Dev Panel</div>
+          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause </div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);">Modes: UNITS →
             UPGRADES → BUFFS</div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);margin-top:4px;">
@@ -2164,6 +2214,10 @@
     <div id="pause-overlay">
       <div class="pause-title">PAUSED</div>
       <div class="pause-sub">Press ESC to resume</div>
+      <button onclick="triggerRagequit()"
+        style="font-family:Cinzel,serif;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border:2px solid #8B0000;padding:10px 28px;border-radius:5px;cursor:pointer;font-size:.85rem;letter-spacing:.12em;margin-top:8px;transition:all .15s;"
+        onmouseover="this.style.borderColor='#ff0000';this.style.color='#ff0000';"
+        onmouseout="this.style.borderColor='#8B0000';this.style.color='#ff4444';">☠ RAGEQUIT</button>
     </div>
     <div id="hud">
       <div class="player-hud" id="p1-hud">
@@ -2271,7 +2325,10 @@
     <div class="go-wrap">
       <div class="go-crown">👑</div>
       <h2 class="go-title" id="go-title"></h2>
-      <p class="go-sub">The enemy base has crumbled. The souls are yours.</p>
+      <p class="go-sub" id="go-sub-text">Get rekt.</p>
+      <div class="go-time-row" id="go-match-time"
+        style="text-align:center;font-family:Cinzel,serif;font-size:clamp(1rem,1.5vw,1.3rem);color:var(--gold);margin:8px 0 14px;letter-spacing:.08em;">
+      </div>
       <div class="go-stats" id="go-stats"></div>
       <div class="go-btns">
         <button class="btn primary" id="btn-rematch">⚔ REMATCH</button>
@@ -2290,6 +2347,39 @@
     const AC = new (window.AudioContext || window.webkitAudioContext)();
     const canvas = document.getElementById('battlefield');
     const ctx = canvas.getContext('2d');
+
+    function resizeGameCanvas() {
+      const wrap = canvas.parentElement;
+      const hudH = document.getElementById('hud').offsetHeight;
+      const mbH = document.getElementById('momentum-bar-wrap').offsetHeight;
+      canvas.width = wrap.offsetWidth;
+      canvas.height = Math.max(100, wrap.offsetHeight - hudH - mbH);
+    }
+
+    // Live resize: update canvas + G geometry whenever the window changes size
+    window.addEventListener('resize', () => {
+      if (!G || !G.running) return;
+      resizeGameCanvas();
+      const BW = Math.max(50, Math.min(85, canvas.width * 0.065));
+      const GY = canvas.height * 0.65;
+      G.w = canvas.width;
+      G.h = canvas.height;
+      G.groundY = GY;
+      G.baseW = BW;
+      G.midX = canvas.width / 2;
+      G.midR = Math.max(35, canvas.width * 0.04);
+      // Repin bases to new edges
+      G.players[0].baseX = BW / 2 + 8;
+      G.players[1].baseX = canvas.width - BW / 2 - 8;
+      // Clamp all unit/projectile positions to new bounds
+      G.units.forEach(u => {
+        u.x = Math.max(BW, Math.min(canvas.width - BW, u.x));
+        u.y = Math.min(GY - (u.def.radius || 10), u.y);
+      });
+      G.projectiles.forEach(p => {
+        p.x = Math.max(0, Math.min(canvas.width, p.x));
+      });
+    });
     let G = null, P1_FACTION = null, P2_FACTION = null;
     let P1_SEL = 0, P2_SEL = 0;
     let P1_MODE = 0, P2_MODE = 0;
@@ -2440,7 +2530,7 @@
           { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 0, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Collects bodies. Very fragile — keep away from combat.' },
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 1, hp: 55, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
           { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
-          { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 16, bodies: 4, hp: 60, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 70 },
+          { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 16, bodies: 4, hp: 60, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 60 },
           { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 5, hp: 130, speed: 44, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 8 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 8 },
         ],
         extraUnits: [{ id: 'if_guard', name: 'Inferno Lord', icon: '🔥', souls: 0, bodies: 0, hp: 210, speed: 55, dmg: 40, range: 34, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#ff4500', type: 'mel', desc: 'Royal Guard. Hellfire on every spawn while active. Despawns 30s.', isSpawned: true, _hellfire: true }],
@@ -2548,13 +2638,14 @@
     // ── RALLY BUFFS ──
     // ─── KEY BINDINGS ────────────────────────────────────────────────────────────
     let KEYS = {
-      p1Left: 'KeyA', p1Right: 'KeyD', p1Up: 'KeyW', p1Down: 'KeyS', p1Act: 'Tab',
+      p1Left: 'KeyA', p1Right: 'KeyD', p1Up: 'KeyW', p1Down: 'KeyS', p1Act: 'KeyQ',
       p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
       // Optional direct-spawn hotkeys (null = unassigned)
       p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null,
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null,
     };
     let _rebinding = null; // { key: 'p1Left', el: element }
+    let _devUnlocked = false; // true once correct password entered
 
     function startRebind(keyName, el) {
       _rebinding = { key: keyName, el };
@@ -2567,46 +2658,41 @@
     }
 
     const RALLY_BUFFS = [
-      { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 15, duration: 6, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 6s.' },
-      { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 12, duration: 8, cooldown: 50, desc: 'All units take 40% less damage for 8s.' },
-      { id: 'soulsurge', name: 'Soul Surge', icon: '💀', cost: 20, duration: 0, cooldown: 60, desc: 'Instantly grants +18 souls and +3 bodies.' },
+      { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 40, duration: 6, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 6s.' },
+      { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 35, duration: 8, cooldown: 50, desc: 'All units take 40% less damage for 8s.' },
+      { id: 'soulsurge', name: 'Soul Surge', icon: '💀', cost: 45, duration: 0, cooldown: 60, desc: 'Instantly grants +18 souls and +3 bodies.' },
     ];
 
     // ── TUTORIAL ──
     let tutIdx = 0;
     const TUT = [
-      { render(el) { el.innerHTML = `<div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div><div class="tut-sub">A TWO-PLAYER REAL-TIME STRATEGY GAME</div><div class="tut-body">Two players face off across a battlefield, spending <b>💀 Souls</b> and <b>🦴 Bodies</b> to spawn units that automatically fight toward the enemy base. Destroy the enemy base to win.<br><br>Controls are entirely keyboard-based — no mouse required during gameplay. Use the arrow keys or mouse to scroll through tutorials.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Primary currency. Earned passively, from kills, and by holding mid.</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Secondary currency. Earned over time and brought in by workers.</div></div><div class="tstat"><div class="tstat-icon">🏰</div><div class="tstat-name">BASE</div><div class="tstat-desc">Your base has 100 HP. When it hits 0, you lose. Protect it at all costs.</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows over time.'], ['⛏ Workers', 'Active workers. Max 3. More workers = faster body income.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div><div class="tut-sub">A TWO-PLAYER REAL-TIME STRATEGY GAME</div><div class="tut-body">Two players face off across a battlefield, spending <b>💀 Souls</b> and <b>🦴 Bodies</b> to spawn units that automatically fight toward the enemy base. Destroy the enemy base to win.<br><br>Controls are entirely keyboard-based — no mouse required during gameplay. Use the ← PREV / NEXT → buttons or <kbd>Arrow Keys</kbd> to navigate.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Primary currency. Earned passively, from kills, and by holding mid.</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Secondary currency. Earned over time and brought in by workers.</div></div><div class="tstat"><div class="tstat-icon">🏰</div><div class="tstat-name">BASE</div><div class="tstat-desc">Your base has 100 HP. When it hits 0, you lose. Protect it at all costs.</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and bring back 3 bodies per trip. Deploy up to 3 workers — more workers means faster body income.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +1.2/s more<br>Each desp stack: +0.4/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Worker trips: +3 per trip<br>1 worker ≈ +4.5/min<br>3 workers ≈ +13.5/min</div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it for <b>2 uncontested seconds</b> captures it. The owner earns <b>+1.5 souls/sec</b> passively, even if they walk away.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No owner. No mid bonus for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">🔴</div><div class="tstat-name">OWNED</div><div class="tstat-desc">Owner earns +1.5💀/s. A capture ring shows progress.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold for 2s to capture.</div></div></div><div class="tut-body" style="margin-top:8px;">If you lose mid for 15+ seconds, you gain Desperation stacks which increase your soul income to compensate.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Worker → off-screen → returns with 3 bodies<br>Mid-owned worker → returns with 4 bodies</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀15 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀12 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">SOUL SURGE</div><div class="tstat-desc">💀20 · Instant · 60s CD<br>+18 souls, +3 bodies instantly</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body">Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name">MELEE</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT INTERACTIONS</div><div class="tut-sub">THE COMBAT TRIANGLE</div><div class="tut-body">Combat has built-in counters. Exploit them to win:<br><br>🦅 <b>AERIAL beats MELEE</b> — ground melee units can't target aerial at all. Aerial units move freely over a melee wall.<br><br>🏹 <b>RANGED beats AERIAL</b> — ranged units deal 2.2× damage to aerial. One archer is worth two swords against a Gryphon.<br><br>🗡️ <b>MELEE beats RANGED</b> — every melee hit slows the target's movement. Ranged units can't permanently kite melee — once slowed, they get caught.</div><div class="tut-visual"><div class="hl-box" style="font-size:var(--fs-md);">🦅 → 🗡️ → 🏹 → 🦅<br><span style="font-size:var(--fs-xs);color:var(--dim);">Counter in this direction</span></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it for <b>2 uncontested seconds</b> captures it. The owner earns <b>+1.5 souls/sec</b> passively, even if they walk away.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No owner. No mid bonus for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">🔴</div><div class="tstat-name">OWNED</div><div class="tstat-desc">Owner earns +1.5💀/s. A capture ring shows progress.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold for 2s to capture.</div></div></div><div class="tut-body" style="margin-top:8px;">If you lose mid for 15+ seconds, you gain Desperation stacks which increase your soul income to compensate.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀40 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀35 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">SOUL SURGE</div><div class="tstat-desc">💀45 · Instant · 60s CD<br>+18 souls, +3 bodies instantly</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SPAWN PROTECTION</div><div class="tut-sub">1.8 SECOND GOLDEN SHIELD</div><div class="tut-body">Every newly spawned unit has <b>1.8 seconds of spawn protection</b>. During this window:<br><br>• The unit <b>cannot die</b> — HP cannot fall below 1<br>• The unit <b>can attack normally</b><br>• A gold shimmer ring shows around the unit<br><br>This lets you reinforce even when your base is under siege. A Warlord sitting next to your base can't instantly kill your fresh recruits.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">✨</span>Spawn → 1.8s invincible → Normal combat<br><span style="font-size:var(--fs-xs);color:var(--dim);">Does NOT apply to summoned units (Shades, Guards)</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">FOCUS FIRE & BLOCKING</div><div class="tut-sub">ARMY DIVERSITY IS REWARDED</div><div class="tut-body"><b>Focus Fire Penalty:</b> When 3 or more ranged units target the same enemy, each attacker beyond the 2nd deals progressively less damage (80% → 65% → 50%). Spamming 8 archers at one target is less effective than a mix.<br><br><b>Projectile Blocking:</b> Enemy frontline melee units can block or deflect incoming ranged projectiles. 65% chance to reduce the shot by 40%, 35% chance to absorb it entirely. A wall of melee protects units behind it.<br><br>Together these systems mean: <b>mix your army</b>.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🛡️</span>Melee wall = natural shield<br>vs ranged spam</div><div class="hl-box"><span class="hl-icon">🎯</span>3+ on one target<br>= diminishing returns</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">LAST STAND</div><div class="tut-sub">THE DESPERATE DEFENSE</div><div class="tut-body">When your base falls to <b>30 HP</b>, Last Stand triggers automatically:<br><br>• You receive <b>+40 souls instantly</b><br>• Your faction's <b>Royal Guard</b> units are summoned (3 powerful temporary units)<br>• Royal Guards despawn after 30 seconds<br>• This can only trigger <b>once per game</b><br><br>Last Stand is your moment to turn the tide. Use the souls wisely — spawn your best units. The guard timer shows in your HUD.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">👑</span>Base ≤ 30 HP → Last Stand!<br>+40💀 + Royal Guards spawned<br><span style="font-size:var(--fs-xs);color:var(--dim);">Guard timer shown in HUD bottom panel</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SIEGE DECAY</div><div class="tut-sub">THE CLOCK IS TICKING</div><div class="tut-body">After <b>3 minutes</b> of gameplay, Siege Decay begins: both bases slowly lose HP over time. After <b>6 minutes</b>, the rate doubles.<br><br>This forces decisive action — you cannot turtle forever. The longer the game goes, the more your base crumbles even without enemy attacks.<br><br>The indicator at the top of the screen shows when Siege Decay is active.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⏳</span>3min: Decay starts (-0.02 HP/s)<br>6min: Decay doubles (-0.04 HP/s)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Both bases decay equally — no advantage to stalling</span></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers active at once</b>. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Worker → off-screen → returns with 3 bodies<br>Mid-owned worker → returns with 4 bodies</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">FACTIONS</div><div class="tut-sub">10 FACTIONS — EACH PLAYS DIFFERENTLY</div><div class="tut-body">Choose your faction before each battle. Each faction has:</div><div class="tut-visual" style="flex-direction:column;gap:8px;text-align:left;max-width:600px;margin:0 auto;">${[['Unique Passive', 'A powerful ability that triggers automatically based on how you play.'], ['5 Units', 'Workers, melee, ranged, aerial, and special units unique to your faction.'], ['3 Upgrades', 'Permanent army improvements bought mid-game. High cost, major reward.'], ['Royal Guard', '3 powerful temporary units summoned during Last Stand.'], ['Matchup Notes', 'Each faction has natural advantages and disadvantages against others.']].map(([k, v]) => `<div style="display:flex;gap:10px;"><div style="min-width:140px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SUMMONER FACTION</div><div class="tut-sub">UNIQUE: PASSIVE SHADE SUMMONING</div><div class="tut-body">The Necromancer unit has two ways to summon Shades:<br><br>• <b>On kill:</b> Summons 2 Shades when it lands the killing blow<br>• <b>Passive:</b> Every 12 seconds, automatically summons 1 Shade (shown as a purple bar under the unit's HP bar on screen)<br><br>Shades have a cap (12 by default, raised to 16 with Dark Covenant upgrade). The Death Frenzy passive gives all nearby allies a +15% attack speed boost whenever any friendly unit dies.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🔮</span>Necromancer: passive summon every 12s<br><span style="font-size:var(--fs-xs);color:var(--dim);">Purple bar below HP = summon countdown</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">MENDERS FACTION</div><div class="tut-sub">UNIQUE: RETREAT AND RETURN</div><div class="tut-body">The Menders have a unique mechanic — their units retreat when damaged instead of dying:<br><br>• Units below <b>35% HP</b> automatically turn and run back to base<br>• At base, they heal gradually over 6 seconds (vulnerable during this time!)<br>• After fully healed, they rejoin the fight and a <b>18s retreat cooldown</b> begins<br>• Veteran units gain a permanent <b>+10% DMG</b> each time they successfully retreat and return (max 3 times)<br><br>The Cleric fires healing projectiles at the lowest-HP friendly unit. The Seraph heals nearby allies on every attack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💚</span>Unit below 35% HP → retreats<br>Heals fully → returns stronger</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">KEY BINDINGS &amp; HOTKEYS</div><div class="tut-sub">CUSTOMISE YOUR CONTROLS</div><div class="tut-body">All controls can be rebound from the main menu's <b>⌨️ KEY Bindings</b> screen.<br><br>You can also assign <b>Direct Spawn Hotkeys</b> — optional keys that instantly spawn a specific unit slot without navigating the menu. For example, bind <kbd>Q</kbd> to Unit Slot 1 and tap it to immediately spawn your first unit.<br><br>Slot labels show the actual unit names if you've already picked a faction. Hotkeys are unassigned by default and reset on page refresh.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⌨️</span>Navigate = WASD / Arrow Keys<br>Direct spawn = any key (optional)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Controls screen updates live with your bindings</span></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">JUICY COMBAT</div><div class="tut-sub">KNOCKBACK · SCREEN SHAKE · PARTICLES</div><div class="tut-body">Combat is designed to <b>feel impactful</b>:<br><br>• Every melee hit <b>knocks the target back</b> slightly — heavier hits push further<br>• The screen <b>shakes</b> on powerful attacks, base hits, and the tower collapse<br>• Units burst into coloured particles on death<br>• The losing tower shakes violently before toppling and collapsing in a shower of debris<br><br>These details are all real gameplay mechanics — knockback slightly delays enemy advance and can separate units from a pack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💥</span>Big hit → knockback + shake<br>Base hit → heavy shake<br>Tower death → violent collapse</div></div>`; } },
-    ];
+      { render(el) { el.innerHTML = `<div class="tut-title">JUICY COMBAT</div><div class="tut-sub">KNOCKBACK · HIT SHAKE · PARTICLES</div><div class="tut-body">Combat is designed to <b>feel impactful</b>:<br><br>• Every melee hit <b>knocks the target back</b> slightly — heavier hits push further<br>• Units <b>shake visually</b> when taking heavy hits — harder hits shake more<br>• Units burst into coloured particles on death<br>• The losing tower shakes violently before toppling and collapsing in a shower of debris<br><br>These details are all real gameplay mechanics — knockback slightly delays enemy advance and can separate units from a pack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💥</span>Melee hit → knockback + unit shake<br>Base hit → screen shake<br>Tower death → violent collapse</div></div>`; } },
+    ];;
     // ─── INIT ─────────────────────────────────────────────────────────────────────
     function initGame() {
       if (AC.state === 'suspended') AC.resume();
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('sc-game').classList.add('active');
-      canvas.width = 0; canvas.height = 0;
-      const wrap = canvas.parentElement;
-      const hudH = document.getElementById('hud').offsetHeight;
-      const mbH = document.getElementById('momentum-bar-wrap').offsetHeight;
-      canvas.width = wrap.offsetWidth;
-      canvas.height = wrap.offsetHeight - hudH - mbH;
+      resizeGameCanvas();
       const BW = Math.max(50, Math.min(85, canvas.width * 0.065));
       const GY = canvas.height * 0.65;
       G = {
@@ -2626,15 +2712,16 @@
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
             lastStandUsed: false, infernalCount: 0,
-            unitCap: 12, buffCooldowns: [0, 0, 0],
+            unitCap: 12, workerCap: 3, buffCooldowns: [0, 0, 0],
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.4,
             bloodTitheRefund: 2, skyBountyAmt: 6,
-            chillSpeedMult: 0.65, chillDur: 2.0,
+            chillSpeedMult: 0.70, chillDur: 2.0,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
             soulsSpent: 0, bodiesSpent: 0,
+            unitTypeKills: {}, unitTypeDeaths: {}, unitTypeSecs: {}, unitTypeSpawned: {},
             maxKillStreak: 0, _killStreak: 0,
             buffUsed: 0, midCaptures: 0,
           },
@@ -2645,28 +2732,33 @@
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
             lastStandUsed: false, infernalCount: 0,
-            unitCap: 12, buffCooldowns: [0, 0, 0],
+            unitCap: 12, workerCap: 3, buffCooldowns: [0, 0, 0],
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.4,
             bloodTitheRefund: 2, skyBountyAmt: 6,
-            chillSpeedMult: 0.65, chillDur: 2.0,
+            chillSpeedMult: 0.70, chillDur: 2.0,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
             soulsSpent: 0, bodiesSpent: 0,
+            unitTypeKills: {}, unitTypeDeaths: {}, unitTypeSecs: {}, unitTypeSpawned: {},
             maxKillStreak: 0, _killStreak: 0,
             buffUsed: 0, midCaptures: 0,
           },
         ],
         shadeCount: [0, 0], MAX_SHADES: 8,
-        gameStart: Date.now(), siegeDecay: false,
+        gameStart: Date.now(), siegeDecay: true,
         capFlash: 0, capFlashPlayer: 0,
         lastCapAnnounce: 0,
       };
       P1_SEL = 0; P2_SEL = 0; P1_MODE = 0; P2_MODE = 0;
       document.getElementById('pause-overlay').classList.remove('show');
       document.getElementById('siege-indicator').style.opacity = '0';
+      document.getElementById('p1-guard-timer').style.display = 'none';
+      document.getElementById('p2-guard-timer').style.display = 'none';
       buildHUD(); updateHUD();
+      // If dev panel was open before game started, refresh it now with live data
+      if (document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
       requestAnimationFrame(gameLoop);
     }
     // ─── HUD ──────────────────────────────────────────────────────────────────────
@@ -2682,7 +2774,12 @@
           const TL = { mel: 'MEL', rng: 'RNG', air: 'AIR', wrk: 'WRK', sum: 'SUM' };
           const TC = { mel: 't-mel', rng: 't-rng', air: 't-air', wrk: 't-wrk', sum: 't-sum' };
           card.innerHTML = `<span class="utypetag ${TC[def.type]}">${TL[def.type]}</span><span class="uicon">${def.icon}</span><span class="uname">${def.name}</span><div class="ucost"><span class="ctag cs">💀${def.souls}</span><span class="ctag cb">🦴${def.bodies}</span></div>`;
-          card.addEventListener('click', () => trySpawn(pid, def.id, card));
+          card.addEventListener('click', () => {
+            if (pid === 1) P1_SEL = i; else P2_SEL = i;
+            if (pid === 1) P1_MODE = 0; else P2_MODE = 0;
+            refreshSel(pid);
+            trySpawn(pid, def.id, card);
+          });
           card.addEventListener('mouseenter', e => showTT(e, def));
           card.addEventListener('mouseleave', hideTT);
           grid.appendChild(card);
@@ -2695,7 +2792,12 @@
           const card = document.createElement('div');
           card.className = 'upcard'; card.dataset.idx = i;
           card.innerHTML = `<div class="upcard-name">${up.name}</div><div class="upcard-desc">${up.desc}</div><div class="upcard-cost"><span class="ctag cs">💀${up.cost.souls}</span><span class="ctag cb">🦴${up.cost.bodies}</span></div>`;
-          card.addEventListener('click', () => tryBuyUpgrade(pid, i, card));
+          card.addEventListener('click', () => {
+            if (pid === 1) P1_SEL = i; else P2_SEL = i;
+            if (pid === 1) P1_MODE = 1; else P2_MODE = 1;
+            refreshSel(pid);
+            tryBuyUpgrade(pid, i, card);
+          });
           upgEl.appendChild(card);
         });
         // Buff cards
@@ -2706,7 +2808,12 @@
           card.className = 'bfcard'; card.dataset.idx = i;
           const durLabel = bf.duration > 0 ? `${bf.duration}s` : 'Instant';
           card.innerHTML = `<div class="bfcard-icon">${bf.icon}</div><div class="bfcard-name">${bf.name}</div><div class="bfcard-cost">💀${bf.cost}</div><div class="bfcard-meta">⏱${durLabel} · 🔄${bf.cooldown}s</div><div class="bfcard-cd-ring" id="p${pid}-bf-ring-${i}"></div>`;
-          card.addEventListener('click', () => tryActivateBuff(pid, i, card));
+          card.addEventListener('click', () => {
+            if (pid === 1) P1_SEL = i; else P2_SEL = i;
+            if (pid === 1) P1_MODE = 2; else P2_MODE = 2;
+            refreshSel(pid);
+            tryActivateBuff(pid, i, card);
+          });
           bufEl.appendChild(card);
         });
       });
@@ -2803,7 +2910,10 @@
       const gameSec = (Date.now() - G.gameStart) / 1000;
       [1, 2].forEach(pid => {
         const p = G.players[pid - 1];
-        document.getElementById(`p${pid}-souls`).textContent = Math.floor(p.souls);
+        const soulsEl = document.getElementById(`p${pid}-souls`);
+        soulsEl.textContent = Math.floor(p.souls);
+        soulsEl.style.color = p.souls >= 900 ? '#e74c3c' : p.souls >= 700 ? '#f39c12' : '';
+        soulsEl.title = p.souls >= 900 ? 'Near cap! Spend souls!' : '';
         document.getElementById(`p${pid}-bodies`).textContent = Math.floor(p.bodies);
         const hpPct = p.baseHp / p.baseMaxHp;
         document.getElementById(`p${pid}-hp-bar`).style.width = (hpPct * 100) + '%';
@@ -2811,7 +2921,7 @@
         // Combat units vs cap
         const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
         document.getElementById(`p${pid}-unit-count`).textContent = `⚔ ${combatUnits}/${p.unitCap}`;
-        document.getElementById(`p${pid}-worker-count`).textContent = `⛏ ${p.workers}/3`;
+        document.getElementById(`p${pid}-worker-count`).textContent = `⛏ ${p.workers}/${p.workerCap || 3}`;
         // Desp badge
         const despEl = document.getElementById(`p${pid}-desp`);
         despEl.style.display = p.despStacks > 0 ? 'inline' : 'none';
@@ -2825,7 +2935,7 @@
           if (p.guardTimerDisplay <= 0) { p.guardTimerDisplay = 0; gtEl.style.display = 'none'; }
         }
         // Income rate
-        const soulRate = (0.45 + (G.midOwner === pid ? 1.2 : 0) + (p.despStacks * 0.4) + (p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(2);
+        const soulRate = (0.45 + (G.midOwner === pid ? 1.2 : 0) + (p.despStacks * 0.4) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(2);
         const bodyRate = ((4.5 + Math.floor(gameSec / 60) * 0.5) * p.workers).toFixed(1);
         document.getElementById(`p${pid}-income-rate`).textContent = `+${soulRate}💀/s · +${bodyRate}🦴/m`;
         // Affordability + cap warn
@@ -2836,7 +2946,7 @@
             const def = defs[i]; if (!def) return;
             const canAfford = p.souls >= def.souls && p.bodies >= def.bodies;
             const atCap = !def.isWorker && combatUnits >= p.unitCap;
-            const workerCap = def.isWorker && p.workers >= 3;
+            const workerCap = def.isWorker && p.workers >= (p.workerCap || 3);
             card.classList.toggle('cant', !canAfford || workerCap);
             let warn = card.querySelector('.ucard-cap-warn');
             if (atCap) {
@@ -2864,18 +2974,36 @@
             const card = document.getElementById(`p${pid}-buffs`).querySelectorAll('.bfcard')[i];
             if (!card) return;
             card.classList.toggle('on-cooldown', cd > 0);
-            // Cooldown ring via SVG conic gradient
+            // Cooldown/duration ring
             const ringEl = document.getElementById(`p${pid}-bf-ring-${i}`);
-            if (cd > 0 && ringEl) {
-              const pct = 1 - (cd / bf.cooldown);
-              const deg = Math.round(pct * 360);
-              ringEl.innerHTML = `<svg viewBox="0 0 40 40" style="opacity:.5"><circle cx="20" cy="20" r="18" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="${(deg / 360) * 113} 113" stroke-dashoffset="28" transform="rotate(-90 20 20)"/></svg>`;
-              const cdTxt = card.querySelector('.bfcard-cd-txt') || document.createElement('span');
-              cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:2px;right:3px;font-size:.3rem;color:var(--gold);font-family:Cinzel,serif;';
-              cdTxt.textContent = Math.ceil(cd) + 's';
-              if (!card.contains(cdTxt)) card.appendChild(cdTxt);
-              card.appendChild(cdTxt);
-            } else if (ringEl) { ringEl.innerHTML = ''; const t = card.querySelector('.bfcard-cd-txt'); if (t) t.remove(); }
+            if (ringEl) {
+              const C = 2 * Math.PI * 18; // circumference
+              // Check if buff is actively running (not just on cooldown)
+              const isActive = (bf.id === 'warcry' && p.activeBuffs.warcry > 0) || (bf.id === 'ironwall' && p.activeBuffs.ironwall > 0);
+              if (isActive) {
+                // Show shrinking bright ring for remaining duration
+                const dur = bf.id === 'warcry' ? p.activeBuffs.warcry : p.activeBuffs.ironwall;
+                const pct = dur / bf.duration;
+                const filled = pct * C;
+                ringEl.innerHTML = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,220,0,.9)" stroke-width="3" stroke-dasharray="${filled} ${C}" stroke-linecap="round" transform="rotate(-90 20 20)"/></svg>`;
+                const cdTxt = card.querySelector('.bfcard-cd-txt') || document.createElement('span');
+                cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:3px;right:4px;font-size:.55rem;color:#ffe040;font-family:Cinzel,serif;font-weight:bold;';
+                cdTxt.textContent = Math.ceil(dur) + 's';
+                if (!card.contains(cdTxt)) card.appendChild(cdTxt);
+              } else if (cd > 0) {
+                // Cooldown: show REMAINING time as draining ring (starts full, drains to empty)
+                const pct = cd / bf.cooldown; // 1.0 = just started, 0 = ready
+                const filled = pct * C;
+                ringEl.innerHTML = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3" stroke-dasharray="${C} 0"/><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(212,168,67,.75)" stroke-width="3" stroke-dasharray="${filled} ${C}" stroke-linecap="round" transform="rotate(-90 20 20)"/></svg>`;
+                const cdTxt = card.querySelector('.bfcard-cd-txt') || document.createElement('span');
+                cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:3px;right:4px;font-size:.55rem;color:var(--gold);font-family:Cinzel,serif;';
+                cdTxt.textContent = Math.ceil(cd) + 's';
+                if (!card.contains(cdTxt)) card.appendChild(cdTxt);
+              } else {
+                ringEl.innerHTML = '';
+                const t = card.querySelector('.bfcard-cd-txt'); if (t) t.remove();
+              }
+            }
           });
         }
         // Momentum bar
@@ -2905,9 +3033,10 @@
       if (!def || def.isSpawned) return;
       const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
       if (!def.isWorker && combatUnits >= p.unitCap) { shakeCard(cardEl); return; }
-      if (def.isWorker && p.workers >= 3) { shakeCard(cardEl); return; }
+      if (def.isWorker && p.workers >= (p.workerCap || 3)) { shakeCard(cardEl); return; }
       if (p.souls < def.souls || p.bodies < def.bodies) { shakeCard(cardEl); flashRes(pid, p.souls < def.souls ? 'souls' : 'bodies'); return; }
-      p.souls -= def.souls; p.bodies -= def.bodies; p.spawned++;
+      p.souls -= def.souls; p.bodies -= def.bodies; p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + def.bodies; p.spawned++;
+      if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
       p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + def.bodies;
       // Blood Tithe refund
       if (G.factions[pid - 1].id === 'bloodpact') p.souls += p.bloodTitheRefund || 2;
@@ -3078,7 +3207,8 @@
         x, y: baseY, hp: def.hp, maxHp: def.hp, vx: 0, vy: 0,
         attackCooldown: Math.random() * (1 / Math.max(def.attackRate || 1, 0.1)),
         target: null, carrying: false, carryCount: 0, offscreen: false, offTimer: 0, goToMid: false,
-        hitFlash: 0, aliveSecs: 0, dmgMult: 1.0,
+        hitFlash: 0, aliveSecs: 0, spawnTime: Date.now(), dmgMult: 1.0,
+        kiteChance: def.type === 'rng' ? Math.random() : 0, // 0=passive, 1=aggressive kiter
         veteranTimer: 0, veteranStacks: 0, stillTimer: 0, fortified: false, frenzyTimer: 0,
         chargeTimer: 0, _speedMult: 1.0, lastHitTime: 0,
         slowTimer: 0, stunTimer: 0, burnTimer: 0, burnDmgTotal: 0,
@@ -3144,20 +3274,25 @@
         }
       }
       bestD = Infinity;
-      // Pass 1: nearest non-worker, non-retreating
+      // Pass 1: nearest non-worker (retreating units ARE valid targets)
       G.units.forEach(e => {
-        if (e.player === u.player || e.offscreen || e.def.isWorker || e.retreating) return;
+        if (e.player === u.player || e.offscreen || e.def.isWorker) return;
         // BUG3 FIX: ground melee can't hit aerial; aerial melee can
         if (!isRanged && !u.def.aerial && e.def.aerial) return;
         const d = rangeDist(u, e);
         if (d < bestD) { best = e; bestD = d; }
       });
       if (best) return best;
-      // Pass 2: worker hunt after 8s alive
+      // Pass 2: worker hunt after 8s alive (skip offscreen or base-side workers)
       if (u.aliveSecs > 8) {
         bestD = Infinity;
         G.units.forEach(e => {
           if (e.player === u.player || e.offscreen || !e.def.isWorker) return;
+          // Don't target workers that are safely behind the front line or at base
+          const myBase = G.players[u.player - 1].baseX;
+          const theirBase = G.players[e.player - 1].baseX;
+          const workerNearTheirBase = Math.abs(e.x - theirBase) < G.baseW * 2;
+          if (workerNearTheirBase) return;
           const d = rangeDist(u, e);
           if (d < bestD) { best = e; bestD = d; }
         });
@@ -3246,7 +3381,9 @@
           target.hp -= actualDmg; target.lastHitTime = Date.now();
           if (actualDmg > 0) G.players[attacker.player - 1].dmgDealt = (G.players[attacker.player - 1].dmgDealt || 0) + actualDmg;
         }
-        target.hitFlash = 1; SFX.hit();
+        target.hitFlash = 1;
+        target.hitShake = Math.min(4, actualDmg * 0.12); // per-unit shake
+        SFX.hit();
         // Melee slow on hit (Balance 4)
         if (!target.def.immuneDebuff) {
           const glacialSlow = attacker.def.chillOnHit;
@@ -3261,7 +3398,7 @@
         if (attacker.def.lifeSteal) attacker.hp = Math.min(attacker.maxHp, attacker.hp + actualDmg * attacker.def.lifeSteal);
         // Knockback
         const kbDir = target.x > attacker.x ? 1 : -1;
-        const kbForce = Math.min(3.5, actualDmg * 0.08);
+        const kbForce = Math.min(7, actualDmg * 0.22); // stronger knockback
         target.vx = (target.vx || 0) + kbDir * kbForce;
         if (actualDmg > 15) G.shake = Math.max(G.shake || 0, 0.18);
         else if (actualDmg > 8) G.shake = Math.max(G.shake || 0, 0.08);
@@ -3289,6 +3426,15 @@
       if (u.hp > 0) return;
       if (u.spawnProtectionTimer > 0) { u.hp = 1; return; } // spawn protect
       u.hp = 0; SFX.death();
+      // Track per-type lifespan and death
+      if (!u.def.isSpawned) {
+        const op = G.players[u.player === 1 ? 1 : 0]; // opponent
+        const ap = G.players[u.player - 1]; // owner
+        ap.unitTypeDeaths = ap.unitTypeDeaths || {};
+        ap.unitTypeDeaths[u.def.id] = (ap.unitTypeDeaths[u.def.id] || 0) + 1;
+        ap.unitTypeSecs = ap.unitTypeSecs || {};
+        ap.unitTypeSecs[u.def.id] = (ap.unitTypeSecs[u.def.id] || 0) + (u.aliveSecs || 0);
+      }
       const kp = killer ? G.players[killer.player - 1] : null;
       let soulReward = u.def.isSpawned ? 0 : Math.max(1, Math.floor((u.def.souls || 0) * 0.5 + 1));
       // Shade reward
@@ -3299,6 +3445,7 @@
       if (kp) { kp.souls += soulReward; kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + soulReward; }
       if (kp) {
         kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward });
+        if (!u.def.isSpawned && killer && !killer.def.isSpawned) { kp.unitTypeKills = kp.unitTypeKills || {}; kp.unitTypeKills[killer.def.id] = (kp.unitTypeKills[killer.def.id] || 0) + 1; }
         kp._killStreak = (kp._killStreak || 0) + 1;
         kp.maxKillStreak = Math.max(kp.maxKillStreak || 0, kp._killStreak);
       }
@@ -3549,19 +3696,20 @@
         if (u.poisonTimer > 0) { u.poisonTimer -= dt; u.hp -= (u.poisonDmgPerSec || 0) * dt; if (u.hp <= 0) { handleDeath(u, null); continue; } }
         // Hit flash
         if (u.hitFlash > 0) u.hitFlash = Math.max(0, u.hitFlash - dt * 6);
+        if (u.hitShake > 0) u.hitShake = Math.max(0, u.hitShake - dt * 12);
         u.aliveSecs += dt;
         // Workers
         if (u.def.isWorker) { updateWorker(u, dt); continue; }
         // ─── Mender retreat ───
         if (u.def.menderRetreat) {
           // Retreat trigger: only if cooldown expired
-          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.35) {
+          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.35 && (u.returnCount || 0) < 3) {
             u.retreating = true;
           }
           // Retreating: walk to base
           if (u.retreating) {
             const p = G.players[u.player - 1];
-            const retSpd = u.def.speed * 1.3 * (u._speedMult || 1);
+            const retSpd = u.def.speed * 1.8 * (u._speedMult || 1); // faster retreat
             u.x += (u.player === 1 ? -1 : 1) * retSpd * dt;
             u.y = G.groundY - (u.def.radius || 10);
             const atBase = (u.player === 1 && u.x < p.baseX + 60) || (u.player === 2 && u.x > p.baseX - 60);
@@ -3583,6 +3731,10 @@
               if (u.def.returnDmgBonus && u.returnCount <= 3) {
                 u.def.dmg = Math.round(u.def.dmg * (1 + u.def.returnDmgBonus));
                 showPopup(u.x, u.y - 40, `+${Math.round(u.def.returnDmgBonus * 100)}% DMG`, '#2ecc71', u.player);
+              }
+              if (u.returnCount >= 3) {
+                u.def.menderRetreat = false; // spent all retreats
+                showPopup(u.x, u.y - 40, '⚔ LAST STAND', '#e67e22', u.player);
               }
               spawnParticles(u.x, u.y, '#2ecc71', 15);
               showPopup(u.x, u.y - 40, '💚 READY', '#a8e063', u.player);
@@ -3656,12 +3808,20 @@
               u.x += Math.sign(dx) * actualSpd * dt;
             }
             u.vx = Math.sign(dx) * actualSpd;
-            // Ranged retreat from melee — don't retreat near own base
+            // Ranged kiting — random personality per unit
             if (u.def.type === 'rng' && !enemy.def.aerial) {
+              const kc = u.kiteChance || 0;
               const ownBase = G.players[u.player - 1].baseX;
-              const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 3;
-              if (d < u.def.range * 0.65 && !nearOwnBase) {
-                u.x -= Math.sign(dx) * spd * 0.5 * dt;
+              const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
+              if (kc > 0.3 && d < u.def.range * 0.85 && !nearOwnBase) {
+                // Smart kiter: back away, try to stay behind a friendly melee unit
+                const retreatSpd = kc > 0.7 ? spd * 0.9 : spd * 0.55;
+                u.x -= Math.sign(dx) * retreatSpd * dt;
+                // Very smart kiters also try to position behind ally melee
+                if (kc > 0.65) {
+                  const allyMelee = G.units.find(a => a.player === u.player && !a.def.isWorker && a.def.type === 'mel' && Math.abs(a.x - u.x) < 120 && a.x * Math.sign(dx) > u.x * Math.sign(dx));
+                  if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.03 * dt * 60;
+                }
               }
             }
           }
@@ -3695,12 +3855,13 @@
       const gameSec = (Date.now() - G.gameStart) / 1000;
       G.players.forEach(p => {
         const soulsBefore = p.souls;
-        const soulTick = (0.45 + (G.midOwner === p.id ? 1.2 : 0) + (p.despStacks * 0.4)) * dt;
+        const baseTick = (0.45 + (G.midOwner === p.id ? 1.2 : 0)) * dt;
+        const despTick = (p.despStacks * 0.4) * dt;
+        const soulTick = baseTick + despTick;
         p.souls += soulTick;
         p.totalSoulsEarned = (p.totalSoulsEarned || 0) + soulTick;
         if (G.midOwner === p.id) p.midCaptures = (p.midCaptures || 0); // already incremented elsewhere
-        if (p.despStacks > 0) p.souls += p.despStacks * 0.4 * dt;
-        if (p.noMidTimer > 25) {
+        if (p.noMidTimer > 20) {
           p.bodyDespTimer = (p.bodyDespTimer || 0) + dt;
           if (p.bodyDespTimer >= 15) { p.bodyDespTimer = 0; p.bodies += 1; showPopup(p.baseX, G.groundY - 50, '+1🦴 SURGE', '#27ae60', p.id); }
         }
@@ -3708,9 +3869,11 @@
         p.bodyAccum += bodyRate / 60 * dt;
         if (p.bodyAccum >= 1) { const bodyGain = Math.floor(p.bodyAccum); p.bodies += bodyGain; p.totalBodiesEarned = (p.totalBodiesEarned || 0) + bodyGain; p.bodyAccum %= 1; }
         // Unit cap scaling
-        const newCap = Math.min(24, 12 + Math.floor(gameSec / 90) * 2);
+        const newCap = Math.min(30, 12 + Math.floor(gameSec / 55) * 2);
         if (newCap > p.unitCap) {
           p.unitCap = newCap;
+          const newWCap = Math.min(5, 3 + Math.floor(gameSec / 240));
+          if (newWCap > (p.workerCap || 3)) { p.workerCap = newWCap; }
           if (Date.now() - G.lastCapAnnounce > 2000) {
             G.lastCapAnnounce = Date.now();
             const ind = document.getElementById('mid-indicator');
@@ -3754,7 +3917,7 @@
             G.midHolder = null;
 
             // SFX.capture();
-            spawnParticles(G.midX, G.groundY, G.midOwner === 1 ? '#c0392b' : '#2471a3', 20);
+            spawnParticles(G.midX, G.groundY, G.midOwner === 1 ? '#2471a3' : '#c0392b', 20);
           }
         } else {
           G.midCapPlayer = G.midHolder; G.midCapTimer = 0;
@@ -3785,12 +3948,12 @@
         ind.classList.remove('capturing');
       } else if (G.midHolder !== null && G.midHolder !== G.midOwner) {
         ind.textContent = G.midHolder === 1 ? '⏳ P1 CAPTURING...' : '⏳ P2 CAPTURING...';
-        ind.style.color = G.midHolder === 1 ? '#c0392b' : '#2471a3';
+        ind.style.color = G.midHolder === 1 ? '#2471a3' : '#c0392b';
         ind.classList.add('capturing');
       } else if (G.midOwner === 1) {
-        ind.textContent = '🔴 MIDDLE — PLAYER 1 (+1.5💀/s)'; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
+        ind.textContent = '🔵 MIDDLE — PLAYER 1 (+1.5💀/s)'; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
       } else if (G.midOwner === 2) {
-        ind.textContent = '🔵 MIDDLE — PLAYER 2 (+1.5💀/s)'; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
+        ind.textContent = '🔴 MIDDLE — PLAYER 2 (+1.5💀/s)'; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
       } else {
         ind.textContent = '⚔ MIDDLE — UNCLAIMED'; ind.style.color = 'var(--gold)'; ind.classList.remove('capturing');
       }
@@ -3848,19 +4011,7 @@
       ctx.clearRect(0, 0, G.w, G.h);
       ctx.save();
       ctx.translate((G && G.shakeX) || 0, (G && G.shakeY) || 0);
-      // Sky gradient
-      const sky = ctx.createLinearGradient(0, 0, 0, G.h);
-      sky.addColorStop(0, '#050510'); sky.addColorStop(0.7, '#0a0a1f'); sky.addColorStop(1, '#131328');
-      ctx.fillStyle = sky; ctx.fillRect(0, 0, G.w, G.h);
-      // Stars
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      for (let i = 0; i < 60; i++) { const sx = (i * 137.5) % G.w, sy = (i * 97) % G.h * .75; ctx.fillRect(sx, sy, 1, 1); }
-      // Ground
-      const grd = ctx.createLinearGradient(0, G.groundY, 0, G.h);
-      grd.addColorStop(0, '#1a1a30'); grd.addColorStop(1, '#0d0d1a');
-      ctx.fillStyle = grd; ctx.fillRect(0, G.groundY, G.w, G.h - G.groundY);
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, G.groundY); ctx.lineTo(G.w, G.groundY); ctx.stroke();
+      drawFactionBackground(ctx, G);
       // Bases
       G.players.forEach(p => drawBase(p));
       // Mid circle with capture arc
@@ -3894,6 +4045,81 @@
       ctx.restore(); // screen shake
     }
 
+    function drawFactionBackground(ctx, G) {
+      const f1id = G.factions[0] ? G.factions[0].id : '';
+      const f2id = G.factions[1] ? G.factions[1].id : '';
+      // Determine theme based on faction mix
+      const themes = {
+        infernal: 'hell', glacial: 'ice', voltborn: 'storm', menders: 'forest',
+        warriors: 'plains', summoners: 'dark', brutes: 'cave', spirits: 'sky', verdant: 'forest', bloodpact: 'hell'
+      };
+      const t1 = themes[f1id] || 'dark', t2 = themes[f2id] || 'dark';
+      // Pick theme: if both same, use that. If different, blend (toss coin seeded by ids)
+      const seed = (f1id.charCodeAt(0) || 0) + (f2id.charCodeAt(0) || 0);
+      const theme = (t1 === t2) ? t1 : (seed % 2 === 0 ? t1 : t2);
+      // Sky gradient per theme
+      const skyColors = {
+        hell: ['#1a0005', '#380010', '#220008'],
+        ice: ['#000b1f', '#001535', '#0a1f3a'],
+        storm: ['#04040c', '#0a0516', '#090b18'],
+        forest: ['#020d06', '#041408', '#081a0a'],
+        plains: ['#050510', '#0c0c1e', '#121228'],
+        dark: ['#050510', '#0a0a1f', '#131328'],
+        cave: ['#080608', '#0f0b0f', '#160d16'],
+        sky: ['#050520', '#0a0835', '#0c0c28'],
+      };
+      const gc = skyColors[theme] || skyColors.dark;
+      const sky = ctx.createLinearGradient(0, 0, 0, G.h);
+      sky.addColorStop(0, gc[0]); sky.addColorStop(0.6, gc[1]); sky.addColorStop(1, gc[2]);
+      ctx.fillStyle = sky; ctx.fillRect(0, 0, G.w, G.h);
+      // Stars (fewer for bright themes)
+      const starCount = theme === 'hell' ? 20 : theme === 'forest' ? 15 : 55;
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      for (let i = 0; i < starCount; i++) { const sx = (i * 137.5 + 13) % G.w, sy = (i * 97 + 7) % G.h * .7; ctx.fillRect(sx, sy, 1, 1); }
+      // Theme-specific background elements
+      if (theme === 'hell') {
+        // Lava glow at horizon
+        const lg = ctx.createLinearGradient(0, G.groundY - 30, 0, G.groundY);
+        lg.addColorStop(0, 'rgba(180,40,0,0)'); lg.addColorStop(1, 'rgba(220,60,0,.35)');
+        ctx.fillStyle = lg; ctx.fillRect(0, G.groundY - 30, G.w, 30);
+        // Distant fire spires
+        ctx.fillStyle = 'rgba(80,0,0,.6)';
+        for (let i = 0; i < 5; i++) { const sx = (i * 180 + 60) % G.w; ctx.fillRect(sx, G.groundY - (30 + i * 8), 6, 30 + i * 8); }
+      } else if (theme === 'ice') {
+        // Icy blue horizon glow
+        const ig = ctx.createLinearGradient(0, G.groundY - 20, 0, G.groundY);
+        ig.addColorStop(0, 'rgba(0,80,160,0)'); ig.addColorStop(1, 'rgba(30,120,200,.2)');
+        ctx.fillStyle = ig; ctx.fillRect(0, G.groundY - 20, G.w, 20);
+      } else if (theme === 'forest') {
+        // Dark tree line silhouettes
+        ctx.fillStyle = 'rgba(2,20,6,.8)';
+        for (let i = 0; i < 12; i++) {
+          const tx = (i * 95 + 20) % G.w, th = 20 + Math.sin(i * 1.7) * 12, tw = 14 + Math.sin(i * 2.3) * 5;
+          ctx.beginPath(); ctx.moveTo(tx, G.groundY); ctx.lineTo(tx + tw / 2, G.groundY - th); ctx.lineTo(tx + tw, G.groundY); ctx.fill();
+        }
+      } else if (theme === 'storm') {
+        // Lightning flicker occasionally
+        if (Math.random() < 0.005) {
+          ctx.strokeStyle = 'rgba(150,100,255,.4)'; ctx.lineWidth = 1;
+          const lx = Math.random() * G.w;
+          ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx + 20, G.h * 0.4); ctx.lineTo(lx + 5, G.h * 0.6); ctx.stroke();
+        }
+      }
+      // Ground
+      const groundColors = {
+        hell: ['#280006', '#1a0003'], ice: ['#0a1525', '#04090f'],
+        storm: ['#0a0a18', '#060610'], forest: ['#041008', '#020804'],
+        plains: ['#0d0d1a', '#080812'], dark: ['#1a1a30', '#0d0d1a'],
+        cave: ['#100c10', '#080608'], sky: ['#0a0a20', '#060610'],
+      };
+      const gc2 = groundColors[theme] || groundColors.dark;
+      const grd = ctx.createLinearGradient(0, G.groundY, 0, G.h);
+      grd.addColorStop(0, gc2[0]); grd.addColorStop(1, gc2[1]);
+      ctx.fillStyle = grd; ctx.fillRect(0, G.groundY, G.w, G.h - G.groundY);
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, G.groundY); ctx.lineTo(G.w, G.groundY); ctx.stroke();
+    }
+
     function drawBase(p) {
       const x = p.baseX, bw = G.baseW, h = G.h, gy = G.groundY;
       const col = p.id === 1 ? '#2471a3' : '#c0392b';
@@ -3901,12 +4127,12 @@
       // Siege shake / collapse
       const isLoser = !G.running && p.baseHp <= 0;
       const colT = G.collapseTime || 0;
-      const shakeX = G.siegeDecay ? Math.sin(Date.now() / 80) * 1.5 : 0;
+      const shakeX = 0; // tower wobble removed
       ctx.save();
       if (isLoser) {
         const cx2 = x; const cy2 = G.groundY;
         ctx.translate(cx2, cy2);
-        const prog = Math.min(colT / 1.5, 1);
+        const prog = Math.min(colT / 4.0, 1);
         const violentShake = Math.sin(Date.now() / 30) * prog * 10 * (1 - prog * 0.3);
         ctx.rotate(prog * (p.id === 1 ? -0.7 : 0.7));
         ctx.translate(-cx2 + violentShake, -cy2 + prog * 50 + Math.sin(Date.now() / 40) * prog * 5);
@@ -3923,16 +4149,22 @@
       // Gate arch
       ctx.fillStyle = colD;
       ctx.beginPath(); ctx.arc(x, gy, bw * .28, Math.PI, 0); ctx.closePath(); ctx.fill();
-      // HP bar above base
+      // HP bar + label ABOVE tower (not inside)
       const bpct = p.baseHp / p.baseMaxHp;
-      const bary = wy - 14, barw = bw + 10, barx = x - barw / 2;
-      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(barx, bary, barw, 7);
-      const barCol = bpct > 0.5 ? col : bpct > 0.25 ? '#f39c12' : '#e74c3c';
-      ctx.fillStyle = barCol; ctx.fillRect(barx, bary, barw * bpct, 7);
-      ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1; ctx.strokeRect(barx, bary, barw, 7);
+      const barAbove = wy - 32;
+      const barw = bw + 18, barx = x - barw / 2;
       // Player label
-      ctx.fillStyle = col; ctx.font = `bold ${Math.max(9, G.w * .008)}px Cinzel,serif`;
-      ctx.textAlign = 'center'; ctx.fillText(`P${p.id}`, x, wy - 20);
+      ctx.fillStyle = col; ctx.font = `bold ${Math.max(10, G.w * .0095)}px Cinzel,serif`;
+      ctx.textAlign = 'center'; ctx.fillText('P' + p.id, x, barAbove - 6);
+      // HP bar
+      const bary = barAbove;
+      ctx.fillStyle = 'rgba(0,0,0,.75)'; ctx.fillRect(barx, bary, barw, 9);
+      const barCol = bpct > 0.5 ? col : bpct > 0.25 ? '#f39c12' : '#e74c3c';
+      ctx.fillStyle = barCol; ctx.fillRect(barx, bary, barw * bpct, 9);
+      ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 1; ctx.strokeRect(barx, bary, barw, 9);
+      // HP number
+      ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.font = `bold ${Math.max(7, G.w * .006)}px sans-serif`;
+      ctx.textAlign = 'center'; ctx.fillText(Math.ceil(p.baseHp), x, bary + 8);
       ctx.restore();
     }
 
@@ -3946,9 +4178,7 @@
         ctx.beginPath(); ctx.arc(mx, my, mr + 6, 0, Math.PI * 2); ctx.stroke();
       }
       // Mid circle base
-      ctx.strokeStyle = G.midHolder === null && G.midOwner ? '#f39c12' :
-        G.midOwner === 1 ? 'rgba(36,113,163,.6)' :
-          G.midOwner === 2 ? 'rgba(192,57,43,.6)' : 'rgba(255,255,255,.2)';
+      ctx.strokeStyle = G.midOwner === 1 ? 'rgba(36,113,163,.7)' : G.midOwner === 2 ? 'rgba(192,57,43,.7)' : 'rgba(255,255,255,.2)';
       ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.stroke();
       // Capture arc
@@ -3959,14 +4189,17 @@
         ctx.beginPath(); ctx.arc(mx, my, mr, -.5 * Math.PI, -.5 * Math.PI + pct * 2 * Math.PI); ctx.stroke();
       }
       // Center dot
-      ctx.fillStyle = G.midOwner === 1 ? 'rgba(36,113,163,.4)' : G.midOwner === 2 ? 'rgba(192,57,43,.4)' : 'rgba(255,255,255,.08)';
+      ctx.fillStyle = G.midOwner === 1 ? 'rgba(36,113,163,.7)' : G.midOwner === 2 ? 'rgba(192,57,43,.7)' : 'rgba(255,255,255,.08)';
       ctx.beginPath(); ctx.arc(mx, my, 6, 0, Math.PI * 2); ctx.fill();
     }
 
     function drawUnit(u) {
-      const x = u.x, y = u.y, r = u.def.radius || 10;
+      const _shk = (u.hitShake || 0);
+      const _skX = _shk > 0 ? (Math.random() - 0.5) * _shk * 2 : 0;
+      const _skY = _shk > 0 ? (Math.random() - 0.5) * _shk : 0;
+      const x = u.x + _skX, y = u.y + _skY, r = u.def.radius || 10;
       const col = u.def.color || '#888';
-      const pcol = u.player === 1 ? '#c0392b' : '#2471a3';
+      const pcol = u.player === 1 ? '#2471a3' : '#c0392b';
       ctx.save();
       // Retreating units: green trail
       if (u.retreating) {
@@ -4174,25 +4407,29 @@
       ctx.restore();
     }
     // ─── GAME LOOP + WIN CHECK ───────────────────────────────────────────────────
+    let _devRefreshTick = 0;
     function gameLoop(ts) {
       if (!G) return;
       if (!G.running) {
-        // collapse animation for 1.5s after game ends
+        // collapse animation for 4s after game ends
         G.collapseTime = (G.collapseTime || 0) + 0.016;
-        if (G.collapseTime < 1.5) {
-          if (Math.random() < 0.4) {
-            const loser = G.players.find(p => p.baseHp <= 0);
-            if (loser) spawnParticles(loser.baseX + (Math.random() - 0.5) * G.baseW * 1.5, G.groundY - Math.random() * 80, '#e74c3c', 5);
+        if (G.collapseTime < 4.0) {
+          const loser = G.players.find(p => p.baseHp <= 0);
+          const earlyColl = G.collapseTime < 2.0;
+          if (loser && Math.random() < (earlyColl ? 0.6 : 0.3)) {
+            const col = Math.random() < 0.5 ? '#e74c3c' : Math.random() < 0.5 ? '#f39c12' : '#888';
+            spawnParticles(loser.baseX + (Math.random() - 0.5) * G.baseW * 2, G.groundY - Math.random() * 120, col, earlyColl ? 8 : 4);
           }
-          G.shake = Math.max(G.shake || 0, 0.4);
+          G.shake = Math.max(G.shake || 0, earlyColl ? 0.7 : 0.2);
           drawGame(); requestAnimationFrame(gameLoop);
         }
         return;
       }
       if (!G.lastTime) G.lastTime = ts;
-      G.dt = Math.min((ts - G.lastTime) / 1000, 0.05);
+      G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
       G.lastTime = ts;
       if (G.paused) { requestAnimationFrame(gameLoop); return; }
+      G.elapsed = (G.elapsed || 0) + G.dt;
       updateEconomy(G.dt);
       updateMid(G.dt);
       updateSiege(G.dt);
@@ -4203,6 +4440,9 @@
       drawGame();
       updateHUD();
       checkWin();
+      // Auto-refresh dev panel every ~1s while it's open
+      _devRefreshTick = (_devRefreshTick + 1) % 60;
+      if (_devRefreshTick === 0 && document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
       requestAnimationFrame(gameLoop);
     }
 
@@ -4212,45 +4452,416 @@
       G.running = false;
       G.collapseTime = 0;
       const winner = G.players.find(p => p.baseHp > 0) || G.players[0];
-      const loser = G.players.find(p => p.baseHp <= 0);
+      // Capture all stats NOW before setTimeout
+      const _winner = winner;
+      const _G = G;
+      setTimeout(() => {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('sc-gameover').classList.add('active');
+        const gt = document.getElementById('go-title');
+        gt.textContent = `PLAYER ${_winner.id} WINS`;
+        gt.style.color = _winner.id === 1 ? '#2471a3' : '#c0392b';
+        gt.style.textShadow = '';
+        const mockSubs = [
+          'Get rekt.', 'Absolutely demolished.', 'Not even close.',
+          'They never stood a chance.', 'Pack it up.',
+          'The enemy base didn\'t just fall — it evaporated.',
+          'Another one bites the dust.', 'Cleaner than expected.',
+          'Should\'ve stayed home.', 'Dominant. Ruthless. Beautiful.',
+          'They came. They saw. They got destroyed.',
+        ];
+        const goSub = document.getElementById('go-sub-text');
+        if (goSub) goSub.textContent = mockSubs[Math.floor(Math.random() * mockSubs.length)];
+        const gameMin = Math.floor((_G.elapsed || 0) / 60), gameSec2 = Math.floor((_G.elapsed || 0) % 60);
+        const timeStr = `${gameMin}m ${String(gameSec2).padStart(2, '0')}s`;
+        document.getElementById('go-match-time').textContent = '⏱ ' + timeStr;
+        function buildUnitBreakdown(p) {
+          const unitDefs = _G.unitDefs[p.id - 1] || [];
+          const combatDefs = unitDefs.filter(d => !d.isSpawned && !d.isWorker);
+          const rows = combatDefs.map(def => {
+            const spawned = (p.unitTypeSpawned || {})[def.id] || 0;
+            if (!spawned) return '';
+            const deaths = (p.unitTypeDeaths || {})[def.id] || 0;
+            const secs = (p.unitTypeSecs || {})[def.id] || 0;
+            const avgLife = deaths > 0 ? (secs / deaths).toFixed(1) + 's' : '—';
+            const kills = (p.unitTypeKills || {})[def.id] || 0;
+            const kd = deaths > 0 ? (kills / deaths).toFixed(1) : (kills > 0 ? kills + '/0' : '—');
+            return `<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.04);padding:2px 0;">
+              <span style="color:var(--text);font-size:.72rem">${def.icon} ${def.name}</span>
+              <span style="display:flex;gap:8px;font-size:.68rem;">
+                <span title="Times spawned" style="color:var(--dim)">${spawned}×</span>
+                <span title="Kills by this unit / Deaths of this unit" style="color:#f39c12">${kills}K/${deaths}D</span>
+                <span title="Average lifespan" style="color:#1abc9c">${avgLife}</span>
+              </span>
+            </div>`;
+          }).filter(Boolean).join('');
+          return rows ? `<div class="go-stat-section"><div style="font-family:Cinzel,serif;font-size:.7rem;color:var(--gold);margin-bottom:2px;">UNIT BREAKDOWN</div>${rows}</div>` : '';
+        }
+        document.getElementById('go-stats').innerHTML =
+          `<div style="display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;">` +
+          _G.players.map(p => {
+            const pc = p.id === 1 ? '#2471a3' : '#c0392b';
+            const isW = p.baseHp > 0;
+            const opp = _G.players[p.id === 1 ? 1 : 0];
+            const kdr = opp.kills > 0 ? (p.kills / Math.max(1, opp.kills)).toFixed(2) : p.kills > 0 ? p.kills + '/0' : '0/0';
+            const dpe = p.spawned > 0 ? Math.round((p.dmgDealt || 0) / p.spawned) : 0;
+            return `<div class="go-stat-col" style="border-color:${pc};min-width:clamp(200px,28vw,320px)">
+              <div class="go-stat-label" style="color:${pc};font-size:clamp(.85rem,1.3vw,1.1rem)">${isW ? '🏆 ' : '💀 '}PLAYER ${p.id}</div>
+              <div class="go-stat-val" style="color:${pc}">${_G.factions[p.id - 1].icon} ${_G.factions[p.id - 1].name}</div>
+              <div class="go-stat-section">
+                <div class="go-row"><span>Overall K/D</span><b>${kdr}</b></div>
+                <div class="go-row"><span>Kills</span><b>${p.kills}</b></div>
+                <div class="go-row"><span>Units Spawned</span><b>${p.spawned}</b></div>
+                <div class="go-row"><span>Dmg Dealt</span><b>${Math.round(p.dmgDealt || 0)}</b></div>
+                <div class="go-row"><span>Dmg/Unit</span><b>${dpe}</b></div>
+              </div>
+              <div class="go-stat-section">
+                <div class="go-row"><span>💀 Souls Earned</span><b>${Math.round(p.totalSoulsEarned || 0)}</b></div>
+                <div class="go-row"><span>💀 Souls Spent</span><b>${p.soulsSpent || 0}</b></div>
+                <div class="go-row"><span>🦴 Bodies Earned</span><b>${p.totalBodiesEarned || 0}</b></div>
+                <div class="go-row"><span>🦴 Bodies Spent</span><b>${p.bodiesSpent || 0}</b></div>
+              </div>
+              <div class="go-stat-section">
+                <div class="go-row"><span>Kill Streak</span><b>${p.maxKillStreak || 0}</b></div>
+                <div class="go-row"><span>Mid Captures</span><b>${p.midCaptures || 0}</b></div>
+                <div class="go-row"><span>Buffs Used</span><b>${p.buffUsed || 0}</b></div>
+                <div class="go-row"><span>Upgrades</span><b>${p.ownedUpgrades.size}/3</b></div>
+                <div class="go-row"><span>Base HP Left</span><b style="color:${p.baseHp > 0 ? '#2ecc71' : '#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
+              </div>
+              ${buildUnitBreakdown(p)}
+            </div>`;
+          }).join('') + `</div>`;
+      }, 1650);
+    }
+    // ─── RAGEQUIT / HELL INVASION ─────────────────────────────────────────────
+    function showRagequitScreen(rqG) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      const sc = document.getElementById('sc-gameover');
-      sc.classList.add('active');
+      document.getElementById('sc-gameover').classList.add('active');
+
+      const tauntTitles = [
+        'SORE LOSER, HUH?', 'RAGE DETECTED.', 'SKILL ISSUE.',
+        'TOUCH GRASS.', 'UNINSTALL. NOW.', 'YOUR MOM COULD DO BETTER.',
+        'CONGRATS ON QUITTING!', 'DELETED. GONE. FINISHED.'
+      ];
       const gt = document.getElementById('go-title');
-      gt.textContent = `PLAYER ${winner.id} WINS`;
-      gt.style.color = winner.id === 1 ? '#2471a3' : '#c0392b';
-      const gameMin = Math.floor((G.elapsed || 0) / 60), gameSec = Math.floor((G.elapsed || 0) % 60);
-      const timeStr = `${gameMin}m ${String(gameSec).padStart(2, '0')}s`;
-      document.getElementById('go-stats').innerHTML = `<div class="go-time-row">⏱ Match Time: <b>${timeStr}</b></div>` +
-        G.players.map(p => {
+      gt.textContent = tauntTitles[Math.floor(Math.random() * tauntTitles.length)];
+      gt.style.color = '#e74c3c';
+      gt.style.textShadow = '0 0 30px #cc0000';
+
+      document.getElementById('go-match-time').textContent = '🏳 surrendered at ' + (rqG ? Math.floor((rqG.elapsed || 0) / 60) + 'm ' + Math.floor((rqG.elapsed || 0) % 60) + 's' : '??');
+      document.getElementById('go-match-time').style.color = '#e74c3c';
+
+      // Build roast stats for both players
+      if (!rqG) { document.getElementById('go-stats').innerHTML = ''; return; }
+
+      const winnerInsults = [
+        'Did they even try?', 'Barely broke a sweat.', 'Was this person AFK?',
+        'Autopilot on.', 'Carried by the game engine.', 'Lucky and they know it.',
+        'Wins by default. Not impressive.', 'The opponent quit, so... congrats?'
+      ];
+      const loserInsults = [
+        'Genuinely embarrassing.', 'A masterclass in failure.',
+        'Deleted their own career.', 'Unironically got bodied.',
+        'The units were fighting FOR you. Still lost.',
+        'Spent 5 minutes doing absolutely nothing.',
+        'Historic levels of bad.', 'Wrote "gg" and ran.',
+        'Forfeited their right to a rematch.'
+      ];
+      const fakeStats = [
+        ['Excuses Generated', () => Math.floor(Math.random() * 8 + 2)],
+        ['Times Almost Won', () => '0'],
+        ['Skill Rating', () => ['F', 'F-', 'F+', 'F++', 'D (generous)'][Math.floor(Math.random() * 5)]],
+        ['Tissues Used', () => Math.floor(Math.random() * 4 + 1)],
+        ['Seconds of Courage', () => Math.floor(Math.random() * 12) + 's'],
+        ['Brain Cells Active', () => Math.floor(Math.random() * 3)],
+        ['Strategy Employed', () => ['None', 'Vibes', 'Crying', 'Spam', 'Rage'][Math.floor(Math.random() * 5)]],
+        ['Times Checked Score', () => Math.floor(Math.random() * 20 + 10)],
+        ['Units Sacrificed Pointlessly', () => rqG.players[0].spawned + rqG.players[1].spawned],
+        ['Overall Performance', () => ['Tragic', 'Pitiful', 'A mistake', 'Just... no', 'Beyond bad'][Math.floor(Math.random() * 5)]],
+      ];
+
+      document.getElementById('go-stats').innerHTML =
+        `<div style="text-align:center;color:#f39c12;font-family:Cinzel,serif;font-size:clamp(.75rem,1.1vw,.9rem);margin-bottom:16px;letter-spacing:.1em;">THE OFFICIAL POST-TANTRUM REPORT</div>` +
+        `<div style="display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;">` +
+        rqG.players.map(p => {
           const pc = p.id === 1 ? '#2471a3' : '#c0392b';
-          const isW = p.baseHp > 0;
-          const kdr = p.kills > 0 ? (p.kills / Math.max(1, G.players[p.id === 1 ? 1 : 0].kills)).toFixed(2) : '—';
-          const dpe = p.spawned > 0 ? Math.round((p.dmgDealt || 0) / p.spawned) : 0;
-          return `<div class="go-stat-col" style="border-color:${pc}">
-            <div class="go-stat-label" style="color:${pc}">${isW ? '🏆 ' : '💀 '}PLAYER ${p.id}</div>
-            <div class="go-stat-val" style="color:${pc}">${G.factions[p.id - 1].icon} ${G.factions[p.id - 1].name}</div>
+          const isLoser = p.baseHp <= 0 || true; // both get roasted
+          const insult = isLoser
+            ? loserInsults[Math.floor(Math.random() * loserInsults.length)]
+            : winnerInsults[Math.floor(Math.random() * winnerInsults.length)];
+          // Pick 5 random fake stats
+          const shuffled = [...fakeStats].sort(() => Math.random() - 0.5).slice(0, 5);
+          return `<div class="go-stat-col" style="border-color:${pc};min-width:clamp(200px,28vw,320px)">
+            <div class="go-stat-label" style="color:${pc};font-size:clamp(.85rem,1.3vw,1.1rem)">💀 PLAYER ${p.id}</div>
+            <div class="go-stat-val" style="color:#e74c3c;font-size:clamp(.7rem,1vw,.85rem);font-style:italic;">"${insult}"</div>
             <div class="go-stat-section">
-              <div class="go-row"><span>Kills</span><b>${p.kills}</b></div>
-              <div class="go-row"><span>Units Spawned</span><b>${p.spawned}</b></div>
-              <div class="go-row"><span>Dmg Dealt</span><b>${Math.round(p.dmgDealt || 0)}</b></div>
-              <div class="go-row"><span>Dmg/Unit</span><b>${dpe}</b></div>
-            </div>
-            <div class="go-stat-section">
-              <div class="go-row"><span>💀 Souls Earned</span><b>${Math.round(p.totalSoulsEarned || 0)}</b></div>
-              <div class="go-row"><span>💀 Souls Spent</span><b>${p.soulsSpent || 0}</b></div>
-              <div class="go-row"><span>🦴 Bodies Earned</span><b>${p.totalBodiesEarned || 0}</b></div>
-            </div>
-            <div class="go-stat-section">
-              <div class="go-row"><span>Kill Streak</span><b>${p.maxKillStreak || 0}</b></div>
-              <div class="go-row"><span>Mid Captures</span><b>${p.midCaptures || 0}</b></div>
-              <div class="go-row"><span>Buffs Used</span><b>${p.buffUsed || 0}</b></div>
-              <div class="go-row"><span>Upgrades</span><b>${p.ownedUpgrades.size}/3</b></div>
-              <div class="go-row"><span>Base HP Left</span><b style="color:${p.baseHp > 0 ? '#2ecc71' : '#e74c3c'}">${Math.max(0, Math.ceil(p.baseHp))}</b></div>
+              <div class="go-row"><span>Faction</span><b style="color:#888;text-decoration:line-through">${rqG.factions[p.id - 1].icon} ${rqG.factions[p.id - 1].name}</b></div>
+              <div class="go-row"><span>Kills</span><b>${p.kills} (meaningless)</b></div>
+              <div class="go-row"><span>Base HP Left</span><b style="color:#e74c3c">${Math.max(0, Math.ceil(p.baseHp))} / 100 💀</b></div>
+              ${shuffled.map(([label, val]) => `<div class="go-row"><span>${label}</span><b style="color:#e74c3c">${val()}</b></div>`).join('')}
             </div>
           </div>`;
-        }).join('');
-      SFX.victory();
+        }).join('') + `</div>`;
+    }
+
+    function triggerRagequit() {
+      if (!G) return;
+      G.paused = false;
+      document.getElementById('pause-overlay').classList.remove('show');
+      G.running = false;
+      G.ragequit = true;
+      G.rqPhase = 0;   // 0=invasion  1=chaos  2=fadeout
+      G.rqTimer = 0;
+      G.rqFlash = 0;
+      G.rqCracks = [];  // ground cracks
+      G.rqFireCols = []; // fire column eruptions
+      G.rqBeasts = [];  // hell creatures
+      G.rqShakeAmt = 2.0;
+
+      // Spawn cracks along the ground
+      for (let i = 0; i < 8; i++) {
+        G.rqCracks.push({ x: Math.random() * G.w, born: Math.random() * 0.6, len: 40 + Math.random() * 80, angle: (Math.random() - 0.5) * 0.8 });
+      }
+
+      // Spawn hell beasts from both sides + rising from ground
+      const beastTypes = [
+        { name: 'PitLord', r: 22, col: '#8e1010', colB: '#cc2200', speed: 200, hp: 6 },
+        { name: 'Shade', r: 13, col: '#2c2c3a', colB: '#9b59b6', speed: 300, hp: 2 },
+        { name: 'Infernal', r: 18, col: '#cc4400', colB: '#ff8800', speed: 175, hp: 4 },
+        { name: 'Warlord', r: 20, col: '#4a0000', colB: '#c0392b', speed: 185, hp: 5 },
+      ];
+      for (let i = 0; i < 50; i++) {
+        const t = beastTypes[Math.floor(Math.random() * beastTypes.length)];
+        const side = i % 2;
+        const fromGround = Math.random() < 0.35;
+        G.rqBeasts.push({
+          ...t,
+          x: fromGround ? Math.random() * G.w : (side === 0 ? -80 - Math.random() * 120 : G.w + 80 + Math.random() * 120),
+          y: fromGround ? G.groundY + 60 : G.groundY - t.r - Math.random() * 60,
+          vx: fromGround ? (Math.random() - 0.5) * 80 : (side === 0 ? t.speed + Math.random() * 50 : -(t.speed + Math.random() * 50)),
+          vy: fromGround ? -(120 + Math.random() * 80) : (Math.random() - 0.5) * 40,
+          wobble: Math.random() * Math.PI * 2, wobbleSpeed: 3 + Math.random() * 4,
+          dead: false, deadTimer: 0, killCount: 0,
+          rampageTarget: null,
+          delay: fromGround ? Math.random() * 2.0 : Math.random() * 4.5,
+        });
+      }
+
+      [...G.units].forEach(u => { spawnParticles(u.x, u.y, '#cc0000', 6); });
+      G.shake = 2.5;
+      requestAnimationFrame(ragequitLoop);
+    }
+
+    function _drawHellBeast(cctx, d) {
+      cctx.save();
+      cctx.translate(d.x, d.y + Math.sin(d.wobble) * 3);
+      const flip = d.vx < 0 ? -1 : 1;
+      cctx.scale(flip, 1);
+      const r = d.r;
+      // Body
+      cctx.beginPath(); cctx.ellipse(0, 0, r, r * 0.85, 0, 0, Math.PI * 2); cctx.fillStyle = d.col; cctx.fill();
+      // Glow rim
+      cctx.beginPath(); cctx.ellipse(0, 0, r, r * 0.85, 0, 0, Math.PI * 2);
+      cctx.strokeStyle = d.colB; cctx.lineWidth = 2.5; cctx.shadowColor = d.colB; cctx.shadowBlur = 12; cctx.stroke();
+      cctx.shadowBlur = 0;
+      // Eyes (two glowing dots)
+      cctx.fillStyle = '#ff4400';
+      cctx.shadowColor = '#ff2200'; cctx.shadowBlur = 8;
+      cctx.beginPath(); cctx.arc(-r * 0.3, -r * 0.25, r * 0.18, 0, Math.PI * 2); cctx.fill();
+      cctx.beginPath(); cctx.arc(r * 0.3, -r * 0.25, r * 0.18, 0, Math.PI * 2); cctx.fill();
+      cctx.shadowBlur = 0;
+      // Horns
+      if (d.name === 'PitLord' || d.name === 'Warlord') {
+        cctx.strokeStyle = d.colB; cctx.lineWidth = 2.5;
+        cctx.beginPath(); cctx.moveTo(-r * 0.4, -r * 0.7); cctx.lineTo(-r * 0.6, -r * 1.4); cctx.stroke();
+        cctx.beginPath(); cctx.moveTo(r * 0.4, -r * 0.7); cctx.lineTo(r * 0.6, -r * 1.4); cctx.stroke();
+      }
+      // Wings for Shade
+      if (d.name === 'Shade') {
+        cctx.strokeStyle = '#9b59b6'; cctx.lineWidth = 1.5; cctx.globalAlpha *= 0.7;
+        const flap = Math.sin(d.wobble * 2) * 0.4;
+        cctx.beginPath(); cctx.moveTo(-r, -r * 0.2); cctx.quadraticCurveTo(-r * 2, -r * 1.2 + flap * r, -r * 1.8, r * 0.3); cctx.stroke();
+        cctx.beginPath(); cctx.moveTo(r, -r * 0.2); cctx.quadraticCurveTo(r * 2, -r * 1.2 + flap * r, r * 1.8, r * 0.3); cctx.stroke();
+        cctx.globalAlpha = 1;
+      }
+      // Fire aura for Infernal
+      if (d.name === 'Infernal') {
+        for (let f = 0; f < 5; f++) {
+          const fa = (d.wobble * 3 + f * 1.26);
+          const fr = r * 0.6 + Math.sin(fa * 2) * r * 0.3;
+          cctx.fillStyle = `rgba(255,${80 + Math.floor(Math.sin(fa) * 60)},0,0.5)`;
+          cctx.beginPath(); cctx.arc(Math.cos(fa) * fr, Math.sin(fa) * fr - r * 0.3, r * 0.18, 0, Math.PI * 2); cctx.fill();
+        }
+      }
+      cctx.restore();
+    }
+
+    function _drawFireColumn(cctx, fc, t) {
+      const age = t - fc.born;
+      if (age < 0 || age > fc.life) return;
+      const prog = age / fc.life;
+      const alpha = prog < 0.15 ? prog / 0.15 : prog > 0.75 ? 1 - (prog - 0.75) / 0.25 : 1;
+      const h = fc.maxH * Math.min(1, age / 0.3);
+      const w = fc.w;
+      cctx.save();
+      cctx.globalAlpha = alpha * 0.85;
+      // Core
+      const grad = cctx.createLinearGradient(fc.x, fc.groundY, fc.x, fc.groundY - h);
+      grad.addColorStop(0, '#ff6600'); grad.addColorStop(0.4, '#ff2200'); grad.addColorStop(1, 'rgba(255,50,0,0)');
+      cctx.fillStyle = grad;
+      cctx.beginPath();
+      cctx.moveTo(fc.x - w * 0.5, fc.groundY);
+      cctx.quadraticCurveTo(fc.x + Math.sin(age * 8) * w * 0.3, fc.groundY - h * 0.5, fc.x + Math.sin(age * 5) * w * 0.2, fc.groundY - h);
+      cctx.quadraticCurveTo(fc.x + Math.sin(age * 6) * w * 0.3, fc.groundY - h * 0.5, fc.x + w * 0.5, fc.groundY);
+      cctx.fill();
+      // Glow
+      cctx.shadowColor = '#ff4400'; cctx.shadowBlur = 30;
+      cctx.fillStyle = `rgba(255,100,0,${alpha * 0.4})`;
+      cctx.beginPath(); cctx.ellipse(fc.x, fc.groundY, w * 0.8, w * 0.25, 0, 0, Math.PI * 2); cctx.fill();
+      cctx.shadowBlur = 0;
+      cctx.restore();
+    }
+
+    function ragequitLoop() {
+      if (!G || !G.ragequit) return;
+      const dt = 0.016;
+      G.rqTimer += dt;
+      const t = G.rqTimer;
+
+      // Phase transitions
+      if (G.rqPhase === 0 && t > 7.0) { G.rqPhase = 1; G.rqTimer = 0; G.rqFlash = 1.0; }
+      if (G.rqPhase === 1 && t > 8.0) { G.rqPhase = 2; G.rqTimer = 0; }
+      if (G.rqPhase === 2 && t > 4.5) { const _rqG = G; G.ragequit = false; G = null; showRagequitScreen(_rqG); return; }
+
+      // Shake — violent in phase 0/1, trails off in phase 2
+      const targetShake = G.rqPhase === 0 ? 2.2 + Math.sin(t * 7) * 1.2
+        : G.rqPhase === 1 ? 3.8 + Math.sin(t * 14) * 1.5
+          : 0;
+      G.rqShakeAmt = G.rqShakeAmt * 0.92 + targetShake * 0.08;
+
+      // Spawn fire columns periodically
+      if (!G.rqFireCols) G.rqFireCols = [];
+      if (Math.random() < (G.rqPhase === 1 ? 0.32 : 0.16)) {
+        G.rqFireCols.push({ x: Math.random() * G.w, groundY: G.groundY, born: G.rqTimer, life: 0.8 + Math.random() * 0.7, maxH: 60 + Math.random() * 120, w: 18 + Math.random() * 24 });
+      }
+
+      // Update beasts
+      G.rqBeasts.forEach(d => {
+        if (d.dead) { d.deadTimer += dt; return; }
+        if ((d.delay -= dt) > 0) return;
+        d.wobble += d.wobbleSpeed * dt;
+
+        // Gravity + bounce
+        d.vy += 55 * dt;
+        d.x += d.vx * dt;
+        d.y += d.vy * dt;
+        if (d.y > G.groundY - d.r) {
+          d.y = G.groundY - d.r;
+          d.vy *= -0.62;
+          if (Math.abs(d.vy) < 8) d.vy = 0;
+          spawnParticles(d.x, d.y + d.r, '#ff4400', 2);
+        }
+        // Reverse at edges to keep rampaging
+        if (d.x < -d.r * 2) d.vx = Math.abs(d.vx);
+        if (d.x > G.w + d.r * 2) d.vx = -Math.abs(d.vx);
+
+        // Kill nearby game units
+        [...G.units].forEach(u => {
+          if (Math.abs(d.x - u.x) < d.r + 16 && Math.abs(d.y - u.y) < d.r + 20) {
+            spawnParticles(u.x, u.y, '#cc0000', 14);
+            spawnParticles(u.x, u.y, '#ff6600', 6);
+            handleDeath(u, null);
+            d.killCount++;
+            d.vx *= 0.9; // brief stumble
+            G.rqShakeAmt = Math.min(G.rqShakeAmt + 0.4, 3.5);
+            G.rqFlash = Math.min((G.rqFlash || 0) + 0.25, 0.7);
+          }
+        });
+
+        // In phase 1 beasts charge bases
+        if (G.rqPhase === 1) {
+          G.players.forEach(p => {
+            const dx = p.baseX - d.x;
+            if (Math.abs(dx) < d.r + G.baseW) {
+              p.baseHp = Math.max(0, p.baseHp - 60 * dt);
+              G.rqShakeAmt = Math.min(G.rqShakeAmt + 0.3, 4.0);
+            }
+          });
+        }
+      });
+
+      if (G.rqPhase === 1) {
+        G.players.forEach(p => { p.rqSink = (p.rqSink || 0) + 18 * dt; });
+      }
+
+      if (G.rqFlash > 0) G.rqFlash = Math.max(0, G.rqFlash - dt * 4);
+      updateParticles(dt);
+
+      // ── DRAW ──────────────────────────────────────────────────────────────────
+      const canvas = document.getElementById('battlefield');
+      const cctx = canvas.getContext('2d');
+      cctx.save();
+
+      // Screenshake
+      const shk = G.rqShakeAmt * 10;
+      cctx.translate((Math.random() - 0.5) * shk, (Math.random() - 0.5) * shk * 0.6);
+
+      drawGame();
+
+      // Draw cracks
+      cctx.save();
+      G.rqCracks.forEach(cr => {
+        const age = t - cr.born; if (age < 0) return;
+        const prog = Math.min(1, age / 0.4);
+        cctx.strokeStyle = `rgba(255,60,0,${0.6 * prog})`;
+        cctx.lineWidth = 2 + prog * 2;
+        cctx.shadowColor = '#ff4400'; cctx.shadowBlur = 8 * prog;
+        cctx.beginPath();
+        cctx.moveTo(cr.x, G.groundY);
+        for (let s = 0; s < 5; s++) {
+          const sx = cr.x + Math.cos(cr.angle + (s - 2) * 0.3) * cr.len * (s + 1) / 5 + (Math.random() - 0.5) * 8;
+          const sy = G.groundY - Math.sin(cr.angle + (s - 2) * 0.2) * cr.len * (s + 1) / 5 * 0.4;
+          cctx.lineTo(sx, sy);
+        }
+        cctx.stroke();
+      });
+      cctx.shadowBlur = 0;
+      cctx.restore();
+
+      // Draw fire columns
+      G.rqFireCols.forEach(fc => _drawFireColumn(cctx, fc, G.rqTimer));
+      G.rqFireCols = G.rqFireCols.filter(fc => G.rqTimer - fc.born < fc.life + 0.3);
+
+      // Hell tint overlay
+      const tint = G.rqPhase === 0 ? 0.12 + Math.sin(t * 5) * 0.06
+        : G.rqPhase === 1 ? 0.28 + t / 8
+          : 0.5 + G.rqTimer;
+      cctx.fillStyle = 'rgba(100,0,0,' + Math.min(0.7, tint) + ')';
+      cctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Flash
+      if (G.rqFlash > 0) {
+        cctx.fillStyle = 'rgba(255,40,0,' + G.rqFlash + ')';
+        cctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Draw hell beasts on top
+      G.rqBeasts.forEach(d => {
+        if (d.dead && d.deadTimer > 0.4) return;
+        cctx.save();
+        if (d.dead) cctx.globalAlpha = Math.max(0, 1 - d.deadTimer * 3);
+        _drawHellBeast(cctx, d);
+        cctx.restore();
+      });
+
+      // Phase 2: fade to black
+      if (G.rqPhase === 2) {
+        cctx.fillStyle = 'rgba(0,0,0,' + Math.min(1, G.rqTimer * 0.28) + ')';
+        cctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      cctx.restore();
+      requestAnimationFrame(ragequitLoop);
     }
 
     // ─── INPUT ───────────────────────────────────────────────────────────────────
@@ -4262,23 +4873,69 @@
         _rebinding.el.textContent = formatKey(e.code);
         _rebinding.el.classList.remove('rebinding');
         _rebinding = null;
+        updateFactionHints();
         e.preventDefault(); return;
       }
-      if (e.code === 'F1') {
+      // Faction selection keyboard nav
+      if (document.getElementById('sc-faction').classList.contains('active')) {
+        if (e.code === KEYS.p1Up) { factionCursorMove(1, -1); e.preventDefault(); return; }
+        if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
+        if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
+        if (e.code === KEYS.p2Up) { factionCursorMove(2, -1); e.preventDefault(); return; }
+        if (e.code === KEYS.p2Down) { factionCursorMove(2, 1); e.preventDefault(); return; }
+        if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { factionConfirm(2); e.preventDefault(); return; }
+        return; // Don't leak other keys out of faction screen
+      }
+      // Tutorial arrow nav
+      if (document.getElementById('sc-tutorial').classList.contains('active')) {
+        if (e.code === 'ArrowLeft') { tutPrev(); e.preventDefault(); return; }
+        if (e.code === 'ArrowRight' || (e.code === 'Enter' && document.activeElement && document.activeElement.tagName !== 'BUTTON')) {
+          if (tutIdx === TUT.length - 1) showScreen('sc-menu'); else tutNext();
+          e.preventDefault(); return;
+        }
+      }
+      // Dev panel open (M key)
+      if (e.code === 'KeyM') {
         e.preventDefault();
-        document.getElementById('dev-pw-input').value = '';
-        document.getElementById('dev-pw-err').textContent = '';
-        document.getElementById('dev-overlay').style.display = 'flex';
-        document.getElementById('dev-pw-input').focus();
+        const dvp = document.getElementById('dev-panel');
+        // Toggle closed if already open
+        if (dvp.style.display === 'flex') { dvp.style.display = 'none'; return; }
+        // If already unlocked, go straight to panel
+        if (_devUnlocked) { openDevPanel(false); return; }
+        // Show password prompt
+        dvp.style.display = 'flex';
+        document.getElementById('dev-panel-body').innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 0;">
+            <div style="font-size:1.4rem;color:#f39c12;letter-spacing:.1em;">🔒 DEV ACCESS</div>
+            <div style="font-size:.75rem;color:#888;">Enter password to unlock</div>
+            <input id="dev-pw-input" type="password" placeholder="password"
+              style="font-family:Cinzel,serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:200px;">
+            <div id="dev-pw-err" style="color:#e74c3c;font-size:.75rem;min-height:1em;"></div>
+            <div style="display:flex;gap:8px;">
+              <button id="dev-pw-enter-btn" style="font-family:Cinzel,serif;background:#f39c12;color:#000;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-weight:700;">ENTER</button>
+              <button id="dev-pw-cancel-btn" style="font-family:Cinzel,serif;background:#333;color:#fff;border:1px solid #555;padding:7px 20px;border-radius:4px;cursor:pointer;">CANCEL</button>
+            </div>
+          </div>`;
+        setTimeout(() => {
+          const pi = document.getElementById('dev-pw-input');
+          const enterBtn = document.getElementById('dev-pw-enter-btn');
+          const cancelBtn = document.getElementById('dev-pw-cancel-btn');
+          if (enterBtn) enterBtn.addEventListener('click', e2 => { e2.stopPropagation(); checkDevPW(); });
+          if (cancelBtn) cancelBtn.addEventListener('click', () => { dvp.style.display = 'none'; });
+          if (pi) {
+            pi.focus();
+            pi.addEventListener('keydown', ev => {
+              if (ev.code === 'Enter' || ev.code === 'NumpadEnter') { ev.stopPropagation(); checkDevPW(); }
+              if (ev.code === 'Escape') dvp.style.display = 'none';
+              ev.stopPropagation();
+            });
+          }
+        }, 30);
         return;
       }
       if (e.code === 'Escape') {
         if (!G) return;
-        if (!G.running) {
-          G.collapseTime = (G.collapseTime || 0) + 0.016;
-          if (G.collapseTime < 1.5) { drawGame(); requestAnimationFrame(gameLoop); }
-          return;
-        }
+        if (!G.running) return;
         G.paused = !G.paused;
         document.getElementById('pause-overlay').classList.toggle('show', G.paused);
         return;
@@ -4296,8 +4953,7 @@
       else if (e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
       else if (e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
       else if (e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
-      else if (e.code === KEYS.p2Act || e.code === 'NumpadEnter') { e.preventDefault(); activate(2); }
-      // Direct-spawn hotkeys
+      else if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); activate(2); }
       else {
         for (let s = 0; s < 5; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
@@ -4309,12 +4965,9 @@
     function directSpawnSlot(pid, slotIdx) {
       if (!G || !G.running || G.paused) return;
       const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
-      const def = defs[slotIdx];
-      if (!def) return;
-      // Switch to units mode, select the slot, and spawn
+      const def = defs[slotIdx]; if (!def) return;
       if (pid === 1) { P1_MODE = 0; P1_SEL = slotIdx; } else { P2_MODE = 0; P2_SEL = slotIdx; }
-      switchMode(pid, 0);
-      refreshSel(pid);
+      switchMode(pid, 0); refreshSel(pid);
       const cardEl = document.querySelector(`#p${pid}-grid .ucard[data-idx='${slotIdx}']`);
       trySpawn(pid, def.id, cardEl);
     }
@@ -4338,32 +4991,36 @@
       const mode = pid === 1 ? P1_MODE : P2_MODE;
       const sel = pid === 1 ? P1_SEL : P2_SEL;
       if (mode === 0) {
-        // Spawn unit
-        const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+        const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
         const def = defs[sel]; if (!def) return;
-        const grid = document.getElementById(`p${pid}-grid`);
-        const card = grid.querySelectorAll('.ucard')[sel];
-        trySpawn(pid, def.id, card);
+        const cardEl = document.querySelector(`#p${pid}-grid .ucard[data-idx='${sel}']`);
+        trySpawn(pid, def.id, cardEl);
       } else if (mode === 1) {
-        // Buy upgrade
-        const upgrades = G.factions[pid - 1].upgrades || [];
-        const up = upgrades[sel]; if (!up) return;
-        const grid = document.getElementById(`p${pid}-upgrades`);
-        const cards = grid.querySelectorAll('.upcard');
-        const card = cards[sel];
-        tryBuyUpgrade(pid, sel, card);
+        const cardEl = document.querySelectorAll(`#p${pid}-upgrades .upcard`)[sel];
+        if (cardEl) tryBuyUpgrade(pid, sel, cardEl);
       } else if (mode === 2) {
-        // Activate buff
-        const grid = document.getElementById(`p${pid}-buffs`);
-        const card = grid.querySelectorAll('.bfcard')[sel];
-        tryActivateBuff(pid, sel, card);
+        const cardEl = document.querySelectorAll(`#p${pid}-buffs .bfcard`)[sel];
+        if (cardEl) tryActivateBuff(pid, sel, cardEl);
       }
+    }
+
+    function getMaxSel(pid) {
+      const mode = pid === 1 ? P1_MODE : P2_MODE;
+      if (mode === 0) return Math.max(0, G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker).length - 1);
+      if (mode === 1) return 2;
+      if (mode === 2) return 2;
+      return 0;
     }
 
     // ─── SCREENS ─────────────────────────────────────────────────────────────────
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+      if (id === 'sc-faction') {
+        fCursor = [0, 0];
+        updateFactionHints();
+        setTimeout(() => { highlightFactionCursor(1); highlightFactionCursor(2); }, 10);
+      }
     }
 
     function tutNext() { tutIdx = Math.min(TUT.length - 1, tutIdx + 1); renderTut(); }
@@ -4378,6 +5035,85 @@
     }
 
     let fSelected = [null, null];
+
+    function refreshControlsPanel() {
+      function kbdRow(label, keyName) {
+        const val = KEYS[keyName] ? formatKey(KEYS[keyName]) : '—';
+        return `<div class='ctrl-row'><kbd>${val}</kbd> ${label}</div>`;
+      }
+      function slotRows(pid) {
+        let rows = '';
+        for (let s = 0; s < 5; s++) {
+          const k = `p${pid}Slot${s}`;
+          if (KEYS[k]) rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> Spawn Unit ${s + 1}</div>`;
+        }
+        return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Cinzel,serif;'>DIRECT SPAWN</div>${rows}` : '';
+      }
+      document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>` +
+        kbdRow('Navigate Left', 'p1Left') + kbdRow('Navigate Right', 'p1Right') +
+        kbdRow('Mode Up', 'p1Up') + kbdRow('Mode Down', 'p1Down') +
+        kbdRow('Spawn / Activate', 'p1Act') + slotRows(1);
+      document.getElementById('ctrl-p2-panel').innerHTML = `<h3>PLAYER 2</h3>` +
+        kbdRow('Navigate Left', 'p2Left') + kbdRow('Navigate Right', 'p2Right') +
+        kbdRow('Mode Up', 'p2Up') + kbdRow('Mode Down', 'p2Down') +
+        kbdRow('Spawn / Activate', 'p2Act') + slotRows(2);
+    }
+
+
+    document.getElementById('btn-rematch').addEventListener('click', () => {
+      if (P1_FACTION && P2_FACTION) initGame();
+    });
+    document.getElementById('btn-change-faction').addEventListener('click', () => {
+      G = null; fSelected = [null, null];
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-start').textContent = 'START BATTLE →';
+      document.getElementById('fchosen-p1').textContent = '— No faction chosen —';
+      document.getElementById('fchosen-p2').textContent = '— No faction chosen —';
+      document.querySelectorAll('.fcard').forEach(c => c.classList.remove('sel1', 'sel2'));
+      showScreen('sc-faction');
+    });
+    document.getElementById('btn-to-menu').addEventListener('click', () => {
+      G = null; showScreen('sc-menu'); animMenuCanvas();
+    });
+
+    // ─── REBIND ──────────────────────────────────────────────────────────────────
+    function updateFactionHints() {
+      const h1 = document.getElementById('faction-hint-p1');
+      const h2 = document.getElementById('faction-hint-p2');
+      if (h1) h1.querySelector('span').textContent = `${formatKey(KEYS.p1Up)}/${formatKey(KEYS.p1Down)} scroll · ${formatKey(KEYS.p1Act)} confirm`;
+      if (h2) h2.querySelector('span').textContent = `${formatKey(KEYS.p2Up)}/${formatKey(KEYS.p2Down)} scroll · ${formatKey(KEYS.p2Act)} confirm`;
+    }
+
+    function refreshRebindUI() {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act'].forEach(k => {
+        const el = document.getElementById('rk-' + k);
+        if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
+      });
+      [1, 2].forEach(pid => {
+        const faction = typeof fSelected !== 'undefined' ? FACTIONS[fSelected[pid - 1]] : null;
+        const units = faction ? faction.units.filter(u => !u.isSpawned && !u.isWorker) : [];
+        for (let s = 0; s < 5; s++) {
+          const k = `p${pid}Slot${s}`;
+          const el = document.getElementById('rk-' + k);
+          const lbl = document.getElementById('rk-' + k + '-label');
+          if (el) {
+            const assigned = KEYS[k];
+            el.textContent = assigned ? formatKey(assigned) : '—';
+            el.className = 'rkey slot-key' + (assigned ? '' : ' unassigned');
+            el.onclick = () => startRebind(k, el);
+          }
+          if (lbl) {
+            lbl.textContent = units[s] ? `${units[s].icon} ${units[s].name}` : `Unit Slot ${s + 1}`;
+          }
+        }
+      });
+    }
+    refreshRebindUI();
+    updateFactionHints();
+    document.getElementById('btn-rebind').addEventListener('click', () => { refreshRebindUI(); showScreen('sc-rebind'); });
+    document.getElementById('btn-rebind-back').addEventListener('click', () => showScreen('sc-menu'));
+
+
     function buildFactionCards() {
       [1, 2].forEach(pid => {
         const container = document.getElementById(`fcards-p${pid}`);
@@ -4426,6 +5162,33 @@
       }
     }
 
+    // ─── FACTION KEYBOARD NAV ─────────────────────────────────────────────────────
+    let fCursor = [0, 0]; // Highlighted (not yet confirmed) faction index per player
+
+    function factionCursorMove(pid, dir) {
+      // Only active when faction screen is visible
+      if (!document.getElementById('sc-faction').classList.contains('active')) return;
+      fCursor[pid - 1] = (fCursor[pid - 1] + dir + FACTIONS.length) % FACTIONS.length;
+      highlightFactionCursor(pid);
+    }
+
+    function factionConfirm(pid) {
+      if (!document.getElementById('sc-faction').classList.contains('active')) return;
+      const fi = fCursor[pid - 1];
+      const card = document.querySelectorAll(`#fcards-p${pid} .fcard`)[fi];
+      if (card) selectFaction(pid, fi, card);
+    }
+
+    function highlightFactionCursor(pid) {
+      const cards = document.querySelectorAll(`#fcards-p${pid} .fcard`);
+      cards.forEach((c, i) => c.classList.toggle('fkey-cursor', i === fCursor[pid - 1]));
+      // Scroll card into view
+      const card = cards[fCursor[pid - 1]];
+      if (card) card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    // Cursor reset is handled in showScreen() — no transitionend needed
+
     // ─── MENU ANIMATION ──────────────────────────────────────────────────────────
     const menuCanvas = document.getElementById('menu-canvas');
     const mctx = menuCanvas.getContext('2d');
@@ -4453,7 +5216,7 @@
 
     // ─── BUTTON WIRING ───────────────────────────────────────────────────────────
     document.getElementById('btn-play').addEventListener('click', () => showScreen('sc-faction'));
-    document.getElementById('btn-tutorial').addEventListener('click', () => { tutIdx = 0; renderTut(); showScreen('sc-tutorial'); });
+    document.getElementById('btn-tutorial').addEventListener('click', () => { tutIdx = 0; renderTut(); showScreen('sc-tutorial'); setTimeout(() => document.getElementById('sc-tutorial').focus(), 50); });
     document.getElementById('btn-controls').addEventListener('click', () => { refreshControlsPanel(); showScreen('sc-controls'); });
     function refreshControlsPanel() {
       function kbdRow(label, keyName) {
@@ -4480,6 +5243,7 @@
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-tut-prev').addEventListener('click', tutPrev);
+    // Tutorial arrow keys handled by global keydown handler
     document.getElementById('btn-tut-next').addEventListener('click', () => {
       if (tutIdx === TUT.length - 1) showScreen('sc-menu'); else tutNext();
     });
@@ -4547,56 +5311,203 @@
     let _escCount = 0, _escTimer = null;
 
     function checkDevPW() {
-      const val = document.getElementById('dev-pw-input').value;
+      const inp = document.getElementById('dev-pw-input');
+      if (!inp) return;
+      const val = inp.value;
       const pw = atob('SUxvdmVCbGFja1Blb3BsZQ==');
       if (val === pw) {
-        document.getElementById('dev-overlay').style.display = 'none';
-        openDevPanel();
+        _devUnlocked = true;
+        openDevPanel(true);
       } else {
-        document.getElementById('dev-pw-err').textContent = 'Invalid password';
-        document.getElementById('dev-pw-input').value = '';
-        document.getElementById('dev-pw-input').focus();
+        const err = document.getElementById('dev-pw-err');
+        if (err) { err.textContent = 'Invalid password'; setTimeout(() => { if (err) err.textContent = ''; }, 2000); }
+        inp.value = ''; inp.focus();
       }
     }
-    document.getElementById('dev-pw-input').addEventListener('keydown', e => { if (e.code === 'Enter') checkDevPW(); if (e.code === 'Escape') { document.getElementById('dev-overlay').style.display = 'none'; } e.stopPropagation(); });
+    // pw-input listener added dynamically inside openDevPanel
 
-    function devRow(label, content) {
-      return `<div class="dev-row"><span>${label}</span>${content}</div>`;
-    }
-    function devBtn(label, onclick) {
-      return `<button class="dev-btn" onclick="${onclick}">${label}</button>`;
-    }
-    function devInp(id, val, onchange) {
-      return `<input class="dev-inp" id="${id}" type="number" value="${val}" onchange="${onchange}">`;
-    }
-
-    function openDevPanel() {
+    // ── DEV PANEL DRAG ──────────────────────────────────────────────────────
+    (function () {
       const panel = document.getElementById('dev-panel');
-      panel.style.display = 'block';
-      if (!G) { document.getElementById('dev-p1-section').innerHTML += '<div style="color:#e74c3c;font-size:.75rem;">No active game</div>'; return; }
+      const bar = document.getElementById('dev-drag-bar');
+
+      // Create resize handle as child of panel (absolute positioning, always in corner)
+      const handle = document.createElement('div');
+      handle.id = 'dev-resize-handle';
+      handle.style.cssText = 'position:absolute;bottom:0;right:0;width:20px;height:20px;cursor:nwse-resize;z-index:10;';
+      // Draw the gripper lines via SVG
+      handle.innerHTML = `<svg width="20" height="20" style="display:block;opacity:0.6"><line x1="6" y1="20" x2="20" y2="6" stroke="#f39c12" stroke-width="2"/><line x1="12" y1="20" x2="20" y2="12" stroke="#f39c12" stroke-width="2"/><line x1="18" y1="20" x2="20" y2="18" stroke="#f39c12" stroke-width="2"/></svg>`;
+      panel.appendChild(handle);
+
+      // Panel needs position:relative so absolute child works, and overflow:hidden
+      // to clip the scrollable body — but panel itself is position:fixed already,
+      // so just ensure overflow clips correctly
+      panel.style.overflow = 'hidden';
+
+      // ── Drag ──
+      let dragging = false, resizing = false, ox = 0, oy = 0, rsx = 0, rsy = 0, rsw = 0, rsh = 0;
+
+      bar.addEventListener('mousedown', e => {
+        if (e.target === handle) return;
+        dragging = true;
+        ox = e.clientX - panel.offsetLeft;
+        oy = e.clientY - panel.offsetTop;
+        bar.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+
+      handle.addEventListener('mousedown', e => {
+        resizing = true;
+        rsx = e.clientX; rsy = e.clientY;
+        rsw = panel.offsetWidth; rsh = panel.offsetHeight;
+        document.body.style.userSelect = 'none';
+        e.preventDefault(); e.stopPropagation();
+      });
+
+      document.addEventListener('mousemove', e => {
+        if (dragging) {
+          panel.style.left = Math.max(0, Math.min(window.innerWidth - panel.offsetWidth, e.clientX - ox)) + 'px';
+          panel.style.top = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, e.clientY - oy)) + 'px';
+        }
+        if (resizing) {
+          panel.style.width = Math.max(340, rsw + (e.clientX - rsx)) + 'px';
+          panel.style.height = Math.max(200, rsh + (e.clientY - rsy)) + 'px';
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        dragging = false; resizing = false;
+        bar.style.cursor = 'grab';
+        document.body.style.userSelect = '';
+      });
+    })();
+
+    // Dev panel tooltip: instant, not browser native title
+    function devTip(tip) { return tip ? `data-dev-tip="${tip.replace(/"/g, "'")}"` : ''; }
+    function devRow(label, content, tip) {
+      return `<div class="dev-row" ${devTip(tip)}><span class="dev-row-label">${label}</span><div class="dev-row-controls">${content}</div></div>`;
+    }
+    function devBtn(label, onclick, tip) {
+      return `<button class="dev-btn" onclick="${onclick}" ${devTip(tip)}>${label}</button>`;
+    }
+    function devInp(id, val, onchange, tip) {
+      return `<input class="dev-inp" id="${id}" type="number" value="${val}" onchange="${onchange}" ${devTip(tip)} step="1">`;
+    }
+    function devToggle(label, active, onclick, tip) {
+      return `<button class="dev-btn ${active ? 'dev-btn-active' : ''}" onclick="${onclick}" ${devTip(tip)}>${active ? '✓ ' : ''} ${label}</button>`;
+    }
+    // Wire up instant tooltip for dev panel
+    function wireDevTooltips() {
+      const panel = document.getElementById('dev-panel');
+      const tip = document.getElementById('dev-tip-box');
+      panel.addEventListener('mouseover', e => {
+        const el = e.target.closest('[data-dev-tip]');
+        if (!el) { tip.style.display = 'none'; return; }
+        tip.textContent = el.getAttribute('data-dev-tip');
+        tip.style.display = 'block';
+        const r = el.getBoundingClientRect();
+        tip.style.left = Math.min(r.left, window.innerWidth - 220) + 'px';
+        tip.style.top = (r.bottom + 4) + 'px';
+      });
+      panel.addEventListener('mouseout', e => {
+        if (!e.relatedTarget || !e.relatedTarget.closest('#dev-panel')) tip.style.display = 'none';
+      });
+    }
+
+    function openDevPanel(forceRebuild) {
+      const panel = document.getElementById('dev-panel');
+      panel.style.display = 'flex';
+      // Rebuild HTML skeleton for sections if needed (first open or forced)
+      if (forceRebuild || !document.getElementById('dev-p1-section')) {
+        document.getElementById('dev-panel-body').innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="dev-section" id="dev-p1-section"><div class="dev-head" style="color:#2471a3">PLAYER 1</div></div>
+            <div class="dev-section" id="dev-p2-section"><div class="dev-head" style="color:#c0392b">PLAYER 2</div></div>
+          </div>
+          <div class="dev-section" id="dev-game-section"><div class="dev-head" style="color:#f39c12">GAME STATE</div></div>
+          <div class="dev-section" id="dev-units-section" style="display:none;"><div class="dev-head" style="color:#9b59b6">UNIT EDITOR</div><div id="dev-unit-list"></div></div>`;
+        wireDevTooltips();
+      }
+      // Show placeholder if no game is running
+      if (!G || !(G.running || G.collapseTime)) {
+        document.getElementById('dev-p1-section').innerHTML = '<div class="dev-head" style="color:#2471a3">PLAYER 1</div><div style="color:#e74c3c;font-size:.75rem;padding:6px;">⚠ No active game — start a match first</div>';
+        document.getElementById('dev-p2-section').innerHTML = '<div class="dev-head" style="color:#c0392b">PLAYER 2</div><div style="color:#e74c3c;font-size:.75rem;padding:6px;"></div>';
+        document.getElementById('dev-game-section').innerHTML = '<div class="dev-head" style="color:#f39c12">GAME STATE</div><div style="color:#666;font-size:.75rem;padding:6px;">Game not running. Launch a match and re-open.</div>';
+        return;
+      }
+      document.getElementById('dev-paused-badge').style.display = G.paused ? 'inline' : 'none';
       [1, 2].forEach(pid => {
         const p = G.players[pid - 1];
+        const pc = pid === 1 ? '#2471a3' : '#c0392b';
         const sec = document.getElementById(`dev-p${pid}-section`);
-        sec.innerHTML = `<div class="dev-head" style="color:${pid === 1 ? '#2471a3' : '#c0392b'}">PLAYER ${pid} — ${G.factions[pid - 1].name}</div>
-          ${devRow('Souls', devInp(`d-p${pid}-souls`, Math.floor(p.souls), `G.players[${pid - 1}].souls=+this.value;updateHUD()`) + devBtn('+500', `G.players[${pid - 1}].souls+=500;updateHUD();openDevPanel()`))}
-          ${devRow('Bodies', devInp(`d-p${pid}-bodies`, p.bodies, `G.players[${pid - 1}].bodies=+this.value;updateHUD()`) + devBtn('+50', `G.players[${pid - 1}].bodies+=50;updateHUD();openDevPanel()`))}
-          ${devRow('Base HP', devInp(`d-p${pid}-hp`, Math.ceil(p.baseHp), `G.players[${pid - 1}].baseHp=+this.value;G.players[${pid - 1}].baseMaxHp=Math.max(G.players[${pid - 1}].baseMaxHp,+this.value);updateHUD()`))}
-          ${devRow('Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `G.players[${pid - 1}].unitCap=+this.value`))}
-          ${devRow('Kill Enemy Base', devBtn('DESTROY', `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`))}
-          ${devRow('Kill All Enemies', devBtn('KILL ALL', `G.units.filter(u=>u.player!==${pid}).forEach(u=>{u.hp=0;handleDeath(u,null)});`))}
-          ${devRow('Spawn Guard', devBtn('SPAWN', `G.players[${pid - 1}].lastStandUsed=false;G.players[${pid - 1}].souls=9999;tryActivateBuff(${pid},0,null)`))}
-          ${devRow('Win Instantly', devBtn('WIN', `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`))}`;
+        sec.innerHTML = `<div class="dev-head" style="color:${pc}">PLAYER ${pid} — ${G.factions[pid - 1].name}</div>
+          ${devRow('💀 Souls', devInp(`d-p${pid}-souls`, Math.floor(p.souls), `G.players[${pid - 1}].souls=+this.value;updateHUD()`) + devBtn('+200', `G.players[${pid - 1}].souls+=200;updateHUD();openDevPanel()`, '+200 souls'), 'Set or add souls directly')}
+          ${devRow('🦴 Bodies', devInp(`d-p${pid}-bodies`, p.bodies, `G.players[${pid - 1}].bodies=+this.value;updateHUD()`) + devBtn('+30', `G.players[${pid - 1}].bodies+=30;updateHUD();openDevPanel()`, '+30 bodies'), 'Set or add bodies directly')}
+          ${devRow('❤️ Base HP', devInp(`d-p${pid}-hp`, Math.ceil(p.baseHp), `G.players[${pid - 1}].baseHp=+this.value;updateHUD()`), 'Edit base health directly (0 = game over)')}
+          ${devRow('⚔ Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `G.players[${pid - 1}].unitCap=+this.value;updateHUD()`), 'Override unit cap for this player')}
+          ${devRow('⛏ Worker Cap', devInp(`d-p${pid}-wcap`, p.workerCap || 3, `G.players[${pid - 1}].workerCap=+this.value;updateHUD()`), 'Override worker cap (default 3→5 over time)')}
+          ${devRow('', devBtn('👑 SPAWN GUARD', `G.players[${pid - 1}].lastStandUsed=false;G.players[${pid - 1}].baseHp=31;`, `Trigger last stand + royal guard for P${pid}`) + devBtn('☠ KILL ENEMIES', `G.units.filter(u=>u.player!==${pid}).forEach(u=>{u.hp=0;handleDeath(u,null)})`, `Kill all of Player ${pid === 1 ? 2 : 1}'s units`))}
+          ${devRow('', devBtn(`💥 DESTROY ENEMY`, `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`, `Destroy Player ${pid === 1 ? 2 : 1}'s base — Player ${pid} wins`) + `<input id="dev-p${pid}-dmg" type="number" value="25" min="1" max="100" style="width:52px;background:#111;border:1px solid #555;color:#fff;padding:3px 5px;font-family:Cinzel,serif;font-size:.7rem;border-radius:3px;text-align:center;">` + devBtn(`🩸 HIT OWN BASE`, `const v=+(document.getElementById('dev-p${pid}-dmg').value||25);G.players[${pid - 1}].baseHp=Math.max(0,G.players[${pid - 1}].baseHp-v);updateHUD();`, `Deal custom damage to Player ${pid}'s own base`))}
+          ${devRow('', devBtn(`📋 UNIT LIST`, `openUnitList(${pid})`, `Browse and edit all active units for Player ${pid}`))}`;
       });
       const gs = document.getElementById('dev-game-section');
+      const spd = G._speedMult || 1;
       gs.innerHTML = `<div class="dev-head" style="color:#f39c12">GAME STATE</div>
-        ${devRow('Game Time', `<span style="color:#fff">${Math.floor(G.elapsed || 0)}s</span>`)}
-        ${devRow('Units on field', `<span style="color:#fff">${G.units.length}</span>`)}
-        ${devRow('Particles', `<span style="color:#fff">${G.particles.length}</span>`)}
-        ${devRow('Speed Multiplier', devInp('d-gamespeed', '1', 'G._speedMult=+this.value') + '<span style="color:#888;font-size:.6rem">sets G._speedMult</span>')}
-        ${devRow('Siege Decay', devBtn(G.siegeDecay ? 'ACTIVE' : 'INACTIVE', 'G.siegeDecay=!G.siegeDecay;openDevPanel()'))}
-        ${devRow('Mid Owner', devBtn('P1', "G.midOwner=1;G.midHolder=1;") + devBtn('P2', "G.midOwner=2;G.midHolder=2;") + devBtn('NONE', "G.midOwner=null;G.midHolder=null;"))}
-        ${devRow('Spawn Particles', devBtn('BURST', "spawnParticles(G.midX,G.groundY-50,'#f39c12',80)"))}
-        ${devRow('Close Panel', devBtn('✕ CLOSE', "document.getElementById('dev-panel').style.display='none'"))}`;
+        ${devRow('⏱ Game Time', `<span style="color:#fff">${Math.floor(G.elapsed || 0)}s</span>`, 'Elapsed game time in seconds')}
+        ${devRow('🧍 Units on field', `<span style="color:#fff">${G.units.length}</span>`, 'Total active units (both players)')}
+        ${devRow('✨ Particles', `<span style="color:#fff">${G.particles.length}</span>`, 'Active particle count')}
+        ${devRow('⚡ Game Speed',
+        `<input type="range" min="0.1" max="4" step="0.1" value="${spd}" oninput="G._speedMult=+this.value;document.getElementById('dev-spd-label').textContent=this.value+'x'" style="width:80px;vertical-align:middle"> <span id="dev-spd-label">${spd}x</span>`,
+        'Multiplier applied to deltaTime — 1.0 = normal, 2.0 = 2× speed, 0.5 = slow-mo')}
+        ${devRow('🔥 Siege Decay', devToggle('SIEGE DECAY', G.siegeDecay, 'G.siegeDecay=!G.siegeDecay;openDevPanel()', 'Toggle base HP drain after 3 min'))}
+        ${devRow('🎯 Mid Control',
+          devBtn('→ P1', "G.midOwner=1;G.midHolder=1;", 'Give mid ownership to Player 1') +
+          devBtn('→ P2', "G.midOwner=2;G.midHolder=2;", 'Give mid ownership to Player 2') +
+          devBtn('NEUTRAL', "G.midOwner=null;G.midHolder=null;", 'Reset mid to neutral'),
+          'Set who controls the mid point')}
+        ${devRow('💥 Particles', devBtn('BURST', "spawnParticles(G.midX,G.groundY-50,'#f39c12',80)", 'Spawn a particle burst at mid'))}
+        ${devRow('🎁 Give All Upgrades',
+            devBtn('P1 ALL', "G.factions[0].upgrades.forEach(u=>{if(!G.players[0].ownedUpgrades.has(u.id)){G.players[0].ownedUpgrades.add(u.id);applyUpgrade(0,u);}});openDevPanel();", 'Unlock every upgrade for Player 1') +
+            devBtn('P2 ALL', "G.factions[1].upgrades.forEach(u=>{if(!G.players[1].ownedUpgrades.has(u.id)){G.players[1].ownedUpgrades.add(u.id);applyUpgrade(1,u);}});openDevPanel();", 'Unlock every upgrade for Player 2'),
+            'Give all faction upgrades instantly')}
+        ${devRow('⚡ Cooldowns', devBtn('RESET ALL', "G.players.forEach(p=>{p.buffCooldowns=[0,0,0];});openDevPanel();", 'Set all buff cooldowns to 0'), 'Reset all buff cooldowns to ready')}
+        ${devRow('🌪 Chaos Mode',
+              devBtn('3× DMG+SPD', "G.units.forEach(u=>{u.def.dmg*=3;u.def.speed*=2;u.dmgMult=3;});showPopup(G.midX,G.groundY-80,'💀 CHAOS!','#e74c3c',1);", 'Triple all unit damage and double speed') +
+              devBtn('💥 QUAKE', "G.shake=2;spawnParticles(G.midX,G.groundY,'#f39c12',200);", 'Huge screenshake + particle burst'),
+              'Cause total mayhem on the battlefield')}
+        ${devRow('☠ Kill All', devBtn('KILL EVERYONE', "[...G.units].forEach(u=>{spawnParticles(u.x,u.y,'#cc0000',8);handleDeath(u,null)});", 'Instantly kill every unit on both sides'), 'Wipe the entire battlefield')}
+
+        <button id="dev-apply-btn" onclick="this.classList.add('dev-apply-click');setTimeout(()=>this.classList.remove('dev-apply-click'),200);updateHUD();openDevPanel();" style="width:100%;padding:10px;margin-top:8px;font-family:Cinzel,serif;font-size:.85rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,#f39c12,#e67e22);color:#000;border:none;border-radius:5px;cursor:pointer;transition:background .15s,transform .1s;" onmouseover="this.style.background='#000';this.style.color='#f39c12';this.style.border='1px solid #f39c12';" onmouseout="this.style.background='linear-gradient(135deg,#f39c12,#e67e22)';this.style.color='#000';this.style.border='none';" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">✅ APPLY CHANGES</button>`;
+    }
+
+    function openUnitList(pid) {
+      const sec = document.getElementById('dev-units-section');
+      const list = document.getElementById('dev-unit-list');
+      sec.style.display = 'block';
+      sec.scrollIntoView({ behavior: 'smooth' });
+      const units = G ? G.units.filter(u => u.player === pid && !u.offscreen) : [];
+      if (!units.length) { list.innerHTML = `<div style="color:#888;font-size:.75rem;padding:6px;">No active units for Player ${pid}</div>`; return; }
+      const pc = pid === 1 ? '#2471a3' : '#c0392b';
+      list.innerHTML = `<div style="font-size:.72rem;color:${pc};font-family:Cinzel,serif;margin-bottom:6px;">PLAYER ${pid} UNITS (${units.length})</div>` +
+        units.map((u, i) => {
+          const hpPct = Math.round(u.hp / u.maxHp * 100);
+          return `<div style="border:1px solid #333;border-radius:4px;padding:6px;margin-bottom:4px;background:rgba(0,0,0,.4)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="color:var(--text);font-size:.72rem">${u.def.icon} ${u.def.name}</span>
+              <span style="color:${hpPct > 50 ? '#2ecc71' : hpPct > 25 ? '#f39c12' : '#e74c3c'};font-size:.65rem">${Math.ceil(u.hp)}/${u.maxHp} HP (${hpPct}%)</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <label style="font-size:.6rem;color:#888;">HP <input type="number" value="${Math.ceil(u.hp)}" min="0" max="${u.maxHp * 3}" step="5" onchange="const uid=${u.id};const ut=G.units.find(x=>x.id===uid);if(ut){ut.hp=+this.value;ut.maxHp=Math.max(ut.maxHp,+this.value);}" style="width:50px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;padding:1px 4px;font-size:.6rem;"></label>
+              <label style="font-size:.6rem;color:#888;">DMG <input type="number" value="${u.def.dmg}" min="0" step="1" onchange="const uid=${u.id};const ut=G.units.find(x=>x.id===uid);if(ut)ut.def={...ut.def,dmg:+this.value};" style="width:40px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;padding:1px 4px;font-size:.6rem;"></label>
+              <label style="font-size:.6rem;color:#888;">SPD <input type="number" value="${u.def.speed}" min="0" step="5" onchange="const uid=${u.id};const ut=G.units.find(x=>x.id===uid);if(ut)ut.def={...ut.def,speed:+this.value};" style="width:40px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;padding:1px 4px;font-size:.6rem;"></label>
+              <label style="font-size:.6rem;color:#888;">DMG× <input type="number" value="${(u.dmgMult || 1).toFixed(1)}" min="0" max="10" step="0.1" onchange="const uid=${u.id};const ut=G.units.find(x=>x.id===uid);if(ut)ut.dmgMult=+this.value;" style="width:40px;background:#111;color:#fff;border:1px solid #555;border-radius:3px;padding:1px 4px;font-size:.6rem;"></label>
+              <button onclick="const uid=${u.id};const ut=G.units.find(x=>x.id===uid);if(ut)ut.hp=0;handleDeath(ut,null);openUnitList(${pid});" style="background:#c0392b33;color:#e74c3c;border:1px solid #c0392b;border-radius:3px;padding:1px 6px;cursor:pointer;font-size:.6rem;">☠ Kill</button>
+              <button onclick="const uid=${u.id};const ut=G.units.find(x=>x.id===uid);if(ut){ut.hp=ut.maxHp;}" style="background:#27ae6033;color:#2ecc71;border:1px solid #27ae60;border-radius:3px;padding:1px 6px;cursor:pointer;font-size:.6rem;">💚 Heal</button>
+            </div>
+            <div style="font-size:.58rem;color:#666;margin-top:2px;">Alive: ${(u.aliveSecs || 0).toFixed(1)}s · Pos: (${Math.round(u.x)}, ${Math.round(u.y)})</div>
+          </div>`;
+        }).join('') +
+        `<button onclick="openUnitList(${pid})" style="background:#222;color:#888;border:1px solid #333;border-radius:3px;padding:3px 8px;cursor:pointer;font-family:Cinzel,serif;font-size:.65rem;margin-top:4px;">🔄 REFRESH</button>`;
     }
 
     buildFactionCards();
