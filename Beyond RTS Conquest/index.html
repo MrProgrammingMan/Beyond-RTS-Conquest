@@ -2027,6 +2027,9 @@
         <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
         <button class="btn" id="btn-controls">🎮 CONTROLS</button>
       </div>
+      <div
+        style="margin-top:14px;font-family:Cinzel,serif;font-size:.65rem;color:rgba(212,168,67,.55);letter-spacing:.08em;text-align:center;line-height:1.8;">
+        P1: WASD + Q TO SPAWN &nbsp;·&nbsp; P2: ↑↓←→ + ENTER &nbsp;·&nbsp; KEYBOARD ONLY</div>
     </div>
   </div>
   <!-- FACTION -->
@@ -2195,7 +2198,8 @@
   </div>
   <!-- GAME -->
   <div id="sc-game" class="screen">
-    <div id="momentum-bar-wrap">
+    <div id="momentum-bar-wrap"
+      title="MOMENTUM — shows who controls the battlefield. Wider bar = more map presence from kills and mid control.">
       <div id="momentum-p1" style="width:50%"></div>
       <div id="momentum-p2" style="width:50%"></div>
       <div id="momentum-center"></div>
@@ -2387,6 +2391,12 @@
     function noise(d, v) { try { const b = AC.createBuffer(1, AC.sampleRate * d, AC.sampleRate), dd = b.getChannelData(0); for (let i = 0; i < dd.length; i++)dd[i] = Math.random() * 2 - 1; const s = AC.createBufferSource(), g = AC.createGain(); s.buffer = b; s.connect(g); g.connect(AC.destination); g.gain.setValueAtTime(v, AC.currentTime); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d); s.start(); } catch (e) { } }
     const SFX = {
       spawn: () => beep(300, 'square', .12, .035),
+      spawnWorker: () => beep(180, 'triangle', .08, .025),
+      spawnLight: () => beep(320, 'square', .1, .03),
+      spawnHeavy: () => { beep(140, 'sawtooth', .15, .04); setTimeout(() => beep(120, 'sawtooth', .1, .025), 40); },
+      spawnRanged: () => beep(520, 'triangle', .09, .03),
+      spawnAerial: () => { beep(600, 'triangle', .06, .025); setTimeout(() => beep(750, 'triangle', .07, .02), 55); },
+      spawnGuard: () => { [260, 330, 400].forEach((f, i) => setTimeout(() => beep(f, 'triangle', .2, .05), i * 90)); },
       hit: () => noise(.04, .025),
       death: () => { beep(180, 'sawtooth', .18, .05); noise(.06, .02); },
       baseHit: () => beep(120, 'square', .2, .06),
@@ -2397,6 +2407,9 @@
       ironwall: () => beep(80, 'square', .35, .07),
       soulsurge: () => { beep(300, 'triangle', .1, .06); setTimeout(() => beep(500, 'triangle', .2, .07), 80); },
     };
+
+    // ── SESSION STATS (in-memory across rematches) ──
+    const SESSION = { wins: [0, 0], games: 0, factions: [null, null] };
 
     // ── FACTIONS ──
     const FACTIONS = [
@@ -2485,7 +2498,7 @@
           { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 2, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
           { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
           { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 14, bodies: 3, hp: 60, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
-          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 18, bodies: 4, hp: 70, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 2× damage bonus vs aerial enemies.', aerialBonus: 2.0 },
+          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 18, bodies: 4, hp: 70, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.6× damage bonus vs aerial enemies.', aerialBonus: 1.6 },
         ],
         extraUnits: [{ id: 'sp_guard', name: 'Spirit Lord', icon: '✨', souls: 0, bodies: 0, hp: 180, speed: 85, dmg: 30, range: 60, aerial: true, isWorker: false, attackRate: 1.4, radius: 16, color: '#a29bfe', type: 'air', desc: 'Royal Guard. Aerial. Sky Bounty gives +18 souls. Despawns 30s.', isSpawned: true }],
         guardUnit: 'sp_guard',
@@ -2700,7 +2713,7 @@
         running: true, paused: false, lastTime: null, dt: 0, elapsed: 0,
         shake: 0, shakeX: 0, shakeY: 0,
         units: [], projectiles: [], particles: [], nextId: 1,
-        midHolder: null, midOwner: null, midCapTimer: 0, midCapPlayer: null,
+        midHolder: null, midOwner: null, midCapTimer: 0, midCapPlayer: null, midOwnerTimer: 0, _prevMidOwner: null,
         midX: canvas.width / 2, midR: Math.max(35, canvas.width * 0.04),
         factions: [P1_FACTION, P2_FACTION],
         unitDefs: [[...P1_FACTION.units, ...(P1_FACTION.extraUnits || [])], [...P2_FACTION.units, ...(P2_FACTION.extraUnits || [])]],
@@ -2711,11 +2724,11 @@
             workers: 0, bodyAccum: 0, kills: 0, spawned: 0,
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
-            lastStandUsed: false, infernalCount: 0,
+            lastStandUsed: false, infernalCount: 0, surgeShown: false,
             unitCap: 12, workerCap: 3, buffCooldowns: [0, 0, 0],
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
-            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.4,
+            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.55,
             bloodTitheRefund: 2, skyBountyAmt: 6,
             chillSpeedMult: 0.70, chillDur: 2.0,
             guardTimerDisplay: 0,
@@ -2731,11 +2744,11 @@
             workers: 0, bodyAccum: 0, kills: 0, spawned: 0,
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
-            lastStandUsed: false, infernalCount: 0,
+            lastStandUsed: false, infernalCount: 0, surgeShown: false,
             unitCap: 12, workerCap: 3, buffCooldowns: [0, 0, 0],
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
-            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.4,
+            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.55,
             bloodTitheRefund: 2, skyBountyAmt: 6,
             chillSpeedMult: 0.70, chillDur: 2.0,
             guardTimerDisplay: 0,
@@ -2748,6 +2761,7 @@
         ],
         shadeCount: [0, 0], MAX_SHADES: 8,
         gameStart: Date.now(), siegeDecay: true,
+        rogueEvent: null, nextRogueTime: 90 + Math.random() * 60, // first rogue 90-150s in
         capFlash: 0, capFlashPlayer: 0,
         lastCapAnnounce: 0,
       };
@@ -2905,8 +2919,11 @@
       document.getElementById(`p${pid}-sp-cost`).textContent = `💀${def.souls}  🦴${def.bodies}`;
     }
 
+    let _hudTick = 0;
     function updateHUD() {
       if (!G) return;
+      _hudTick = (_hudTick + 1) % 4;
+      const _fullUpdate = (_hudTick === 0);
       const gameSec = (Date.now() - G.gameStart) / 1000;
       [1, 2].forEach(pid => {
         const p = G.players[pid - 1];
@@ -2921,7 +2938,10 @@
         // Combat units vs cap
         const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
         document.getElementById(`p${pid}-unit-count`).textContent = `⚔ ${combatUnits}/${p.unitCap}`;
-        document.getElementById(`p${pid}-worker-count`).textContent = `⛏ ${p.workers}/${p.workerCap || 3}`;
+        const offWorkers = G.units.filter(u => u.player === pid && u.def.isWorker && u.offscreen);
+        const minReturn = offWorkers.length > 0 ? Math.ceil(Math.min(...offWorkers.map(w => w.offTimer))) : 0;
+        const wReturnStr = minReturn > 0 ? ` ⏳${minReturn}s` : '';
+        document.getElementById(`p${pid}-worker-count`).textContent = `⛏ ${p.workers}/${p.workerCap || 3}${wReturnStr}`;
         // Desp badge
         const despEl = document.getElementById(`p${pid}-desp`);
         despEl.style.display = p.despStacks > 0 ? 'inline' : 'none';
@@ -2935,12 +2955,33 @@
           if (p.guardTimerDisplay <= 0) { p.guardTimerDisplay = 0; gtEl.style.display = 'none'; }
         }
         // Income rate
-        const soulRate = (0.45 + (G.midOwner === pid ? 1.2 : 0) + (p.despStacks * 0.4) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(2);
+        const _midTaperHUD = G.midOwner === pid ? Math.max(0.78, 1.2 - ((G.midOwnerTimer || 0) / 120) * 0.42) : 0;
+        const soulRate = (0.45 + _midTaperHUD + (p.despStacks * 0.7) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(2);
         const bodyRate = ((4.5 + Math.floor(gameSec / 60) * 0.5) * p.workers).toFixed(1);
-        document.getElementById(`p${pid}-income-rate`).textContent = `+${soulRate}💀/s · +${bodyRate}🦴/m`;
-        // Affordability + cap warn
+        const incEl = document.getElementById(`p${pid}-income-rate`);
+        const _bm = G.activeEvent && G.activeEvent.type === 'blood_moon' && p._bloodMoon;
+        const _bmRemain = _bm ? Math.ceil((G.activeEvent.duration || 18) - (G.activeEvent.timer || 0)) : 0;
+        const _ec = G.activeEvent && G.activeEvent._eclipseActive;
+        const _ecRemain = _ec ? Math.ceil((G.activeEvent.duration || 15) - (G.activeEvent.timer || 0)) : 0;
+        const eventTag = _bm ? ` 🔴×½🦴 ${_bmRemain}s` : _ec ? ` 🌑 ${_ecRemain}s` : '';
+        incEl.textContent = `+${soulRate}💀/s · +${bodyRate}🦴/m${eventTag}`;
+        const passiveText = G.factions[pid - 1].passive || '';
+        incEl.title = passiveText ? `PASSIVE: ${passiveText}` : '';
+        let passiveEl = document.getElementById(`p${pid}-passive-hint`);
+        if (!passiveEl) {
+          passiveEl = document.createElement('div');
+          passiveEl.id = `p${pid}-passive-hint`;
+          passiveEl.style.cssText = 'font-size:.58rem;color:rgba(212,168,67,.7);font-family:Cinzel,serif;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:1px 0 0;cursor:help;';
+          incEl.insertAdjacentElement('afterend', passiveEl);
+        }
+        if (passiveText) {
+          const passShort = passiveText.length > 52 ? passiveText.slice(0, 52) + '…' : passiveText;
+          passiveEl.textContent = '⚡ ' + passShort;
+          passiveEl.title = passiveText;
+        }
+        // Affordability + cap warn (throttled — every 4 frames)
         const mode = pid === 1 ? P1_MODE : P2_MODE;
-        if (mode === 0) {
+        if (mode === 0 && _fullUpdate) {
           const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
           document.getElementById(`p${pid}-grid`).querySelectorAll('.ucard').forEach((card, i) => {
             const def = defs[i]; if (!def) return;
@@ -2955,7 +2996,7 @@
             } else if (warn) { warn.remove(); }
           });
         }
-        if (mode === 1) {
+        if (mode === 1 && _fullUpdate) {
           const upgrades = G.factions[pid - 1].upgrades || [];
           document.getElementById(`p${pid}-upgrades`).querySelectorAll('.upcard').forEach((card, i) => {
             const up = upgrades[i]; if (!up) return;
@@ -2968,7 +3009,7 @@
             else if (badge) { badge.remove(); }
           });
         }
-        if (mode === 2) {
+        if (mode === 2 && _fullUpdate) {
           RALLY_BUFFS.forEach((bf, i) => {
             const cd = p.buffCooldowns[i];
             const card = document.getElementById(`p${pid}-buffs`).querySelectorAll('.bfcard')[i];
@@ -3034,15 +3075,23 @@
       const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
       if (!def.isWorker && combatUnits >= p.unitCap) { shakeCard(cardEl); return; }
       if (def.isWorker && p.workers >= (p.workerCap || 3)) { shakeCard(cardEl); return; }
-      if (p.souls < def.souls || p.bodies < def.bodies) { shakeCard(cardEl); flashRes(pid, p.souls < def.souls ? 'souls' : 'bodies'); return; }
-      p.souls -= def.souls; p.bodies -= def.bodies; p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + def.bodies; p.spawned++;
+      const _bodyCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
+      if (p.souls < def.souls || p.bodies < _bodyCost) { shakeCard(cardEl); flashRes(pid, p.souls < def.souls ? 'souls' : 'bodies'); return; }
+      const _bCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
+      p.souls -= def.souls; p.bodies -= _bCost; p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + _bCost; p.spawned++;
       if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
-      p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + def.bodies;
       // Blood Tithe refund
       if (G.factions[pid - 1].id === 'bloodpact') p.souls += p.bloodTitheRefund || 2;
       spawnUnit(pid, unitId, false);
       if (cardEl) { cardEl.classList.remove('spawn-flash'); void cardEl.offsetWidth; cardEl.classList.add('spawn-flash'); }
-      SFX.spawn(); updateHUD();
+      // Tiered spawn audio
+      if (def.isSpawned) SFX.spawnGuard();
+      else if (def.isWorker) SFX.spawnWorker();
+      else if (def.type === 'air') SFX.spawnAerial();
+      else if (def.type === 'rng') SFX.spawnRanged();
+      else if ((def.souls || 0) > 9) SFX.spawnHeavy();
+      else SFX.spawnLight();
+      updateHUD();
     }
 
     function tryBuyUpgrade(pid, idx, cardEl) {
@@ -3426,6 +3475,25 @@
       if (u.hp > 0) return;
       if (u.spawnProtectionTimer > 0) { u.hp = 1; return; } // spawn protect
       u.hp = 0; SFX.death();
+      // ── Rogue unit special death ──
+      if (u.isRogue) {
+        spawnParticles(u.x, u.y, '#f39c12', 35);
+        spawnParticles(u.x, u.y - 15, '#ffffff', 8);
+        G.rogueEvent = null;
+        const idx = G.units.indexOf(u); if (idx !== -1) G.units.splice(idx, 1);
+        if (killer && killer.player >= 1 && killer.player <= 2) {
+          const kp = G.players[killer.player - 1];
+          const reward = u.rogueReward || 25;
+          const rogCol = u.isChampion ? '#e74c3c' : '#f39c12';
+          kp.souls = Math.min(900, kp.souls + reward);
+          kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + reward;
+          G.shake = Math.max(G.shake || 0, u.isChampion ? 1.2 : 0.8);
+          showPopup(u.x, u.y - 50, `+${reward}💀 BOUNTY CLAIMED!`, rogCol, killer.player);
+          addKillFeed(`P${killer.player} ⚔ ${u.isChampion ? '💀 Rogue Champion' : '☠ Rogue Wanderer'}`, killer.player === 1 ? '#e8d080' : '#d0d0e8');
+        }
+        updateHUD();
+        return;
+      }
       // Track per-type lifespan and death
       if (!u.def.isSpawned) {
         const op = G.players[u.player === 1 ? 1 : 0]; // opponent
@@ -3524,6 +3592,320 @@
       if (idx !== -1) G.units.splice(idx, 1);
       updateHUD();
     }
+    // ─── RANDOM EVENTS ────────────────────────────────────────────────────────────
+    //
+    // Event pool (one fires at a time, 90-150s first event, then 90-150s between):
+    //
+    //  1. ROGUE WANDERER      — neutral unit at mid, 18s to kill for +25 souls
+    //  2. ROGUE CHAMPION      — harder rogue (200HP, attacks for 18DMG), +40 soul reward
+    //  3. SOUL CACHE          — buried treasure at mid, stand on it 2s to claim +30 souls
+    //  4. BLOOD MOON          — 18s window: all units spawn at half body cost
+    //  5. ANCIENT CURSE       — both lose 15 souls, gain 25 bodies (punishes hoarders)
+    //  6. VETERAN'S RALLY     — all alive combat units on BOTH sides gain +20% speed for 12s
+    //  7. SUPPLY DROP         — random player gets +20 souls + 12 bodies windfall
+    //  8. DARK ECLIPSE        — 15s of darkness (mid income halved for current owner, desp stacks give double)
+    //
+    // Weighted pool: Wanderer and Champion appear more rarely late-game.
+    // Events that are catch-up oriented (Cache, Curse, Supply) are weighted higher when a player is losing.
+
+    function _announceEvent(msg, col) {
+      const ind = document.getElementById('mid-indicator');
+      ind.textContent = msg;
+      ind.style.color = col || '#f39c12';
+      G.shake = Math.max(G.shake || 0, 0.5);
+      setTimeout(() => { if (G) updateMidIndicator(); }, 4500);
+    }
+
+    function fireRandomEvent() {
+      const elapsed = G.elapsed || 0;
+      // Build weighted pool based on game state
+      const p1hp = G.players[0].baseHp, p2hp = G.players[1].baseHp;
+      const hpDiff = Math.abs(p1hp - p2hp);
+      const losingP = p1hp < p2hp ? G.players[0] : G.players[1];
+      const isLopsided = hpDiff > 30; // somebody is clearly losing
+      const isMidLocked = G.midOwner !== null; // someone owns mid
+
+      // Pool: [eventId, baseWeight]
+      const pool = [
+        ['wanderer', isMidLocked ? 2 : 3],
+        ['champion', elapsed > 180 ? 2 : 0],   // only after 3 min
+        ['soul_cache', isLopsided ? 4 : 2],        // favour when lopsided
+        ['blood_moon', 2],
+        ['ancient_curse', losingP.souls > 60 ? 3 : 1], // punishes hoarder
+        ['veterans_rally', 2],
+        ['supply_drop', isLopsided ? 4 : 1],        // favour when lopsided
+        ['dark_eclipse', isMidLocked ? 3 : 1],
+      ];
+      const totalWeight = pool.reduce((s, [, w]) => s + w, 0);
+      let r = Math.random() * totalWeight;
+      let chosen = pool[0][0];
+      for (const [id, w] of pool) { r -= w; if (r <= 0) { chosen = id; break; } }
+
+      G.activeEvent = { type: chosen, timer: 0 };
+
+      if (chosen === 'wanderer' || chosen === 'champion') {
+        _spawnRogueUnit(chosen === 'champion');
+      } else if (chosen === 'soul_cache') {
+        _startSoulCache();
+      } else if (chosen === 'blood_moon') {
+        _startBloodMoon();
+      } else if (chosen === 'ancient_curse') {
+        _fireAncientCurse();
+      } else if (chosen === 'veterans_rally') {
+        _fireVeteransRally();
+      } else if (chosen === 'supply_drop') {
+        _fireSupplyDrop();
+      } else if (chosen === 'dark_eclipse') {
+        _startDarkEclipse();
+      }
+    }
+
+    // ── EVENT: Rogue Unit ──────────────────────────────────────────────────────
+    function _spawnRogueUnit(isChampion) {
+      const hp = isChampion ? 200 : 80;
+      const reward = isChampion ? 40 : 25;
+      const dmg = isChampion ? 18 : 0;
+      const label = isChampion ? '💀 ROGUE CHAMPION' : '☠ ROGUE WANDERER';
+      const col = isChampion ? '#e74c3c' : '#d4a843';
+      _announceEvent(isChampion ? '💀 A ROGUE CHAMPION EMERGES — HIGH BOUNTY!' : '☠ A ROGUE WANDERER APPROACHES THE MID!', col);
+      spawnParticles(G.midX, G.groundY - 20, col, isChampion ? 40 : 25);
+      showPopup(G.midX, G.groundY - 80, `${label} — KILL FOR +${reward}💀`, col, 1);
+      showPopup(G.midX, G.groundY - 80, `${label} — KILL FOR +${reward}💀`, col, 2);
+      if (isChampion) { SFX.lastStand && SFX.lastStand(); }
+      const rogDef = {
+        id: isChampion ? 'rogue_champion' : 'rogue_wanderer',
+        name: isChampion ? 'Rogue Champion' : 'Rogue Wanderer', icon: isChampion ? '💀' : '☠',
+        hp, speed: isChampion ? 45 : 35, dmg, range: isChampion ? 32 : 0,
+        attackRate: isChampion ? 0.8 : 0, radius: isChampion ? 19 : 16,
+        color: col, type: 'mel', aerial: false, isWorker: false, isSpawned: true
+      };
+      const rogUnit = {
+        id: ++G.nextId, def: rogDef, player: 3, isRogue: true,
+        isChampion, rogueReward: reward,
+        x: G.midX + (Math.random() - 0.5) * 60,
+        y: G.groundY - rogDef.radius,
+        hp, maxHp: hp,
+        vx: 0, vy: 0, hitFlash: 0, aliveSecs: 0,
+        attackCooldown: 1 / Math.max(rogDef.attackRate, 0.01), target: null, offscreen: false,
+        spawnProtectionTimer: 0, _speedMult: 1, slowTimer: 0,
+        rogueTimer: 0, rogueLife: isChampion ? 22 : 18
+      };
+      G.units.push(rogUnit);
+      G.rogueEvent = rogUnit;
+      G.activeEvent.unit = rogUnit;
+    }
+
+    // ── EVENT: Soul Cache ──────────────────────────────────────────────────────
+    function _startSoulCache() {
+      _announceEvent('💰 SOUL CACHE UNEARTHED — STAND ON MID TO CLAIM!', '#2ecc71');
+      spawnParticles(G.midX, G.groundY - 10, '#2ecc71', 30);
+      showPopup(G.midX, G.groundY - 80, '💰 SOUL CACHE — Hold mid 2s to claim +30💀', '#2ecc71', 1);
+      showPopup(G.midX, G.groundY - 80, '💰 SOUL CACHE — Hold mid 2s to claim +30💀', '#2ecc71', 2);
+      G.activeEvent.cacheHolder = null;
+      G.activeEvent.cacheProgress = 0;
+      G.activeEvent.duration = 20; // expires in 20s unclaimed
+    }
+
+    // ── EVENT: Blood Moon ─────────────────────────────────────────────────────
+    function _startBloodMoon() {
+      _announceEvent('🔴 BLOOD MOON RISES — half body cost for 18s!', '#c0392b');
+      spawnParticles(G.midX, G.groundY - 40, '#c0392b', 35);
+      showPopup(G.midX - 60, G.groundY - 80, '🔴 BLOOD MOON — half bodies!', '#c0392b', 1);
+      showPopup(G.midX + 60, G.groundY - 80, '🔴 BLOOD MOON — half bodies!', '#e74c3c', 2);
+      G.players.forEach(p => p._bloodMoon = true);
+      G.activeEvent.duration = 18;
+    }
+
+    // ── EVENT: Ancient Curse ──────────────────────────────────────────────────
+    function _fireAncientCurse() {
+      _announceEvent('💀 ANCIENT CURSE — souls drained, bodies surge!', '#9b59b6');
+      G.players.forEach(p => {
+        const lost = Math.min(p.souls, 15);
+        p.souls -= lost;
+        p.bodies += 25;
+        showPopup(p.baseX, G.groundY - 70, `-${lost}💀 +25🦴 CURSED`, '#9b59b6', p.id);
+        spawnParticles(p.baseX, G.groundY - 30, '#9b59b6', 20);
+      });
+      G.activeEvent = null; // instant event, clean up immediately
+      G.nextEventTime = (G.elapsed || 0) + 90 + Math.random() * 60;
+    }
+
+    // ── EVENT: Veteran's Rally ────────────────────────────────────────────────
+    function _fireVeteransRally() {
+      _announceEvent("⚡ VETERAN'S RALLY — all units surge forward!", '#fdcb6e');
+      let unitCount = 0;
+      G.units.forEach(u => {
+        if (u.player !== 1 && u.player !== 2) return;
+        if (u.def.isWorker || u.isGuard || u.isRogue) return;
+        u._rallySpeed = true;
+        u._rallyTimer = 12;
+        unitCount++;
+      });
+      spawnParticles(G.midX, G.groundY - 30, '#fdcb6e', 30);
+      G.players.forEach(p => showPopup(p.baseX, G.groundY - 70, '⚡ RALLY — +20% speed 12s', '#fdcb6e', p.id));
+      G.activeEvent.duration = 12;
+    }
+
+    // ── EVENT: Supply Drop ────────────────────────────────────────────────────
+    function _fireSupplyDrop() {
+      // Favour the losing player (lower base HP), pure random if even
+      const p1hp = G.players[0].baseHp, p2hp = G.players[1].baseHp;
+      let recipient;
+      if (Math.abs(p1hp - p2hp) > 15) {
+        recipient = p1hp < p2hp ? G.players[0] : G.players[1];
+      } else {
+        recipient = G.players[Math.floor(Math.random() * 2)];
+      }
+      recipient.souls = Math.min(900, recipient.souls + 20);
+      recipient.bodies += 12;
+      _announceEvent(`📦 SUPPLY DROP — P${recipient.id} receives aid!`, '#27ae60');
+      spawnParticles(recipient.baseX, G.groundY - 40, '#27ae60', 30);
+      showPopup(recipient.baseX, G.groundY - 80, '📦 SUPPLY DROP +20💀 +12🦴', '#27ae60', recipient.id);
+      addKillFeed(`📦 P${recipient.id} received a Supply Drop`, '#27ae60');
+      G.activeEvent = null;
+      G.nextEventTime = (G.elapsed || 0) + 90 + Math.random() * 60;
+    }
+
+    // ── EVENT: Dark Eclipse ───────────────────────────────────────────────────
+    function _startDarkEclipse() {
+      _announceEvent('🌑 DARK ECLIPSE — mid income halved, SURGE doubled!', '#6c3483');
+      spawnParticles(G.midX, G.groundY - 40, '#6c3483', 35);
+      G.players.forEach(p => showPopup(p.baseX, G.groundY - 70, '🌑 ECLIPSE — mid halved / SURGE×2', '#9b59b6', p.id));
+      G.activeEvent._eclipseActive = true;
+      G.activeEvent.duration = 15;
+    }
+
+    // ── Main event update tick ─────────────────────────────────────────────────
+    function updateRogueEvent(dt) {
+      const elapsed = G.elapsed || 0;
+
+      // Spawn next event when timer fires and no active event
+      if (!G.activeEvent && elapsed > (G.nextEventTime || 90 + Math.random() * 60)) {
+        if (!G.nextEventTime) G.nextEventTime = 90 + Math.random() * 60;
+        fireRandomEvent();
+        if (!G.nextEventTime || G.nextEventTime <= elapsed) {
+          G.nextEventTime = elapsed + 90 + Math.random() * 60;
+        }
+      }
+
+      if (!G.activeEvent) return;
+      const ev = G.activeEvent;
+      ev.timer = (ev.timer || 0) + dt;
+
+      // ── ROGUE: wander + attack + expire ──────────────────────────────────
+      if ((ev.type === 'wanderer' || ev.type === 'champion') && G.rogueEvent) {
+        const rog = G.rogueEvent;
+        rog.rogueTimer = (rog.rogueTimer || 0) + dt;
+        rog.aliveSecs = (rog.aliveSecs || 0) + dt;
+        // Wander near mid
+        if (Math.random() < 0.012) rog.vx = (Math.random() - 0.5) * (rog.isChampion ? 80 : 55);
+        rog.x += rog.vx * dt;
+        rog.x = Math.max(G.midX - 180, Math.min(G.midX + 180, rog.x));
+        rog.y = G.groundY - rog.def.radius;
+        // Champion attacks nearby units
+        if (rog.isChampion && rog.def.dmg > 0) {
+          rog.attackCooldown = (rog.attackCooldown || 0) - dt;
+          if (rog.attackCooldown <= 0) {
+            rog.attackCooldown = 1 / rog.def.attackRate;
+            const nearby = G.units.filter(u => u.player !== 3 && !u.def.isWorker && !u.offscreen && Math.abs(u.x - rog.x) < 50);
+            if (nearby.length > 0) {
+              const t = nearby[0];
+              t.hp -= rog.def.dmg;
+              t.hitFlash = 1;
+              spawnParticles(t.x, t.y, '#e74c3c', 8);
+              if (t.hp <= 0) handleDeath(t, null);
+            }
+          }
+        }
+        // Expire
+        if (rog.rogueTimer >= rog.rogueLife) {
+          spawnParticles(rog.x, rog.y, '#888', 18);
+          showPopup(rog.x, rog.y - 40, rog.isChampion ? 'CHAMPION RETREATED' : 'ROGUE ESCAPED', '#888', 1);
+          G.rogueEvent = null;
+          const idx = G.units.indexOf(rog); if (idx !== -1) G.units.splice(idx, 1);
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 90 + Math.random() * 60;
+        }
+      }
+
+      // ── SOUL CACHE: track who is standing on mid ──────────────────────────
+      if (ev.type === 'soul_cache') {
+        const midR = G.midR * 1.6;
+        let holderThisFrame = null;
+        for (const p of G.players) {
+          const hasUnit = G.units.some(u => u.player === p.id && !u.offscreen && !u.def.isWorker && Math.abs(u.x - G.midX) < midR);
+          if (hasUnit) { holderThisFrame = p.id; break; }
+        }
+        // Both players contesting = no progress
+        const p1Near = G.units.some(u => u.player === 1 && !u.offscreen && !u.def.isWorker && Math.abs(u.x - G.midX) < midR);
+        const p2Near = G.units.some(u => u.player === 2 && !u.offscreen && !u.def.isWorker && Math.abs(u.x - G.midX) < midR);
+        if (p1Near && p2Near) {
+          ev.cacheHolder = null; ev.cacheProgress = Math.max(0, ev.cacheProgress - dt * 1.5);
+        } else if (holderThisFrame !== null) {
+          if (ev.cacheHolder === holderThisFrame) {
+            ev.cacheProgress += dt;
+          } else {
+            ev.cacheHolder = holderThisFrame; ev.cacheProgress = 0;
+          }
+          if (ev.cacheProgress >= 2.0) {
+            // Claimed!
+            const claimP = G.players[ev.cacheHolder - 1];
+            claimP.souls = Math.min(900, claimP.souls + 30);
+            showPopup(G.midX, G.groundY - 70, '+30💀 CACHE CLAIMED!', '#2ecc71', ev.cacheHolder);
+            spawnParticles(G.midX, G.groundY - 10, '#2ecc71', 40);
+            addKillFeed(`P${ev.cacheHolder} claimed the Soul Cache (+30💀)`, '#2ecc71');
+            G.activeEvent = null;
+            G.nextEventTime = elapsed + 90 + Math.random() * 60;
+          }
+        } else {
+          ev.cacheProgress = Math.max(0, ev.cacheProgress - dt * 0.5); // decay slowly if nobody near
+        }
+        // Expire unclaimed
+        if (ev.timer >= (ev.duration || 20)) {
+          showPopup(G.midX, G.groundY - 50, 'CACHE FADED', '#555', 1);
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 90 + Math.random() * 60;
+        }
+      }
+
+      // ── BLOOD MOON: count down and restore costs ──────────────────────────
+      if (ev.type === 'blood_moon') {
+        const remaining = Math.ceil((ev.duration || 18) - ev.timer);
+        if (ev.timer >= (ev.duration || 18)) {
+          G.players.forEach(p => { p._bloodMoon = false; });
+          showPopup(G.midX, G.groundY - 60, '🌑 Blood Moon fades', '#888', 1);
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 90 + Math.random() * 60;
+        }
+      }
+
+      // ── VETERAN'S RALLY: tick speed bonus on units ────────────────────────
+      if (ev.type === 'veterans_rally') {
+        G.units.forEach(u => {
+          if (u._rallySpeed) {
+            u._rallyTimer = (u._rallyTimer || 0) - dt;
+            if (u._rallyTimer <= 0) { u._rallySpeed = false; delete u._rallyTimer; }
+          }
+        });
+        if (ev.timer >= (ev.duration || 12)) {
+          G.units.forEach(u => { u._rallySpeed = false; });
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 90 + Math.random() * 60;
+        }
+      }
+
+      // ── DARK ECLIPSE: halve mid bonus, double desp income ─────────────────
+      if (ev.type === 'dark_eclipse' && ev._eclipseActive) {
+        const remaining = Math.ceil((ev.duration || 15) - ev.timer);
+        if (ev.timer >= (ev.duration || 15)) {
+          ev._eclipseActive = false;
+          showPopup(G.midX, G.groundY - 60, '🌑 Eclipse lifts', '#888', 1);
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 90 + Math.random() * 60;
+        }
+      }
+    }
+
     // ─── UPDATE FUNCTIONS ─────────────────────────────────────────────────────────
     function updateWorker(u, dt) {
       const p = G.players[u.player - 1];
@@ -3703,7 +4085,7 @@
         // ─── Mender retreat ───
         if (u.def.menderRetreat) {
           // Retreat trigger: only if cooldown expired
-          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.35 && (u.returnCount || 0) < 3) {
+          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.45 && (u.returnCount || 0) < 3) {
             u.retreating = true;
           }
           // Retreating: walk to base
@@ -3755,6 +4137,7 @@
           }
         }
         // ─── Faction passives ───
+        if (u.isRogue) continue; // rogue unit: skip all faction logic
         const faction = G.factions[u.player - 1];
         if (faction.id === 'verdant' && !u.target && u.hp < u.maxHp) u.hp = Math.min(u.maxHp, u.hp + 1.0 * dt);
         if (u.def.bearAura) { G.units.forEach(e => { if (e.player !== u.player && dist2d(u, e) < 60 && !e.def.immuneDebuff) { e.slowTimer = Math.max(e.slowTimer || 0, .5); e._speedMult = Math.min(e._speedMult || 1, .75); } }); }
@@ -3772,8 +4155,9 @@
         if (u.def.berserkThreshold) u._berserkActive = u.hp < u.maxHp * u.def.berserkThreshold;
         // Warcry speed
         const warcryMult = u._warcryed > 0 ? 1.25 : 1.0;
+        const rallyMult = u._rallySpeed ? 1.20 : 1.0;
         // Speed floor for slowed units (BUG2 fix)
-        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult;
+        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult;
         const spd = u.def.immuneDebuff ? u.def.speed * warcryMult : Math.max(30, rawSpd);
         const enemy = findEnemy(u);
         u.target = enemy;
@@ -3855,13 +4239,25 @@
       const gameSec = (Date.now() - G.gameStart) / 1000;
       G.players.forEach(p => {
         const soulsBefore = p.souls;
-        const baseTick = (0.45 + (G.midOwner === p.id ? 1.2 : 0)) * dt;
-        const despTick = (p.despStacks * 0.4) * dt;
+        const earlyBonus = gameSec < 90 ? 0.3 * (1 - gameSec / 90) : 0; // tapers from +0.3 to 0 over 90s
+        // Mid income tapers: 1.2 → 0.78 after 120s of unbroken hold (reduces snowball compounding)
+        if (G.midOwner === p.id) G.midOwnerTimer = (G.midOwnerTimer || 0) + dt;
+        else if (G._prevMidOwner === p.id) G.midOwnerTimer = 0;
+        const _eclipseActive = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
+        const midTaper = G.midOwner === p.id ? Math.max(0.39, (Math.max(0.78, 1.2 - (G.midOwnerTimer / 120) * 0.42)) * (_eclipseActive ? 0.5 : 1.0)) : 0;
+        const baseTick = (0.45 + earlyBonus + midTaper) * dt;
+        const _eclipseDesp = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
+        const despTick = (p.despStacks * (_eclipseDesp ? 1.4 : 0.7)) * dt;
         const soulTick = baseTick + despTick;
-        p.souls += soulTick;
+        const soulCap = 900;
+        if (p.souls + soulTick > soulCap) {
+          const overflow = (p.souls + soulTick) - soulCap;
+          p.bodies += overflow * 0.3; // overflow converts to bodies at 30%
+        }
+        p.souls = Math.min(soulCap, p.souls + soulTick);
         p.totalSoulsEarned = (p.totalSoulsEarned || 0) + soulTick;
         if (G.midOwner === p.id) p.midCaptures = (p.midCaptures || 0); // already incremented elsewhere
-        if (p.noMidTimer > 20) {
+        if (p.noMidTimer > 15) {
           p.bodyDespTimer = (p.bodyDespTimer || 0) + dt;
           if (p.bodyDespTimer >= 15) { p.bodyDespTimer = 0; p.bodies += 1; showPopup(p.baseX, G.groundY - 50, '+1🦴 SURGE', '#27ae60', p.id); }
         }
@@ -3909,8 +4305,16 @@
           G.midCapTimer += dt;
           if (G.midCapTimer >= 2.0 && G.midOwner !== G.midHolder) {
             if (G.midHolder && G.midHolder !== G.midOwner) { const mp = G.players[G.midHolder - 1]; if (mp) mp.midCaptures = (mp.midCaptures || 0) + 1; }
+            const _prevOwner = G.midOwner;
             G.midOwner = G.midHolder;
-
+            if (_prevOwner !== G.midOwner) G.midOwnerTimer = 0; // reset taper on capture
+            // Mid recapture burst — reward player who had LOST mid (had despStacks)
+            const captureP = G.players[G.midOwner - 1];
+            if (captureP && (captureP.noMidTimer || 0) > 10) {
+              const burst = 15;
+              captureP.souls = Math.min(900, captureP.souls + burst);
+              showPopup(G.midX, G.groundY - 60, `+${burst}💀 RECAPTURE BONUS`, '#f39c12', G.midOwner);
+            }
             // reset capture state
             G.midCapTimer = 0;
             G.midCapPlayer = null;
@@ -3923,12 +4327,19 @@
           G.midCapPlayer = G.midHolder; G.midCapTimer = 0;
         }
       } else if (G.midHolder === null) { G.midCapTimer = 0; G.midCapPlayer = null; }
+      G._prevMidOwner = G.midOwner;
       updateMidIndicator();
       // Desperation: only increment if enemy OWNS mid (BUG6 fix)
       G.players.forEach(p => {
         if (G.midOwner !== null && G.midOwner !== p.id) {
           p.noMidTimer = (p.noMidTimer || 0) + dt;
-          if (p.noMidTimer >= 15) p.despStacks = Math.min(3, Math.floor((p.noMidTimer - 15) / 10) + 1);
+          const prevStacks = p.despStacks || 0;
+          p.despStacks = Math.min(3, Math.floor((p.noMidTimer - 15) / 10) + 1);
+          if (!p.surgeShown && p.despStacks >= 1 && prevStacks === 0) {
+            p.surgeShown = true;
+            showPopup(p.baseX, G.groundY - 90, '🔥 SURGE — enemy holds mid! Bonus income activated', '#e67e22', p.id);
+            setTimeout(() => showPopup(p.baseX, G.groundY - 70, `+${(p.despStacks * 0.7).toFixed(1)}💀/s`, '#e67e22', p.id), 800);
+          }
         } else if (G.midOwner === p.id || G.midHolder === null) {
           // Owning mid OR mid is contested = pause timer (don't reset)
           if (G.midOwner === p.id) { p.noMidTimer = 0; p.despStacks = 0; }
@@ -3961,12 +4372,29 @@
 
     function updateSiege(dt) {
       const sec = (Date.now() - G.gameStart) / 1000;
-      if (sec > 180) {
-        G.siegeDecay = true;
-        const rate = sec > 360 ? .04 : .02;
-        G.players.forEach(p => { if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt); });
-        document.getElementById('siege-indicator').style.opacity = '1';
-        document.getElementById('siege-indicator').textContent = sec > 360 ? '⏳ SIEGE DECAY — DOUBLED' : '⏳ SIEGE DECAY ACTIVE';
+      const siEl = document.getElementById('siege-indicator');
+      if (sec > 240) {
+        // Only apply decay during true stalemates — if either base is already below 55 HP,
+        // the game is being decided by combat. Decay would only pile on the loser unfairly.
+        const bothHealthy = G.players.every(p => p.baseHp >= 55);
+        if (bothHealthy) {
+          G.siegeDecay = true;
+          const elapsed = sec - 240;
+          const rate = elapsed > 90 ? 0.05 : 0.025; // faster second stage
+          G.players.forEach(p => { if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt); });
+          siEl.style.opacity = '1';
+          siEl.textContent = elapsed > 90 ? '⏳ STALEMATE — DECAY ACCELERATING' : '⏳ STALEMATE — BASES DECAYING';
+        } else {
+          // One base is clearly losing — no decay, let combat finish it
+          siEl.style.opacity = '0';
+        }
+      } else if (sec > 210) {
+        // Warning: 30s before decay kicks in (if stalemate)
+        const bothHealthy = G.players.every(p => p.baseHp >= 55);
+        siEl.style.opacity = bothHealthy ? '1' : '0';
+        if (bothHealthy) siEl.textContent = `⏳ STALEMATE DECAY IN ${Math.ceil(240 - sec)}s`;
+      } else {
+        siEl.style.opacity = '0';
       }
     }
 
@@ -4000,6 +4428,7 @@
 
     function updateParticles(dt) {
       G.particles = G.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 200 * dt; p.life -= dt; return p.life > 0; });
+      if (G.particles.length > 600) G.particles.splice(0, G.particles.length - 600);
     }
     // ─── DRAWING ─────────────────────────────────────────────────────────────────
     function drawGame() {
@@ -4170,6 +4599,42 @@
 
     function drawMid() {
       const mx = G.midX, my = G.groundY, mr = G.midR;
+      // Soul Cache glow
+      if (G.activeEvent && G.activeEvent.type === 'soul_cache') {
+        const pulse = 0.4 + Math.sin(Date.now() / 200) * 0.3;
+        ctx.save();
+        ctx.globalAlpha = pulse;
+        ctx.shadowBlur = 24; ctx.shadowColor = '#2ecc71';
+        ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(mx, my, mr + 12, 0, Math.PI * 2); ctx.stroke();
+        // Progress arc
+        const prog = G.activeEvent.cacheProgress || 0;
+        if (prog > 0) {
+          ctx.globalAlpha = 0.8;
+          ctx.strokeStyle = '#27ae60'; ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.arc(mx, my, mr + 12, -Math.PI / 2, -Math.PI / 2 + (prog / 2) * Math.PI * 2); ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+      // Blood Moon tint
+      if (G.activeEvent && G.activeEvent.type === 'blood_moon') {
+        const remaining = Math.max(0, (G.activeEvent.duration || 18) - (G.activeEvent.timer || 0));
+        const fade = Math.min(1, remaining / 3);
+        ctx.save(); ctx.globalAlpha = 0.06 * fade;
+        ctx.fillStyle = '#c0392b';
+        ctx.fillRect(0, 0, G.w, G.h);
+        ctx.restore();
+      }
+      // Dark Eclipse overlay
+      if (G.activeEvent && G.activeEvent._eclipseActive) {
+        const remaining = Math.max(0, (G.activeEvent.duration || 15) - (G.activeEvent.timer || 0));
+        const fade = Math.min(1, remaining / 3);
+        ctx.save(); ctx.globalAlpha = 0.1 * fade;
+        ctx.fillStyle = '#2d1b69';
+        ctx.fillRect(0, 0, G.w, G.h);
+        ctx.restore();
+      }
       // Owner pulse ring
       if (G.midOwner) {
         const oc = G.midOwner === 1 ? 'rgba(36,113,163,' : 'rgba(192,57,43,';
@@ -4199,7 +4664,7 @@
       const _skY = _shk > 0 ? (Math.random() - 0.5) * _shk : 0;
       const x = u.x + _skX, y = u.y + _skY, r = u.def.radius || 10;
       const col = u.def.color || '#888';
-      const pcol = u.player === 1 ? '#2471a3' : '#c0392b';
+      const pcol = u.player === 1 ? '#2471a3' : u.player === 2 ? '#c0392b' : '#888';
       ctx.save();
       // Retreating units: green trail
       if (u.retreating) {
@@ -4243,6 +4708,17 @@
       // Berserk glow
       if (u._berserkActive) {
         ctx.shadowBlur = 12; ctx.shadowColor = '#e74c3c';
+      }
+      // Hellfire empowerment — orange pulse ring
+      if (u._hellfire) {
+        const hfPulse = 0.5 + Math.sin(Date.now() / 120) * 0.4;
+        ctx.save();
+        ctx.globalAlpha = hfPulse;
+        ctx.strokeStyle = '#ff6600'; ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 14; ctx.shadowColor = '#ff4400';
+        ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
       }
       // Hit flash
       if (u.hitFlash > 0) { ctx.globalAlpha = 0.5 + u.hitFlash * 0.5; }
@@ -4365,19 +4841,66 @@
       }
       ctx.shadowBlur = 0; ctx.globalAlpha = 1;
 
+      // Enemy unit type label — tiny badge for combat triangle legibility
+      // Only on enemy units (not own), not workers, not aerial (altitude line already implies it)
+      // Shown after 1.5s alive to reduce spawn clutter
+      if (u.player !== 1 && u.player !== 2) { /* rogue handled below */ }
+      else {
+        const isEnemy = G && G.factions && (
+          (u.player === 1 && G.factions[1]) || (u.player === 2 && G.factions[0])
+        );
+        if (isEnemy && !u.def.isWorker && (u.aliveSecs || 0) > 1.5) {
+          const typeMap = { mel: 'MEL', rng: 'RNG', air: 'AIR', sum: 'SUM' };
+          const typeLabel = typeMap[u.def.type];
+          if (typeLabel && typeLabel !== 'AIR') { // AIR already has altitude visual
+            const labelY = u.def.aerial ? y - r * 1.9 : y - r - 10;
+            ctx.save();
+            ctx.globalAlpha = 0.55;
+            ctx.font = `bold 6px Cinzel,serif`;
+            ctx.textAlign = 'center';
+            ctx.fillStyle = u.player === 1 ? '#88b8d8' : '#d89888';
+            ctx.fillText(typeLabel, x, labelY);
+            ctx.restore();
+          }
+        }
+      }
+
+      // Rogue unit visual — gold pulsing ring + skull label
+      if (u.isRogue) {
+        const ropulse = 0.6 + Math.sin(Date.now() / 200) * 0.35;
+        ctx.save();
+        ctx.globalAlpha = ropulse;
+        ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 3;
+        ctx.shadowBlur = 18; ctx.shadowColor = '#d4a843';
+        ctx.beginPath(); ctx.arc(x, y, r + 6, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+        // HP bar in gold
+        ctx.fillStyle = 'rgba(0,0,0,.7)'; ctx.fillRect(x - r - 2, y - r - 12, (r + 2) * 2, 4);
+        ctx.fillStyle = '#d4a843';
+        ctx.fillRect(x - r - 2, y - r - 12, (r + 2) * 2 * (u.hp / u.maxHp), 4);
+        // "BOUNTY" label
+        ctx.save();
+        ctx.font = `bold ${Math.max(7, r * .65)}px Cinzel,serif`;
+        ctx.textAlign = 'center'; ctx.fillStyle = '#f39c12';
+        ctx.shadowColor = '#d4a843'; ctx.shadowBlur = 8;
+        ctx.fillText('BOUNTY +25💀', x, y - r - 16);
+        ctx.restore();
+        return;
+      }
       // Kill marks (marked unit)
       if ((u.killCount || 0) >= 3) {
         ctx.strokeStyle = '#d4a843'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(x, y, r + 2, 0, Math.PI * 2); ctx.stroke();
       }
-      // HP bar
+      // HP bar — always visible
       const hpPct = u.hp / u.maxHp;
       const bw = r * 2 + 4, bh = 3, bx = x - bw / 2, by = u.def.aerial ? y - r * 1.8 : y - r - 8;
-      if (hpPct < 1) {
-        ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(bx, by, bw, bh);
-        ctx.fillStyle = hpPct > 0.5 ? '#2ecc71' : hpPct > 0.25 ? '#f39c12' : '#e74c3c';
-        ctx.fillRect(bx, by, bw * hpPct, bh);
-      }
+      ctx.globalAlpha = hpPct >= 1 ? 0.35 : 1;
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(bx, by, bw, bh);
+      ctx.fillStyle = hpPct > 0.5 ? '#2ecc71' : hpPct > 0.25 ? '#f39c12' : '#e74c3c';
+      ctx.fillRect(bx, by, bw * hpPct, bh);
+      ctx.globalAlpha = 1;
       // Necromancer passive summon bar
       if ((u.def.passiveSummonInterval || u.def.passiveSummon) && u.passiveSummonTimer > 0) {
         const pct = 1 - (u.passiveSummonTimer / (u.def.passiveSummonInterval || u.def.passiveSummon));
@@ -4433,6 +4956,7 @@
       updateEconomy(G.dt);
       updateMid(G.dt);
       updateSiege(G.dt);
+      updateRogueEvent(G.dt);
       checkLastStand();
       updateUnits(G.dt);
       updateProjectiles(G.dt);
@@ -4451,7 +4975,28 @@
       if (dead.length === 0) return;
       G.running = false;
       G.collapseTime = 0;
+      if (dead.length >= 2) {
+        const _G = G;
+        setTimeout(() => {
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          document.getElementById('sc-gameover').classList.add('active');
+          const gt = document.getElementById('go-title');
+          gt.textContent = 'MUTUAL DESTRUCTION';
+          gt.style.color = '#f39c12'; gt.style.textShadow = '0 0 20px #cc8800';
+          const goSub = document.getElementById('go-sub-text');
+          if (goSub) goSub.textContent = 'Both bases fell simultaneously. No winners here.';
+          const gameMin = Math.floor((_G.elapsed || 0) / 60), gameSec2 = Math.floor((_G.elapsed || 0) % 60);
+          document.getElementById('go-match-time').textContent = `⚔ Draw after ${gameMin}m ${String(gameSec2).padStart(2, '0')}s`;
+          document.getElementById('go-match-time').style.color = '#f39c12';
+          document.getElementById('go-stats').innerHTML = '<div style="text-align:center;color:var(--gold);font-family:Cinzel,serif;font-size:1rem;padding:30px;">Both players destroyed each other at the same moment.<br>A rare outcome. Respect.</div>';
+        }, 1650);
+        return;
+      }
       const winner = G.players.find(p => p.baseHp > 0) || G.players[0];
+      // Record session stats
+      SESSION.games++;
+      SESSION.wins[winner.id - 1]++;
+      SESSION.factions = [G.factions[0].name, G.factions[1].name];
       // Capture all stats NOW before setTimeout
       const _winner = winner;
       const _G = G;
@@ -4475,6 +5020,19 @@
         const gameMin = Math.floor((_G.elapsed || 0) / 60), gameSec2 = Math.floor((_G.elapsed || 0) % 60);
         const timeStr = `${gameMin}m ${String(gameSec2).padStart(2, '0')}s`;
         document.getElementById('go-match-time').textContent = '⏱ ' + timeStr;
+        // Session record badge
+        let sesEl = document.getElementById('go-session-record');
+        if (!sesEl) {
+          sesEl = document.createElement('div');
+          sesEl.id = 'go-session-record';
+          sesEl.style.cssText = 'text-align:center;font-family:Cinzel,serif;font-size:.65rem;color:rgba(212,168,67,.7);letter-spacing:.07em;margin-bottom:6px;';
+          document.getElementById('go-match-time').insertAdjacentElement('afterend', sesEl);
+        }
+        if (SESSION.games > 1) {
+          sesEl.textContent = `SESSION: P1 ${SESSION.wins[0]}W · P2 ${SESSION.wins[1]}W · ${SESSION.games} GAMES`;
+        } else {
+          sesEl.textContent = '';
+        }
         function buildUnitBreakdown(p) {
           const unitDefs = _G.unitDefs[p.id - 1] || [];
           const combatDefs = unitDefs.filter(d => !d.isSpawned && !d.isWorker);
@@ -4530,7 +5088,40 @@
               </div>
               ${buildUnitBreakdown(p)}
             </div>`;
-          }).join('') + `</div>`;
+          }).join('') + `</div>` +
+          // Faction recommendation based on winner's playstyle
+          (() => {
+            const w = _winner;
+            const spawned = w.unitTypeSpawned || {};
+            const unitDefs = _G.unitDefs[w.id - 1] || [];
+            let airCount = 0, melCount = 0, rngCount = 0;
+            unitDefs.forEach(d => {
+              const s = spawned[d.id] || 0;
+              if (d.type === 'air') airCount += s;
+              else if (d.type === 'mel') melCount += s;
+              else if (d.type === 'rng') rngCount += s;
+            });
+            const curFaction = _G.factions[w.id - 1].id;
+            const suggestions = [];
+            if (airCount > melCount && airCount > rngCount) {
+              if (curFaction !== 'spirits') suggestions.push({ f: 'Spirits ✨', tip: 'Your aerial-heavy style is perfect for Spirits — Sky Bounty rewards every aerial kill.' });
+              if (curFaction !== 'voltborn') suggestions.push({ f: 'Voltborn ⚡', tip: 'Arc Kite chains on every hit. If you love aerial, Voltborn will feel electric.' });
+            } else if (melCount > rngCount) {
+              if (curFaction !== 'brutes') suggestions.push({ f: 'Brutes 🪨', tip: 'Heavy melee specialist — Warlord and Fortify passive reward the aggressive ground game you played.' });
+              if (curFaction !== 'bloodpact') suggestions.push({ f: 'Bloodpact 🩸', tip: 'Your melee aggression could thrive here — Berserk doubles attack rate when bloodied.' });
+            } else {
+              if (curFaction !== 'voltborn') suggestions.push({ f: 'Voltborn ⚡', tip: 'Chain lightning rewards constant ranged pressure — your style fits perfectly.' });
+              if (curFaction !== 'infernal') suggestions.push({ f: 'Infernal 🔥', tip: 'Burn stacks from Hellshot shred everything. High-skill ranged faction.' });
+            }
+            if (suggestions.length === 0) {
+              suggestions.push({ f: 'Summoners 💀', tip: 'Try building an undead swarm next — free Shades every 12s from a Necromancer.' });
+            }
+            const sug = suggestions[0];
+            return `<div style="text-align:center;margin-top:18px;padding:12px 20px;background:rgba(212,168,67,.07);border:1px solid rgba(212,168,67,.25);border-radius:6px;max-width:520px;margin-left:auto;margin-right:auto;">
+              <div style="font-family:Cinzel,serif;font-size:.68rem;color:var(--gold);letter-spacing:.08em;margin-bottom:5px;">TRY NEXT: ${sug.f}</div>
+              <div style="font-size:.7rem;color:var(--dim);">${sug.tip}</div>
+            </div>`;
+          })();
       }, 1650);
     }
     // ─── RAGEQUIT / HELL INVASION ─────────────────────────────────────────────
@@ -4991,7 +5582,7 @@
       const mode = pid === 1 ? P1_MODE : P2_MODE;
       const sel = pid === 1 ? P1_SEL : P2_SEL;
       if (mode === 0) {
-        const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
+        const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
         const def = defs[sel]; if (!def) return;
         const cardEl = document.querySelector(`#p${pid}-grid .ucard[data-idx='${sel}']`);
         trySpawn(pid, def.id, cardEl);
@@ -5006,7 +5597,7 @@
 
     function getMaxSel(pid) {
       const mode = pid === 1 ? P1_MODE : P2_MODE;
-      if (mode === 0) return Math.max(0, G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker).length - 1);
+      if (mode === 0) return Math.max(0, G.factions[pid - 1].units.filter(d => !d.isSpawned).length - 1);
       if (mode === 1) return 2;
       if (mode === 2) return 2;
       return 0;
@@ -5125,9 +5716,10 @@
             const cls = u.type === 'air' ? 'air' : u.type === 'rng' ? 'rng' : '';
             return `<span class="futag ${cls}">${u.icon} ${u.name}</span>`;
           }).join('');
+          const beginnerBadge = f.id === 'warriors' ? '<div style="display:inline-block;background:rgba(212,168,67,.18);border:1px solid rgba(212,168,67,.5);color:#d4a843;font-family:Cinzel,serif;font-size:.58rem;padding:2px 7px;border-radius:3px;margin-bottom:4px;letter-spacing:.06em;">⭐ BEGINNER FRIENDLY</div>' : '';
           card.innerHTML = `
         <div class="fcard-head"><span class="fcard-icon">${f.icon}</span><span class="fcard-name">${f.name}</span></div>
-        <div class="fcard-tag">${f.tagline}</div>
+        ${beginnerBadge}<div class="fcard-tag">${f.tagline}</div>
         <div class="fcard-passive">✦ ${f.passive}</div>
         <div class="fcard-units">${unitTags}</div>
         <div class="fcard-pc">
