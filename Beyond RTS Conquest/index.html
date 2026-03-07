@@ -3045,12 +3045,13 @@
         <button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
         <button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
         <button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
+        <button class="btn" id="btn-aivsai">👁 AI VS AI</button>
         <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
         <button class="btn" id="btn-controls">🎮 CONTROLS &amp; KEY BINDS</button>
         <!-- hidden elements kept for JS compatibility -->
         <div style="display:none">
           <button id="mode-vs"></button><button id="mode-solo"></button>
-          <button id="btn-aivsai"></button><button id="btn-rebind"></button>
+          <button id="btn-rebind"></button>
         </div>
       </div>
       <div
@@ -9102,6 +9103,7 @@
     // ─── BUTTON WIRING ───────────────────────────────────────────────────────────
     document.getElementById('btn-play').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-faction'); });
     document.getElementById('btn-solo').addEventListener('click', () => { setGameMode('solo'); showScreen('sc-faction'); });
+    document.getElementById('btn-aivsai').addEventListener('click', () => { setGameMode('aivsai'); showScreen('sc-faction'); });
     document.getElementById('btn-tutorial').addEventListener('click', () => {
       // Launch interactive in-game tutorial
       GAME_MODE = 'tutorial';
