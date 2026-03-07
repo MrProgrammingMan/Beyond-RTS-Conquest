@@ -579,6 +579,47 @@
       text-shadow: 0 0 20px rgba(192, 57, 43, .4);
     }
 
+    .ai-pers-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .pers-btn {
+      font-family: Cinzel, serif;
+      font-size: clamp(.48rem, .7vw, .62rem);
+      letter-spacing: .06em;
+      padding: 4px 7px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      color: var(--dim);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .pers-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .pers-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 168, 67, .1);
+    }
+
+    .pers-btn.random-btn {
+      border-color: #9b59b6;
+      color: #a29bfe;
+    }
+
+    .pers-btn.random-btn.active {
+      background: rgba(155, 89, 182, .15);
+    }
+
     .ai-personality-badge {
       font-family: 'Cinzel', serif;
       font-size: var(--fs-sm);
@@ -1644,7 +1685,7 @@
       cursor: pointer;
       transition: all .14s;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       min-width: 0;
       height: clamp(78px, 11vh, 120px);
       /* fixed height so all cards uniform */
@@ -2543,16 +2584,17 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
+      width: 100%;
     }
 
     .t-fcard {
       background: #0a0a16;
       border: 1px solid var(--border);
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
-      padding: 10px 6px;
+      padding: 14px 8px;
       text-align: center;
-      font-size: 1.6rem;
+      font-size: 2rem;
       transition: all .15s;
     }
 
@@ -2576,9 +2618,14 @@
 
     .t-faction-name {
       font-family: Cinzel, serif;
-      font-size: .58rem;
+      font-size: clamp(.52rem, .9vw, .72rem);
       color: var(--dim);
-      margin-top: 4px;
+      margin-top: 6px;
+      line-height: 1.3;
+      word-break: break-word;
+      white-space: normal;
+      overflow-wrap: break-word;
+      hyphens: auto;
     }
 
     .t-add-btn {
@@ -3088,8 +3135,8 @@
             <button class="diff-btn" data-diff1="hard">HARD</button>
             <button class="diff-btn" data-diff1="expert">EXPERT</button>
           </div>
-          <div class="ai-personality-badge" id="ai1-personality-display" style="margin-top:4px;">Personality: Random
-          </div>
+          <div class="ai-personality-badge" id="ai1-personality-display" style="margin-top:4px;font-size:.7rem;"></div>
+          <div class="ai-pers-row" id="ai1-pers-row"></div>
           <button class="ai-faction-reroll" id="ai1-reroll-btn">🎲 Re-roll P1 Faction</button>
         </div>
       </div>
@@ -3113,7 +3160,9 @@
             <button class="diff-btn" data-diff="hard">HARD</button>
             <button class="diff-btn" data-diff="expert">EXPERT</button>
           </div>
-          <div class="ai-personality-badge" id="ai-personality-display">Personality: Loading...</div>
+          <div class="ai-personality-badge" id="ai-personality-display" style="margin-bottom:4px;font-size:.7rem;">
+          </div>
+          <div class="ai-pers-row" id="ai-pers-row"></div>
           <div class="ai-faction-chosen" id="ai-faction-display">Faction: Random</div>
           <button class="ai-faction-reroll" id="ai-reroll-btn">🎲 Re-roll AI Faction</button>
         </div>
@@ -3712,7 +3761,7 @@
           const isSel = selFIdx === i;
           return `<div class="t-fcard${isTaken ? ' t-fcard-taken' : ''}${isSel ? ' t-fcard-sel' : ''}" onclick="tSelectFaction(${i})" title="${f.name}">
             <div>${f.icon}</div>
-            <div class="t-faction-name">${f.name.split(' ')[0]}</div>
+            <div class="t-faction-name">${f.name}</div>
           </div>`;
         }).join('');
       }
@@ -5580,7 +5629,7 @@
         // ── Spy unit card (universal, appended after faction units) ──
         if (GAME_MODE !== 'tutorial') {
           const spyCard = document.createElement('div');
-          spyCard.className = 'ucard spy-card'; spyCard.dataset.idx = 99;
+          spyCard.className = 'ucard spy-card'; spyCard.style.height = 'auto'; spyCard.style.minHeight = 'clamp(78px,11vh,120px)'; spyCard.dataset.idx = 99;
           spyCard.innerHTML = `<span class="utypetag" style="background:rgba(99,110,114,.3);color:#b2bec3;">SPY</span><span class="uicon">🕵️</span><span class="uname">Spy</span><div class="ucost"><span class="ctag cs">💀${SPY_DEF.souls}</span><span class="ctag cb">🦴${SPY_DEF.bodies}</span></div>`;
           spyCard.addEventListener('click', () => {
             const defs2 = G.factions[pid - 1].units.filter(d => !d.isSpawned);
@@ -7224,24 +7273,24 @@
           }
         } else {
           u.chargeTimer = 0; u.attackCooldown -= dt;
-          // Mid lingering: non-worker units near mid stop to help capture if no enemies nearby
-          // Disabled in tutorial — units should march freely
+          // Mid lingering: units INSIDE the circle slow down to help capture.
+          // Only applies when mid is unowned by this player and no enemies nearby.
+          // Disabled in tutorial — units should march freely.
           const midDist = Math.abs(u.x - G.midX);
-          const inMidZone = midDist < G.midR * 2.5;
           const midNotOwned = G.midOwner !== u.player;
           const enemyNearMid = G.units.some(e => e.player !== u.player && !e.def.isWorker && !e.offscreen && Math.abs(e.x - G.midX) < G.midR * 4);
-          const strictlyInMid = Math.abs(u.x - G.midX) < G.midR * 1.2;
-          if (GAME_MODE !== 'tutorial' && strictlyInMid && midNotOwned && !enemyNearMid && !u.def.isWorker) {
-            // Unit is inside the circle — hold position until captured
+          const insideCircle = midDist < G.midR;
+          // "about to leave" = just past edge, still marching away from center
+          const marchDir = u.player === 1 ? 1 : -1;
+          const nearEdge = midDist >= G.midR && midDist < G.midR * 1.35;
+          const wouldLeaveCircle = nearEdge && Math.sign(u.x - G.midX) === marchDir;
+          if (GAME_MODE !== 'tutorial' && midNotOwned && !enemyNearMid && !u.def.isWorker && (insideCircle || wouldLeaveCircle)) {
+            // Hold inside the circle — drift gently back toward centre
             const driftDx = G.midX - u.x;
-            u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 8 * dt);
-          } else if (GAME_MODE !== 'tutorial' && inMidZone && midNotOwned && !strictlyInMid && !enemyNearMid && !u.def.isWorker) {
-            // Near-mid but not inside — drift inward to help capture
-            const driftDx = G.midX - u.x;
-            u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 20 * dt);
+            u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 12 * dt);
           } else {
-            // Always march forward toward enemy base when no valid target
-            u.x += (u.player === 1 ? 1 : -1) * spd * dt;
+            // March forward toward enemy base
+            u.x += marchDir * spd * dt;
           } // end mid-linger else
           if (canAttackBase(u)) {
             const ebase = G.players[u.player === 1 ? 1 : 0];
@@ -8961,6 +9010,7 @@
         if (aivsai) {
           // Also pick P1 AI faction
           if (AI1_FACTION_IDX === null) AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
+          AI1_PERSONALITY = AI1_PERSONALITY; // keep existing or null for random
           fSelected[0] = AI1_FACTION_IDX;
           _updateAi1Display();
         }
@@ -8974,11 +9024,44 @@
     function _updateAi1Display() {
       const el1 = document.getElementById('ai1-faction-display');
       const p1el = document.getElementById('ai1-personality-display');
-      if (!AI1_FACTION_IDX !== null && el1) {
+      if (AI1_FACTION_IDX !== null && el1) {
         const f = FACTIONS[AI1_FACTION_IDX];
         if (f && el1) el1.textContent = 'P1: ' + f.icon + ' ' + f.name;
       }
-      if (p1el) p1el.textContent = 'P1 Style: ' + (AI_PERS_DESCRIPTIONS[AI1_PERSONALITY] || 'Random');
+      const _refreshP1Badge = () => {
+        if (!p1el) return;
+        if (AI1_PERSONALITY === null) {
+          const resolved = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+          p1el.textContent = '🎲 ' + AI_PERS_DESCRIPTIONS[resolved];
+        } else {
+          p1el.textContent = AI_PERS_DESCRIPTIONS[AI1_PERSONALITY];
+        }
+      };
+      _refreshP1Badge();
+      _buildPersRow('ai1-pers-row', AI1_PERSONALITY, val => {
+        AI1_PERSONALITY = val;
+        _refreshP1Badge();
+        _buildPersRow('ai1-pers-row', val, arguments[0]);
+      });
+    }
+
+    function _buildPersRow(rowId, currentPers, onSelect) {
+      const row = document.getElementById(rowId);
+      if (!row) return;
+      const opts = [{ key: null, label: '🎲 RANDOM' }, ...AI_PERSONALITIES.map(p => ({ key: p, label: p.toUpperCase() }))];
+      row.innerHTML = opts.map(o => {
+        const isActive = (o.key === currentPers) || (o.key === null && currentPers === null);
+        const cls = 'pers-btn' + (o.key === null ? ' random-btn' : '') + (isActive ? ' active' : '');
+        return `<button class="${cls}" data-pers="${o.key ?? ''}">${o.label}</button>`;
+      }).join('');
+      row.querySelectorAll('.pers-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = btn.dataset.pers === '' ? null : btn.dataset.pers;
+          row.querySelectorAll('.pers-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          onSelect(val);
+        });
+      });
     }
 
     function _aiAutoPickFaction() {
@@ -8986,9 +9069,22 @@
       const f = FACTIONS[AI_FACTION_IDX];
       document.getElementById('ai-faction-display').textContent = f.icon + ' ' + f.name + ' — ' + f.tagline;
       fSelected[1] = AI_FACTION_IDX;
-      // Randomise personality
-      AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
-      document.getElementById('ai-personality-display').textContent = AI_PERS_DESCRIPTIONS[AI_PERSONALITY];
+      // Only randomize personality if set to random (null)
+      if (AI_PERSONALITY === null) {
+        const resolved = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+        document.getElementById('ai-personality-display').textContent = '🎲 ' + AI_PERS_DESCRIPTIONS[resolved];
+      } else {
+        document.getElementById('ai-personality-display').textContent = AI_PERS_DESCRIPTIONS[AI_PERSONALITY];
+      }
+      _buildPersRow('ai-pers-row', AI_PERSONALITY, val => {
+        AI_PERSONALITY = val;
+        if (val === null) {
+          const resolved = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+          document.getElementById('ai-personality-display').textContent = '🎲 ' + AI_PERS_DESCRIPTIONS[resolved];
+        } else {
+          document.getElementById('ai-personality-display').textContent = AI_PERS_DESCRIPTIONS[val];
+        }
+      });
     }
 
     function _updateStartBtn() {
@@ -9475,7 +9571,7 @@
       tBuildBracket();
       TOURNAMENT.state = 'bracket';
       showScreen('sc-tournament-bracket');
-      tRenderBracket()
+      tRenderBracket();
     });
     document.getElementById('btn-t-back').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas(); });
     document.getElementById('btn-t-play-match').addEventListener('click', () => {
