@@ -2063,6 +2063,9 @@
     }
 
     .usp-special {
+      overflow-y: auto;
+      max-height: 4.5em;
+      line-height: 1.4;
       font-size: clamp(.6rem, .9vw, .8rem);
       color: #9b59b6;
       line-height: 1.4;
@@ -2462,6 +2465,568 @@
     .tt-body .st {
       color: var(--text);
     }
+
+    /* ── TOURNAMENT ──────────────────────────────────────────────────── */
+    #sc-tournament-setup,
+    #sc-tournament-bracket {
+      background: radial-gradient(ellipse at 50% 20%, #1a1228 0%, #06060e 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: clamp(14px, 2vh, 28px) clamp(12px, 2vw, 32px);
+      gap: clamp(10px, 1.5vh, 18px);
+      overflow-y: auto;
+    }
+
+    .t-screen-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+      color: var(--gold);
+      letter-spacing: .14em;
+      text-align: center;
+      text-shadow: 0 0 24px rgba(212, 168, 67, .5);
+    }
+
+    /* ── Setup screen ── */
+    .t-setup-body {
+      display: flex;
+      gap: clamp(14px, 2.5vw, 32px);
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .t-setup-form {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 260px;
+      max-width: 340px;
+      flex: 1;
+    }
+
+    .t-form-label {
+      font-family: Cinzel, serif;
+      font-size: .65rem;
+      color: var(--gold);
+      letter-spacing: .08em;
+    }
+
+    .t-name-input {
+      background: #0d0d18;
+      border: 1px solid var(--border);
+      color: #fff;
+      font-family: Cinzel, serif;
+      font-size: .8rem;
+      padding: 7px 10px;
+      border-radius: 5px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .t-name-input:focus {
+      border-color: var(--gold);
+    }
+
+    .t-faction-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .t-fcard {
+      background: #0a0a16;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+      padding: 6px 4px;
+      text-align: center;
+      font-size: 1.2rem;
+      transition: all .15s;
+    }
+
+    .t-fcard:hover:not(.t-fcard-taken) {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, .08);
+      transform: scale(1.05);
+    }
+
+    .t-fcard.t-fcard-sel {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, .18);
+      box-shadow: 0 0 10px rgba(212, 168, 67, .3);
+    }
+
+    .t-fcard.t-fcard-taken {
+      opacity: .3;
+      cursor: not-allowed;
+      filter: grayscale(1);
+    }
+
+    .t-faction-name {
+      font-family: Cinzel, serif;
+      font-size: .44rem;
+      color: var(--dim);
+      margin-top: 2px;
+    }
+
+    .t-add-btn {
+      background: rgba(212, 168, 67, .12);
+      border: 1px solid rgba(212, 168, 67, .4);
+      color: var(--gold);
+      font-family: Cinzel, serif;
+      font-size: .75rem;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      letter-spacing: .07em;
+      transition: all .15s;
+    }
+
+    .t-add-btn:hover:not(:disabled) {
+      background: rgba(212, 168, 67, .22);
+    }
+
+    .t-add-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    /* ── Player list ── */
+    .t-player-list {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 240px;
+      max-width: 340px;
+      flex: 1;
+    }
+
+    .t-player-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+    }
+
+    .t-player-num {
+      font-family: Cinzel, serif;
+      font-size: .6rem;
+      color: var(--gold);
+      min-width: 20px;
+    }
+
+    .t-player-icon {
+      font-size: 1.1rem;
+    }
+
+    .t-player-info {
+      flex: 1;
+    }
+
+    .t-player-name {
+      font-family: Cinzel, serif;
+      font-size: .72rem;
+      color: var(--text);
+    }
+
+    .t-player-faction-name {
+      font-family: Cinzel, serif;
+      font-size: .58rem;
+      color: var(--dim);
+    }
+
+    .t-player-remove {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      font-size: .85rem;
+      padding: 2px 5px;
+      opacity: .7;
+    }
+
+    .t-player-remove:hover {
+      opacity: 1;
+    }
+
+    .t-setup-footer {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .t-start-btn {
+      background: linear-gradient(135deg, rgba(212, 168, 67, .2), rgba(212, 168, 67, .08));
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      font-family: Cinzel, serif;
+      font-size: .85rem;
+      padding: 10px 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: .1em;
+      transition: all .2s;
+    }
+
+    .t-start-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, rgba(212, 168, 67, .35), rgba(212, 168, 67, .15));
+      box-shadow: 0 0 20px rgba(212, 168, 67, .25);
+    }
+
+    .t-start-btn:disabled {
+      opacity: .3;
+      cursor: not-allowed;
+    }
+
+    .t-hint {
+      font-family: Cinzel, serif;
+      font-size: .58rem;
+      color: rgba(255, 255, 255, .3);
+      letter-spacing: .06em;
+      text-align: center;
+    }
+
+    /* ── Bracket screen ── */
+    #tourney-bracket-container {
+      position: relative;
+      overflow: auto;
+      flex: 1;
+      width: 100%;
+      max-width: 1100px;
+      min-height: 200px;
+    }
+
+    .t-bracket-inner {
+      display: flex;
+      align-items: stretch;
+      padding: 20px 10px 20px 20px;
+      gap: 0;
+      min-height: 100%;
+    }
+
+    .t-round {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: stretch;
+      flex: 0 0 200px;
+    }
+
+    .t-round-label {
+      font-family: Cinzel, serif;
+      font-size: .58rem;
+      color: rgba(212, 168, 67, .5);
+      letter-spacing: .1em;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .t-match {
+      background: rgba(255, 255, 255, .035);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+
+    .t-match.t-match-current {
+      border-color: var(--gold);
+      box-shadow: 0 0 16px rgba(212, 168, 67, .3);
+    }
+
+    .t-match.t-match-done {
+      opacity: .7;
+    }
+
+    .t-slot {
+      padding: 6px 10px;
+      font-family: Cinzel, serif;
+      font-size: .63rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--dim);
+      min-height: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .t-slot:last-child {
+      border-bottom: none;
+    }
+
+    .t-slot.t-slot-winner {
+      color: #f1c40f;
+      background: rgba(241, 196, 15, .07);
+      font-weight: 700;
+    }
+
+    .t-slot.t-slot-loser {
+      text-decoration: line-through;
+      color: rgba(255, 255, 255, .25);
+    }
+
+    .t-slot.t-slot-tbd {
+      color: rgba(255, 255, 255, .2);
+      font-style: italic;
+    }
+
+    .t-slot.t-slot-ai {
+      color: rgba(100, 180, 255, .6);
+    }
+
+    .t-match-label {
+      font-family: Cinzel, serif;
+      font-size: .5rem;
+      color: rgba(212, 168, 67, .5);
+      padding: 2px 8px;
+      letter-spacing: .08em;
+      background: rgba(0, 0, 0, .2);
+      text-align: center;
+    }
+
+    .t-round-gap {
+      flex: 0 0 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    /* ── Bracket bottom bar ── */
+    .t-bracket-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 16px;
+      background: rgba(0, 0, 0, .4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 860px;
+      box-sizing: border-box;
+      flex-wrap: wrap;
+    }
+
+    .t-current-match-info {
+      font-family: Cinzel, serif;
+      font-size: .7rem;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .t-current-match-info b {
+      color: var(--gold);
+    }
+
+    /* ── Pre-match overlay ── */
+    #t-prematch-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .92);
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .t-prematch-box {
+      background: linear-gradient(160deg, #12101e, #0a0816);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: clamp(20px, 4vh, 50px) clamp(24px, 5vw, 60px);
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 0 60px rgba(212, 168, 67, .25);
+    }
+
+    .t-prematch-round {
+      font-family: Cinzel, serif;
+      font-size: .65rem;
+      color: rgba(212, 168, 67, .7);
+      letter-spacing: .15em;
+      margin-bottom: 10px;
+    }
+
+    .t-prematch-vs-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(12px, 3vw, 32px);
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .t-prematch-player {
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .t-prematch-icon {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+    }
+
+    .t-prematch-name {
+      font-family: Cinzel, serif;
+      font-size: clamp(.8rem, 1.8vw, 1.2rem);
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    .t-prematch-faction {
+      font-family: Cinzel, serif;
+      font-size: .6rem;
+      color: var(--gold);
+      opacity: .8;
+    }
+
+    .t-prematch-vs-text {
+      font-family: Cinzel, serif;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--gold);
+      font-weight: 900;
+    }
+
+    .t-prematch-tagline {
+      font-family: Cinzel, serif;
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .5);
+      letter-spacing: .06em;
+      margin: 8px 0 16px;
+    }
+
+    .t-prematch-countdown {
+      font-family: Cinzel, serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(212, 168, 67, .6);
+      margin: 10px 0;
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .t-prematch-start-btn {
+      background: linear-gradient(135deg, rgba(212, 168, 67, .25), rgba(212, 168, 67, .1));
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      font-family: Cinzel, serif;
+      font-size: .85rem;
+      padding: 12px 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: .1em;
+      transition: all .2s;
+    }
+
+    .t-prematch-start-btn:hover {
+      background: linear-gradient(135deg, rgba(212, 168, 67, .4), rgba(212, 168, 67, .2));
+      box-shadow: 0 0 20px rgba(212, 168, 67, .3);
+    }
+
+    /* ── Tournament celebration ── */
+    #t-celebration-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .88);
+    }
+
+    .t-celeb-box {
+      text-align: center;
+      max-width: 520px;
+      width: 90%;
+    }
+
+    .t-celeb-crown {
+      font-size: clamp(4rem, 10vw, 7rem);
+      animation: t-crownBounce 1s ease-in-out infinite alternate;
+    }
+
+    @keyframes t-crownBounce {
+      from {
+        transform: translateY(0) scale(1);
+      }
+
+      to {
+        transform: translateY(-12px) scale(1.08);
+      }
+    }
+
+    .t-celeb-title {
+      font-family: Cinzel, serif;
+      font-size: clamp(.7rem, 1.5vw, 1rem);
+      color: rgba(212, 168, 67, .7);
+      letter-spacing: .18em;
+      margin: 10px 0 4px;
+    }
+
+    .t-celeb-name {
+      font-family: Cinzel, serif;
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
+      color: var(--gold);
+      text-shadow: 0 0 40px rgba(212, 168, 67, .7);
+      margin: 6px 0;
+      letter-spacing: .06em;
+    }
+
+    .t-celeb-faction {
+      font-family: Cinzel, serif;
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .t-celeb-sub {
+      font-family: Cinzel, serif;
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .4);
+      letter-spacing: .08em;
+      margin-bottom: 24px;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 698;
+    }
+
+    /* ── Match-won mini banner (shown on gameover in tournament) ── */
+    #t-match-banner {
+      display: none;
+      background: linear-gradient(90deg, rgba(212, 168, 67, .15), rgba(212, 168, 67, .05));
+      border: 1px solid rgba(212, 168, 67, .5);
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-family: Cinzel, serif;
+      font-size: .72rem;
+      color: var(--gold);
+      letter-spacing: .06em;
+      text-align: center;
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 
@@ -2476,16 +3041,16 @@
         <h1 class="menu-title">BEYOND KINGS'<br>CONQUEST</h1>
       </div>
       <div class="menu-btns">
-        <div class="mode-row">
-          <button class="mode-btn active" id="mode-vs" onclick="setGameMode('vs')">⚔ VS PLAYER</button>
-          <button class="mode-btn" id="mode-solo" onclick="setGameMode('solo')">🤖 SINGLEPLAYER</button>
-        </div>
-        <button class="btn primary" id="btn-play">⚔ VS PLAYER</button>
-        <button class="btn" id="btn-rebind">⌨️ KEY BINDINGS</button>
-        <button class="btn" id="btn-aivsai" onclick="setGameMode('aivsai'); showScreen('sc-faction')">🤖 AI vs
-          AI</button>
+        <button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
+        <button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
+        <button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
         <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
-        <button class="btn" id="btn-controls">🎮 CONTROLS</button>
+        <button class="btn" id="btn-controls">🎮 CONTROLS &amp; KEY BINDS</button>
+        <!-- hidden elements kept for JS compatibility -->
+        <div style="display:none">
+          <button id="mode-vs"></button><button id="mode-solo"></button>
+          <button id="btn-aivsai"></button><button id="btn-rebind"></button>
+        </div>
       </div>
       <div
         style="margin-top:14px;font-family:Cinzel,serif;font-size:.65rem;color:rgba(212,168,67,.55);letter-spacing:.08em;text-align:center;line-height:1.8;">
@@ -2598,7 +3163,7 @@
   <!-- REBIND -->
   <div id="sc-rebind" class="screen">
     <div class="rebind-wrap" style="max-width:720px;">
-      <div class="sc-title">KEY BINDINGS</div>
+      <div class="sc-title">CONTROLS &amp; KEY BINDS</div>
       <div class="rebind-note">Click any key button to rebind it. Press <kbd>ESC</kbd> to cancel. Resets on refresh.
       </div>
       <div class="rebind-grid">
@@ -2834,9 +3399,84 @@
       </div>
     </div>
   </div>
+  <!-- TOURNAMENT SETUP -->
+  <div id="sc-tournament-setup" class="screen">
+    <div class="t-screen-title">🏆 TOURNAMENT SETUP</div>
+    <div class="t-hint" id="t-setup-hint">Add 2–10 players. Each player picks a unique faction.</div>
+    <div class="t-setup-body">
+      <div class="t-setup-form">
+        <div class="t-form-label">PLAYER NAME</div>
+        <input class="t-name-input" id="t-name-input" type="text" maxlength="16" placeholder="Enter name..."
+          autocomplete="off">
+        <div class="t-form-label" style="margin-top:4px">CHOOSE FACTION</div>
+        <div class="t-faction-grid" id="t-faction-grid"></div>
+        <button class="t-add-btn" id="t-add-player-btn" disabled>+ ADD PLAYER</button>
+      </div>
+      <div class="t-player-list">
+        <div class="t-form-label">PLAYERS <span id="t-player-count" style="color:var(--text)">(0/10)</span></div>
+        <div id="t-players-list-body" style="display:flex;flex-direction:column;gap:6px;min-height:60px;"></div>
+        <div id="t-players-empty"
+          style="font-family:Cinzel,serif;font-size:.6rem;color:rgba(255,255,255,.25);text-align:center;padding:20px 0;">
+          No players added yet</div>
+      </div>
+    </div>
+    <div class="t-setup-footer">
+      <button class="btn" id="btn-t-back">← BACK</button>
+      <button class="t-start-btn" id="btn-t-start-tournament" disabled>START TOURNAMENT →</button>
+    </div>
+  </div>
+
+  <!-- TOURNAMENT BRACKET -->
+  <div id="sc-tournament-bracket" class="screen">
+    <div class="t-screen-title">🏆 TOURNAMENT BRACKET</div>
+    <div id="tourney-bracket-container">
+      <div class="t-bracket-inner" id="t-bracket-inner"></div>
+    </div>
+    <div class="t-bracket-bar">
+      <div class="t-current-match-info" id="t-next-match-info">Ready to begin.</div>
+      <button class="t-start-btn" id="btn-t-play-match">▶ START MATCH</button>
+    </div>
+    <!-- Pre-match overlay (inside bracket screen space) -->
+    <div id="t-prematch-overlay" style="display:none">
+      <div class="t-prematch-box">
+        <div class="t-prematch-round" id="t-prematch-round-label">ROUND 1 · MATCH 1 OF 5</div>
+        <div class="t-prematch-vs-row">
+          <div class="t-prematch-player">
+            <div class="t-prematch-icon" id="t-pm-icon1">⚔️</div>
+            <div class="t-prematch-name" id="t-pm-name1">PLAYER 1</div>
+            <div class="t-prematch-faction" id="t-pm-faction1">Warriors</div>
+          </div>
+          <div class="t-prematch-vs-text">VS</div>
+          <div class="t-prematch-player">
+            <div class="t-prematch-icon" id="t-pm-icon2">💀</div>
+            <div class="t-prematch-name" id="t-pm-name2">PLAYER 2</div>
+            <div class="t-prematch-faction" id="t-pm-faction2">Summoners</div>
+          </div>
+        </div>
+        <div class="t-prematch-tagline">⚔ Get into your positions! Match starts on countdown.</div>
+        <div class="t-prematch-countdown" id="t-prematch-countdown">GO!</div>
+        <button class="t-prematch-start-btn" id="btn-t-begin-match">▶ BEGIN!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOURNAMENT WINNER CELEBRATION -->
+  <canvas id="confetti-canvas" style="display:none;position:fixed;inset:0;pointer-events:none;z-index:698;"></canvas>
+  <div id="t-celebration-overlay" style="display:none">
+    <div class="t-celeb-box">
+      <div class="t-celeb-crown">👑</div>
+      <div class="t-celeb-title">TOURNAMENT CHAMPION</div>
+      <div class="t-celeb-name" id="t-celeb-name">PLAYER</div>
+      <div class="t-celeb-faction" id="t-celeb-faction">⚔️ Warriors</div>
+      <div class="t-celeb-sub" id="t-celeb-sub">Undefeated. Unbroken. Victorious.</div>
+      <button class="t-start-btn" id="btn-t-celebration-menu" style="margin-top:10px">🏠 RETURN TO MENU</button>
+    </div>
+  </div>
+
   <!-- GAMEOVER -->
   <div id="sc-gameover" class="screen">
     <div class="go-wrap">
+      <div id="t-match-banner"></div>
       <div class="go-crown">👑</div>
       <h2 class="go-title" id="go-title"></h2>
       <p class="go-sub" id="go-sub-text">Get rekt.</p>
@@ -2911,6 +3551,440 @@
         p.x = Math.max(0, Math.min(canvas.width, p.x));
       });
     });
+
+    // ══════════════════════════════════════════════════════════════════
+    // TOURNAMENT SYSTEM
+    // ══════════════════════════════════════════════════════════════════
+    let TOURNAMENT = null;
+    let _confettiAnim = null;
+
+    function tInit() {
+      TOURNAMENT = { players: [], rounds: [], currentRound: 0, currentMatchInRound: 0, state: 'setup', winnerPlayer: null };
+    }
+
+    function tTakenFactions() {
+      return new Set(TOURNAMENT.players.map(p => p.factionIdx));
+    }
+
+    function tAddPlayer(name, fIdx) {
+      if (!name.trim() || TOURNAMENT.players.length >= 10) return false;
+      if (tTakenFactions().has(fIdx)) return false;
+      TOURNAMENT.players.push({ name: name.trim().toUpperCase(), factionIdx: fIdx, faction: FACTIONS[fIdx], isAI: false });
+      return true;
+    }
+
+    function tRemovePlayer(idx) {
+      TOURNAMENT.players.splice(idx, 1);
+      tRenderSetup();
+    }
+
+    function tMakeAI() {
+      const used = tTakenFactions();
+      // Pick all rounds' AI factions too
+      TOURNAMENT.rounds.forEach(r => r.forEach(m => { if (m.p1 && m.p1.isAI) used.add(m.p1.factionIdx); if (m.p2 && m.p2.isAI) used.add(m.p2.factionIdx); }));
+      const avail = FACTIONS.map((_, i) => i).filter(i => !used.has(i));
+      const fIdx = avail.length > 0 ? avail[Math.floor(Math.random() * avail.length)] : Math.floor(Math.random() * FACTIONS.length);
+      const pers = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+      return { name: 'AI CHALLENGER', factionIdx: fIdx, faction: FACTIONS[fIdx], isAI: true, aiDiff: 'hard', aiPers: pers };
+    }
+
+    function tBuildBracket() {
+      TOURNAMENT.rounds = [];
+      let current = TOURNAMENT.players.slice();
+      while (current.length > 1) {
+        const round = [];
+        const pairs = Math.floor(current.length / 2);
+        for (let i = 0; i < pairs; i++) {
+          round.push({ p1: current[i * 2], p2: current[i * 2 + 1], winner: null, played: false, round: TOURNAMENT.rounds.length, idx: i });
+        }
+        if (current.length % 2 === 1) {
+          // Odd player out fights AI
+          round.push({ p1: current[current.length - 1], p2: tMakeAI(), winner: null, played: false, round: TOURNAMENT.rounds.length, idx: pairs, hasAI: true });
+        }
+        TOURNAMENT.rounds.push(round);
+        current = round.map(() => null); // TBD — filled as matches resolve
+      }
+      TOURNAMENT.currentRound = 0;
+      TOURNAMENT.currentMatchInRound = 0;
+    }
+
+    function tGetCurrentMatch() {
+      if (!TOURNAMENT) return null;
+      const r = TOURNAMENT.rounds[TOURNAMENT.currentRound];
+      return r ? (r[TOURNAMENT.currentMatchInRound] || null) : null;
+    }
+
+    function tAdvanceWinner(round, matchIdx, winner, loser) {
+      const match = TOURNAMENT.rounds[round][matchIdx];
+      match.winner = winner;
+      match.loser = loser;
+      match.played = true;
+      // Propagate to next round
+      const nextR = TOURNAMENT.rounds[round + 1];
+      if (nextR) {
+        const nm = Math.floor(matchIdx / 2);
+        if (!nextR[nm]) return;
+        if (matchIdx % 2 === 0) nextR[nm].p1 = winner;
+        else nextR[nm].p2 = winner;
+      }
+      // Find next match to play
+      tAdvanceCursor();
+    }
+
+    function tAdvanceCursor() {
+      for (let r = 0; r < TOURNAMENT.rounds.length; r++) {
+        for (let m = 0; m < TOURNAMENT.rounds[r].length; m++) {
+          const match = TOURNAMENT.rounds[r][m];
+          if (!match.played && match.p1 !== null && match.p2 !== null) {
+            TOURNAMENT.currentRound = r;
+            TOURNAMENT.currentMatchInRound = m;
+            return;
+          }
+        }
+      }
+      // No more matches — tournament done
+      TOURNAMENT.state = 'done';
+      // Find final match winner
+      const lastR = TOURNAMENT.rounds[TOURNAMENT.rounds.length - 1];
+      if (lastR && lastR[0] && lastR[0].winner) TOURNAMENT.winnerPlayer = lastR[0].winner;
+    }
+
+    function tTotalMatchCount() {
+      return TOURNAMENT.rounds.reduce((s, r) => s + r.length, 0);
+    }
+
+    function tPlayedMatchCount() {
+      return TOURNAMENT.rounds.reduce((s, r) => s + r.filter(m => m.played).length, 0);
+    }
+
+    // ── Setup screen renderer ──────────────────────────────────────
+    function tRenderSetup() {
+      const taken = tTakenFactions();
+      const selFIdx = window._tSelFaction;
+      // Faction grid
+      const grid = document.getElementById('t-faction-grid');
+      if (grid) {
+        grid.innerHTML = FACTIONS.map((f, i) => {
+          const isTaken = taken.has(i);
+          const isSel = selFIdx === i;
+          return `<div class="t-fcard${isTaken ? ' t-fcard-taken' : ''}${isSel ? ' t-fcard-sel' : ''}" onclick="tSelectFaction(${i})" title="${f.name}">
+            <div>${f.icon}</div>
+            <div class="t-faction-name">${f.name.split(' ')[0]}</div>
+          </div>`;
+        }).join('');
+      }
+      // Players list
+      const body = document.getElementById('t-players-list-body');
+      const empty = document.getElementById('t-players-empty');
+      if (body) {
+        body.innerHTML = TOURNAMENT.players.map((p, i) => `
+          <div class="t-player-row">
+            <div class="t-player-num">${i + 1}.</div>
+            <div class="t-player-icon">${p.faction.icon}</div>
+            <div class="t-player-info">
+              <div class="t-player-name">${p.name}</div>
+              <div class="t-player-faction-name">${p.faction.name}</div>
+            </div>
+            <button class="t-player-remove" onclick="tRemovePlayer(${i})" title="Remove">✕</button>
+          </div>`).join('');
+      }
+      if (empty) empty.style.display = TOURNAMENT.players.length ? 'none' : 'block';
+      const countEl = document.getElementById('t-player-count');
+      if (countEl) countEl.textContent = `(${TOURNAMENT.players.length}/10)`;
+      const startBtn = document.getElementById('btn-t-start-tournament');
+      if (startBtn) startBtn.disabled = TOURNAMENT.players.length < 2;
+      const hint = document.getElementById('t-setup-hint');
+      if (hint) hint.textContent = TOURNAMENT.players.length >= 10 ? 'Maximum players reached.' :
+        TOURNAMENT.players.length >= 2 ? `${TOURNAMENT.players.length} players ready — add more or start!` :
+          'Add 2–10 players. Each player picks a unique faction.';
+      tUpdateAddBtn();
+    }
+
+    function tSelectFaction(idx) {
+      if (tTakenFactions().has(idx)) return;
+      window._tSelFaction = idx;
+      tRenderSetup();
+      tUpdateAddBtn();
+    }
+
+    function tUpdateAddBtn() {
+      const btn = document.getElementById('t-add-player-btn');
+      const name = (document.getElementById('t-name-input') || {}).value || '';
+      if (btn) btn.disabled = !name.trim() || window._tSelFaction === undefined || window._tSelFaction === null || tTakenFactions().has(window._tSelFaction) || TOURNAMENT.players.length >= 10;
+    }
+
+    // ── Bracket renderer ──────────────────────────────────────────
+    function tRenderBracket() {
+      const container = document.getElementById('t-bracket-inner');
+      if (!container) return;
+      const rounds = TOURNAMENT.rounds;
+      let html = '';
+      for (let r = 0; r < rounds.length; r++) {
+        const round = rounds[r];
+        const roundLabel = r === rounds.length - 1 ? 'FINAL' : r === rounds.length - 2 ? 'SEMI-FINAL' : r === 0 ? 'ROUND 1' : `ROUND ${r + 1}`;
+        html += `<div class="t-round" id="t-round-${r}" style="min-height:${Math.max(round.length, 1) * 92}px">`;
+        html += `<div class="t-round-label">${roundLabel}</div>`;
+        for (let m = 0; m < round.length; m++) {
+          const match = round[m];
+          const isCurrent = !match.played && r === TOURNAMENT.currentRound && m === TOURNAMENT.currentMatchInRound && TOURNAMENT.state !== 'done';
+          html += `<div class="t-match${isCurrent ? ' t-match-current' : ''}${match.played ? ' t-match-done' : ''}" data-round="${r}" data-match="${m}">`;
+          html += `<div class="t-match-label">M${tPlayedMatchCount() + 1 <= tTotalMatchCount() ? '' : ''} ${roundLabel} ${m + 1}</div>`;
+          html += tRenderSlot(match.p1, match.winner === match.p1 && match.played, match.winner !== match.p1 && match.played && match.p1);
+          html += tRenderSlot(match.p2, match.winner === match.p2 && match.played, match.winner !== match.p2 && match.played && match.p2);
+          html += `</div>`;
+        }
+        html += '</div>';
+        // Connector gap between rounds
+        if (r < rounds.length - 1) {
+          html += `<div class="t-round-gap" id="t-gap-${r}"></div>`;
+        }
+      }
+      // Winner slot
+      html += `<div class="t-round" style="justify-content:center;padding-left:8px;min-height:80px">`;
+      html += `<div class="t-round-label">WINNER</div>`;
+      if (TOURNAMENT.state === 'done' && TOURNAMENT.rounds.length > 0) {
+        const finalMatch = TOURNAMENT.rounds[rounds.length - 1][0];
+        if (finalMatch && finalMatch.winner) {
+          html += `<div class="t-match t-match-done" style="border-color:#f1c40f">`;
+          html += tRenderSlot(finalMatch.winner, true, false);
+          html += `</div>`;
+        }
+      } else {
+        html += `<div class="t-match" style="border-style:dashed;opacity:.4"><div class="t-slot t-slot-tbd">🏆 TBD</div></div>`;
+      }
+      html += '</div>';
+      container.innerHTML = html;
+      // Draw SVG connector lines
+      requestAnimationFrame(tDrawBracketLines);
+      // Update info bar
+      tUpdateBracketBar();
+    }
+
+    function tRenderSlot(player, isWinner, isLoser) {
+      if (!player) return `<div class="t-slot t-slot-tbd">— TBD —</div>`;
+      const cls = isWinner ? 't-slot-winner' : isLoser ? 't-slot-loser' : player.isAI ? 't-slot-ai' : '';
+      const pre = isWinner ? '🏆 ' : '';
+      const aiLabel = player.isAI ? '🤖 ' : '';
+      return `<div class="t-slot ${cls}">${pre}${player.faction.icon} ${aiLabel}${player.name}</div>`;
+    }
+
+    function tDrawBracketLines() {
+      const container = document.getElementById('tourney-bracket-container');
+      if (!container) return;
+      const old = container.querySelector('.t-svg-lines');
+      if (old) old.remove();
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.classList.add('t-svg-lines');
+      svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible;';
+      const cRect = container.getBoundingClientRect();
+      const rounds = TOURNAMENT.rounds;
+      for (let r = 0; r < rounds.length; r++) {
+        for (let m = 0; m < rounds[r].length; m++) {
+          const fromEl = container.querySelector(`[data-round="${r}"][data-match="${m}"]`);
+          const toRound = r + 1;
+          const toMatch = Math.floor(m / 2);
+          const toEl = toRound < rounds.length ? container.querySelector(`[data-round="${toRound}"][data-match="${toMatch}"]`) : null;
+          if (!fromEl) continue;
+          const fRect = fromEl.getBoundingClientRect();
+          const x1 = fRect.right - cRect.left + container.scrollLeft;
+          const y1 = fRect.top + fRect.height / 2 - cRect.top + container.scrollTop;
+          if (toEl) {
+            const tRect = toEl.getBoundingClientRect();
+            const x2 = tRect.left - cRect.left + container.scrollLeft;
+            const y2 = tRect.top + tRect.height / 2 - cRect.top + container.scrollTop;
+            const midX = x1 + (x2 - x1) * 0.42;
+            const done = TOURNAMENT.rounds[r][m].played;
+            const col = done ? 'rgba(212,168,67,0.6)' : 'rgba(212,168,67,0.25)';
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', `M${x1},${y1} H${midX} V${y2} H${x2}`);
+            path.setAttribute('stroke', col); path.setAttribute('stroke-width', '2'); path.setAttribute('fill', 'none');
+            svg.appendChild(path);
+          } else if (r === rounds.length - 1) {
+            // Final → winner line
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x1 + 50); line.setAttribute('y2', y1);
+            line.setAttribute('stroke', 'rgba(212,168,67,0.5)'); line.setAttribute('stroke-width', '2');
+            svg.appendChild(line);
+          }
+        }
+      }
+      container.style.position = 'relative';
+      container.appendChild(svg);
+    }
+
+    function tUpdateBracketBar() {
+      const info = document.getElementById('t-next-match-info');
+      const btn = document.getElementById('btn-t-play-match');
+      if (TOURNAMENT.state === 'done') {
+        if (info) info.innerHTML = `🏆 <b>${TOURNAMENT.winnerPlayer ? TOURNAMENT.winnerPlayer.name : 'CHAMPION'}</b> wins the tournament!`;
+        if (btn) { btn.textContent = '🏆 CELEBRATE!'; btn.disabled = false; }
+        return;
+      }
+      const match = tGetCurrentMatch();
+      if (!match) return;
+      const p1n = match.p1 ? `${match.p1.faction.icon} ${match.p1.name}` : '?';
+      const p2n = match.p2 ? `${match.p2.faction.icon} ${match.p2.name}` : '?';
+      const rLabel = TOURNAMENT.currentRound === TOURNAMENT.rounds.length - 1 ? 'FINAL' : `ROUND ${TOURNAMENT.currentRound + 1}`;
+      if (info) info.innerHTML = `<b>${rLabel}</b> · ${p1n} <b>VS</b> ${p2n}`;
+      if (btn) { btn.textContent = '▶ START MATCH'; btn.disabled = false; }
+    }
+
+    // ── Pre-match sequence ─────────────────────────────────────────
+    function tShowPreMatch() {
+      const match = tGetCurrentMatch();
+      if (!match) return;
+      const total = tTotalMatchCount();
+      const played = tPlayedMatchCount();
+      const rLabel = TOURNAMENT.currentRound === TOURNAMENT.rounds.length - 1 ? 'FINAL' : `ROUND ${TOURNAMENT.currentRound + 1}`;
+      document.getElementById('t-prematch-round-label').textContent = `${rLabel} · MATCH ${played + 1} OF ${total}`;
+      document.getElementById('t-pm-icon1').textContent = match.p1.faction.icon;
+      document.getElementById('t-pm-name1').textContent = match.p1.name;
+      document.getElementById('t-pm-faction1').textContent = match.p1.faction.name;
+      document.getElementById('t-pm-icon2').textContent = match.p2.faction.icon;
+      document.getElementById('t-pm-name2').textContent = match.p2.isAI ? '🤖 ' + match.p2.name : match.p2.name;
+      document.getElementById('t-pm-faction2').textContent = match.p2.faction.name;
+      document.getElementById('t-prematch-overlay').style.display = 'flex';
+      document.getElementById('btn-t-begin-match').style.display = 'inline-block';
+      document.getElementById('t-prematch-countdown').textContent = '⚔';
+    }
+
+    function tStartCountdown() {
+      const btn = document.getElementById('btn-t-begin-match');
+      if (btn) btn.style.display = 'none';
+      let n = 3;
+      const cd = document.getElementById('t-prematch-countdown');
+      const tick = () => {
+        if (n <= 0) { tLaunchMatch(); return; }
+        if (cd) { cd.textContent = n; cd.style.transform = 'scale(1.4)'; setTimeout(() => { if (cd) cd.style.transform = 'scale(1)'; }, 250); }
+        n--;
+        setTimeout(tick, 900);
+      };
+      tick();
+    }
+
+    function tLaunchMatch() {
+      document.getElementById('t-prematch-overlay').style.display = 'none';
+      const match = tGetCurrentMatch();
+      if (!match) return;
+      GAME_MODE = 'tournament';
+      P1_FACTION = match.p1.faction;
+      P2_FACTION = match.p2.faction;
+      if (match.p2.isAI) {
+        // P2 = AI: set AI config
+        AI_DIFFICULTY = match.p2.aiDiff || 'hard';
+        AI_FACTION_IDX = match.p2.factionIdx;
+        AI_PERSONALITY = match.p2.aiPers || 'aggressive';
+        TOURNAMENT._aiMatch = true;
+      } else {
+        TOURNAMENT._aiMatch = false;
+      }
+      if (AC.state === 'suspended') AC.resume();
+      initGame();
+    }
+
+    // ── After match ────────────────────────────────────────────────
+    function tOnMatchEnd(winnerPid) {
+      const match = tGetCurrentMatch();
+      if (!match) return;
+      const winner = winnerPid === 1 ? match.p1 : match.p2;
+      const loser = winnerPid === 1 ? match.p2 : match.p1;
+      tAdvanceWinner(TOURNAMENT.currentRound, TOURNAMENT.currentMatchInRound, winner, loser);
+      // Show banner on gameover screen
+      const banner = document.getElementById('t-match-banner');
+      if (banner) {
+        banner.textContent = TOURNAMENT.state === 'done' ? `🏆 ${winner.name} IS THE TOURNAMENT CHAMPION!` : `🏆 ${winner.name} advances! ${loser ? loser.name + ' is eliminated.' : ''}`;
+        banner.style.display = 'block';
+      }
+      // Hide tournament-irrelevant gameover buttons
+      const rematch = document.getElementById('btn-rematch');
+      const changeFaction = document.getElementById('btn-change-faction');
+      const continueBtn = document.getElementById('btn-t-continue');
+      if (rematch) rematch.style.display = 'none';
+      if (changeFaction) changeFaction.style.display = 'none';
+      // Ensure continue button exists and is visible
+      if (!continueBtn) {
+        const toMenuBtn = document.getElementById('btn-to-menu');
+        if (toMenuBtn) {
+          const cb = document.createElement('button');
+          cb.id = 'btn-t-continue'; cb.className = 'btn primary';
+          cb.textContent = TOURNAMENT.state === 'done' ? '🏆 SEE CHAMPION' : '▶ CONTINUE TOURNAMENT';
+          cb.addEventListener('click', tContinueFromGameover);
+          toMenuBtn.parentElement.insertBefore(cb, toMenuBtn);
+        }
+      } else {
+        continueBtn.textContent = TOURNAMENT.state === 'done' ? '🏆 SEE CHAMPION' : '▶ CONTINUE TOURNAMENT';
+        continueBtn.style.display = '';
+      }
+      const toMenuBtn = document.getElementById('btn-to-menu');
+      if (toMenuBtn) toMenuBtn.textContent = '🚪 QUIT TOURNAMENT';
+    }
+
+    function tContinueFromGameover() {
+      G = null;
+      stopIngameTutorial();
+      // Restore gameover buttons for non-tournament games
+      const rematch = document.getElementById('btn-rematch');
+      const changeFaction = document.getElementById('btn-change-faction');
+      if (rematch) rematch.style.display = '';
+      if (changeFaction) changeFaction.style.display = '';
+      const toMenuBtn = document.getElementById('btn-to-menu');
+      if (toMenuBtn) toMenuBtn.textContent = '🏠 MENU';
+      const banner = document.getElementById('t-match-banner');
+      if (banner) banner.style.display = 'none';
+      if (TOURNAMENT.state === 'done') {
+        tShowChampion();
+      } else {
+        showScreen('sc-tournament-bracket');
+        tRenderBracket();
+      }
+    }
+
+    function tShowChampion() {
+      const winner = TOURNAMENT.winnerPlayer;
+      if (!winner) { showScreen('sc-menu'); animMenuCanvas(); return; }
+      TOURNAMENT.winnerPlayer = winner;
+      document.getElementById('t-celeb-name').textContent = winner.name;
+      document.getElementById('t-celeb-faction').textContent = `${winner.faction.icon} ${winner.faction.name}`;
+      document.getElementById('t-celeb-sub').textContent = `Undefeated. Unbroken. Victorious. — ${tTotalMatchCount()} matches decided.`;
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('t-celebration-overlay').style.display = 'flex';
+      const cc = document.getElementById('confetti-canvas');
+      if (cc) cc.style.display = 'block';
+      tFireConfetti();
+    }
+
+    // ── Confetti ──────────────────────────────────────────────────
+    function tFireConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+      const particles = [];
+      const colors = ['#f1c40f', '#e74c3c', '#2ecc71', '#3498db', '#9b59b6', '#e67e22', '#fff', '#d4a843'];
+      for (let i = 0; i < 220; i++) {
+        particles.push({ x: Math.random() * canvas.width, y: -20 - Math.random() * canvas.height, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, rot: Math.random() * 360, rotV: (Math.random() - 0.5) * 8, w: 6 + Math.random() * 8, h: 3 + Math.random() * 5, color: colors[Math.floor(Math.random() * colors.length)], alpha: 1 });
+      }
+      let frame = 0;
+      const loop = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy; p.rot += p.rotV;
+          if (frame > 180) p.alpha = Math.max(0, p.alpha - 0.008);
+          ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180); ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+        });
+        frame++;
+        if (frame < 300) _confettiAnim = requestAnimationFrame(loop);
+        else { ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+      };
+      if (_confettiAnim) cancelAnimationFrame(_confettiAnim);
+      _confettiAnim = requestAnimationFrame(loop);
+    }
+
+    // ── Siege decay is faster in tournament ───────────────────────
+    // (handled in updateGame siege decay section with GAME_MODE check)
+
+
     let G = null, P1_FACTION = null, P2_FACTION = null;
     let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial' | 'aivsai'
     let AI_DIFFICULTY = 'medium';   // 'easy'|'medium'|'hard'|'expert'|'tutorial'
@@ -3670,16 +4744,17 @@
     const AI_PERSONALITIES = ['aggressive', 'defensive', 'swarm', 'economist', 'aerial', 'counter', 'saver', 'rusher', 'balanced', 'berserker', 'turtler', 'opportunist'];
 
     const AI_DIFF_SETTINGS = {
-      //          interval  spawnCh  saveThresh  buffs    upgrades  workerPri  defenseReact  adapts   savesUp  resourceSave  counterPlays
-      tutorial: { interval: 5.5, spawnChance: 0.22, saveThreshold: 40, usesBuffs: false, buysUpgrades: false, workerPriority: 0.10, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
-      easy: { interval: 3.5, spawnChance: 0.38, saveThreshold: 30, usesBuffs: false, buysUpgrades: false, workerPriority: 0.18, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
-      medium: { interval: 2.0, spawnChance: 0.62, saveThreshold: 20, usesBuffs: false, buysUpgrades: true, workerPriority: 0.32, defenseReact: true, adapts: false, savesUp: true, resourceSave: false, counterPlays: false },
-      hard: { interval: 1.2, spawnChance: 0.80, saveThreshold: 14, usesBuffs: true, buysUpgrades: true, workerPriority: 0.46, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
-      expert: { interval: 0.65, spawnChance: 0.96, saveThreshold: 6, usesBuffs: true, buysUpgrades: true, workerPriority: 0.62, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
+      // All AIs are active and aggressive — difficulty determines HOW smart they are,
+      // not whether they bother doing anything. Speed differences are secondary.
+      tutorial: { interval: 3.2, spawnChance: 0.72, saveThreshold: 40, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
+      easy: { interval: 2.8, spawnChance: 0.78, saveThreshold: 35, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
+      medium: { interval: 1.8, spawnChance: 0.85, saveThreshold: 22, usesBuffs: false, buysUpgrades: true, defenseReact: true, adapts: false, savesUp: true, resourceSave: false, counterPlays: false, usesSpy: false },
+      hard: { interval: 1.0, spawnChance: 0.92, saveThreshold: 12, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false },
+      expert: { interval: 0.50, spawnChance: 0.98, saveThreshold: 4, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true },
     };
 
     // Delay between AI "thinking" (showing highlight) and actually executing the action
-    const AI_THINK_DELAY = 360; // ms
+    const AI_THINK_DELAY = 360; // ms (legacy — per-diff overrides used in _aiActWithDelay)
 
     // AI idle browsing — the AI "hovers" over cards like a human would
     // Per-pid state so both AIs in aivsai mode browse independently
@@ -3696,12 +4771,18 @@
       if (_aiIdleTimer[pidx] < (0.6 + Math.random() * 1.4)) return;
       _aiIdleTimer[pidx] = 0;
 
-      // Occasionally glance at upgrades tab (10% chance)
+      // Occasionally glance at upgrades tab — only if this difficulty actually buys upgrades
+      const idleDiff = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
+      const idleCfg = AI_DIFF_SETTINGS[idleDiff] || AI_DIFF_SETTINGS.medium;
       let tab = _aiLastActionTab[pidx] || 0;
-      if (Math.random() < 0.10 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) {
+      // Only glance at upgrades if the AI tier can actually buy them, and not tutorial
+      if (idleCfg.buysUpgrades && idleDiff !== 'tutorial' && Math.random() < 0.10 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) {
         tab = 1; // peek at upgrades
         _aiLastActionTab[pidx] = 1;
-        setTimeout(() => { _aiLastActionTab[pidx] = 0; }, 1500 + Math.random() * 1500);
+        setTimeout(() => { if (!G[pid === 1 ? '_aiActing1' : '_aiActing']) _aiLastActionTab[pidx] = 0; }, 1200 + Math.random() * 1200);
+      } else {
+        tab = 0; // always stay on units tab if can't buy upgrades
+        _aiLastActionTab[pidx] = 0;
       }
 
       const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
@@ -3745,7 +4826,18 @@
 
     // Visually "navigate" the AI to a tab and highlight a card, then execute after delay
     // How long the AI pauses on each card while navigating toward its target
-    const AI_STEP_DELAY = 180; // ms per navigation step
+    // Per-diff step delays — expert snaps faster, easy lingers
+    const AI_STEP_DELAYS = { tutorial: 300, easy: 260, medium: 190, hard: 140, expert: 85 };
+    const AI_THINK_DELAYS = { tutorial: 500, easy: 450, medium: 340, hard: 220, expert: 110 };
+    function _getStepDelay(pid) {
+      const d = pid === 1 ? (G && G.ai1Difficulty || 'medium') : (G && G.aiDifficulty || 'medium');
+      return AI_STEP_DELAYS[d] || 200;
+    }
+    function _getThinkDelay(pid) {
+      const d = pid === 1 ? (G && G.ai1Difficulty || 'medium') : (G && G.aiDifficulty || 'medium');
+      return AI_THINK_DELAYS[d] || 360;
+    }
+    const AI_STEP_DELAY = 180; // legacy fallback
 
     function _aiHighlightCard(pid, tabMode, cardIdx) {
       _aiClearThinking(pid);
@@ -3789,7 +4881,7 @@
             if (!G || !G.running) { _aiClearThinking(pid); return; }
             _aiClearThinking(pid);
             executeFn();
-          }, AI_THINK_DELAY);
+          }, _getThinkDelay(pid));
           return;
         }
 
@@ -3804,23 +4896,23 @@
           _aiHighlightCard(pid, tabMode, curIdx);
           if (curIdx !== cardIdx) {
             // Not there yet — keep walking
-            setTimeout(walkStep, AI_STEP_DELAY);
+            setTimeout(walkStep, _getStepDelay(pid));
           } else {
             // Arrived — pause then execute
             setTimeout(() => {
               if (!G || !G.running) { _aiClearThinking(pid); return; }
               _aiClearThinking(pid);
               executeFn();
-            }, AI_THINK_DELAY);
+            }, _getThinkDelay(pid));
           }
         };
-        setTimeout(walkStep, AI_STEP_DELAY);
+        setTimeout(walkStep, _getStepDelay(pid));
       };
 
       // If switching tabs, pause briefly first
       if (curTab !== tabMode) {
         _aiLastActionTab[pid - 1] = tabMode;
-        setTimeout(doNavigate, AI_STEP_DELAY);
+        setTimeout(doNavigate, _getStepDelay(pid));
       } else {
         doNavigate();
       }
@@ -3833,9 +4925,10 @@
 
       const p = G.players[pid - 1];
       const enemy = G.players[pid === 1 ? 1 : 0];
-      const diff = G.aiDifficulty || 'medium';
+      const diff = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
       const pers = (pid === 1 ? G.ai1Personality : G.aiPersonality) || 'aggressive';
       const cfg = AI_DIFF_SETTINGS[diff] || AI_DIFF_SETTINGS.medium;
+      const factionId = G.factions[pid - 1].id || '';
 
       if (!forceDefend && Math.random() > cfg.spawnChance) return;
 
@@ -3845,111 +4938,141 @@
       const enCount = enemyUnits.length;
       const midOwned = G.midOwner === pid;
       const midEmpty = G.midOwner === null;
+      const gameSecs = G.time || 0;
       const enemyTypes = { mel: 0, rng: 0, air: 0 };
       enemyUnits.forEach(u => { if (enemyTypes[u.def.type] !== undefined) enemyTypes[u.def.type]++; });
 
       const units = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
       const workerDef = G.factions[pid - 1].units.find(d => d.isWorker);
       const allUnitDefs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
-
-      // ── Resource saving: hard+ AI saves before buying expensive things ──
-      const saving = cfg.savesUp && (pid === 1 ? (G._aiSaving1 || false) : (G._aiSaving || false));
       const allUpgrades = G.factions[pid - 1].upgrades || [];
       const availUpgrades = allUpgrades.filter(u => !p.ownedUpgrades.has(u.id));
       const nextUpgrade = availUpgrades[0];
-      // Decide whether to start saving for upgrade
-      if (cfg.savesUp && !saving && nextUpgrade && !forceDefend) {
-        const needed = nextUpgrade.cost.souls;
-        const urgency = diff === 'expert' ? 0.40 : 0.28;
-        if (Math.random() < urgency && p.souls < needed && p.souls >= needed * 0.5) {
-          if (pid === 1) { G._aiSaving1 = true; G._aiSaveTarget1 = needed; } else { G._aiSaving = true; G._aiSaveTarget = needed; }
+
+      // ── Smart saving logic ──
+      // AI decides each tick if it should be "saving mode" for an upgrade or buff
+      const savKey = pid === 1 ? '_aiSaving1' : '_aiSaving';
+      const savTargKey = pid === 1 ? '_aiSaveTarget1' : '_aiSaveTarget';
+      const saving = !!(G[savKey]);
+
+      if (cfg.savesUp && !forceDefend) {
+        if (!saving && nextUpgrade) {
+          const needed = nextUpgrade.cost.souls;
+          const alreadyHasEnoughTroops = myCount >= Math.max(3, enCount);
+          const almostThere = p.souls >= needed * 0.55;
+          // Expert: aggressively saves when having enough troops; hard: opportunistically
+          const shouldSave = diff === 'expert' ? (almostThere && alreadyHasEnoughTroops)
+            : diff === 'hard' ? (almostThere && alreadyHasEnoughTroops && Math.random() < 0.6)
+              : (almostThere && alreadyHasEnoughTroops && Math.random() < 0.3);
+          if (shouldSave) { G[savKey] = true; G[savTargKey] = needed; }
+        }
+        // Break saving: afford it, no more upgrades, or being attacked
+        if (saving) {
+          if (!nextUpgrade || p.souls >= (G[savTargKey] || 999) || forceDefend || myCount < 2) {
+            G[savKey] = false;
+          }
         }
       }
-      // Break saving when we can afford it or enemy is at our base
-      if (pid === 1 ? G._aiSaving1 : G._aiSaving) {
-        if (!nextUpgrade || p.souls >= (pid === 1 ? G._aiSaveTarget1 : G._aiSaveTarget || 999) || forceDefend) { if (pid === 1) G._aiSaving1 = false; else G._aiSaving = false; }
-      }
 
-      // ── Priority: defense > upgrade > buff > worker > unit ──
+      // ── Priority order: workers > upgrades/buffs (if saving) > buffs > upgrades > spy > units ──
 
-      // ── 1. Workers — always fill to cap before doing anything else ──
+      // ── 1. Workers — always fill to cap ──
       if (!forceDefend && workerDef && p.workers < (p.workerCap || 3) &&
         p.souls >= workerDef.souls && p.bodies >= workerDef.bodies) {
         const workerIdx = allUnitDefs.indexOf(workerDef);
         G[_actingKey] = true;
-        _aiLastActionIdx[pid - 1] = workerIdx; _aiLastActionTab[pid - 1] = 0;
         _aiActWithDelay(pid, 0, workerIdx, () => { G[_actingKey] = false; trySpawn(pid, workerDef.id, null); });
         return;
       }
 
-      // ── 2. Upgrades — more aggressive buying logic ──
+      // ── 2. Upgrades — buy when can afford + good timing ──
       if (!forceDefend && cfg.buysUpgrades && nextUpgrade) {
         const canAfford = p.souls >= nextUpgrade.cost.souls + cfg.saveThreshold && p.bodies >= nextUpgrade.cost.bodies;
-        // Expert buys upgrades very aggressively; hard moderately
-        const upgradeChance = diff === 'expert' ? 0.85 : diff === 'hard' ? 0.50 : 0.25;
+        // Buy immediately when in saving mode and threshold met; or buy with probability otherwise
+        const upgradeChance = saving ? 1.0 : diff === 'expert' ? 0.90 : diff === 'hard' ? 0.60 : 0.30;
         if (canAfford && Math.random() < upgradeChance) {
           const upIdx = allUpgrades.indexOf(nextUpgrade);
-          G[_actingKey] = true; G._aiSaving = false;
-          _aiLastActionIdx[pid - 1] = upIdx; _aiLastActionTab[pid - 1] = 1;
+          G[_actingKey] = true; G[savKey] = false;
           _aiActWithDelay(pid, 1, upIdx, () => { G[_actingKey] = false; tryBuyUpgrade(pid, upIdx, null); });
           return;
         }
       }
 
-      // ── 3. Buffs ──
+      // ── 3. Buffs — context-sensitive ──
       if (!forceDefend && cfg.usesBuffs && myCount > 0) {
-        const buffIdx = _aiChooseBuff(pid, p, myCount, enCount, enemy);
+        const buffIdx = _aiChooseBuff(pid, p, myCount, enCount, enemy, diff, factionId);
         if (buffIdx !== -1) {
           G[_actingKey] = true;
           _aiActWithDelay(pid, 2, buffIdx, () => {
             G[_actingKey] = false;
             tryActivateBuff(pid, buffIdx, null);
-            setTimeout(() => runAI(pid), 150);
+            setTimeout(() => runAI(pid), 100);
           });
           return;
         }
       }
 
-      // ── 4. Skip spawning if currently saving for upgrade ──
-      if (saving && !forceDefend && myCount >= 3) return;
+      // ── 4. Hold back if saving and have enough army ──
+      if (saving && !forceDefend && myCount >= Math.max(2, enCount - 1)) return;
 
-      // ── 5. Choose combat unit ──
-      const chosen = _aiChooseUnit(pid, units, pers, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend);
+      // ── 5. Spy — expert only, when enemy base is low ──
+      if (cfg.usesSpy && !forceDefend && GAME_MODE !== 'tutorial') {
+        const activeSpies = G.spies ? G.spies.filter(s => s.owner === pid).length : 0;
+        const spyCost = { souls: SPY_DEF.souls, bodies: SPY_DEF.bodies };
+        const enemyLowBase = enemy.baseHp < 65;
+        const goodSpyMoment = (activeSpies < 2) && p.souls >= spyCost.souls && p.bodies >= spyCost.bodies
+          && (enemyLowBase || p.bodies < 6) && Math.random() < 0.35;
+        if (goodSpyMoment) {
+          const spyGridIdx = allUnitDefs.length; // spy is always appended last
+          G[_actingKey] = true;
+          _aiActWithDelay(pid, 0, spyGridIdx, () => { G[_actingKey] = false; trySpawnSpy(pid); });
+          return;
+        }
+      }
+
+      // ── 6. Choose combat unit ──
+      const chosen = _aiChooseUnit(pid, units, pers, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend, factionId, gameSecs);
       if (chosen) {
-        // Map to grid visual index — grid includes workers, units[] excludes them
         const allGridDefs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
         const gridIdx = allGridDefs.findIndex(d => d.id === chosen.id);
         const chosenIdx = gridIdx >= 0 ? gridIdx : units.indexOf(chosen);
         G[_actingKey] = true;
-        _aiLastActionIdx[pid - 1] = chosenIdx; _aiLastActionTab[pid - 1] = 0;
         _aiActWithDelay(pid, 0, chosenIdx, () => { G[_actingKey] = false; trySpawn(pid, chosen.id, null); });
       }
     }
 
-    function _aiChooseBuff(pid, p, myCount, enCount, enemy) {
+    function _aiChooseBuff(pid, p, myCount, enCount, enemy, diff, factionId) {
       const bf = RALLY_BUFFS;
-      const diff = G.aiDifficulty || 'medium';
-      // War Cry: when we have more units or pushing hard
-      if (p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && myCount >= enCount) return 0;
-      // Iron Wall: when under pressure
-      if (p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost && (enCount > myCount + 1 || p.players && G.players[pid - 1].baseHp < 50)) return 1;
-      // Body Boon: when bodies are scarce and we have enough souls
-      if (p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost + 10 && p.bodies < 10 && myCount > 1) return 2;
-      // Expert: aggressive with all buffs
+      if (!diff) diff = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
+      const can0 = p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost;
+      const can1 = p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost;
+      const can2 = p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost;
+      const winning = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
+      const losing = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
+      const lowBodies = p.bodies < 8;
+      const richSouls = p.souls > bf[2].cost + 20;
+
       if (diff === 'expert') {
-        // War cry when ahead or pushing
-        if (p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && (myCount >= enCount || enemy.baseHp < 70)) return 0;
-        // Iron wall when taking damage or outnumbered
-        if (p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost && (enCount > myCount || p.baseHp < 60)) return 1;
-        // Body Boon when very high on souls but low on bodies
-        if (p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost && p.bodies < 6 && p.souls > 80) return 2;
+        // Very aggressive — uses any available buff in the right context
+        if (can0 && winning) return 0; // war cry when ahead — push advantage
+        if (can1 && losing) return 1; // iron wall when behind — survive
+        if (can2 && lowBodies && richSouls) return 2; // body boon when economy is unbalanced
+        if (can0 && myCount >= enCount && Math.random() < 0.4) return 0; // war cry to maintain edge
+        if (can1 && p.baseHp < 55) return 1; // defensive wall when base hurting
+        if (can2 && p.bodies < 5 && p.souls > 70) return 2; // body boon emergency
+      } else if (diff === 'hard') {
+        if (can0 && winning && Math.random() < 0.7) return 0;
+        if (can1 && p.baseHp < 45 && Math.random() < 0.8) return 1;
+        if (can2 && lowBodies && richSouls && Math.random() < 0.5) return 2;
+      } else {
+        // Medium baseline — only very obvious situations
+        if (can0 && myCount > enCount + 3) return 0;
+        if (can1 && p.baseHp < 35) return 1;
       }
-      // Hard: uses war cry when clearly winning
-      if (diff === 'hard' && p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && myCount > enCount + 2) return 0;
       return -1;
     }
 
-    function _aiChooseUnit(pid, units, personality, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend) {
+    function _aiChooseUnit(pid, units, personality, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend, factionId, gameSecs) {
       if (!units.length) return null;
       const affordable = units.filter(u => p.souls >= u.souls && p.bodies >= (p._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
       if (!affordable.length) return null;
@@ -3972,81 +5095,91 @@
         const isMel = u.type === 'mel', isRng = u.type === 'rng', isAir = u.type === 'air', isSum = u.type === 'sum';
         const cost = u.souls + u.bodies * 0.8;
 
-        // ── Personality weights ──
+        // ── Personality weights — strong, distinct biases ──
         switch (personality) {
           case 'aggressive':
-            score += u.dmg * 0.18;
-            if (u.speed > 70) score += 2.5;
-            if (isAir) score += 1.5;
+            score += u.dmg * 0.30;          // loves raw damage
+            score += u.speed * 0.06;         // loves fast units
+            if (isAir) score += 4;           // aerials for pressure
+            if (u.hp > 120) score -= 2;      // avoids slow tanks
             break;
           case 'defensive':
-            score += u.hp * 0.032;
-            if (isMel && enRngPct > 0.3) score += 3;
-            if (isRng) score += 2;
-            if (myCount < 4) score += 2.5;
+            score += u.hp * 0.055;           // loves tanky units
+            if (isRng) score += 4;           // ranged = safe fighting
+            if (isMel && u.hp > 80) score += 3;
+            if (isAir) score -= 3;           // avoids fragile aerials
+            if (myCount < 3) score += 5;     // panics when thin
             break;
           case 'swarm':
-            score += Math.max(0, 20 - cost) * 0.4;
-            if (cost <= 7) score += 5;
-            if (u.attackRate > 1.1) score += 2;
-            if (cost > 16) score -= 3; // swarm avoids expensive units
+            score += Math.max(0, 22 - cost) * 0.6; // strongly prefers cheap
+            if (cost <= 7) score += 8;
+            if (u.attackRate > 1.2) score += 3;
+            if (cost > 14) score -= 6;       // strongly avoids expensive
             break;
           case 'economist':
-            score += (u.dmg / Math.max(1, cost)) * 12;
-            if (cost >= 14) score += 4;
-            if (isSum) score += 3; // summon units are good value
+            score += (u.dmg / Math.max(1, cost)) * 18; // efficiency metric
+            if (isSum) score += 5;           // summon = free units later
+            if (cost < 5) score -= 1;        // avoids throwing gold at chaff
             break;
           case 'aerial':
-            if (isAir) score += 6;
-            score += u.speed * 0.05;
-            if (isMel) score -= 1;
+            if (isAir) score += 10;          // obsessed with aerial units
+            if (!isAir) score -= 3;          // actively avoids ground units
+            score += u.speed * 0.04;
             break;
           case 'counter':
-            if (isRng && enAirPct > 0.2) score += 7;
-            if (isAir && enMelPct > 0.4) score += 7;
-            if (isMel && enRngPct > 0.35) score += 7;
-            score += u.dmg * 0.12;
+            // Hard counters — giant bonus for the right matchup unit
+            if (isRng && enAirPct > 0.2) score += 10;
+            if (isAir && enMelPct > 0.35) score += 10;
+            if (isMel && enRngPct > 0.3) score += 10;
+            if (totalEnemy < 2) score += u.dmg * 0.1; // default when nothing to counter
             break;
           case 'saver':
-            score += Math.max(0, 16 - cost) * 0.45;
-            if (u.souls <= 8) score += 4;
-            if (isSum) score += 2; // summons are future-proof
+            score += Math.max(0, 14 - cost) * 0.6; // cheap units only
+            if (u.souls <= 6) score += 6;
+            if (cost > 12) score -= 5;
             break;
           case 'rusher':
-            score += u.dmg * 0.22;
-            score += u.speed * 0.07;
-            if (isAir) score += 3;
-            if (u.hp < 60) score -= 1; // rusher doesn't want glass cannons defensively
+            score += u.dmg * 0.35;
+            score += u.speed * 0.10;
+            if (u.speed > 75) score += 4;
+            if (u.hp < 55) score += 2;      // glass cannons welcome
+            if (isAir) score += 4;
             break;
-          case 'balanced':
-            // Tries to maintain a mix of unit types
+          case 'balanced': {
             const myUnitsNow = G.units.filter(uu => uu.player === pid && !uu.def.isWorker && !uu.isGuard && !uu.offscreen);
             const myMel = myUnitsNow.filter(uu => uu.def.type === 'mel').length;
             const myRng = myUnitsNow.filter(uu => uu.def.type === 'rng').length;
             const myAir = myUnitsNow.filter(uu => uu.def.type === 'air').length;
-            if (isMel && myMel < 3) score += 4;
-            if (isRng && myRng < 2) score += 4;
-            if (isAir && myAir < 2) score += 3;
-            score += u.hp * 0.015 + u.dmg * 0.1;
+            // Strongly fill whichever type is most missing
+            if (isMel && myMel <= myRng && myMel <= myAir) score += 7;
+            else if (isRng && myRng <= myMel && myRng <= myAir) score += 7;
+            else if (isAir && myAir <= myMel && myAir <= myRng) score += 7;
+            score += u.hp * 0.01 + u.dmg * 0.08;
             break;
+          }
           case 'berserker':
-            score += u.dmg * 0.25;
-            if (u.hp < 80) score += 1.5; // glass cannon
-            if (isAir) score += 2;
-            if (u.attackRate > 1.1) score += 2;
+            score += u.dmg * 0.40;          // pure damage above all
+            if (u.attackRate > 1.1) score += 4;
+            if (isAir) score += 3;
+            if (u.hp > 130) score -= 2;     // avoids slow heavies
             break;
           case 'turtler':
-            score += u.hp * 0.04;
-            if (isMel && u.hp > 100) score += 5;
-            if (isRng) score += 3; // ranged defense
-            if (isAir) score -= 2; // turtler doesn't like expensive aerials
+            score += u.hp * 0.065;          // maximum HP obsession
+            if (isMel && u.hp > 100) score += 8;
+            if (isRng) score += 4;           // ranged = safe
+            if (isAir) score -= 4;           // no aerials
+            if (u.hp < 50) score -= 5;       // refuses fragile units
             break;
           case 'opportunist':
-            // Adapts aggressively to whatever is winning
-            if (p.baseHp > enemy.baseHp + 15) { // winning — go aggressive
-              score += u.dmg * 0.2; if (isAir) score += 3;
-            } else { // losing — go defensive/counter
-              score += u.hp * 0.035; if (isRng && enemyTypes.air > 1) score += 5;
+            if (p.baseHp > enemy.baseHp + 20) {
+              // Winning hard — go all-in
+              score += u.dmg * 0.30; if (isAir) score += 5; if (u.speed > 70) score += 3;
+            } else if (p.baseHp < enemy.baseHp - 20) {
+              // Losing hard — go defensive/counter
+              score += u.hp * 0.05; if (isRng && enemyTypes.air > 1) score += 7; if (isMel) score += 3;
+            } else {
+              // Even — balanced scoring
+              score += u.dmg * 0.12 + u.hp * 0.02;
             }
             break;
         }
@@ -4092,7 +5225,70 @@
 
         // Hard/expert: don't spam the same unit — variety bonus
         if ((diff === 'hard' || diff === 'expert') && G.units.filter(uu => uu.player === pid && uu.defId === u.id).length > 4) {
-          score -= 2.5; // slight preference for less-used units
+          score -= 2.5;
+        }
+
+        // ── Faction-aware scoring (medium+ only) ──
+        if (diff !== 'tutorial' && diff !== 'easy' && factionId) {
+          switch (factionId) {
+            case 'summoners':
+              // Necromancer is the core — strongly prioritize it
+              if (u.type === 'sum') score += 8;
+              // Wraiths are the fuel for Death Frenzy — spam cheap
+              if (u.id && u.id.startsWith('su_wraith')) score += 3;
+              // Avoid heavy investment in non-synergy units
+              if (cost > 16 && u.type !== 'sum') score -= 2;
+              break;
+            case 'spirits':
+              // Spirits excel at aerial — prioritize all air
+              if (isAir) score += 5;
+              // And ranged support
+              if (isRng) score += 2;
+              break;
+            case 'brutes':
+              // Brutes are tanks — prioritize high HP melee
+              if (isMel && u.hp > 100) score += 5;
+              if (u.hp > 120) score += 3;
+              // Avoid fragile units
+              if (u.hp < 50) score -= 2;
+              break;
+            case 'verdant':
+              // Verdant wins on sustain — prefer high HP units that regen
+              if (u.hp > 90) score += 3;
+              if (isMel) score += 2;
+              break;
+            case 'infernal':
+              // Infernal thrives on deaths and explosions — cheap melee martyrs
+              if (cost <= 8 && isMel) score += 4;
+              if (isAir) score += 2; // aerial to pressure
+              break;
+            case 'glacial':
+              // Glacial wants slows and AoE — ranged + heavy melee
+              if (isRng) score += 3;
+              if (isMel && u.hp > 100) score += 3;
+              break;
+            case 'voltborn':
+              // Voltborn chains lightning — lots of units clumped = more chains
+              score += 1; // slight generic push
+              if (isRng) score += 2;
+              break;
+            case 'bloodpact':
+              // Bloodpact gains power from sacrifice — spend health, buy big
+              if (cost >= 14) score += 3; // prefers investing heavily
+              if (isAir) score += 3;
+              break;
+            case 'menders':
+              // Menders wins attrition — prefer units with retreat/heal
+              if (u.menderRetreat) score += 6;
+              if (u.isHealer) score += 4;
+              if (isAir && u.seraphHeal) score += 5; // Seraph is huge
+              break;
+            case 'warriors':
+              // Warriors are balanced — just lean melee slightly and Gryphon
+              if (isMel) score += 1.5;
+              if (isAir && gameSecs > 60) score += 3; // Gryphon as finisher
+              break;
+          }
         }
 
         return { unit: u, score };
@@ -4103,20 +5299,26 @@
       // Selection randomness scales with difficulty — clear tiers
       const top = scored.length;
       if (diff === 'tutorial') {
-        // Fully random from all affordable units
-        return affordable[Math.floor(Math.random() * affordable.length)];
+        // Prefers cheap, basic units — not fully random, not optimal
+        // Sort by cost ascending and pick from the cheaper half
+        const byCost = [...affordable].sort((a, b) => (a.souls + a.bodies) - (b.souls + b.bodies));
+        const pool = Math.max(1, Math.ceil(byCost.length * 0.6));
+        return byCost[Math.floor(Math.random() * pool)];
       }
       if (diff === 'easy') {
-        // Mostly random — 70% chance of picking a random unit, 30% picks worst scored unit
-        if (Math.random() < 0.70) return affordable[Math.floor(Math.random() * affordable.length)];
-        return scored[scored.length - 1].unit; // occasionally picks the worst choice
+        // Picks randomly but weighted toward cheaper/weaker units — actively bad decisions
+        // No counter-picking, no strategy, just vibes
+        const weighted = affordable.map(u => ({ u, w: 1 / Math.max(1, u.souls + u.bodies * 0.5) }));
+        const total = weighted.reduce((s, x) => s + x.w, 0);
+        let r = Math.random() * total;
+        for (const { u, w } of weighted) { r -= w; if (r <= 0) return u; }
+        return affordable[0];
       }
       if (diff === 'medium') {
-        // Pick from bottom half of scored options (mediocre but not terrible)
-        const pool = Math.max(1, Math.floor(top * 0.55));
-        const midStart = Math.floor(top * 0.25); // avoid very best AND very worst
-        const idx = midStart + Math.floor(Math.random() * Math.max(1, top - midStart));
-        return scored[Math.min(idx, top - 1)].unit;
+        // Picks from the top half but with 40% random noise — occasionally misses the play
+        if (Math.random() < 0.40) return affordable[Math.floor(Math.random() * affordable.length)];
+        const pool = Math.max(1, Math.floor(top * 0.50));
+        return scored[Math.floor(Math.random() * pool)].unit;
       }
       if (diff === 'hard') {
         // 75% chance top pick, 25% second pick — clear advantage over medium
@@ -4129,7 +5331,7 @@
 
     function updateAI(dt) {
       if (!G || !G.running || G.paused) return;
-      if (GAME_MODE !== 'solo' && GAME_MODE !== 'tutorial' && GAME_MODE !== 'aivsai') return;
+      if (GAME_MODE !== 'solo' && GAME_MODE !== 'tutorial' && GAME_MODE !== 'aivsai' && !(GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) return;
 
       // Idle browsing for all active AIs
       const _browsePids = GAME_MODE === 'aivsai' ? [1, 2] : [2];
@@ -4163,16 +5365,20 @@
           if (!G[_ak]) { G.aiDifficulty = diffKey; if (pid === 1) { G.ai1Personality = G.ai1Personality || AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)]; } runAI(pid, false); }
         }
 
-        // ── Base defense reaction ──
-        if (cfg.defenseReact) {
+        // ── Base defense reaction — all difficulties react, just at different speeds/thresholds ──
+        {
           if (!G._aiDefTimers) G._aiDefTimers = [0, 0];
           G._aiDefTimers[pid - 1] = (G._aiDefTimers[pid - 1] || 0) + dt;
-          if (G._aiDefTimers[pid - 1] >= 1.8) {
+          // How fast each diff reacts: expert=1.0s, hard=1.5s, medium=2.2s, easy=3.5s, tutorial=4.5s
+          const defReactTime = { tutorial: 4.5, easy: 3.5, medium: 2.2, hard: 1.5, expert: 1.0 }[diffKey] || 2.2;
+          // How many enemies trigger reaction: expert=1, hard=1, medium=2, easy=3, tutorial=4
+          const defThreshold = { tutorial: 4, easy: 3, medium: 2, hard: 1, expert: 1 }[diffKey] || 2;
+          if (G._aiDefTimers[pid - 1] >= defReactTime) {
             G._aiDefTimers[pid - 1] = 0;
             const aiBase = G.players[pid - 1];
-            const threatZone = G.w * 0.28;
+            const threatZone = G.w * 0.30;
             const enemiesNearBase = G.units.filter(u => u.player !== pid && !u.def.isWorker && Math.abs(u.x - aiBase.baseX) < threatZone);
-            if (enemiesNearBase.length >= 2 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) { G.aiDifficulty = diffKey; runAI(pid, true); }
+            if (enemiesNearBase.length >= defThreshold && !G[pid === 1 ? '_aiActing1' : '_aiActing']) { G.aiDifficulty = diffKey; runAI(pid, true); }
           }
         }
       });
@@ -4257,7 +5463,7 @@
       G._aiDefTimers = [0, 0];
       G._aiSaving = false;
       // Easy mode: player gets +10 starting souls bonus
-      if ((GAME_MODE === 'solo' || GAME_MODE === 'tutorial') && AI_DIFFICULTY === 'easy') {
+      if ((GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || (GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) && AI_DIFFICULTY === 'easy') {
         G.players[0].souls += 10;
       }
       // Singleplayer: show AI badge on P2 HUD
@@ -4273,6 +5479,17 @@
           const p1hud = document.getElementById('p1-hud');
           const p1name = p1hud ? p1hud.querySelector('.pname') : null;
           if (p1name) p1name.innerHTML = 'AI <span class="ai-badge">' + (AI1_DIFFICULTY || '').toUpperCase() + '</span>';
+        } else if (GAME_MODE === 'tournament' && TOURNAMENT) {
+          // Show tournament player names in HUD
+          const _tm = TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound];
+          if (_tm && _tm.p1 && _tm.p2) {
+            const p1hud2 = document.getElementById('p1-hud');
+            const p1name2 = p1hud2 ? p1hud2.querySelector('.pname') : null;
+            if (p1name2) p1name2.textContent = _tm.p1.name;
+            p2name.textContent = _tm.p2.isAI ? ('🤖 ' + _tm.p2.name) : _tm.p2.name;
+          } else {
+            p2name.textContent = 'PLAYER 2';
+          }
         } else {
           p2name.textContent = 'PLAYER 2';
         }
@@ -4447,8 +5664,8 @@
       document.getElementById(`p${pid}-sp-dmg`).textContent = def.isWorker ? '—' : def.dmg;
       document.getElementById(`p${pid}-sp-spd`).textContent = def.speed;
       document.getElementById(`p${pid}-sp-rng`).textContent = def.isWorker ? '—' : def.range;
-      // Brief one-liner only — no passive text to prevent layout jitter
-      const spSpecial = def.isWorker ? `⛏ +${((def.speed > 55 ? 4.5 : 4) * 60 / 70).toFixed(1)}🦴/min` : (def.type === 'sum' ? '🔮 Summons on kill + passive' : '');
+      // Show full unit description
+      const spSpecial = def.desc || (def.isWorker ? `Collects bodies from off-screen. Returns with +3🦴 per trip.` : '');
       document.getElementById(`p${pid}-sp-special`).textContent = spSpecial;
       document.getElementById(`p${pid}-sp-cost`).textContent = `💀${def.souls}  🦴${def.bodies}`;
     }
@@ -4878,9 +6095,8 @@
       // Pass 1: nearest non-worker (retreating units ARE valid targets)
       G.units.forEach(e => {
         if (e.player === u.player || e.offscreen || e.def.isWorker) return;
-        // BUG3 FIX: ground melee can't hit aerial; aerial melee can
-        // Exception: melee directly under aerial unit (<40px away) can swipe at it
-        if (!isRanged && !u.def.aerial && e.def.aerial && Math.abs(e.x - u.x) > 40) return;
+        // Ground melee cannot target aerial units — ranged and aerial only
+        if (!isRanged && !u.def.aerial && e.def.aerial) return;
         const d = rangeDist(u, e);
         if (d < bestD) { best = e; bestD = d; }
       });
@@ -5936,41 +7152,39 @@
             const ownBase = G.players[u.player - 1].baseX;
             const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
             const dx2 = enemy.x - u.x;
-            // Only trigger kite when melee is truly close (45px) — not on approach
-            const enemyMeleeClose = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 45);
-            // kiteChance decides if THIS specific archer even bothers kiting at all
-            // Low kc archers (0.3–0.5) mostly stand and fight like a brave fool
-            const willKite = kc > 0.55; // only ~40% of archers have a kite tendency
+            // Trigger kite when melee gets within 65px — visible and responsive
+            const enemyMeleeClose = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 65);
+            // Only archers with kc > 0.50 kite at all (~50/50 split for natural variety)
+            const willKite = kc > 0.50;
             const shouldKite = willKite && !nearOwnBase && enemyMeleeClose;
             if (shouldKite) {
-              // Slow, deliberate retreat — not a teleport
-              // Max 35% of normal movement speed so it looks natural
-              const retreatSpd = spd * (0.25 + kc * 0.15); // 0.25–0.40x speed
+              // Speed: 0.55–0.80x normal — clearly visible but not a teleport
+              const retreatSpd = spd * (0.55 + kc * 0.25); // 0.55–0.80x speed
               u.x -= Math.sign(dx2) * retreatSpd * dt;
-              // Occasionally shelter behind ally melee (only high-kite archers)
-              if (kc > 0.75 && Math.random() < 0.03) {
+              // High-kite archers try to stay behind ally melee
+              if (kc > 0.70) {
                 const allyMelee = G.units.find(a =>
                   a.player === u.player && !a.def.isWorker && a.def.type === 'mel' &&
-                  Math.abs(a.x - u.x) < 140 && Math.sign(a.x - u.x) !== Math.sign(dx2)
+                  Math.abs(a.x - u.x) < 160 && Math.sign(a.x - u.x) !== Math.sign(dx2)
                 );
-                if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.02 * dt * 60;
+                if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.04 * dt * 60;
               }
             }
           }
         } else {
           u.chargeTimer = 0; u.attackCooldown -= dt;
           // Mid lingering: non-worker units near mid stop to help capture if no enemies nearby
+          // Disabled in tutorial — units should march freely
           const midDist = Math.abs(u.x - G.midX);
           const inMidZone = midDist < G.midR * 2.5;
           const midNotOwned = G.midOwner !== u.player;
           const enemyNearMid = G.units.some(e => e.player !== u.player && !e.def.isWorker && !e.offscreen && Math.abs(e.x - G.midX) < G.midR * 4);
           const strictlyInMid = Math.abs(u.x - G.midX) < G.midR * 1.2;
-          if (strictlyInMid && midNotOwned && !enemyNearMid && !u.def.isWorker) {
+          if (GAME_MODE !== 'tutorial' && strictlyInMid && midNotOwned && !enemyNearMid && !u.def.isWorker) {
             // Unit is inside the circle — hold position until captured
-            // Drift very gently toward exact center
             const driftDx = G.midX - u.x;
             u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 8 * dt);
-          } else if (inMidZone && midNotOwned && !strictlyInMid && !enemyNearMid && !u.def.isWorker) {
+          } else if (GAME_MODE !== 'tutorial' && inMidZone && midNotOwned && !strictlyInMid && !enemyNearMid && !u.def.isWorker) {
             // Near-mid but not inside — drift inward to help capture
             const driftDx = G.midX - u.x;
             u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 20 * dt);
@@ -6147,26 +7361,34 @@
     function updateSiege(dt) {
       const sec = (Date.now() - G.gameStart) / 1000;
       const siEl = document.getElementById('siege-indicator');
-      if (sec > 240) {
-        // Only apply decay during true stalemates — if either base is already below 55 HP,
-        // the game is being decided by combat. Decay would only pile on the loser unfairly.
+      const _isTourney = GAME_MODE === 'tournament';
+      const _decayStart = _isTourney ? 180 : 240;  // tournament: 3min, normal: 4min
+      const _decayWarn = _isTourney ? 150 : 210;
+      if (sec > _decayStart) {
+        // Only apply decay during stalemates — if one base is already below 55, let combat finish it
         const bothHealthy = G.players.every(p => p.baseHp >= 55);
         if (bothHealthy) {
           G.siegeDecay = true;
-          const elapsed = sec - 240;
-          const rate = elapsed > 90 ? 0.05 : 0.025; // faster second stage
+          const elapsed = sec - _decayStart;
+          // Tournament: faster escalating decay to keep matches 3–7 min
+          // Normal: gentle stalemate nudge
+          let rate;
+          if (_isTourney) {
+            rate = elapsed > 120 ? 0.15 : elapsed > 60 ? 0.09 : 0.05; // 3/5.4/9 HP/min
+          } else {
+            rate = elapsed > 90 ? 0.05 : 0.025;
+          }
           G.players.forEach(p => { if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt); });
           siEl.style.opacity = '1';
-          siEl.textContent = elapsed > 90 ? '⏳ STALEMATE — DECAY ACCELERATING' : '⏳ STALEMATE — BASES DECAYING';
+          const urgency = elapsed > 120 ? '🔥 TOURNAMENT PRESSURE — ACCELERATING' : elapsed > 60 ? '⏳ TOURNAMENT PRESSURE — ESCALATING' : '⏳ STALEMATE — BASES DECAYING';
+          siEl.textContent = _isTourney ? urgency : (elapsed > 90 ? '⏳ STALEMATE — DECAY ACCELERATING' : '⏳ STALEMATE — BASES DECAYING');
         } else {
-          // One base is clearly losing — no decay, let combat finish it
           siEl.style.opacity = '0';
         }
-      } else if (sec > 210) {
-        // Warning: 30s before decay kicks in (if stalemate)
+      } else if (sec > _decayWarn) {
         const bothHealthy = G.players.every(p => p.baseHp >= 55);
         siEl.style.opacity = bothHealthy ? '1' : '0';
-        if (bothHealthy) siEl.textContent = `⏳ STALEMATE DECAY IN ${Math.ceil(240 - sec)}s`;
+        if (bothHealthy) siEl.textContent = `⏳ STALEMATE DECAY IN ${Math.ceil(_decayStart - sec)}s`;
       } else {
         siEl.style.opacity = '0';
       }
@@ -6781,6 +8003,10 @@
       SESSION.games++;
       SESSION.wins[winner.id - 1]++;
       SESSION.factions = [G.factions[0].name, G.factions[1].name];
+      // Tournament: record match result (called after gameover renders)
+      if (GAME_MODE === 'tournament' && TOURNAMENT) {
+        TOURNAMENT._pendingWinnerPid = winner.id;
+      }
       // Capture all stats NOW before setTimeout
       const _winner = winner;
       const _G = G;
@@ -6790,11 +8016,13 @@
         document.getElementById('sc-gameover').classList.add('active');
         const gt = document.getElementById('go-title');
         const _soloMode = GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
-        const _winnerName = (_winner.id === 2 && _soloMode)
-          ? 'AI WINS'
-          : (_winner.id === 1 && _soloMode)
-            ? 'YOU WIN!'
-            : `PLAYER ${_winner.id} WINS`;
+        const _isTournament = GAME_MODE === 'tournament' && TOURNAMENT;
+        const _tournamentWinner = _isTournament ? (_winner.id === 1 ? TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p1 : TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p2) : null;
+        const _winnerName = _isTournament && _tournamentWinner
+          ? `${_tournamentWinner.faction.icon} ${_tournamentWinner.name} WINS!`
+          : (_winner.id === 2 && _soloMode) ? 'AI WINS'
+            : (_winner.id === 1 && _soloMode) ? 'YOU WIN!'
+              : `PLAYER ${_winner.id} WINS`;
         gt.textContent = _winnerName;
         gt.style.color = _winner.id === 1 ? '#2471a3' : '#c0392b';
         gt.style.textShadow = '';
@@ -6819,6 +8047,10 @@
         if (goSub) {
           if (_soloMode && _winner.id === 2) goSub.textContent = aiWinSubs[Math.floor(Math.random() * aiWinSubs.length)];
           else if (_soloMode && _winner.id === 1) goSub.textContent = playerWinSubs[Math.floor(Math.random() * playerWinSubs.length)];
+          else if (GAME_MODE === 'tournament' && TOURNAMENT) {
+            const tSubs = ['The bracket doesn\'t lie.', 'Onward to glory.', 'One step closer to the crown.', 'The crowd goes wild.', 'Another challenger falls.'];
+            goSub.textContent = tSubs[Math.floor(Math.random() * tSubs.length)];
+          }
           else goSub.textContent = mockSubs[Math.floor(Math.random() * mockSubs.length)];
         }
         const gameMin = Math.floor((_G.elapsed || 0) / 60), gameSec2 = Math.floor((_G.elapsed || 0) % 60);
@@ -6932,7 +8164,9 @@
               const soulsEarned = pp.totalSoulsEarned || 0;
               const soulsSpent = pp.soulsSpent || 0;
               const bodiesSpent = pp.bodiesSpent || 0;
-              const ppName = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial') ? (pp.id === 1 ? 'YOU' : 'AI') : ('P' + pp.id);
+              const _tM2 = (GAME_MODE === 'tournament' && TOURNAMENT) ? (TOURNAMENT.rounds[TOURNAMENT.currentRound] || [])[TOURNAMENT.currentMatchInRound] : null;
+              const _tP2 = _tM2 ? (pp.id === 1 ? _tM2.p1 : _tM2.p2) : null;
+              const ppName = _tP2 ? (_tP2.isAI ? '🤖 ' + _tP2.name : _tP2.name) : (GAME_MODE === 'solo' || GAME_MODE === 'tutorial') ? (pp.id === 1 ? 'YOU' : 'AI') : ('P' + pp.id);
               if (soulsEarned > 0 && soulsSpent / soulsEarned < 0.5 && soulsEarned > 80)
                 tips.push(`${ppName} hoarded souls — spend more aggresively to pressure the enemy.`);
               if (pp.buffUsed === 0 && soulsEarned > 100)
@@ -6949,12 +8183,18 @@
             const tipHtml = tips.length ? tips.slice(0, 3).map(t => `<div style="font-size:.68rem;color:var(--dim);padding:2px 0;border-top:1px solid rgba(255,255,255,.05);">💡 ${t}</div>`).join('') : '';
             return `<div style="margin-top:14px;padding:10px 16px;background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.2);border-radius:5px;max-width:560px;margin-left:auto;margin-right:auto;">
               <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
-                <span style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold);letter-spacing:.08em;white-space:nowrap;">TRY NEXT: ${sug.f}</span>
+                <span style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold);letter-spacing:.08em;white-space:nowrap;">${GAME_MODE === 'tournament' ? 'UP NEXT IN BRACKET →' : 'TRY NEXT: ' + sug.f}</span>
                 <span style="font-size:.67rem;color:var(--dim);">${sug.tip}</span>
               </div>
               ${tipHtml}
             </div>`;
           })();
+        // Tournament: trigger bracket advancement after gameover renders
+        if (GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._pendingWinnerPid) {
+          const _twp = TOURNAMENT._pendingWinnerPid;
+          TOURNAMENT._pendingWinnerPid = null;
+          setTimeout(() => tOnMatchEnd(_twp), 1700);
+        }
       }, 1650);
     }
     // ─── RAGEQUIT / HELL INVASION ─────────────────────────────────────────────
@@ -7321,7 +8561,7 @@
       if (document.getElementById('sc-tutorial').classList.contains('active')) {
         if (e.code === 'ArrowLeft') { tutPrev(); e.preventDefault(); return; }
         if (e.code === 'ArrowRight' || (e.code === 'Enter' && document.activeElement && document.activeElement.tagName !== 'BUTTON')) {
-          if (tutIdx === TUT.length - 1) showScreen('sc-menu'); else tutNext();
+          if (tutIdx === TUT.length - 1) { setGameMode('vs'); showScreen('sc-menu'); } else tutNext();
           e.preventDefault(); return;
         }
       }
@@ -7440,14 +8680,6 @@
       }
     }
 
-    function getMaxSel(pid) {
-      const mode = pid === 1 ? P1_MODE : P2_MODE;
-      if (mode === 0) return Math.max(0, G.factions[pid - 1].units.filter(d => !d.isSpawned).length - 1);
-      if (mode === 1) return 2;
-      if (mode === 2) return 2;
-      return 0;
-    }
-
     // ─── SCREENS ─────────────────────────────────────────────────────────────────
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -7521,7 +8753,21 @@
       showScreen('sc-faction');
     });
     document.getElementById('btn-to-menu').addEventListener('click', () => {
-      G = null; stopIngameTutorial(); showScreen('sc-menu'); animMenuCanvas();
+      G = null; stopIngameTutorial();
+      // Clean up tournament state if quitting mid-tournament
+      if (GAME_MODE === 'tournament' && TOURNAMENT) {
+        TOURNAMENT = null;
+        const rematch = document.getElementById('btn-rematch');
+        const changeFaction = document.getElementById('btn-change-faction');
+        if (rematch) rematch.style.display = '';
+        if (changeFaction) changeFaction.style.display = '';
+        const cb = document.getElementById('btn-t-continue');
+        if (cb) cb.remove();
+        const banner = document.getElementById('t-match-banner');
+        if (banner) banner.style.display = 'none';
+        document.getElementById('btn-to-menu').textContent = '🏠 MENU';
+      }
+      setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas();
     });
 
     // ─── REBIND ──────────────────────────────────────────────────────────────────
@@ -7612,15 +8858,9 @@
 
     function setGameMode(mode) {
       GAME_MODE = mode;
-      document.getElementById('mode-vs').classList.toggle('active', mode === 'vs');
-      document.getElementById('mode-solo').classList.toggle('active', mode === 'solo');
-      if (mode === 'aivsai') {
-        document.getElementById('btn-play').textContent = '⚔ VS PLAYER';
-        document.getElementById('mode-solo').classList.remove('active');
-        document.getElementById('mode-vs').classList.remove('active');
-      } else {
-        document.getElementById('btn-play').textContent = mode === 'solo' ? '🤖 SINGLEPLAYER' : '⚔ VS PLAYER';
-      }
+      const _mVs = document.getElementById('mode-vs'), _mSolo = document.getElementById('mode-solo');
+      if (_mVs) _mVs.classList.toggle('active', mode === 'vs');
+      if (_mSolo) _mSolo.classList.toggle('active', mode === 'solo');
       // If faction screen is currently open, update it live
       if (document.getElementById('sc-faction').classList.contains('active')) {
         _applyFactionScreenMode();
@@ -7815,7 +9055,8 @@
     }
 
     // ─── BUTTON WIRING ───────────────────────────────────────────────────────────
-    document.getElementById('btn-play').addEventListener('click', () => showScreen('sc-faction'));
+    document.getElementById('btn-play').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-faction'); });
+    document.getElementById('btn-solo').addEventListener('click', () => { setGameMode('solo'); showScreen('sc-faction'); });
     document.getElementById('btn-tutorial').addEventListener('click', () => {
       // Launch interactive in-game tutorial
       GAME_MODE = 'tutorial';
@@ -7830,7 +9071,12 @@
       initGame();
       setTimeout(startIngameTutorial, 400);
     });
-    document.getElementById('btn-controls').addEventListener('click', () => { refreshControlsPanel(); showScreen('sc-controls'); });
+    document.getElementById('btn-controls').addEventListener('click', () => {
+      refreshControlsPanel();
+      refreshRebindUI();
+      // Show rebind screen — it has both the key reference panel AND live rebinding
+      showScreen('sc-rebind');
+    });
     function refreshControlsPanel() {
       function kbdRow(label, keyName) {
         const val = KEYS[keyName] ? formatKey(KEYS[keyName]) : '—';
@@ -7858,9 +9104,9 @@
     document.getElementById('btn-tut-prev').addEventListener('click', tutPrev);
     // Tutorial arrow keys handled by global keydown handler
     document.getElementById('btn-tut-next').addEventListener('click', () => {
-      if (tutIdx === TUT.length - 1) showScreen('sc-menu'); else tutNext();
+      if (tutIdx === TUT.length - 1) { setGameMode('vs'); showScreen('sc-menu'); } else tutNext();
     });
-    document.getElementById('btn-tut-skip').addEventListener('click', () => showScreen('sc-menu'));
+    document.getElementById('btn-tut-skip').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); });
     document.getElementById('btn-start').addEventListener('click', () => {
       if (fSelected[0] === null) return;
       const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
@@ -8149,6 +9395,50 @@
     buildFactionCards();
     renderTut();
     animMenuCanvas();
+
+    // ── TOURNAMENT WIRING ──────────────────────────────────────────
+    document.getElementById('btn-tournament').addEventListener('click', () => {
+      tInit();
+      window._tSelFaction = null;
+      tRenderSetup();
+      showScreen('sc-tournament-setup');
+    });
+    document.getElementById('t-name-input').addEventListener('input', tUpdateAddBtn);
+    document.getElementById('t-name-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { const b = document.getElementById('t-add-player-btn'); if (b && !b.disabled) b.click(); }
+    });
+    document.getElementById('t-add-player-btn').addEventListener('click', () => {
+      const nameEl = document.getElementById('t-name-input');
+      const name = nameEl ? nameEl.value : '';
+      if (tAddPlayer(name, window._tSelFaction)) {
+        if (nameEl) nameEl.value = '';
+        window._tSelFaction = null;
+        tRenderSetup();
+      }
+    });
+    document.getElementById('btn-t-start-tournament').addEventListener('click', () => {
+      if (!TOURNAMENT || TOURNAMENT.players.length < 2) return;
+      tBuildBracket();
+      TOURNAMENT.state = 'bracket';
+      showScreen('sc-tournament-bracket');
+      tRenderBracket();
+    });
+    document.getElementById('btn-t-back').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas(); });
+    document.getElementById('btn-t-play-match').addEventListener('click', () => {
+      if (!TOURNAMENT) return;
+      if (TOURNAMENT.state === 'done') { tShowChampion(); return; }
+      tShowPreMatch();
+    });
+    document.getElementById('btn-t-begin-match').addEventListener('click', tStartCountdown);
+    document.getElementById('btn-t-celebration-menu').addEventListener('click', () => {
+      const cc = document.getElementById('confetti-canvas');
+      if (cc) cc.style.display = 'none';
+      if (_confettiAnim) { cancelAnimationFrame(_confettiAnim); _confettiAnim = null; }
+      document.getElementById('t-celebration-overlay').style.display = 'none';
+      TOURNAMENT = null;
+      setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas();
+    });
+
   </script>
 </body>
 
