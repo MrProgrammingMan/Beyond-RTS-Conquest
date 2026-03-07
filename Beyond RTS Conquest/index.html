@@ -727,13 +727,13 @@
     }
 
     /* ── AI CARD THINKING HIGHLIGHT ── */
-    .ai-thinking {
+    .p2-ai-thinking {
       box-shadow: 0 0 0 2px #c0392b, 0 0 16px rgba(192, 57, 43, .7) !important;
       background: rgba(192, 57, 43, .18) !important;
-      animation: aiThinkPulse 0.55s ease-in-out infinite alternate !important;
+      animation: aiThinkPulseP2 0.55s ease-in-out infinite alternate !important;
     }
 
-    @keyframes aiThinkPulse {
+    @keyframes aiThinkPulseP2 {
       from {
         box-shadow: 0 0 0 2px #c0392b, 0 0 10px rgba(192, 57, 43, .5);
       }
@@ -743,11 +743,33 @@
       }
     }
 
+    .p1-ai-thinking {
+      box-shadow: 0 0 0 2px #2471a3, 0 0 16px rgba(36, 113, 163, .7) !important;
+      background: rgba(36, 113, 163, .18) !important;
+      animation: aiThinkPulseP1 0.55s ease-in-out infinite alternate !important;
+    }
+
+    @keyframes aiThinkPulseP1 {
+      from {
+        box-shadow: 0 0 0 2px #2471a3, 0 0 10px rgba(36, 113, 163, .5);
+      }
+
+      to {
+        box-shadow: 0 0 0 3px #3498db, 0 0 22px rgba(52, 152, 219, .9);
+      }
+    }
+
     /* AI cursor — tab highlight when AI switches modes */
-    .ai-tab-active {
+    .p2-ai-tab-active {
       outline: 2px solid var(--p2) !important;
       outline-offset: 2px;
       background: rgba(192, 57, 43, .18) !important;
+    }
+
+    .p1-ai-tab-active {
+      outline: 2px solid var(--p1) !important;
+      outline-offset: 2px;
+      background: rgba(36, 113, 163, .18) !important;
     }
 
     /* ── IN-GAME TUTORIAL OVERLAY ── */
@@ -3649,11 +3671,11 @@
 
     const AI_DIFF_SETTINGS = {
       //          interval  spawnCh  saveThresh  buffs    upgrades  workerPri  defenseReact  adapts   savesUp  resourceSave  counterPlays
-      tutorial: { interval: 4.5, spawnChance: 0.28, saveThreshold: 30, usesBuffs: false, buysUpgrades: false, workerPriority: 0.15, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
-      easy: { interval: 2.8, spawnChance: 0.45, saveThreshold: 25, usesBuffs: false, buysUpgrades: false, workerPriority: 0.22, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
-      medium: { interval: 1.6, spawnChance: 0.68, saveThreshold: 18, usesBuffs: false, buysUpgrades: true, workerPriority: 0.35, defenseReact: true, adapts: false, savesUp: true, resourceSave: false, counterPlays: false },
-      hard: { interval: 1.1, spawnChance: 0.82, saveThreshold: 12, usesBuffs: true, buysUpgrades: true, workerPriority: 0.48, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
-      expert: { interval: 0.80, spawnChance: 0.90, saveThreshold: 8, usesBuffs: true, buysUpgrades: true, workerPriority: 0.56, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
+      tutorial: { interval: 5.5, spawnChance: 0.22, saveThreshold: 40, usesBuffs: false, buysUpgrades: false, workerPriority: 0.10, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
+      easy: { interval: 3.5, spawnChance: 0.38, saveThreshold: 30, usesBuffs: false, buysUpgrades: false, workerPriority: 0.18, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
+      medium: { interval: 2.0, spawnChance: 0.62, saveThreshold: 20, usesBuffs: false, buysUpgrades: true, workerPriority: 0.32, defenseReact: true, adapts: false, savesUp: true, resourceSave: false, counterPlays: false },
+      hard: { interval: 1.2, spawnChance: 0.80, saveThreshold: 14, usesBuffs: true, buysUpgrades: true, workerPriority: 0.46, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
+      expert: { interval: 0.65, spawnChance: 0.96, saveThreshold: 6, usesBuffs: true, buysUpgrades: true, workerPriority: 0.62, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
     };
 
     // Delay between AI "thinking" (showing highlight) and actually executing the action
@@ -3714,42 +3736,94 @@
     function _aiClearThinking(pid) {
       const pids = pid ? [pid] : (GAME_MODE === 'aivsai' ? [1, 2] : [2]);
       pids.forEach(p => {
-        document.querySelectorAll(`#p${p}-grid .ai-thinking, #p${p}-upgrades .ai-thinking, #p${p}-buffs .ai-thinking`).forEach(el => el.classList.remove('ai-thinking'));
-        document.querySelectorAll(`#p${p}-tabs .ai-tab-active`).forEach(el => el.classList.remove('ai-tab-active'));
+        const cls = p === 1 ? 'p1-ai-thinking' : 'p2-ai-thinking';
+        const tabCls = p === 1 ? 'p1-ai-tab-active' : 'p2-ai-tab-active';
+        document.querySelectorAll(`#p${p}-grid .${cls}, #p${p}-upgrades .${cls}, #p${p}-buffs .${cls}`).forEach(el => el.classList.remove(cls));
+        document.querySelectorAll(`#p${p}-tabs .${tabCls}`).forEach(el => el.classList.remove(tabCls));
       });
     }
 
     // Visually "navigate" the AI to a tab and highlight a card, then execute after delay
+    // How long the AI pauses on each card while navigating toward its target
+    const AI_STEP_DELAY = 180; // ms per navigation step
+
+    function _aiHighlightCard(pid, tabMode, cardIdx) {
+      _aiClearThinking(pid);
+      const selector = [`#p${pid}-grid .ucard`, `#p${pid}-upgrades .upcard`, `#p${pid}-buffs .bfcard`][tabMode];
+      let card = document.querySelector(selector + `[data-idx='${cardIdx}']`);
+      if (!card) { const cards = document.querySelectorAll(selector); card = cards[cardIdx]; }
+      if (card) {
+        const cls = pid === 1 ? 'p1-ai-thinking' : 'p2-ai-thinking';
+        card.classList.add(cls);
+      }
+      if (tabMode === 0) { if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx; }
+      else if (tabMode === 1) { if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx; }
+      else { if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx; }
+      _aiLastActionIdx[pid - 1] = cardIdx; _aiLastActionTab[pid - 1] = tabMode;
+      refreshSel(pid);
+    }
+
     function _aiActWithDelay(pid, tabMode, cardIdx, executeFn) {
       if (!G || !G.running) return;
-      _aiClearThinking();
+      _aiClearThinking(pid);
 
-      // Switch to the right tab visually
-      const modes = ['grid', 'upgrades', 'buffs'];
-      const modeKey = modes[tabMode];
-      switchMode(pid, tabMode);
+      // Switch to the right tab first (costs one step if different from current)
+      const curTab = _aiLastActionTab[pid - 1] || 0;
+      const tabThinkCls = pid === 1 ? 'p1-ai-tab-active' : 'p2-ai-tab-active';
 
-      // Highlight the target card — find by data-idx to avoid off-by-one with spy card
-      const selector = [`#p${pid}-grid .ucard`, `#p${pid}-upgrades .upcard`, `#p${pid}-buffs .bfcard`][tabMode];
-      // Try data-idx match first, fallback to NodeList position
-      let targetCard = document.querySelector(selector + `[data-idx='${cardIdx}']`);
-      if (!targetCard) { const cards = document.querySelectorAll(selector); targetCard = cards[cardIdx]; }
-      if (targetCard) {
-        targetCard.classList.add('ai-thinking');
-        // Sync selection variable
-        if (tabMode === 0) { if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx; }
-        _aiLastActionIdx[pid - 1] = cardIdx; _aiLastActionTab[pid - 1] = tabMode;
-        // Also highlight the tab label
+      const doNavigate = () => {
+        if (!G || !G.running) return;
+        // Highlight current tab
+        switchMode(pid, tabMode);
         const tab = document.querySelectorAll(`#p${pid}-tabs .hud-tab`)[tabMode];
-        if (tab) tab.classList.add('ai-tab-active');
-      }
+        if (tab) tab.classList.add(tabThinkCls);
 
-      // Execute after delay
-      setTimeout(() => {
-        if (!G || !G.running) { _aiClearThinking(); return; }
-        _aiClearThinking();
-        executeFn();
-      }, AI_THINK_DELAY);
+        // Walk cursor one step at a time from current position to target
+        const startIdx = _aiLastActionIdx[pid - 1] || 0;
+        const steps = Math.abs(cardIdx - startIdx);
+
+        if (steps === 0) {
+          // Already on target — highlight and fire
+          _aiHighlightCard(pid, tabMode, cardIdx);
+          setTimeout(() => {
+            if (!G || !G.running) { _aiClearThinking(pid); return; }
+            _aiClearThinking(pid);
+            executeFn();
+          }, AI_THINK_DELAY);
+          return;
+        }
+
+        // Walk step by step
+        let curIdx = startIdx;
+        const dir = cardIdx > startIdx ? 1 : -1;
+        let step = 0;
+        const walkStep = () => {
+          if (!G || !G.running) { _aiClearThinking(pid); return; }
+          curIdx += dir;
+          step++;
+          _aiHighlightCard(pid, tabMode, curIdx);
+          if (curIdx !== cardIdx) {
+            // Not there yet — keep walking
+            setTimeout(walkStep, AI_STEP_DELAY);
+          } else {
+            // Arrived — pause then execute
+            setTimeout(() => {
+              if (!G || !G.running) { _aiClearThinking(pid); return; }
+              _aiClearThinking(pid);
+              executeFn();
+            }, AI_THINK_DELAY);
+          }
+        };
+        setTimeout(walkStep, AI_STEP_DELAY);
+      };
+
+      // If switching tabs, pause briefly first
+      if (curTab !== tabMode) {
+        _aiLastActionTab[pid - 1] = tabMode;
+        setTimeout(doNavigate, AI_STEP_DELAY);
+      } else {
+        doNavigate();
+      }
     }
 
     function runAI(pid, forceDefend) {
@@ -3798,23 +3872,21 @@
 
       // ── Priority: defense > upgrade > buff > worker > unit ──
 
-      // ── 1. Workers — always important ──
-      if (!forceDefend && !saving && workerDef && p.workers < (p.workerCap || 3) &&
+      // ── 1. Workers — always fill to cap before doing anything else ──
+      if (!forceDefend && workerDef && p.workers < (p.workerCap || 3) &&
         p.souls >= workerDef.souls && p.bodies >= workerDef.bodies) {
-        if (Math.random() < cfg.workerPriority) {
-          const workerIdx = allUnitDefs.indexOf(workerDef);
-          G[_actingKey] = true;
-          _aiLastActionIdx[pid - 1] = workerIdx; _aiLastActionTab[pid - 1] = 0;
-          _aiActWithDelay(pid, 0, workerIdx, () => { G[_actingKey] = false; trySpawn(pid, workerDef.id, null); });
-          return;
-        }
+        const workerIdx = allUnitDefs.indexOf(workerDef);
+        G[_actingKey] = true;
+        _aiLastActionIdx[pid - 1] = workerIdx; _aiLastActionTab[pid - 1] = 0;
+        _aiActWithDelay(pid, 0, workerIdx, () => { G[_actingKey] = false; trySpawn(pid, workerDef.id, null); });
+        return;
       }
 
       // ── 2. Upgrades — more aggressive buying logic ──
       if (!forceDefend && cfg.buysUpgrades && nextUpgrade) {
         const canAfford = p.souls >= nextUpgrade.cost.souls + cfg.saveThreshold && p.bodies >= nextUpgrade.cost.bodies;
-        // Expert buys upgrades aggressively; hard moderately
-        const upgradeChance = diff === 'expert' ? 0.55 : diff === 'hard' ? 0.35 : 0.22;
+        // Expert buys upgrades very aggressively; hard moderately
+        const upgradeChance = diff === 'expert' ? 0.85 : diff === 'hard' ? 0.50 : 0.25;
         if (canAfford && Math.random() < upgradeChance) {
           const upIdx = allUpgrades.indexOf(nextUpgrade);
           G[_actingKey] = true; G._aiSaving = false;
@@ -3863,11 +3935,17 @@
       if (p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost && (enCount > myCount + 1 || p.players && G.players[pid - 1].baseHp < 50)) return 1;
       // Body Boon: when bodies are scarce and we have enough souls
       if (p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost + 10 && p.bodies < 10 && myCount > 1) return 2;
-      // Expert: also use war cry when attacking base
-      if (diff === 'expert' && p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost) {
-        const enemyBase = enemy ? G.players[pid === 1 ? 1 : 0] : null;
-        if (enemyBase && enemyBase.baseHp < 60) return 0; // push for the kill
+      // Expert: aggressive with all buffs
+      if (diff === 'expert') {
+        // War cry when ahead or pushing
+        if (p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && (myCount >= enCount || enemy.baseHp < 70)) return 0;
+        // Iron wall when taking damage or outnumbered
+        if (p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost && (enCount > myCount || p.baseHp < 60)) return 1;
+        // Body Boon when very high on souls but low on bodies
+        if (p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost && p.bodies < 6 && p.souls > 80) return 2;
       }
+      // Hard: uses war cry when clearly winning
+      if (diff === 'hard' && p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && myCount > enCount + 2) return 0;
       return -1;
     }
 
@@ -4022,21 +4100,30 @@
 
       scored.sort((a, b) => b.score - a.score);
 
-      // Selection randomness scales with difficulty
+      // Selection randomness scales with difficulty — clear tiers
       const top = scored.length;
-      if (diff === 'tutorial') return scored[Math.floor(Math.random() * Math.min(top, 4))].unit;
-      if (diff === 'easy') return scored[Math.floor(Math.random() * top)].unit;
+      if (diff === 'tutorial') {
+        // Fully random from all affordable units
+        return affordable[Math.floor(Math.random() * affordable.length)];
+      }
+      if (diff === 'easy') {
+        // Mostly random — 70% chance of picking a random unit, 30% picks worst scored unit
+        if (Math.random() < 0.70) return affordable[Math.floor(Math.random() * affordable.length)];
+        return scored[scored.length - 1].unit; // occasionally picks the worst choice
+      }
       if (diff === 'medium') {
-        // Pick from top 40% but weighted toward top
-        const pool = Math.max(1, Math.floor(top * 0.45));
-        return scored[Math.floor(Math.random() * pool)].unit;
+        // Pick from bottom half of scored options (mediocre but not terrible)
+        const pool = Math.max(1, Math.floor(top * 0.55));
+        const midStart = Math.floor(top * 0.25); // avoid very best AND very worst
+        const idx = midStart + Math.floor(Math.random() * Math.max(1, top - midStart));
+        return scored[Math.min(idx, top - 1)].unit;
       }
       if (diff === 'hard') {
-        // 70% chance top pick, 30% second pick
-        return (Math.random() < 0.70 && scored[0]) ? scored[0].unit : scored[Math.min(1, top - 1)].unit;
+        // 75% chance top pick, 25% second pick — clear advantage over medium
+        return (Math.random() < 0.75 && scored[0]) ? scored[0].unit : scored[Math.min(1, top - 1)].unit;
       }
-      // expert: always best, but 15% chance of intentional mix-up for unpredictability
-      if (Math.random() < 0.15 && scored[1]) return scored[1].unit;
+      // expert: always the optimal pick, tiny 8% variation for unpredictability
+      if (Math.random() < 0.08 && scored[1]) return scored[1].unit;
       return scored[0].unit;
     }
 
@@ -5843,31 +5930,30 @@
             }
             u.vx = Math.sign(dx) * actualSpd;
           }
-          // ── Ranged kiting — archers actively back away from melee threats ──
+          // ── Ranged kiting — some archers back away, others hold their ground ──
           if (u.def.type === 'rng' && !enemy.def.aerial && !u.def.aerial) {
             const kc = u.kiteChance || 0;
             const ownBase = G.players[u.player - 1].baseX;
-            const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.2;
+            const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
             const dx2 = enemy.x - u.x;
-            // Check for nearby melee threats (expanded range to 70px)
-            const enemyMeleeNear = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 70);
-            // Also kite when enemy closes to 70% of shoot range
-            const tooClose = d < u.def.range * 0.70;
-            const shouldKite = (!nearOwnBase) && (
-              (enemyMeleeNear && kc > 0.15) ||  // melee nearby — almost always kite
-              (kc > 0.45 && tooClose)            // high-kite archers back off preemptively
-            );
+            // Only trigger kite when melee is truly close (45px) — not on approach
+            const enemyMeleeClose = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 45);
+            // kiteChance decides if THIS specific archer even bothers kiting at all
+            // Low kc archers (0.3–0.5) mostly stand and fight like a brave fool
+            const willKite = kc > 0.55; // only ~40% of archers have a kite tendency
+            const shouldKite = willKite && !nearOwnBase && enemyMeleeClose;
             if (shouldKite) {
-              // Speed: high-kite archers back off fast, low-kite at half speed
-              const retreatSpd = kc > 0.65 ? spd * 0.9 : spd * 0.6;
+              // Slow, deliberate retreat — not a teleport
+              // Max 35% of normal movement speed so it looks natural
+              const retreatSpd = spd * (0.25 + kc * 0.15); // 0.25–0.40x speed
               u.x -= Math.sign(dx2) * retreatSpd * dt;
-              // Try to shelter behind ally melee
-              if (kc > 0.5) {
+              // Occasionally shelter behind ally melee (only high-kite archers)
+              if (kc > 0.75 && Math.random() < 0.03) {
                 const allyMelee = G.units.find(a =>
                   a.player === u.player && !a.def.isWorker && a.def.type === 'mel' &&
-                  Math.abs(a.x - u.x) < 160 && Math.sign(a.x - u.x) !== Math.sign(dx2)
+                  Math.abs(a.x - u.x) < 140 && Math.sign(a.x - u.x) !== Math.sign(dx2)
                 );
-                if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.06 * dt * 60;
+                if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.02 * dt * 60;
               }
             }
           }
