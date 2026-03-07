@@ -1605,7 +1605,8 @@
       gap: var(--gap);
       flex: 1;
       min-height: 0;
-      overflow-y: auto;
+      overflow: hidden;
+      /* no scroll — all cards show in grid, spy wraps to row 2 */
       align-content: start;
     }
 
@@ -1617,13 +1618,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: clamp(3px, .45vh, 6px) clamp(2px, .3vw, 4px);
+      padding: clamp(3px, .45vh, 5px) clamp(2px, .3vw, 4px);
       cursor: pointer;
       transition: all .14s;
       position: relative;
       overflow: hidden;
       min-width: 0;
-      min-height: clamp(90px, 12vh, 140px);
+      height: clamp(78px, 11vh, 120px);
+      /* fixed height so all cards uniform */
     }
 
     .ucard:hover {
@@ -1701,7 +1703,9 @@
     }
 
     .ucard.no-afford-shake {
-      animation: cardShake .3s ease-out;
+      animation: cardShake .28s ease-out;
+      /* Don't let shake cause layout shift in parent grid */
+      will-change: transform;
     }
 
     @keyframes cardShake {
@@ -2456,6 +2460,8 @@
         </div>
         <button class="btn primary" id="btn-play">⚔ VS PLAYER</button>
         <button class="btn" id="btn-rebind">⌨️ KEY BINDINGS</button>
+        <button class="btn" id="btn-aivsai" onclick="setGameMode('aivsai'); showScreen('sc-faction')">🤖 AI vs
+          AI</button>
         <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
         <button class="btn" id="btn-controls">🎮 CONTROLS</button>
       </div>
@@ -2464,6 +2470,7 @@
         P1: WASD + Q TO SPAWN &nbsp;·&nbsp; P2: ↑↓←→ + ENTER &nbsp;·&nbsp; KEYBOARD ONLY</div>
     </div>
   </div>
+  <!-- AI VS AI mode label inlined into faction screen JS -->
   <!-- FACTION -->
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
@@ -2476,6 +2483,19 @@
           <div class="faction-scroll-count" id="fscroll-p1"></div>
         </div>
         <div class="faction-chosen" id="fchosen-p1">— No faction chosen —</div>
+        <!-- P1 AI settings panel — shown only in aivsai mode -->
+        <div id="ai-p1-panel" style="display:none;margin-top:8px;">
+          <div class="ai-label" style="color:#2471a3;">🤖 AI 1 SETTINGS</div>
+          <div class="ai-diff-row" id="ai1-diff-row">
+            <button class="diff-btn" data-diff1="easy">EASY</button>
+            <button class="diff-btn active" data-diff1="medium">MEDIUM</button>
+            <button class="diff-btn" data-diff1="hard">HARD</button>
+            <button class="diff-btn" data-diff1="expert">EXPERT</button>
+          </div>
+          <div class="ai-personality-badge" id="ai1-personality-display" style="margin-top:4px;">Personality: Random
+          </div>
+          <button class="ai-faction-reroll" id="ai1-reroll-btn">🎲 Re-roll P1 Faction</button>
+        </div>
       </div>
       <div class="faction-vs">VS</div>
       <div class="faction-side">
@@ -2488,7 +2508,7 @@
           </div>
           <div class="faction-chosen" id="fchosen-p2">— No faction chosen —</div>
         </div>
-        <!-- AI opponent section (hidden in vs mode) -->
+        <!-- AI opponent section (shown in solo + aivsai) -->
         <div id="ai-p2-panel" style="display:none">
           <div class="ai-label">🤖 AI OPPONENT</div>
           <div class="ai-diff-row" id="ai-diff-row">
@@ -2518,7 +2538,7 @@
     style="display:none;position:fixed;z-index:10001;background:#1a1a2e;border:1px solid #f39c12;color:#fff;font-family:Cinzel,serif;font-size:.72rem;padding:5px 9px;border-radius:4px;max-width:220px;pointer-events:none;">
   </div>
   <div id="dev-panel"
-    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:340px;min-height:200px;background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Cinzel,serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:visible;flex-direction:column;">
+    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:320px;min-height:200px;max-width:min(90vw,780px);background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Cinzel,serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:visible;flex-direction:column;box-sizing:border-box;">
     <!-- Drag handle -->
     <div id="dev-drag-bar"
       style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#12120a;border-bottom:1px solid #333;cursor:grab;user-select:none;">
@@ -2533,7 +2553,8 @@
           style="background:#333;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Cinzel,serif;font-size:.7rem;">✕</button>
       </div>
     </div>
-    <div style="overflow-y:auto;padding:14px;flex:1;display:flex;flex-direction:column;gap:12px;overflow-x:hidden;"
+    <div
+      style="overflow-y:auto;overflow-x:hidden;padding:clamp(8px,1.5vw,14px);flex:1;display:flex;flex-direction:column;gap:10px;min-height:0;"
       id="dev-panel-body">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="dev-section" id="dev-p1-section">
@@ -2869,8 +2890,10 @@
       });
     });
     let G = null, P1_FACTION = null, P2_FACTION = null;
-    let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial'
+    let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial' | 'aivsai'
     let AI_DIFFICULTY = 'medium';   // 'easy'|'medium'|'hard'|'expert'|'tutorial'
+    let AI1_DIFFICULTY = 'medium';  // P1 AI difficulty in aivsai mode
+    let AI1_PERSONALITY = null;     // P1 AI personality in aivsai mode
     let AI_PERSONALITY = null;      // assigned at game start
     let AI_FACTION_IDX = null;      // AI's chosen faction index
     let P1_SEL = 0, P2_SEL = 0;
@@ -2893,7 +2916,7 @@
       upgrade: () => { [440, 550, 660].forEach((f, i) => setTimeout(() => beep(f, 'triangle', .2, .06), i * 80)); },
       warcry: () => { [400, 500, 650].forEach((f, i) => setTimeout(() => beep(f, 'square', .15, .05), i * 100)); },
       ironwall: () => beep(80, 'square', .35, .07),
-      soulsurge: () => { beep(300, 'triangle', .1, .06); setTimeout(() => beep(500, 'triangle', .2, .07), 80); },
+      bodyboon: () => { beep(300, 'triangle', .1, .06); setTimeout(() => beep(500, 'triangle', .2, .07), 80); },
     };
 
     // ── SESSION STATS (in-memory across rematches) ──
@@ -3161,7 +3184,7 @@
     // ── GLOBAL SPY UNIT ──────────────────────────────────────────────────────────
     const SPY_DEF = {
       id: 'spy', name: 'Spy', icon: '🕵️', souls: 10, bodies: 2,
-      desc: 'Sneaks into the enemy base. Steals whichever resource the enemy has less of. Detected by workers or defending units.',
+      desc: '🕵️ INFILTRATES enemy base · Steals the resource the enemy has MORE of (souls or bodies) every 7s · Detected by workers (35%) or combat units (15%) near base every 2s · Max 2 active · Countered by keeping workers near your base',
       type: 'spc', isWorker: false, isSpawned: false, aerial: false,
       hp: 18, speed: 0, dmg: 0, range: 0, attackRate: 0, radius: 10, color: '#636e72',
     };
@@ -3213,20 +3236,20 @@
             // Steal whichever resource the enemy has LESS of (proportionally)
             const soulsRatio = enemy.souls / Math.max(1, owner.souls);
             const bodiesRatio = enemy.bodies / Math.max(1, owner.bodies);
+            // Steal whichever resource the enemy has MORE of
             let stealAmt, resource;
-            if (enemy.souls < 15 && enemy.bodies > enemy.souls * 2) {
-              // Enemy very low on souls — steal souls
-              stealAmt = Math.min(enemy.souls, 3 + Math.floor(Math.random() * 2));
+            if (enemy.souls >= enemy.bodies * 2 || (enemy.souls > 20 && enemy.bodies < 10)) {
               resource = 'souls';
-            } else if (enemy.bodies < 6) {
-              stealAmt = Math.min(enemy.bodies, 2);
-              resource = 'bodies';
-            } else if (soulsRatio < bodiesRatio) {
               stealAmt = Math.min(enemy.souls, 4 + Math.floor(Math.random() * 3));
-              resource = 'souls';
-            } else {
-              stealAmt = Math.min(enemy.bodies, 2 + Math.floor(Math.random() * 2));
+            } else if (enemy.bodies > enemy.souls * 1.5 || enemy.bodies > 15) {
               resource = 'bodies';
+              stealAmt = Math.min(enemy.bodies, 2 + Math.floor(Math.random() * 2));
+            } else if (enemy.souls >= enemy.bodies) {
+              resource = 'souls';
+              stealAmt = Math.min(enemy.souls, 3 + Math.floor(Math.random() * 2));
+            } else {
+              resource = 'bodies';
+              stealAmt = Math.min(enemy.bodies, 2 + Math.floor(Math.random() * 1));
             }
             enemy[resource] = Math.max(0, enemy[resource] - stealAmt);
             owner[resource] = Math.min(resource === 'souls' ? 900 : 999, owner[resource] + stealAmt);
@@ -3262,7 +3285,7 @@
     const RALLY_BUFFS = [
       { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 40, duration: 6, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 6s.' },
       { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 35, duration: 8, cooldown: 50, desc: 'All units take 40% less damage for 8s.' },
-      { id: 'soulsurge', name: 'Soul Surge', icon: '💀', cost: 60, duration: 0, cooldown: 75, desc: 'Spend 60 Souls to instantly convert into +14 Bodies. Use when souls are high and bodies are scarce.' },
+      { id: 'bodyboon', name: 'Body Boon', icon: '💀', cost: 60, duration: 0, cooldown: 75, desc: 'Spend 60 Souls to instantly convert into +14 Bodies. Use when souls are high and bodies are scarce.' },
     ];
 
     // ── TUTORIAL ──
@@ -3396,7 +3419,7 @@
       // ── Step 11: Rally Buffs ──
       {
         title: '⚡ RALLY BUFFS — TACTICAL TOOLS',
-        body: 'The BUFFS tab (press <kbd>W</kbd> twice from Units) has 3 temporary power-ups shared across all factions:\n\n⚡ War Cry — +25% speed & attack for 6s\n🛡 Iron Wall — 40% less damage for 8s\n💀 Soul Surge — spend 60💀 to get +14🦴 Bodies\n\nEach has a cooldown. Use them at the right moment.',
+        body: 'The BUFFS tab (press <kbd>W</kbd> twice from Units) has 3 temporary power-ups shared across all factions:\n\n⚡ War Cry — +25% speed & attack for 6s\n🛡 Iron Wall — 40% less damage for 8s\n🦴 Body Boon — spend 60💀 to get +14🦴 Bodies\n\nEach has a cooldown. Use them at the right moment.',
         highlight: 'p1-tabs',
         arrowDir: 'down',
         pause: true,
@@ -3525,11 +3548,11 @@
     function _advanceTutorial() {
       if (!_tutActive) return;
       const nextIdx = _tutStep + 1;
-      // Wake up AI when reaching the final battle step
+      // Wake up AI only on the FINAL battle step — use tutorial difficulty (gentlest)
       if (G && INGAME_TUT_STEPS[nextIdx] && INGAME_TUT_STEPS[nextIdx].finalStep) {
-        G.aiDifficulty = 'easy'; // Upgrade from tutorial to easy for the final fight
-        G.aiPersonality = 'aggressive';
-        G.aiTimer = 0;
+        G.aiDifficulty = 'tutorial'; // Stay at tutorial difficulty — still gentle
+        G.aiPersonality = 'defensive'; // Defensive so it doesn't just rush
+        if (G._aiTimers) G._aiTimers[1] = 0;
       }
       _showTutStep(nextIdx);
     }
@@ -3622,26 +3645,78 @@
 
     // ─── AI SYSTEM ───────────────────────────────────────────────────────────────
 
-    const AI_PERSONALITIES = ['aggressive', 'defensive', 'swarm', 'economist'];
+    const AI_PERSONALITIES = ['aggressive', 'defensive', 'swarm', 'economist', 'aerial', 'counter', 'saver', 'rusher', 'balanced', 'berserker', 'turtler', 'opportunist'];
 
     const AI_DIFF_SETTINGS = {
-      //          interval  spawnCh  saveThresh  buffs    upgrades  workerPri  defenseReact
-      tutorial: { interval: 1.9, spawnChance: 0.60, saveThreshold: 20, usesBuffs: false, buysUpgrades: false, workerPriority: 0.35, defenseReact: true },
-      easy: { interval: 2.1, spawnChance: 0.55, saveThreshold: 25, usesBuffs: false, buysUpgrades: false, workerPriority: 0.25, defenseReact: false },
-      medium: { interval: 1.2, spawnChance: 0.75, saveThreshold: 15, usesBuffs: false, buysUpgrades: true, workerPriority: 0.40, defenseReact: true },
-      hard: { interval: 0.9, spawnChance: 0.88, saveThreshold: 10, usesBuffs: true, buysUpgrades: true, workerPriority: 0.50, defenseReact: true },
-      expert: { interval: 0.7, spawnChance: 0.95, saveThreshold: 8, usesBuffs: true, buysUpgrades: true, workerPriority: 0.60, defenseReact: true },
+      //          interval  spawnCh  saveThresh  buffs    upgrades  workerPri  defenseReact  adapts   savesUp  resourceSave  counterPlays
+      tutorial: { interval: 4.5, spawnChance: 0.28, saveThreshold: 30, usesBuffs: false, buysUpgrades: false, workerPriority: 0.15, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
+      easy: { interval: 2.8, spawnChance: 0.45, saveThreshold: 25, usesBuffs: false, buysUpgrades: false, workerPriority: 0.22, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false },
+      medium: { interval: 1.6, spawnChance: 0.68, saveThreshold: 18, usesBuffs: false, buysUpgrades: true, workerPriority: 0.35, defenseReact: true, adapts: false, savesUp: true, resourceSave: false, counterPlays: false },
+      hard: { interval: 1.1, spawnChance: 0.82, saveThreshold: 12, usesBuffs: true, buysUpgrades: true, workerPriority: 0.48, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
+      expert: { interval: 0.80, spawnChance: 0.90, saveThreshold: 8, usesBuffs: true, buysUpgrades: true, workerPriority: 0.56, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true },
     };
 
     // Delay between AI "thinking" (showing highlight) and actually executing the action
-    const AI_THINK_DELAY = 380; // ms
+    const AI_THINK_DELAY = 360; // ms
 
-    // Clears any ai-thinking highlight on p2 cards
-    function _aiClearThinking() {
-      document.querySelectorAll('#p2-grid .ai-thinking, #p2-upgrades .ai-thinking, #p2-buffs .ai-thinking').forEach(el => {
-        el.classList.remove('ai-thinking');
+    // AI idle browsing — the AI "hovers" over cards like a human would
+    // Per-pid state so both AIs in aivsai mode browse independently
+    let _aiIdleTimer = [0, 0];
+    let _aiLastActionIdx = [0, 0];  // stays on this card between actions
+    let _aiLastActionTab = [0, 0];
+
+    function _aiIdleBrowse(pid, dt) {
+      const pidx = pid - 1;
+      const pidxIdle = pid - 1;
+      if (!G || !G.running || G.paused) return;
+      if (G[pid === 1 ? '_aiActing1' : '_aiActing']) return;
+      _aiIdleTimer[pidx] = (_aiIdleTimer[pidx] || 0) + dt;
+      if (_aiIdleTimer[pidx] < (0.6 + Math.random() * 1.4)) return;
+      _aiIdleTimer[pidx] = 0;
+
+      // Occasionally glance at upgrades tab (10% chance)
+      let tab = _aiLastActionTab[pidx] || 0;
+      if (Math.random() < 0.10 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) {
+        tab = 1; // peek at upgrades
+        _aiLastActionTab[pidx] = 1;
+        setTimeout(() => { _aiLastActionTab[pidx] = 0; }, 1500 + Math.random() * 1500);
+      }
+
+      const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+      const maxIdx = tab === 0 ? defs.length - 1 : tab === 1 ? (G.factions[pid - 1].upgrades || []).length - 1 : 2;
+      if (maxIdx < 0) return;
+
+      // Human-like: random walk from current card position
+      const nudge = Math.random() < 0.55 ? 1 : -1;
+      const cur = _aiLastActionIdx[pidx] || 0;
+      const newIdx = Math.max(0, Math.min(maxIdx, cur + nudge));
+      _aiLastActionIdx[pidx] = newIdx;
+
+      // Apply visual selection without executing
+      const modeKey = ['grid', 'upgrades', 'buffs'][tab];
+      const switchId = `p${pid}-${modeKey}`;
+      // Switch tab display
+      ['grid', 'upgrades', 'buffs'].forEach((m, i) => {
+        const el = document.getElementById(`p${pid}-${m}`);
+        if (el) el.style.display = i === tab ? (m === 'grid' ? 'grid' : 'flex') : 'none';
       });
-      document.querySelectorAll('#p2-tabs .ai-tab-active').forEach(el => el.classList.remove('ai-tab-active'));
+      const tabs = document.querySelectorAll(`#p${pid}-tabs .hud-tab`);
+      tabs.forEach((t, i) => {
+        t.classList.remove(pid === 1 ? 'active' : 'active2');
+        if (i === tab) t.classList.add(pid === 1 ? 'active' : 'active2');
+      });
+      if (pid === 1) { P1_SEL = newIdx; P1_MODE = tab; }
+      else { P2_SEL = newIdx; P2_MODE = tab; }
+      refreshSel(pid);
+    }
+
+    // Clears any ai-thinking highlight — clears both pids in aivsai
+    function _aiClearThinking(pid) {
+      const pids = pid ? [pid] : (GAME_MODE === 'aivsai' ? [1, 2] : [2]);
+      pids.forEach(p => {
+        document.querySelectorAll(`#p${p}-grid .ai-thinking, #p${p}-upgrades .ai-thinking, #p${p}-buffs .ai-thinking`).forEach(el => el.classList.remove('ai-thinking'));
+        document.querySelectorAll(`#p${p}-tabs .ai-tab-active`).forEach(el => el.classList.remove('ai-tab-active'));
+      });
     }
 
     // Visually "navigate" the AI to a tab and highlight a card, then execute after delay
@@ -3654,12 +3729,16 @@
       const modeKey = modes[tabMode];
       switchMode(pid, tabMode);
 
-      // Highlight the target card
-      const containers = [`#p${pid}-${modeKey} .ucard`, `#p${pid}-${modeKey} .upcard`, `#p${pid}-${modeKey} .bfcard`];
+      // Highlight the target card — find by data-idx to avoid off-by-one with spy card
       const selector = [`#p${pid}-grid .ucard`, `#p${pid}-upgrades .upcard`, `#p${pid}-buffs .bfcard`][tabMode];
-      const cards = document.querySelectorAll(selector);
-      if (cards[cardIdx]) {
-        cards[cardIdx].classList.add('ai-thinking');
+      // Try data-idx match first, fallback to NodeList position
+      let targetCard = document.querySelector(selector + `[data-idx='${cardIdx}']`);
+      if (!targetCard) { const cards = document.querySelectorAll(selector); targetCard = cards[cardIdx]; }
+      if (targetCard) {
+        targetCard.classList.add('ai-thinking');
+        // Sync selection variable
+        if (tabMode === 0) { if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx; }
+        _aiLastActionIdx[pid - 1] = cardIdx; _aiLastActionTab[pid - 1] = tabMode;
         // Also highlight the tab label
         const tab = document.querySelectorAll(`#p${pid}-tabs .hud-tab`)[tabMode];
         if (tab) tab.classList.add('ai-tab-active');
@@ -3675,16 +3754,15 @@
 
     function runAI(pid, forceDefend) {
       if (!G || !G.running || G.paused) return;
-      // Don't queue another action if one is in flight (thinking delay)
-      if (G._aiActing) return;
+      const _actingKey = pid === 1 ? '_aiActing1' : '_aiActing';
+      if (G[_actingKey]) return;
 
       const p = G.players[pid - 1];
       const enemy = G.players[pid === 1 ? 1 : 0];
       const diff = G.aiDifficulty || 'medium';
-      const pers = G.aiPersonality || 'aggressive';
+      const pers = (pid === 1 ? G.ai1Personality : G.aiPersonality) || 'aggressive';
       const cfg = AI_DIFF_SETTINGS[diff] || AI_DIFF_SETTINGS.medium;
 
-      // ── 0. Spawn chance gate (skip for forced defense) ──
       if (!forceDefend && Math.random() > cfg.spawnChance) return;
 
       const myUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard);
@@ -3700,71 +3778,96 @@
       const workerDef = G.factions[pid - 1].units.find(d => d.isWorker);
       const allUnitDefs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
 
-      // ── Priority order: defense > upgrade > buff > worker > unit ──
+      // ── Resource saving: hard+ AI saves before buying expensive things ──
+      const saving = cfg.savesUp && (pid === 1 ? (G._aiSaving1 || false) : (G._aiSaving || false));
+      const allUpgrades = G.factions[pid - 1].upgrades || [];
+      const availUpgrades = allUpgrades.filter(u => !p.ownedUpgrades.has(u.id));
+      const nextUpgrade = availUpgrades[0];
+      // Decide whether to start saving for upgrade
+      if (cfg.savesUp && !saving && nextUpgrade && !forceDefend) {
+        const needed = nextUpgrade.cost.souls;
+        const urgency = diff === 'expert' ? 0.40 : 0.28;
+        if (Math.random() < urgency && p.souls < needed && p.souls >= needed * 0.5) {
+          if (pid === 1) { G._aiSaving1 = true; G._aiSaveTarget1 = needed; } else { G._aiSaving = true; G._aiSaveTarget = needed; }
+        }
+      }
+      // Break saving when we can afford it or enemy is at our base
+      if (pid === 1 ? G._aiSaving1 : G._aiSaving) {
+        if (!nextUpgrade || p.souls >= (pid === 1 ? G._aiSaveTarget1 : G._aiSaveTarget || 999) || forceDefend) { if (pid === 1) G._aiSaving1 = false; else G._aiSaving = false; }
+      }
 
-      // ── 1. Workers ──
-      if (!forceDefend && workerDef && p.workers < (p.workerCap || 3) &&
+      // ── Priority: defense > upgrade > buff > worker > unit ──
+
+      // ── 1. Workers — always important ──
+      if (!forceDefend && !saving && workerDef && p.workers < (p.workerCap || 3) &&
         p.souls >= workerDef.souls && p.bodies >= workerDef.bodies) {
         if (Math.random() < cfg.workerPriority) {
           const workerIdx = allUnitDefs.indexOf(workerDef);
-          G._aiActing = true;
-          _aiActWithDelay(pid, 0, workerIdx, () => {
-            G._aiActing = false;
-            trySpawn(pid, workerDef.id, null);
-          });
+          G[_actingKey] = true;
+          _aiLastActionIdx[pid - 1] = workerIdx; _aiLastActionTab[pid - 1] = 0;
+          _aiActWithDelay(pid, 0, workerIdx, () => { G[_actingKey] = false; trySpawn(pid, workerDef.id, null); });
           return;
         }
       }
 
-      // ── 2. Upgrades (medium+ only) ──
-      if (!forceDefend && cfg.buysUpgrades) {
-        const allUpgrades = G.factions[pid - 1].upgrades || [];
-        const upgrades = allUpgrades.filter(u => !p.ownedUpgrades.has(u.id));
-        if (upgrades.length && p.souls >= upgrades[0].cost.souls + cfg.saveThreshold && p.bodies >= upgrades[0].cost.bodies) {
-          if (Math.random() < 0.28) {
-            const upIdx = allUpgrades.indexOf(upgrades[0]);
-            G._aiActing = true;
-            _aiActWithDelay(pid, 1, upIdx, () => {
-              G._aiActing = false;
-              tryBuyUpgrade(pid, upIdx, null);
-            });
-            return;
-          }
+      // ── 2. Upgrades — more aggressive buying logic ──
+      if (!forceDefend && cfg.buysUpgrades && nextUpgrade) {
+        const canAfford = p.souls >= nextUpgrade.cost.souls + cfg.saveThreshold && p.bodies >= nextUpgrade.cost.bodies;
+        // Expert buys upgrades aggressively; hard moderately
+        const upgradeChance = diff === 'expert' ? 0.55 : diff === 'hard' ? 0.35 : 0.22;
+        if (canAfford && Math.random() < upgradeChance) {
+          const upIdx = allUpgrades.indexOf(nextUpgrade);
+          G[_actingKey] = true; G._aiSaving = false;
+          _aiLastActionIdx[pid - 1] = upIdx; _aiLastActionTab[pid - 1] = 1;
+          _aiActWithDelay(pid, 1, upIdx, () => { G[_actingKey] = false; tryBuyUpgrade(pid, upIdx, null); });
+          return;
         }
       }
 
-      // ── 3. Buffs (hard+ only) ──
+      // ── 3. Buffs ──
       if (!forceDefend && cfg.usesBuffs && myCount > 0) {
-        const buffIdx = _aiChooseBuff(pid, p, myCount, enCount);
+        const buffIdx = _aiChooseBuff(pid, p, myCount, enCount, enemy);
         if (buffIdx !== -1) {
-          G._aiActing = true;
+          G[_actingKey] = true;
           _aiActWithDelay(pid, 2, buffIdx, () => {
-            G._aiActing = false;
+            G[_actingKey] = false;
             tryActivateBuff(pid, buffIdx, null);
-            // After buff, immediately queue a unit spawn
-            setTimeout(() => runAI(pid), 120);
+            setTimeout(() => runAI(pid), 150);
           });
           return;
         }
       }
 
-      // ── 4. Choose combat unit ──
+      // ── 4. Skip spawning if currently saving for upgrade ──
+      if (saving && !forceDefend && myCount >= 3) return;
+
+      // ── 5. Choose combat unit ──
       const chosen = _aiChooseUnit(pid, units, pers, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend);
       if (chosen) {
-        const chosenIdx = units.indexOf(chosen);
-        G._aiActing = true;
-        _aiActWithDelay(pid, 0, chosenIdx, () => {
-          G._aiActing = false;
-          trySpawn(pid, chosen.id, null);
-        });
+        // Map to grid visual index — grid includes workers, units[] excludes them
+        const allGridDefs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+        const gridIdx = allGridDefs.findIndex(d => d.id === chosen.id);
+        const chosenIdx = gridIdx >= 0 ? gridIdx : units.indexOf(chosen);
+        G[_actingKey] = true;
+        _aiLastActionIdx[pid - 1] = chosenIdx; _aiLastActionTab[pid - 1] = 0;
+        _aiActWithDelay(pid, 0, chosenIdx, () => { G[_actingKey] = false; trySpawn(pid, chosen.id, null); });
       }
     }
 
-    function _aiChooseBuff(pid, p, myCount, enCount) {
+    function _aiChooseBuff(pid, p, myCount, enCount, enemy) {
       const bf = RALLY_BUFFS;
-      if (p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && myCount >= enCount + 1) return 0;  // War Cry when pushing
-      if (p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost && enCount > myCount + 1) return 1;   // Iron Wall when defending
-      if (p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost && p.bodies < 8 && myCount > 2) return 2; // Soul Surge when low on bodies
+      const diff = G.aiDifficulty || 'medium';
+      // War Cry: when we have more units or pushing hard
+      if (p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost && myCount >= enCount) return 0;
+      // Iron Wall: when under pressure
+      if (p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost && (enCount > myCount + 1 || p.players && G.players[pid - 1].baseHp < 50)) return 1;
+      // Body Boon: when bodies are scarce and we have enough souls
+      if (p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost + 10 && p.bodies < 10 && myCount > 1) return 2;
+      // Expert: also use war cry when attacking base
+      if (diff === 'expert' && p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost) {
+        const enemyBase = enemy ? G.players[pid === 1 ? 1 : 0] : null;
+        if (enemyBase && enemyBase.baseHp < 60) return 0; // push for the kill
+      }
       return -1;
     }
 
@@ -3773,95 +3876,219 @@
       const affordable = units.filter(u => p.souls >= u.souls && p.bodies >= (p._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
       if (!affordable.length) return null;
 
+      const totalEnemy = enemyTypes.mel + enemyTypes.rng + enemyTypes.air;
+      const enMelPct = totalEnemy > 0 ? enemyTypes.mel / totalEnemy : 0.33;
+      const enRngPct = totalEnemy > 0 ? enemyTypes.rng / totalEnemy : 0.33;
+      const enAirPct = totalEnemy > 0 ? enemyTypes.air / totalEnemy : 0;
+      const dominantEnemy = enMelPct > enRngPct && enMelPct > enAirPct ? 'mel'
+        : enRngPct > enAirPct ? 'rng' : 'air';
+
+      // Hard+ resource conservation: avoid overspending when bodies/souls are thin
+      if (cfg.resourceSave && affordable.length > 1) {
+        const canAffordBetter = affordable.some(u => u.souls > 8 || u.bodies > 2);
+        if (!canAffordBetter && p.bodies < 4 && !forceDefend) return null; // wait for resources
+      }
+
       let scored = affordable.map(u => {
-        let score = 1;
-        const isMel = u.type === 'mel', isRng = u.type === 'rng', isAir = u.type === 'air';
-        const cost = u.souls + u.bodies * 0.5;
+        let score = 1.5;
+        const isMel = u.type === 'mel', isRng = u.type === 'rng', isAir = u.type === 'air', isSum = u.type === 'sum';
+        const cost = u.souls + u.bodies * 0.8;
 
-        // Personality base weights
-        if (personality === 'aggressive') {
-          score += u.dmg * 0.14;
-          if (u.speed > 70) score += 1.5;
-        } else if (personality === 'defensive') {
-          score += u.hp * 0.025;
-          if (isMel) score += 1.5;
-          if (myCount < 4) score += 2;
-        } else if (personality === 'swarm') {
-          score += Math.max(0, 20 - cost) * 0.25;
-          if (u.souls <= 7) score += 3.5;
-        } else if (personality === 'economist') {
-          score += (u.dmg / Math.max(1, cost)) * 9;
-          if (u.souls > 12) score += 2.5;
+        // ── Personality weights ──
+        switch (personality) {
+          case 'aggressive':
+            score += u.dmg * 0.18;
+            if (u.speed > 70) score += 2.5;
+            if (isAir) score += 1.5;
+            break;
+          case 'defensive':
+            score += u.hp * 0.032;
+            if (isMel && enRngPct > 0.3) score += 3;
+            if (isRng) score += 2;
+            if (myCount < 4) score += 2.5;
+            break;
+          case 'swarm':
+            score += Math.max(0, 20 - cost) * 0.4;
+            if (cost <= 7) score += 5;
+            if (u.attackRate > 1.1) score += 2;
+            if (cost > 16) score -= 3; // swarm avoids expensive units
+            break;
+          case 'economist':
+            score += (u.dmg / Math.max(1, cost)) * 12;
+            if (cost >= 14) score += 4;
+            if (isSum) score += 3; // summon units are good value
+            break;
+          case 'aerial':
+            if (isAir) score += 6;
+            score += u.speed * 0.05;
+            if (isMel) score -= 1;
+            break;
+          case 'counter':
+            if (isRng && enAirPct > 0.2) score += 7;
+            if (isAir && enMelPct > 0.4) score += 7;
+            if (isMel && enRngPct > 0.35) score += 7;
+            score += u.dmg * 0.12;
+            break;
+          case 'saver':
+            score += Math.max(0, 16 - cost) * 0.45;
+            if (u.souls <= 8) score += 4;
+            if (isSum) score += 2; // summons are future-proof
+            break;
+          case 'rusher':
+            score += u.dmg * 0.22;
+            score += u.speed * 0.07;
+            if (isAir) score += 3;
+            if (u.hp < 60) score -= 1; // rusher doesn't want glass cannons defensively
+            break;
+          case 'balanced':
+            // Tries to maintain a mix of unit types
+            const myUnitsNow = G.units.filter(uu => uu.player === pid && !uu.def.isWorker && !uu.isGuard && !uu.offscreen);
+            const myMel = myUnitsNow.filter(uu => uu.def.type === 'mel').length;
+            const myRng = myUnitsNow.filter(uu => uu.def.type === 'rng').length;
+            const myAir = myUnitsNow.filter(uu => uu.def.type === 'air').length;
+            if (isMel && myMel < 3) score += 4;
+            if (isRng && myRng < 2) score += 4;
+            if (isAir && myAir < 2) score += 3;
+            score += u.hp * 0.015 + u.dmg * 0.1;
+            break;
+          case 'berserker':
+            score += u.dmg * 0.25;
+            if (u.hp < 80) score += 1.5; // glass cannon
+            if (isAir) score += 2;
+            if (u.attackRate > 1.1) score += 2;
+            break;
+          case 'turtler':
+            score += u.hp * 0.04;
+            if (isMel && u.hp > 100) score += 5;
+            if (isRng) score += 3; // ranged defense
+            if (isAir) score -= 2; // turtler doesn't like expensive aerials
+            break;
+          case 'opportunist':
+            // Adapts aggressively to whatever is winning
+            if (p.baseHp > enemy.baseHp + 15) { // winning — go aggressive
+              score += u.dmg * 0.2; if (isAir) score += 3;
+            } else { // losing — go defensive/counter
+              score += u.hp * 0.035; if (isRng && enemyTypes.air > 1) score += 5;
+            }
+            break;
         }
 
-        // Tutorial: prefers melee to be approachable
+        // Tutorial: very gentle, cheap melee preference
         if (diff === 'tutorial') {
-          if (isMel) score += 3;
-          score += u.hp * 0.02;
+          if (isMel) score += 1.5;
+          score += u.hp * 0.008;
+          score -= cost * 0.08;
         }
 
-        // Situational (medium+)
-        if (diff !== 'easy' && diff !== 'tutorial') {
-          if (isRng && enemyTypes.air > 1) score += 3.5;
-          if (isMel && enemyTypes.rng > 2) score += 2.5;
-          if (isAir && enemyTypes.mel > 3) score += 2.5;
-          if (midEmpty && isMel && myCount < 3) score += 2;
-          if (enemy.baseHp < p.baseHp - 25) score += u.dmg * 0.05; // push when winning
+        // Hard/expert: strong counter-picking based on enemy army
+        if (cfg.counterPlays && totalEnemy > 2) {
+          if (isRng && dominantEnemy === 'air') score += 6;
+          if (isAir && dominantEnemy === 'mel') score += 5;
+          if (isMel && dominantEnemy === 'rng') score += 4;
+          // Also react to specific counts
+          if (isRng && enemyTypes.air >= 3) score += 3;
+          if (isAir && enemyTypes.mel >= 4) score += 3;
+        } else if (diff === 'medium' && totalEnemy > 2) {
+          // Partial counter-picking for medium
+          if (isRng && enemyTypes.air >= 2) score += 3;
+          if (isAir && enemyTypes.mel >= 3) score += 2;
         }
 
-        // Defense emergency: prefer tanky, fast units
+        // Mid control urgency
+        if (midEmpty && (isMel || isAir) && myCount < 3) score += 2;
+
+        // Winning push: add damage weight when ahead
+        if (cfg.adapts && enemy.baseHp < p.baseHp - 20) score += u.dmg * 0.08;
+
+        // Defense emergency
         if (forceDefend) {
-          score += u.hp * 0.04;
-          score += u.speed * 0.03;
-          if (isMel) score += 4;
+          score += u.hp * 0.06;
+          score += u.speed * 0.05;
+          if (isMel) score += 5;
+          if (isAir) score += 2; // aerials also useful for base defense
         }
 
-        // Near cap: prefer cheaper units
-        if (myCount >= p.unitCap - 2 && cost > 10) score -= 3;
+        // Near unit cap: strongly prefer cheaper units
+        if (myCount >= p.unitCap - 2 && cost > 14) score -= 5;
+        if (myCount >= p.unitCap - 1 && cost > 8) score -= 3;
+
+        // Hard/expert: don't spam the same unit — variety bonus
+        if ((diff === 'hard' || diff === 'expert') && G.units.filter(uu => uu.player === pid && uu.defId === u.id).length > 4) {
+          score -= 2.5; // slight preference for less-used units
+        }
 
         return { unit: u, score };
       });
 
       scored.sort((a, b) => b.score - a.score);
-      if (diff === 'easy') return scored[Math.floor(Math.random() * scored.length)].unit;
-      if (diff === 'medium') return scored[Math.min(Math.floor(Math.random() * 2), scored.length - 1)].unit;
+
+      // Selection randomness scales with difficulty
+      const top = scored.length;
+      if (diff === 'tutorial') return scored[Math.floor(Math.random() * Math.min(top, 4))].unit;
+      if (diff === 'easy') return scored[Math.floor(Math.random() * top)].unit;
+      if (diff === 'medium') {
+        // Pick from top 40% but weighted toward top
+        const pool = Math.max(1, Math.floor(top * 0.45));
+        return scored[Math.floor(Math.random() * pool)].unit;
+      }
+      if (diff === 'hard') {
+        // 70% chance top pick, 30% second pick
+        return (Math.random() < 0.70 && scored[0]) ? scored[0].unit : scored[Math.min(1, top - 1)].unit;
+      }
+      // expert: always best, but 15% chance of intentional mix-up for unpredictability
+      if (Math.random() < 0.15 && scored[1]) return scored[1].unit;
       return scored[0].unit;
     }
 
     function updateAI(dt) {
       if (!G || !G.running || G.paused) return;
-      if (GAME_MODE !== 'solo' && GAME_MODE !== 'tutorial') return;
+      if (GAME_MODE !== 'solo' && GAME_MODE !== 'tutorial' && GAME_MODE !== 'aivsai') return;
 
-      const pid = 2;
-      const diff = G.aiDifficulty || 'medium';
-      const cfg = AI_DIFF_SETTINGS[diff] || AI_DIFF_SETTINGS.medium;
+      // Idle browsing for all active AIs
+      const _browsePids = GAME_MODE === 'aivsai' ? [1, 2] : [2];
+      _browsePids.forEach(p => _aiIdleBrowse(p, dt));
 
-      // ── Normal decision timer ──
-      G.aiTimer = (G.aiTimer || 0) + dt;
-      const jitter = (Math.random() - 0.5) * 0.25;
-      if (G.aiTimer >= cfg.interval + jitter) {
-        G.aiTimer = 0;
-        if (!G._aiActing) runAI(pid, false);
-      }
-
-      // ── Base defense reaction ──
-      if (cfg.defenseReact) {
-        G.aiDefenseTimer = (G.aiDefenseTimer || 0) + dt;
-        if (G.aiDefenseTimer >= 1.8) { // Check every 1.8s
-          G.aiDefenseTimer = 0;
-          const aiBase = G.players[pid - 1];
-          const threatZone = G.w * 0.28; // enemy within 28% of map width from AI base
-          const enemiesNearBase = G.units.filter(u =>
-            u.player !== pid &&
-            !u.def.isWorker &&
-            Math.abs(u.x - aiBase.baseX) < threatZone
-          );
-          if (enemiesNearBase.length >= 2 && !G._aiActing) {
-            // Emergency defense spawn
-            runAI(pid, true);
-          }
+      // In aivsai mode run BOTH sides
+      // Spectator mode indicator
+      if (GAME_MODE === 'aivsai') {
+        const specBadge = document.getElementById('aivsai-spectate-badge');
+        if (!specBadge) {
+          const b = document.createElement('div');
+          b.id = 'aivsai-spectate-badge';
+          b.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(0,0,0,.7);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Cinzel,serif;font-size:.65rem;padding:3px 12px;border-radius:10px;letter-spacing:.1em;pointer-events:none;';
+          b.textContent = '👁 SPECTATING — AI vs AI';
+          document.getElementById('sc-game').appendChild(b);
         }
       }
+      const aiPids = GAME_MODE === 'aivsai' ? [1, 2] : [2];
+      aiPids.forEach(pid => {
+        const p = G.players[pid - 1];
+        const diffKey = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
+        const cfg = AI_DIFF_SETTINGS[diffKey] || AI_DIFF_SETTINGS.medium;
+
+        // ── Normal decision timer ──
+        if (!G._aiTimers) G._aiTimers = [0, 0];
+        G._aiTimers[pid - 1] = (G._aiTimers[pid - 1] || 0) + dt;
+        const jitter = (Math.random() - 0.5) * 0.3;
+        if (G._aiTimers[pid - 1] >= cfg.interval + jitter) {
+          G._aiTimers[pid - 1] = 0;
+          const _ak = pid === 1 ? '_aiActing1' : '_aiActing';
+          if (!G[_ak]) { G.aiDifficulty = diffKey; if (pid === 1) { G.ai1Personality = G.ai1Personality || AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)]; } runAI(pid, false); }
+        }
+
+        // ── Base defense reaction ──
+        if (cfg.defenseReact) {
+          if (!G._aiDefTimers) G._aiDefTimers = [0, 0];
+          G._aiDefTimers[pid - 1] = (G._aiDefTimers[pid - 1] || 0) + dt;
+          if (G._aiDefTimers[pid - 1] >= 1.8) {
+            G._aiDefTimers[pid - 1] = 0;
+            const aiBase = G.players[pid - 1];
+            const threatZone = G.w * 0.28;
+            const enemiesNearBase = G.units.filter(u => u.player !== pid && !u.def.isWorker && Math.abs(u.x - aiBase.baseX) < threatZone);
+            if (enemiesNearBase.length >= 2 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) { G.aiDifficulty = diffKey; runAI(pid, true); }
+          }
+        }
+      });
     }
 
     function initGame() {
@@ -3933,9 +4160,15 @@
       G.aiTimer = 0;
       G.aiDefenseTimer = 0;
       G._aiActing = false;
+      G._aiActing1 = false;
       G.spies = []; // active spy units
       G.aiDifficulty = AI_DIFFICULTY;
       G.aiPersonality = AI_PERSONALITY;
+      G.ai1Difficulty = AI1_DIFFICULTY;
+      G.ai1Personality = AI1_PERSONALITY || AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+      G._aiTimers = [0, 0];
+      G._aiDefTimers = [0, 0];
+      G._aiSaving = false;
       // Easy mode: player gets +10 starting souls bonus
       if ((GAME_MODE === 'solo' || GAME_MODE === 'tutorial') && AI_DIFFICULTY === 'easy') {
         G.players[0].souls += 10;
@@ -3948,6 +4181,11 @@
           p2name.innerHTML = 'AI <span class="ai-badge">' + (AI_DIFFICULTY || '').toUpperCase() + '</span>';
         } else if (GAME_MODE === 'tutorial') {
           p2name.innerHTML = 'AI <span class="ai-badge" style="background:rgba(27,174,96,.2);border-color:rgba(27,174,96,.5);color:#2ecc71;">TUTORIAL</span>';
+        } else if (GAME_MODE === 'aivsai') {
+          p2name.innerHTML = 'AI <span class="ai-badge">' + (AI_DIFFICULTY || '').toUpperCase() + '</span>';
+          const p1hud = document.getElementById('p1-hud');
+          const p1name = p1hud ? p1hud.querySelector('.pname') : null;
+          if (p1name) p1name.innerHTML = 'AI <span class="ai-badge">' + (AI1_DIFFICULTY || '').toUpperCase() + '</span>';
         } else {
           p2name.textContent = 'PLAYER 2';
         }
@@ -3989,7 +4227,13 @@
           const spyCard = document.createElement('div');
           spyCard.className = 'ucard spy-card'; spyCard.dataset.idx = 99;
           spyCard.innerHTML = `<span class="utypetag" style="background:rgba(99,110,114,.3);color:#b2bec3;">SPY</span><span class="uicon">🕵️</span><span class="uname">Spy</span><div class="ucost"><span class="ctag cs">💀${SPY_DEF.souls}</span><span class="ctag cb">🦴${SPY_DEF.bodies}</span></div>`;
-          spyCard.addEventListener('click', () => trySpawnSpy(pid));
+          spyCard.addEventListener('click', () => {
+            const defs2 = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+            const spyIdx = defs2.length; // spy is always last
+            if (pid === 1) { P1_SEL = spyIdx; P1_MODE = 0; } else { P2_SEL = spyIdx; P2_MODE = 0; }
+            refreshSel(pid);
+            trySpawnSpy(pid);
+          });
           spyCard.addEventListener('mouseenter', e => showTT(e, SPY_DEF));
           spyCard.addEventListener('mouseleave', hideTT);
           grid.appendChild(spyCard);
@@ -4042,7 +4286,10 @@
 
     function getMaxSel(pid) {
       const mode = pid === 1 ? P1_MODE : P2_MODE;
-      if (mode === 0) return G.factions[pid - 1].units.filter(d => !d.isSpawned).length - 1;
+      if (mode === 0) {
+        const base = G.factions[pid - 1].units.filter(d => !d.isSpawned).length - 1;
+        return base + (GAME_MODE !== 'tutorial' ? 1 : 0); // +1 for spy card
+      }
       if (mode === 1) return (G.factions[pid - 1].upgrades || []).length - 1;
       return RALLY_BUFFS.length - 1;
     }
@@ -4053,10 +4300,16 @@
       const containerIds = ['grid', 'upgrades', 'buffs'];
       const cardClasses = ['ucard', 'upcard', 'bfcard'];
       const el = document.getElementById(`p${pid}-${containerIds[mode]}`);
+      const defs = mode === 0 ? G.factions[pid - 1].units.filter(d => !d.isSpawned) : [];
+      const isSpySel = mode === 0 && sel >= defs.length;
       el.querySelectorAll('.' + cardClasses[mode]).forEach((c, i) => {
-        c.classList.toggle('sel', i === sel);
+        // Spy card has data-idx=99; regular cards use their position
+        const cardDataIdx = parseInt(c.dataset.idx);
+        const isSpyCard = cardDataIdx === 99;
+        const isSelected = isSpySel ? isSpyCard : (i === sel && !isSpyCard);
+        c.classList.toggle('sel', isSelected);
         c.classList.remove(`sel${pid === 1 ? 2 : 1}`);
-        if (i === sel) c.classList.add(`sel`);
+        if (isSelected) c.classList.add('sel');
       });
       if (mode === 0) updateStatPanel(pid);
       else {
@@ -4099,7 +4352,7 @@
     function updateStatPanel(pid) {
       const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
       const sel = pid === 1 ? P1_SEL : P2_SEL;
-      const def = defs[sel]; if (!def) return;
+      const def = sel >= defs.length ? SPY_DEF : defs[sel]; if (!def) return;
       const TL = { mel: '⚔ MEL', rng: '🏹 RNG', air: '🦅 AIR', wrk: '⛏ WRK', sum: '🔮 SUM' };
       document.getElementById(`p${pid}-sp-name`).textContent = `${def.icon} ${def.name}`;
       document.getElementById(`p${pid}-sp-type`).textContent = TL[def.type] || def.type;
@@ -4140,6 +4393,7 @@
         const despEl = document.getElementById(`p${pid}-desp`);
         despEl.style.display = p.despStacks > 0 ? 'inline' : 'none';
         despEl.textContent = `🔥 SURGE ×${p.despStacks}`;
+        despEl.title = `DESPERATION SURGE: +${(p.despStacks * 0.7).toFixed(1)}💀/s bonus income because enemy holds mid. Max 3 stacks.`;
         // Guard timer
         const gtEl = document.getElementById(`p${pid}-guard-timer`);
         if (p.guardTimerDisplay > 0) {
@@ -4424,11 +4678,10 @@
         G.units.filter(u => u.player === pid && !u.def.isWorker).forEach(u => { u._ironwalled = bf.duration; });
         SFX.ironwall(); spawnParticles(p.baseX, G.groundY - 50, '#95a5a6', 20);
         showPopup(p.baseX, G.groundY - 80, '🛡 IRON WALL!', '#bdc3c7', pid);
-      } else if (bf.id === 'soulsurge') {
+      } else if (bf.id === 'bodyboon') {
         p.bodies += 14;
-        SFX.soulsurge(); spawnParticles(p.baseX, G.groundY - 60, '#9b59b6', 30);
-        showPopup(p.baseX, G.groundY - 80, '+14🦴 SOUL SURGE', '#9b59b6', pid);
-        showPopup(p.baseX, G.groundY - 80, '+18💀 +3🦴 SURGE', '#9b59b6', pid);
+        SFX.bodyboon(); spawnParticles(p.baseX, G.groundY - 60, '#9b59b6', 30);
+        showPopup(p.baseX, G.groundY - 80, '+14🦴 BODY BOON', '#9b59b6', pid);
       }
       updateHUD();
     }
@@ -4461,10 +4714,12 @@
       }
       const x = Math.max(minX, Math.min(maxX, rawX));
       const baseY = def.aerial ? G.groundY - 85 : G.groundY - (def.radius || 10);
+      // Aerial units have an initial swoop-in delay before attacking
+      const _aerialDelay = def.aerial ? 1.4 : 0;
       const u = {
         id: G.nextId++, player: pid, defId: unitId, def: { ...def },
         x, y: baseY, hp: def.hp, maxHp: def.hp, vx: 0, vy: 0,
-        attackCooldown: Math.random() * (1 / Math.max(def.attackRate || 1, 0.1)),
+        attackCooldown: Math.random() * (1 / Math.max(def.attackRate || 1, 0.1)) + _aerialDelay,
         target: null, carrying: false, carryCount: 0, offscreen: false, offTimer: 0, goToMid: false,
         hitFlash: 0, aliveSecs: 0, spawnTime: Date.now(), dmgMult: 1.0,
         kiteChance: def.type === 'rng' ? (0.3 + Math.random() * 0.7) : 0, // floor 0.3 — all ranged reposition; top end still random
@@ -4537,7 +4792,8 @@
       G.units.forEach(e => {
         if (e.player === u.player || e.offscreen || e.def.isWorker) return;
         // BUG3 FIX: ground melee can't hit aerial; aerial melee can
-        if (!isRanged && !u.def.aerial && e.def.aerial) return;
+        // Exception: melee directly under aerial unit (<40px away) can swipe at it
+        if (!isRanged && !u.def.aerial && e.def.aerial && Math.abs(e.x - u.x) > 40) return;
         const d = rangeDist(u, e);
         if (d < bestD) { best = e; bestD = d; }
       });
@@ -4568,10 +4824,16 @@
     }
 
     function doAttack(attacker, target, frenzyMult) {
+      // Aerial engage delay — takes 1.2s before they can attack (can't instant-hit on spawn)
+      if (attacker.def.aerial && (attacker.aliveSecs || 0) < 1.2 && !attacker.def.isSpawned) return;
       const isRanged = attacker.def.range > 60;
       const berserkHPMult = (attacker.def.berserkHPThresh && attacker.hp < attacker.maxHp * attacker.def.berserkHPThresh) ? 2.0 : 1.0;
       let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0) * berserkHPMult;
-      if (isRanged && target.def.aerial) dmg *= 2.2;
+      if (isRanged && target.def.aerial) {
+        dmg *= 3.2; // Ranged strongly counters aerial
+        // Extra attack rate for ranged vs aerial — simulate faster targeting
+        if (attacker.attackCooldown > 0) attacker.attackCooldown *= 0.75; // 33% faster attacks vs aerial
+      }
       if (isRanged && target.def.hp >= 120) dmg *= 1.3;
 
       // Focus fire falloff — ranged units firing at same target diminish.
@@ -4917,6 +5179,70 @@
       try { beep(280, 'triangle', .25, .08); setTimeout(() => beep(420, 'triangle', .3, .07), 120); } catch (e) { }
     }
 
+    // ── EVENT: Meteor Strike ─────────────────────────────────────────────────
+    function _fireMeteorStrike() {
+      _announceEvent('☄️ METEOR STRIKE', '#e17055', 'A meteor crashes at the mid — all units near center take damage');
+      const impactX = G.midX + (Math.random() - 0.5) * 80;
+      const impactY = G.groundY - 10;
+      const radius = 110;
+      spawnParticles(impactX, impactY - 20, '#e17055', 60);
+      spawnParticles(impactX, impactY, '#f39c12', 35);
+      G.shake = Math.max(G.shake || 0, 1.6);
+      // Deal splash damage to units near impact
+      G.units.forEach(u => {
+        if (u.offscreen || u.def.isWorker) return;
+        const d = dist2d(u, { x: impactX, y: impactY });
+        if (d < radius) {
+          const falloff = 1 - (d / radius) * 0.6;
+          const dmg = Math.round(35 * falloff);
+          u.hp -= dmg; u.hitFlash = 1;
+          if (u.hp <= 0) handleDeath(u, null);
+          else showPopup(u.x, u.y - 20, '-' + dmg + ' ☄️', '#e17055', u.player);
+        }
+      });
+      // Also damage bases if meteor is near one
+      G.players.forEach(p => {
+        if (Math.abs(p.baseX - impactX) < 100) {
+          const bd = Math.round(8 * (1 - Math.abs(p.baseX - impactX) / 100));
+          p.baseHp = Math.max(1, p.baseHp - bd);
+          showPopup(p.baseX, G.groundY - 70, '-' + bd + ' ☄️ BASE', '#e17055', p.id);
+        }
+      });
+      G.activeEvent = null;
+      G.nextEventTime = (G.elapsed || 0) + 80 + Math.random() * 60;
+      updateHUD();
+    }
+
+    // ── EVENT: Gold Rush ──────────────────────────────────────────────────────
+    function _fireGoldRush() {
+      _announceEvent('💰 GOLD RUSH', '#f9ca24', 'Both players gain +30💀 souls and +8🦴 bodies — spend wisely!');
+      G.players.forEach(p => {
+        p.souls = Math.min(900, p.souls + 30);
+        p.bodies += 8;
+        p.totalSoulsEarned = (p.totalSoulsEarned || 0) + 30;
+        p.totalBodiesEarned = (p.totalBodiesEarned || 0) + 8;
+        showPopup(p.baseX, G.groundY - 70, '+30💀 +8🦴 GOLD RUSH!', '#f9ca24', p.id);
+        spawnParticles(p.baseX, G.groundY - 30, '#f9ca24', 25);
+      });
+      G.activeEvent = null;
+      G.nextEventTime = (G.elapsed || 0) + 100 + Math.random() * 60;
+      updateHUD();
+    }
+
+    // ── EVENT: Battlefield Tremor ─────────────────────────────────────────────
+    function _fireBattlefieldTremor() {
+      _announceEvent('🌋 TREMOR', '#636e72', 'The ground shakes — all units are slowed for 5 seconds');
+      G.shake = Math.max(G.shake || 0, 2.2);
+      G.units.forEach(u => {
+        if (u.offscreen || u.def.isWorker || u.def.aerial) return;
+        u.slowTimer = Math.max(u.slowTimer || 0, 5);
+        u._speedMult = Math.min(u._speedMult || 1, 0.55);
+      });
+      spawnParticles(G.midX, G.groundY, '#636e72', 50);
+      G.players.forEach(p => showPopup(p.baseX, G.groundY - 70, '🌋 TREMOR — all slowed 5s', '#636e72', p.id));
+      G.activeEvent = { type: 'tremor', timer: 0, duration: 5 };
+    }
+
     function fireRandomEvent() {
       const elapsed = G.elapsed || 0;
       // Build weighted pool based on game state
@@ -4929,13 +5255,16 @@
       // Pool: [eventId, baseWeight]
       const pool = [
         ['wanderer', isMidLocked ? 2 : 3],
-        ['champion', elapsed > 180 ? 2 : 0],   // only after 3 min
-        ['soul_cache', isLopsided ? 4 : 2],        // favour when lopsided
+        ['champion', elapsed > 180 ? 2 : 0],
+        ['soul_cache', isLopsided ? 4 : 2],
         ['blood_moon', 2],
-        ['ancient_curse', losingP.souls > 60 ? 3 : 1], // punishes hoarder
+        ['ancient_curse', losingP.souls > 60 ? 3 : 1],
         ['veterans_rally', 2],
-        ['supply_drop', isLopsided ? 4 : 1],        // favour when lopsided
+        ['supply_drop', isLopsided ? 4 : 1],
         ['dark_eclipse', isMidLocked ? 3 : 1],
+        ['meteor', elapsed > 60 ? 2 : 0],    // only after 1 min
+        ['gold_rush', isLopsided ? 1 : 3],       // less likely when lopsided
+        ['tremor', elapsed > 90 ? 2 : 0],
       ];
       const totalWeight = pool.reduce((s, [, w]) => s + w, 0);
       let r = Math.random() * totalWeight;
@@ -4958,6 +5287,12 @@
         _fireSupplyDrop();
       } else if (chosen === 'dark_eclipse') {
         _startDarkEclipse();
+      } else if (chosen === 'meteor') {
+        _fireMeteorStrike();
+      } else if (chosen === 'gold_rush') {
+        _fireGoldRush();
+      } else if (chosen === 'tremor') {
+        _fireBattlefieldTremor();
       }
     }
 
@@ -4976,8 +5311,8 @@
       const rogDef = {
         id: isChampion ? 'rogue_champion' : 'rogue_wanderer',
         name: isChampion ? 'Rogue Champion' : 'Rogue Wanderer', icon: isChampion ? '💀' : '☠',
-        hp, speed: isChampion ? 45 : 35, dmg, range: isChampion ? 32 : 0,
-        attackRate: isChampion ? 0.8 : 0, radius: isChampion ? 19 : 16,
+        hp, speed: isChampion ? 70 : 55, dmg: isChampion ? 22 : 8, range: isChampion ? 35 : 28,
+        attackRate: isChampion ? 1.2 : 0.6, radius: isChampion ? 19 : 16,
         color: col, type: 'mel', aerial: false, isWorker: false, isSpawned: true
       };
       const rogUnit = {
@@ -5498,9 +5833,8 @@
             const chargeMult = u.chargeTimer > 1.2 ? 1.2 : 1.0;
             const dx = enemy.x - u.x;
             const actualSpd = spd * chargeMult;
-            // Aerial: move ahead of target to intercept, not just chase
+            // Aerial: move ahead of target to intercept
             if (u.def.aerial) {
-              // Move to the OPTIMAL attack position: slightly ahead in enemy's movement direction
               const interceptX = enemy.x + (enemy.vx || 0) * 0.3;
               const interceptDx = interceptX - u.x;
               u.x += Math.sign(interceptDx) * actualSpd * dt;
@@ -5508,27 +5842,56 @@
               u.x += Math.sign(dx) * actualSpd * dt;
             }
             u.vx = Math.sign(dx) * actualSpd;
-            // Ranged kiting — random personality per unit
-            if (u.def.type === 'rng' && !enemy.def.aerial) {
-              const kc = u.kiteChance || 0;
-              const ownBase = G.players[u.player - 1].baseX;
-              const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
-              if (kc > 0.3 && d < u.def.range * 0.85 && !nearOwnBase) {
-                // Smart kiter: back away, try to stay behind a friendly melee unit
-                const retreatSpd = kc > 0.7 ? spd * 0.9 : spd * 0.55;
-                u.x -= Math.sign(dx) * retreatSpd * dt;
-                // Very smart kiters also try to position behind ally melee
-                if (kc > 0.65) {
-                  const allyMelee = G.units.find(a => a.player === u.player && !a.def.isWorker && a.def.type === 'mel' && Math.abs(a.x - u.x) < 120 && a.x * Math.sign(dx) > u.x * Math.sign(dx));
-                  if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.03 * dt * 60;
-                }
+          }
+          // ── Ranged kiting — archers actively back away from melee threats ──
+          if (u.def.type === 'rng' && !enemy.def.aerial && !u.def.aerial) {
+            const kc = u.kiteChance || 0;
+            const ownBase = G.players[u.player - 1].baseX;
+            const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.2;
+            const dx2 = enemy.x - u.x;
+            // Check for nearby melee threats (expanded range to 70px)
+            const enemyMeleeNear = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 70);
+            // Also kite when enemy closes to 70% of shoot range
+            const tooClose = d < u.def.range * 0.70;
+            const shouldKite = (!nearOwnBase) && (
+              (enemyMeleeNear && kc > 0.15) ||  // melee nearby — almost always kite
+              (kc > 0.45 && tooClose)            // high-kite archers back off preemptively
+            );
+            if (shouldKite) {
+              // Speed: high-kite archers back off fast, low-kite at half speed
+              const retreatSpd = kc > 0.65 ? spd * 0.9 : spd * 0.6;
+              u.x -= Math.sign(dx2) * retreatSpd * dt;
+              // Try to shelter behind ally melee
+              if (kc > 0.5) {
+                const allyMelee = G.units.find(a =>
+                  a.player === u.player && !a.def.isWorker && a.def.type === 'mel' &&
+                  Math.abs(a.x - u.x) < 160 && Math.sign(a.x - u.x) !== Math.sign(dx2)
+                );
+                if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.06 * dt * 60;
               }
             }
           }
         } else {
           u.chargeTimer = 0; u.attackCooldown -= dt;
-          // Always march forward toward enemy base when no valid target
-          u.x += (u.player === 1 ? 1 : -1) * spd * dt;
+          // Mid lingering: non-worker units near mid stop to help capture if no enemies nearby
+          const midDist = Math.abs(u.x - G.midX);
+          const inMidZone = midDist < G.midR * 2.5;
+          const midNotOwned = G.midOwner !== u.player;
+          const enemyNearMid = G.units.some(e => e.player !== u.player && !e.def.isWorker && !e.offscreen && Math.abs(e.x - G.midX) < G.midR * 4);
+          const strictlyInMid = Math.abs(u.x - G.midX) < G.midR * 1.2;
+          if (strictlyInMid && midNotOwned && !enemyNearMid && !u.def.isWorker) {
+            // Unit is inside the circle — hold position until captured
+            // Drift very gently toward exact center
+            const driftDx = G.midX - u.x;
+            u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 8 * dt);
+          } else if (inMidZone && midNotOwned && !strictlyInMid && !enemyNearMid && !u.def.isWorker) {
+            // Near-mid but not inside — drift inward to help capture
+            const driftDx = G.midX - u.x;
+            u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 20 * dt);
+          } else {
+            // Always march forward toward enemy base when no valid target
+            u.x += (u.player === 1 ? 1 : -1) * spd * dt;
+          } // end mid-linger else
           if (canAttackBase(u)) {
             const ebase = G.players[u.player === 1 ? 1 : 0];
             if (Math.abs(u.x - ebase.baseX) < G.baseW * .7 + u.def.range) {
@@ -6487,7 +6850,7 @@
               if (soulsEarned > 0 && soulsSpent / soulsEarned < 0.5 && soulsEarned > 80)
                 tips.push(`${ppName} hoarded souls — spend more aggresively to pressure the enemy.`);
               if (pp.buffUsed === 0 && soulsEarned > 100)
-                tips.push(`${ppName} never used a Rally Buff — War Cry and Soul Surge can change the tide instantly.`);
+                tips.push(`${ppName} never used a Rally Buff — War Cry and Body Boon can change the tide instantly.`);
               if (pp.midCaptures === 0)
                 tips.push(`${ppName} never captured mid — the +1.5💀/s bonus compounds massively over time.`);
               if ((pp.ownedUpgrades || new Set()).size === 0 && soulsEarned > 120)
@@ -6974,6 +7337,11 @@
       const sel = pid === 1 ? P1_SEL : P2_SEL;
       if (mode === 0) {
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+        // Last slot (beyond faction units) = spy card
+        if (sel >= defs.length && GAME_MODE !== 'tutorial') {
+          trySpawnSpy(pid);
+          return;
+        }
         const def = defs[sel]; if (!def) return;
         const cardEl = document.querySelector(`#p${pid}-grid .ucard[data-idx='${sel}']`);
         trySpawn(pid, def.id, cardEl);
@@ -7146,34 +7514,92 @@
       defensive: '🛡 DEFENSIVE — builds armies, holds mid firmly',
       swarm: '🐝 SWARM — floods with cheap units',
       economist: '💰 ECONOMIST — saves up for powerful units',
+      aerial: '🦅 AERIAL — fixates on flying units',
+      counter: '🔄 COUNTER — reads enemy and adapts',
+      saver: '💎 SAVER — hoards resources for big moves',
+      rusher: '💨 RUSHER — all-in speed and damage',
+      balanced: '⚖ BALANCED — mixed army composition',
+      berserker: '🩸 BERSERKER — glass cannon aggression',
+      turtler: '🐢 TURTLER — tanks, high-HP slow plays',
+      opportunist: '👁 OPPORTUNIST — adapts to game state',
     };
 
     function setGameMode(mode) {
       GAME_MODE = mode;
       document.getElementById('mode-vs').classList.toggle('active', mode === 'vs');
       document.getElementById('mode-solo').classList.toggle('active', mode === 'solo');
-      document.getElementById('btn-play').textContent = mode === 'solo' ? '🤖 SINGLEPLAYER' : '⚔ VS PLAYER';
+      if (mode === 'aivsai') {
+        document.getElementById('btn-play').textContent = '⚔ VS PLAYER';
+        document.getElementById('mode-solo').classList.remove('active');
+        document.getElementById('mode-vs').classList.remove('active');
+      } else {
+        document.getElementById('btn-play').textContent = mode === 'solo' ? '🤖 SINGLEPLAYER' : '⚔ VS PLAYER';
+      }
       // If faction screen is currently open, update it live
       if (document.getElementById('sc-faction').classList.contains('active')) {
         _applyFactionScreenMode();
       }
     }
 
+    let AI1_FACTION_IDX = null; // P1 AI faction in aivsai mode
+
     function _applyFactionScreenMode() {
       const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
+      const aivsai = GAME_MODE === 'aivsai';
       document.getElementById('p2-human-section').style.display = solo ? 'none' : '';
-      document.getElementById('ai-p2-panel').style.display = solo ? 'flex' : 'none';
-      document.querySelector('.faction-vs').textContent = solo ? '🤖' : 'VS';
-      if (solo) {
-        _aiAutoPickFaction();
-        // Reset P2 selection — AI will handle it
+      document.getElementById('ai-p2-panel').style.display = (solo || aivsai) ? 'flex' : 'none';
+      document.querySelector('.faction-vs').textContent = (solo || aivsai) ? '🤖' : 'VS';
+
+      // Show P1 AI settings panel only in aivsai mode
+      document.getElementById('ai-p1-panel').style.display = aivsai ? '' : 'none';
+      // Update P2 faction panel label to show it's an AI in aivsai mode
+      const p2lbl = document.getElementById('faction-hint-p2');
+      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2 (P2)' : 'PLAYER 2';
+      // Update P1 label
+      const p1lbl2 = document.getElementById('faction-hint-p1');
+      if (p1lbl2) p1lbl2.firstChild.textContent = aivsai ? '🤖 AI 1 (P1)' : 'PLAYER 1';
+      // In aivsai: auto-pick P2 faction if not set
+      if (aivsai && fSelected[1] === null) {
+        if (AI_FACTION_IDX === null) AI_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
         fSelected[1] = AI_FACTION_IDX;
+        document.querySelectorAll('#fcards-p2 .fcard').forEach((c, i) => {
+          c.classList.toggle('sel2', i === AI_FACTION_IDX);
+        });
+        document.getElementById('fchosen-p2').textContent = FACTIONS[AI_FACTION_IDX].icon + ' ' + FACTIONS[AI_FACTION_IDX].name + ' — ' + FACTIONS[AI_FACTION_IDX].tagline;
+      }
+
+      // Update faction screen title
+      const titleEl = document.querySelector('#sc-faction .sc-title');
+      if (titleEl) {
+        if (aivsai) titleEl.textContent = 'AI VS AI — CHOOSE FACTIONS';
+        else if (solo) titleEl.textContent = 'CHOOSE YOUR FACTION';
+        else titleEl.textContent = 'CHOOSE YOUR FACTION';
+      }
+
+      if (solo || aivsai) {
+        _aiAutoPickFaction();
+        fSelected[1] = AI_FACTION_IDX;
+        if (aivsai) {
+          // Also pick P1 AI faction
+          if (AI1_FACTION_IDX === null) AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
+          fSelected[0] = AI1_FACTION_IDX;
+          _updateAi1Display();
+        }
         _updateStartBtn();
       } else {
-        // Restore P2 selection state
         fSelected[1] = null;
         _updateStartBtn();
       }
+    }
+
+    function _updateAi1Display() {
+      const el1 = document.getElementById('ai1-faction-display');
+      const p1el = document.getElementById('ai1-personality-display');
+      if (!AI1_FACTION_IDX !== null && el1) {
+        const f = FACTIONS[AI1_FACTION_IDX];
+        if (f && el1) el1.textContent = 'P1: ' + f.icon + ' ' + f.name;
+      }
+      if (p1el) p1el.textContent = 'P1 Style: ' + (AI_PERS_DESCRIPTIONS[AI1_PERSONALITY] || 'Random');
     }
 
     function _aiAutoPickFaction() {
@@ -7205,6 +7631,22 @@
       fSelected[1] = AI_FACTION_IDX;
       _updateStartBtn();
     });
+    document.getElementById('ai1-reroll-btn').addEventListener('click', () => {
+      AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
+      AI1_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+      fSelected[0] = AI1_FACTION_IDX;
+      // Highlight the new faction card on P1 side
+      document.querySelectorAll('#fcards-p1 .fcard').forEach((c, i) => c.classList.toggle('sel1', i === AI1_FACTION_IDX));
+      document.getElementById('fchosen-p1').textContent = FACTIONS[AI1_FACTION_IDX].icon + ' ' + FACTIONS[AI1_FACTION_IDX].name + ' — ' + FACTIONS[AI1_FACTION_IDX].tagline;
+      _updateAi1Display();
+      _updateStartBtn();
+    });
+    document.getElementById('ai1-diff-row').addEventListener('click', e => {
+      const btn = e.target.closest('[data-diff1]');
+      if (!btn) return;
+      AI1_DIFFICULTY = btn.dataset.diff1;
+      document.querySelectorAll('[data-diff1]').forEach(b => b.classList.toggle('active', b === btn));
+    });
 
     document.getElementById('ai-diff-row').addEventListener('click', e => {
       const btn = e.target.closest('.diff-btn');
@@ -7217,6 +7659,14 @@
       document.querySelectorAll(`#fcards-p${pid} .fcard`).forEach(c => { c.classList.remove('sel1', 'sel2'); });
       card.classList.add(`sel${pid}`);
       fSelected[pid - 1] = fi;
+      // In aivsai mode, track faction indices for both AIs
+      if (GAME_MODE === 'aivsai' && pid === 1) AI1_FACTION_IDX = fi;
+      if (GAME_MODE === 'aivsai' && pid === 2) {
+        AI_FACTION_IDX = fi;
+        // Sync the ai-faction-display text
+        const afd = document.getElementById('ai-faction-display');
+        if (afd) afd.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
+      }
       const f = FACTIONS[fi];
       document.getElementById(`fchosen-p${pid}`).textContent = `${f.icon} ${f.name} — ${f.tagline}`;
       // Mirror warn (only in VS mode)
@@ -7328,7 +7778,8 @@
     document.getElementById('btn-start').addEventListener('click', () => {
       if (fSelected[0] === null) return;
       const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
-      if (!solo && fSelected[1] === null) return;
+      const aivsai = GAME_MODE === 'aivsai';
+      if (!solo && !aivsai && fSelected[1] === null) return;
       if (AC.state === 'suspended') AC.resume();
       P1_FACTION = FACTIONS[fSelected[0]];
       // In solo/tutorial: AI faction auto-selected
@@ -7337,6 +7788,14 @@
         P2_FACTION = FACTIONS[AI_FACTION_IDX];
         if (!AI_PERSONALITY) AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
         if (GAME_MODE === 'tutorial') AI_DIFFICULTY = 'tutorial';
+      } else if (GAME_MODE === 'aivsai') {
+        // Both P1 and P2 are AI
+        if (AI1_FACTION_IDX === null) AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
+        if (AI_FACTION_IDX === null) AI_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
+        P1_FACTION = FACTIONS[AI1_FACTION_IDX];
+        P2_FACTION = FACTIONS[AI_FACTION_IDX];
+        if (!AI1_PERSONALITY) AI1_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+        if (!AI_PERSONALITY) AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
       } else {
         P2_FACTION = FACTIONS[fSelected[1]];
       }
