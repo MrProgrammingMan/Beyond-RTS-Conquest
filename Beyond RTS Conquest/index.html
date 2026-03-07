@@ -2472,14 +2472,18 @@
       background: radial-gradient(ellipse at 50% 20%, #1a1228 0%, #06060e 70%);
       flex-direction: column;
       align-items: center;
-      padding: clamp(14px, 2vh, 28px) clamp(12px, 2vw, 32px);
-      gap: clamp(10px, 1.5vh, 18px);
+      padding: clamp(16px, 2.5vh, 32px) clamp(16px, 3vw, 48px);
+      gap: clamp(12px, 2vh, 24px);
       overflow-y: auto;
+    }
+
+    #sc-tournament-setup {
+      justify-content: space-between;
     }
 
     .t-screen-title {
       font-family: 'Cinzel', serif;
-      font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
       color: var(--gold);
       letter-spacing: .14em;
       text-align: center;
@@ -2489,29 +2493,31 @@
     /* ── Setup screen ── */
     .t-setup-body {
       display: flex;
-      gap: clamp(14px, 2.5vw, 32px);
+      gap: clamp(16px, 2.5vw, 40px);
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
-      max-width: 860px;
+      max-width: 1200px;
+      flex: 1;
+      min-height: 0;
     }
 
     .t-setup-form {
       background: rgba(255, 255, 255, .04);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px 20px;
+      border-radius: 10px;
+      padding: clamp(18px, 2.5vh, 32px) clamp(20px, 2.5vw, 36px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      min-width: 260px;
-      max-width: 340px;
+      gap: 14px;
+      min-width: 300px;
+      max-width: 460px;
       flex: 1;
     }
 
     .t-form-label {
       font-family: Cinzel, serif;
-      font-size: .65rem;
+      font-size: .85rem;
       color: var(--gold);
       letter-spacing: .08em;
     }
@@ -2521,9 +2527,9 @@
       border: 1px solid var(--border);
       color: #fff;
       font-family: Cinzel, serif;
-      font-size: .8rem;
-      padding: 7px 10px;
-      border-radius: 5px;
+      font-size: 1rem;
+      padding: 10px 14px;
+      border-radius: 6px;
       outline: none;
       width: 100%;
       box-sizing: border-box;
@@ -2536,17 +2542,17 @@
     .t-faction-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
+      gap: 8px;
     }
 
     .t-fcard {
       background: #0a0a16;
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 7px;
       cursor: pointer;
-      padding: 6px 4px;
+      padding: 10px 6px;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.6rem;
       transition: all .15s;
     }
 
@@ -2570,9 +2576,9 @@
 
     .t-faction-name {
       font-family: Cinzel, serif;
-      font-size: .44rem;
+      font-size: .58rem;
       color: var(--dim);
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .t-add-btn {
@@ -2580,9 +2586,9 @@
       border: 1px solid rgba(212, 168, 67, .4);
       color: var(--gold);
       font-family: Cinzel, serif;
-      font-size: .75rem;
-      padding: 8px;
-      border-radius: 5px;
+      font-size: .95rem;
+      padding: 12px;
+      border-radius: 6px;
       cursor: pointer;
       letter-spacing: .07em;
       transition: all .15s;
@@ -2601,35 +2607,36 @@
     .t-player-list {
       background: rgba(255, 255, 255, .04);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 16px;
+      border-radius: 10px;
+      padding: clamp(16px, 2.5vh, 28px) clamp(18px, 2vw, 30px);
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      min-width: 240px;
-      max-width: 340px;
+      gap: 10px;
+      min-width: 280px;
+      max-width: 460px;
       flex: 1;
+      overflow-y: auto;
     }
 
     .t-player-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
+      gap: 10px;
+      padding: 10px 12px;
       background: rgba(255, 255, 255, .03);
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 7px;
     }
 
     .t-player-num {
       font-family: Cinzel, serif;
-      font-size: .6rem;
+      font-size: .8rem;
       color: var(--gold);
-      min-width: 20px;
+      min-width: 24px;
     }
 
     .t-player-icon {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
     }
 
     .t-player-info {
@@ -2638,13 +2645,13 @@
 
     .t-player-name {
       font-family: Cinzel, serif;
-      font-size: .72rem;
+      font-size: .95rem;
       color: var(--text);
     }
 
     .t-player-faction-name {
       font-family: Cinzel, serif;
-      font-size: .58rem;
+      font-size: .72rem;
       color: var(--dim);
     }
 
@@ -2674,9 +2681,9 @@
       border: 2px solid var(--gold);
       color: var(--gold);
       font-family: Cinzel, serif;
-      font-size: .85rem;
-      padding: 10px 28px;
-      border-radius: 6px;
+      font-size: 1rem;
+      padding: 13px 36px;
+      border-radius: 7px;
       cursor: pointer;
       letter-spacing: .1em;
       transition: all .2s;
@@ -2694,8 +2701,8 @@
 
     .t-hint {
       font-family: Cinzel, serif;
-      font-size: .58rem;
-      color: rgba(255, 255, 255, .3);
+      font-size: .78rem;
+      color: rgba(255, 255, 255, .4);
       letter-spacing: .06em;
       text-align: center;
     }
@@ -9468,7 +9475,7 @@
       tBuildBracket();
       TOURNAMENT.state = 'bracket';
       showScreen('sc-tournament-bracket');
-      tRenderBracket();
+      tRenderBracket()
     });
     document.getElementById('btn-t-back').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas(); });
     document.getElementById('btn-t-play-match').addEventListener('click', () => {
