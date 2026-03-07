@@ -2470,7 +2470,6 @@
     #sc-tournament-setup,
     #sc-tournament-bracket {
       background: radial-gradient(ellipse at 50% 20%, #1a1228 0%, #06060e 70%);
-      display: flex;
       flex-direction: column;
       align-items: center;
       padding: clamp(14px, 2vh, 28px) clamp(12px, 2vw, 32px);
@@ -2707,7 +2706,7 @@
       overflow: auto;
       flex: 1;
       width: 100%;
-      max-width: 1100px;
+      max-width: 1300px;
       min-height: 200px;
     }
 
@@ -2724,16 +2723,18 @@
       flex-direction: column;
       justify-content: space-around;
       align-items: stretch;
-      flex: 0 0 200px;
+      flex: 0 0 240px;
     }
 
     .t-round-label {
       font-family: Cinzel, serif;
-      font-size: .58rem;
-      color: rgba(212, 168, 67, .5);
-      letter-spacing: .1em;
+      font-size: .95rem;
+      font-weight: 700;
+      color: rgba(212, 168, 67, .85);
+      letter-spacing: .12em;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 12px rgba(212, 168, 67, .3);
     }
 
     .t-match {
@@ -2756,14 +2757,14 @@
     }
 
     .t-slot {
-      padding: 6px 10px;
+      padding: 8px 12px;
       font-family: Cinzel, serif;
-      font-size: .63rem;
+      font-size: .85rem;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       color: var(--dim);
-      min-height: 30px;
+      min-height: 42px;
       border-bottom: 1px solid rgba(255, 255, 255, .06);
     }
 
@@ -2793,16 +2794,16 @@
 
     .t-match-label {
       font-family: Cinzel, serif;
-      font-size: .5rem;
-      color: rgba(212, 168, 67, .5);
-      padding: 2px 8px;
+      font-size: .7rem;
+      color: rgba(212, 168, 67, .65);
+      padding: 4px 8px;
       letter-spacing: .08em;
       background: rgba(0, 0, 0, .2);
       text-align: center;
     }
 
     .t-round-gap {
-      flex: 0 0 36px;
+      flex: 0 0 48px;
       display: flex;
       flex-direction: column;
       justify-content: space-around;
@@ -2826,7 +2827,7 @@
 
     .t-current-match-info {
       font-family: Cinzel, serif;
-      font-size: .7rem;
+      font-size: .95rem;
       color: var(--text);
       flex: 1;
     }
@@ -3589,23 +3590,57 @@
     }
 
     function tBuildBracket() {
+      // ── Shuffle players (random draw) ─────────────────────────────
+      const players = [...TOURNAMENT.players];
+      for (let i = players.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [players[i], players[j]] = [players[j], players[i]];
+      }
+      const n = players.length;
+      // Largest power of 2 <= n
+      let prevPow2 = 1;
+      while (prevPow2 * 2 <= n) prevPow2 *= 2;
+      const playInCount = n - prevPow2; // number of play-in matches needed
       TOURNAMENT.rounds = [];
-      let current = TOURNAMENT.players.slice();
-      while (current.length > 1) {
-        const round = [];
-        const pairs = Math.floor(current.length / 2);
-        for (let i = 0; i < pairs; i++) {
-          round.push({ p1: current[i * 2], p2: current[i * 2 + 1], winner: null, played: false, round: TOURNAMENT.rounds.length, idx: i });
+      TOURNAMENT.hasPlayIn = playInCount > 0;
+      if (playInCount === 0) {
+        // ── Clean power-of-2 bracket ──────────────────────────────
+        let current = players.slice();
+        while (current.length > 1) {
+          const round = [];
+          const rIdx = TOURNAMENT.rounds.length;
+          for (let i = 0; i + 1 < current.length; i += 2) {
+            round.push({ p1: current[i], p2: current[i + 1], winner: null, played: false, round: rIdx, idx: round.length });
+          }
+          TOURNAMENT.rounds.push(round);
+          current = new Array(round.length).fill(null);
         }
-        if (current.length % 2 === 1) {
-          // Odd player out fights AI
-          round.push({ p1: current[current.length - 1], p2: tMakeAI(), winner: null, played: false, round: TOURNAMENT.rounds.length, idx: pairs, hasAI: true });
+      } else {
+        // ── Play-in round (first 2*playInCount players compete) ───
+        const playInPlayers = players.slice(0, 2 * playInCount);
+        const byePlayers = players.slice(2 * playInCount);
+        const playInRound = [];
+        for (let i = 0; i < playInPlayers.length; i += 2) {
+          playInRound.push({ p1: playInPlayers[i], p2: playInPlayers[i + 1], winner: null, played: false, round: 0, idx: playInRound.length });
         }
-        TOURNAMENT.rounds.push(round);
-        current = round.map(() => null); // TBD — filled as matches resolve
+        TOURNAMENT.rounds.push(playInRound);
+        // ── Subsequent power-of-2 rounds ──────────────────────────
+        // Round 2 slots: TBD (play-in winners, null) + pre-filled bye players
+        let slots = [...new Array(playInCount).fill(null), ...byePlayers];
+        let rIdx = 1;
+        while (slots.length > 1) {
+          const round = [];
+          for (let i = 0; i + 1 < slots.length; i += 2) {
+            round.push({ p1: slots[i], p2: slots[i + 1], winner: null, played: false, round: rIdx, idx: round.length });
+          }
+          TOURNAMENT.rounds.push(round);
+          slots = new Array(round.length).fill(null);
+          rIdx++;
+        }
       }
       TOURNAMENT.currentRound = 0;
       TOURNAMENT.currentMatchInRound = 0;
+      tAdvanceCursor();
     }
 
     function tGetCurrentMatch() {
@@ -3721,8 +3756,15 @@
       let html = '';
       for (let r = 0; r < rounds.length; r++) {
         const round = rounds[r];
-        const roundLabel = r === rounds.length - 1 ? 'FINAL' : r === rounds.length - 2 ? 'SEMI-FINAL' : r === 0 ? 'ROUND 1' : `ROUND ${r + 1}`;
-        html += `<div class="t-round" id="t-round-${r}" style="min-height:${Math.max(round.length, 1) * 92}px">`;
+        const _hasPlayIn = TOURNAMENT.hasPlayIn;
+        const _totalR = rounds.length;
+        let roundLabel;
+        if (r === _totalR - 1) roundLabel = '🏆 FINAL';
+        else if (r === _totalR - 2 && round.length <= 2) roundLabel = 'SEMI-FINAL';
+        else if (r === _totalR - 3 && round.length <= 4) roundLabel = 'QUARTER-FINAL';
+        else if (r === 0 && _hasPlayIn) roundLabel = 'PLAY-IN';
+        else roundLabel = 'ROUND ' + (r + 1);
+        html += `<div class="t-round" id="t-round-${r}" style="min-height:${Math.max(round.length, 1) * 120}px">`
         html += `<div class="t-round-label">${roundLabel}</div>`;
         for (let m = 0; m < round.length; m++) {
           const match = round[m];
@@ -3741,12 +3783,12 @@
       }
       // Winner slot
       html += `<div class="t-round" style="justify-content:center;padding-left:8px;min-height:80px">`;
-      html += `<div class="t-round-label">WINNER</div>`;
+      html += `<div class="t-round-label" style="font-size:1.1rem;color:#f1c40f;">WINNER</div>`;
       if (TOURNAMENT.state === 'done' && TOURNAMENT.rounds.length > 0) {
         const finalMatch = TOURNAMENT.rounds[rounds.length - 1][0];
         if (finalMatch && finalMatch.winner) {
           html += `<div class="t-match t-match-done" style="border-color:#f1c40f">`;
-          html += tRenderSlot(finalMatch.winner, true, false);
+          html += tRenderSlot(finalMatch.winner, true, false, true);
           html += `</div>`;
         }
       } else {
@@ -3760,12 +3802,13 @@
       tUpdateBracketBar();
     }
 
-    function tRenderSlot(player, isWinner, isLoser) {
+    function tRenderSlot(player, isWinner, isLoser, isChampion) {
       if (!player) return `<div class="t-slot t-slot-tbd">— TBD —</div>`;
       const cls = isWinner ? 't-slot-winner' : isLoser ? 't-slot-loser' : player.isAI ? 't-slot-ai' : '';
-      const pre = isWinner ? '🏆 ' : '';
+      const pre = isChampion ? '👑 ' : isWinner ? '🏆 ' : '';
       const aiLabel = player.isAI ? '🤖 ' : '';
-      return `<div class="t-slot ${cls}">${pre}${player.faction.icon} ${aiLabel}${player.name}</div>`;
+      const champStyle = isChampion ? ' style="font-size:1.1rem;min-height:54px;color:#f1c40f;"' : '';
+      return `<div class="t-slot ${cls}"${champStyle}>${pre}${player.faction.icon} ${aiLabel}${player.name}</div>`;
     }
 
     function tDrawBracketLines() {
@@ -8567,6 +8610,8 @@
       }
       // Dev panel open (M key)
       if (e.code === 'KeyM') {
+        const _active = document.activeElement;
+        if (_active && (_active.tagName === 'INPUT' || _active.tagName === 'TEXTAREA')) return;
         e.preventDefault();
         const dvp = document.getElementById('dev-panel');
         // Toggle closed if already open
