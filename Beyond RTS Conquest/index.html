@@ -1000,9 +1000,13 @@
       vertical-align: middle;
       margin-left: 3px;
       opacity: .85;
+      cursor: help;
+      pointer-events: all;
     }
 
     .ai-badge {
+      cursor: help;
+      pointer-events: all;
       display: inline-block;
       background: rgba(192, 57, 43, .2);
       border: 1px solid rgba(192, 57, 43, .5);
@@ -2137,7 +2141,7 @@
 
     .usp-special {
       overflow-y: auto;
-      max-height: 4.5em;
+      max-height: 7em;
       line-height: 1.4;
       font-size: clamp(.6rem, .9vw, .8rem);
       color: #9b59b6;
@@ -2149,7 +2153,7 @@
     }
 
     .player-hud:hover .unit-stat-panel {
-      width: clamp(150px, 18vw, 220px);
+      width: clamp(160px, 20vw, 240px);
     }
 
     .usp-cost {
@@ -4879,11 +4883,12 @@
     const AI_DIFF_SETTINGS = {
       // All AIs are active and aggressive — difficulty determines HOW smart they are,
       // not whether they bother doing anything. Speed differences are secondary.
-      tutorial: { interval: 3.2, spawnChance: 0.72, saveThreshold: 40, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
-      easy: { interval: 2.8, spawnChance: 0.78, saveThreshold: 35, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
-      medium: { interval: 1.8, spawnChance: 0.85, saveThreshold: 22, usesBuffs: false, buysUpgrades: true, defenseReact: true, adapts: false, savesUp: true, resourceSave: false, counterPlays: false, usesSpy: false },
-      hard: { interval: 1.0, spawnChance: 0.92, saveThreshold: 12, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false },
-      expert: { interval: 0.50, spawnChance: 0.98, saveThreshold: 4, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true },
+      // Difficulty gaps are intentionally large — each tier should feel like a different opponent
+      tutorial: { interval: 3.5, spawnChance: 0.68, saveThreshold: 50, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
+      easy: { interval: 3.0, spawnChance: 0.72, saveThreshold: 42, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
+      medium: { interval: 2.3, spawnChance: 0.79, saveThreshold: 32, usesBuffs: false, buysUpgrades: true, defenseReact: true, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
+      hard: { interval: 1.1, spawnChance: 0.91, saveThreshold: 13, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false },
+      expert: { interval: 0.36, spawnChance: 0.99, saveThreshold: 2, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true },
     };
 
     // Delay between AI "thinking" (showing highlight) and actually executing the action
@@ -5123,7 +5128,7 @@
       if (!forceDefend && cfg.buysUpgrades && nextUpgrade) {
         const canAfford = p.souls >= nextUpgrade.cost.souls + cfg.saveThreshold && p.bodies >= nextUpgrade.cost.bodies;
         // Buy immediately when in saving mode and threshold met; or buy with probability otherwise
-        const upgradeChance = saving ? 1.0 : diff === 'expert' ? 0.90 : diff === 'hard' ? 0.60 : 0.30;
+        const upgradeChance = saving ? 1.0 : diff === 'expert' ? 0.97 : diff === 'hard' ? 0.72 : 0.12; // medium rarely times upgrades well
         if (canAfford && Math.random() < upgradeChance) {
           const upIdx = allUpgrades.indexOf(nextUpgrade);
           G[_actingKey] = true; G[savKey] = false;
@@ -5153,9 +5158,9 @@
       if (cfg.usesSpy && !forceDefend && GAME_MODE !== 'tutorial') {
         const activeSpies = G.spies ? G.spies.filter(s => s.owner === pid).length : 0;
         const spyCost = { souls: SPY_DEF.souls, bodies: SPY_DEF.bodies };
-        const enemyLowBase = enemy.baseHp < 65;
+        const enemyLowBase = enemy.baseHp < 75;
         const goodSpyMoment = (activeSpies < 2) && p.souls >= spyCost.souls && p.bodies >= spyCost.bodies
-          && (enemyLowBase || p.bodies < 6) && Math.random() < 0.35;
+          && (enemyLowBase || myCount > enCount + 1 || gameSecs > 90) && Math.random() < 0.55;
         if (goodSpyMoment) {
           const spyGridIdx = allUnitDefs.length; // spy is always appended last
           G[_actingKey] = true;
@@ -5426,18 +5431,16 @@
 
       scored.sort((a, b) => b.score - a.score);
 
-      // Selection randomness scales with difficulty — clear tiers
+      // Selection randomness — gaps are deliberately wide so each tier is clearly distinct
       const top = scored.length;
       if (diff === 'tutorial') {
-        // Prefers cheap, basic units — not fully random, not optimal
-        // Sort by cost ascending and pick from the cheaper half
+        // Only buys cheapest units, mostly random — doesn't understand strategy at all
         const byCost = [...affordable].sort((a, b) => (a.souls + a.bodies) - (b.souls + b.bodies));
-        const pool = Math.max(1, Math.ceil(byCost.length * 0.6));
+        const pool = Math.max(1, Math.ceil(byCost.length * 0.55));
         return byCost[Math.floor(Math.random() * pool)];
       }
       if (diff === 'easy') {
-        // Picks randomly but weighted toward cheaper/weaker units — actively bad decisions
-        // No counter-picking, no strategy, just vibes
+        // Fully random — no scoring used at all, just chaos weighted toward cheap
         const weighted = affordable.map(u => ({ u, w: 1 / Math.max(1, u.souls + u.bodies * 0.5) }));
         const total = weighted.reduce((s, x) => s + x.w, 0);
         let r = Math.random() * total;
@@ -5445,18 +5448,23 @@
         return affordable[0];
       }
       if (diff === 'medium') {
-        // Picks from the top half but with 40% random noise — occasionally misses the play
-        if (Math.random() < 0.40) return affordable[Math.floor(Math.random() * affordable.length)];
-        const pool = Math.max(1, Math.floor(top * 0.50));
-        return scored[Math.floor(Math.random() * pool)].unit;
+        // 60% of the time: completely ignores scoring, pure random pick
+        // 40% of the time: picks from the bottom 70% of scored units (occasionally lucky, never optimal)
+        if (Math.random() < 0.60) return affordable[Math.floor(Math.random() * affordable.length)];
+        const pool = Math.max(1, Math.floor(top * 0.70));
+        // Picks from the middle of the scored list — misses best options
+        const offset = Math.floor(top * 0.15);
+        return scored[Math.min(offset + Math.floor(Math.random() * (pool - offset)), top - 1)].unit;
       }
       if (diff === 'hard') {
-        // 75% chance top pick, 25% second pick — clear advantage over medium
-        return (Math.random() < 0.75 && scored[0]) ? scored[0].unit : scored[Math.min(1, top - 1)].unit;
+        // 82% best pick, 12% second best, 6% third — smart but not perfect
+        const r = Math.random();
+        if (r < 0.82) return scored[0].unit;
+        if (r < 0.94 && scored[1]) return scored[1].unit;
+        return scored[Math.min(2, top - 1)].unit;
       }
-      // expert: always the optimal pick, tiny 8% variation for unpredictability
-      if (Math.random() < 0.08 && scored[1]) return scored[1].unit;
-      return scored[0].unit;
+      // Expert: 97% optimal pick, 3% second-best for unpredictability — nearly perfect
+      return (Math.random() < 0.03 && scored[1]) ? scored[1].unit : scored[0].unit;
     }
 
     function updateAI(dt) {
@@ -5488,7 +5496,8 @@
         // ── Normal decision timer ──
         if (!G._aiTimers) G._aiTimers = [0, 0];
         G._aiTimers[pid - 1] = (G._aiTimers[pid - 1] || 0) + dt;
-        const jitter = (Math.random() - 0.5) * 0.3;
+        const jitterScale = { tutorial: 0.8, easy: 0.7, medium: 0.9, hard: 0.3, expert: 0.08 }[diffKey] || 0.4;
+        const jitter = (Math.random() - 0.5) * jitterScale;
         if (G._aiTimers[pid - 1] >= cfg.interval + jitter) {
           G._aiTimers[pid - 1] = 0;
           const _ak = pid === 1 ? '_aiActing1' : '_aiActing';
@@ -5499,10 +5508,10 @@
         {
           if (!G._aiDefTimers) G._aiDefTimers = [0, 0];
           G._aiDefTimers[pid - 1] = (G._aiDefTimers[pid - 1] || 0) + dt;
-          // How fast each diff reacts: expert=1.0s, hard=1.5s, medium=2.2s, easy=3.5s, tutorial=4.5s
-          const defReactTime = { tutorial: 4.5, easy: 3.5, medium: 2.2, hard: 1.5, expert: 1.0 }[diffKey] || 2.2;
-          // How many enemies trigger reaction: expert=1, hard=1, medium=2, easy=3, tutorial=4
-          const defThreshold = { tutorial: 4, easy: 3, medium: 2, hard: 1, expert: 1 }[diffKey] || 2;
+          // Defense reaction speed — much wider gaps between tiers
+          const defReactTime = { tutorial: 6.0, easy: 4.5, medium: 3.2, hard: 1.6, expert: 0.7 }[diffKey] || 3.2;
+          // Enemies near base needed to trigger: medium needs 3, hard/expert react to 1
+          const defThreshold = { tutorial: 5, easy: 4, medium: 3, hard: 1, expert: 1 }[diffKey] || 3;
           if (G._aiDefTimers[pid - 1] >= defReactTime) {
             G._aiDefTimers[pid - 1] = 0;
             const aiBase = G.players[pid - 1];
@@ -5600,19 +5609,20 @@
       const p2hud = document.getElementById('p2-hud');
       const p2name = p2hud ? p2hud.querySelector('.pname') : null;
       if (p2name) {
-        const _persBadge = p => p ? `<span class="pers-badge">${p.toUpperCase()}</span>` : '';
+        const _persBadge = p => p ? `<span class="pers-badge" data-pers="${p}">${p.toUpperCase()}</span>` : '';
+        const _diffBadge = d => d ? `<span class="ai-badge" data-diff="${d}">${d.toUpperCase()}</span>` : '';
         if (GAME_MODE === 'solo') {
           const _p2pers = G.aiPersonality || AI_PERSONALITY || '';
-          p2name.innerHTML = 'AI <span class="ai-badge">' + (AI_DIFFICULTY || '').toUpperCase() + '</span>' + _persBadge(_p2pers);
+          p2name.innerHTML = 'AI ' + _diffBadge(AI_DIFFICULTY) + _persBadge(_p2pers);
         } else if (GAME_MODE === 'tutorial') {
           p2name.innerHTML = 'AI <span class="ai-badge" style="background:rgba(27,174,96,.2);border-color:rgba(27,174,96,.5);color:#2ecc71;">TUTORIAL</span>';
         } else if (GAME_MODE === 'aivsai') {
           const _p2pers2 = G.aiPersonality || AI_PERSONALITY || '';
           const _p1pers = G.ai1Personality || AI1_PERSONALITY || '';
-          p2name.innerHTML = 'AI 2 <span class="ai-badge">' + (AI_DIFFICULTY || '').toUpperCase() + '</span>' + _persBadge(_p2pers2);
+          p2name.innerHTML = 'AI 2 ' + _diffBadge(AI_DIFFICULTY) + _persBadge(_p2pers2);
           const p1hud = document.getElementById('p1-hud');
           const p1name = p1hud ? p1hud.querySelector('.pname') : null;
-          if (p1name) p1name.innerHTML = 'AI 1 <span class="ai-badge">' + (AI1_DIFFICULTY || '').toUpperCase() + '</span>' + _persBadge(_p1pers);
+          if (p1name) p1name.innerHTML = 'AI 1 ' + _diffBadge(AI1_DIFFICULTY) + _persBadge(_p1pers);
         } else if (GAME_MODE === 'tournament' && TOURNAMENT) {
           // Show tournament player names in HUD
           const _tm = TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound];
@@ -5643,6 +5653,45 @@
       document.getElementById('p1-guard-timer').style.display = 'none';
       document.getElementById('p2-guard-timer').style.display = 'none';
       buildHUD(); updateHUD();
+      // Wire personality/difficulty badge tooltips in HUD
+      setTimeout(() => {
+        document.querySelectorAll('.pers-badge[data-pers]').forEach(el => {
+          el.addEventListener('mouseenter', ev => {
+            const p = el.dataset.pers;
+            const desc = AI_PERS_DESCRIPTIONS[p] || p;
+            const tt = document.getElementById('tooltip');
+            document.getElementById('tt-name').textContent = p.toUpperCase() + ' PERSONALITY';
+            document.getElementById('tt-body').innerHTML = desc.replace(/^[^\s]+\s[^\s]+\s—\s/, '');
+            tt.style.display = 'block';
+            tt.style.left = Math.min(ev.clientX + 10, window.innerWidth - 260) + 'px';
+            tt.style.top = Math.max(ev.clientY - tt.offsetHeight - 8, 4) + 'px';
+          });
+          el.addEventListener('mouseleave', hideTT);
+          el.addEventListener('mousemove', ev => {
+            const tt = document.getElementById('tooltip');
+            tt.style.left = Math.min(ev.clientX + 10, window.innerWidth - 260) + 'px';
+            tt.style.top = Math.max(ev.clientY - tt.offsetHeight - 8, 4) + 'px';
+          });
+        });
+        document.querySelectorAll('.ai-badge[data-diff]').forEach(el => {
+          el.addEventListener('mouseenter', ev => {
+            const d = el.dataset.diff;
+            const desc = AI_DIFF_DESCRIPTIONS[d] || d;
+            const tt = document.getElementById('tooltip');
+            document.getElementById('tt-name').textContent = d.toUpperCase() + ' DIFFICULTY';
+            document.getElementById('tt-body').innerHTML = desc;
+            tt.style.display = 'block';
+            tt.style.left = Math.min(ev.clientX + 10, window.innerWidth - 260) + 'px';
+            tt.style.top = Math.max(ev.clientY - tt.offsetHeight - 8, 4) + 'px';
+          });
+          el.addEventListener('mouseleave', hideTT);
+          el.addEventListener('mousemove', ev => {
+            const tt = document.getElementById('tooltip');
+            tt.style.left = Math.min(ev.clientX + 10, window.innerWidth - 260) + 'px';
+            tt.style.top = Math.max(ev.clientY - tt.offsetHeight - 8, 4) + 'px';
+          });
+        });
+      }, 100);
       // If dev panel was open before game started, refresh it now with live data
       if (document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
       requestAnimationFrame(gameLoop);
@@ -5809,7 +5858,7 @@
       document.getElementById(`p${pid}-sp-spd`).textContent = def.speed;
       document.getElementById(`p${pid}-sp-rng`).textContent = def.isWorker ? '—' : def.range;
       // Show full unit description
-      const spSpecial = def.desc || (def.isWorker ? `Collects bodies from off-screen. Returns with +3🦴 per trip.` : '');
+      const spSpecial = def.desc || (def.isWorker ? `Collects bodies from off-screen. Returns with +2🦴 per trip.` : '');
       document.getElementById(`p${pid}-sp-special`).textContent = spSpecial;
       document.getElementById(`p${pid}-sp-cost`).textContent = `💀${def.souls}  🦴${def.bodies}`;
     }
@@ -9025,6 +9074,13 @@
       opportunist: '👁 OPPORTUNIST — all-in when winning, switches defensive when losing',
     };
 
+
+    const AI_DIFF_DESCRIPTIONS = {
+      easy: 'Fully random unit picks. Slow and inconsistent. Purely for learning the game.',
+      medium: 'Buys upgrades occasionally, reacts slowly to threats. Makes frequent mistakes and ignores counters. Manageable with some practice.',
+      hard: 'Fast spawns, counter-picks your army, uses buffs strategically and saves for upgrades. Punishes poor choices. A real challenge.',
+      expert: 'Near-instant reactions, nearly always optimal picks, uses spy, adapts every few seconds. Will punish any mistake. Very difficult.',
+    };
     function setGameMode(mode) {
       GAME_MODE = mode;
       const _mVs = document.getElementById('mode-vs'), _mSolo = document.getElementById('mode-solo');
