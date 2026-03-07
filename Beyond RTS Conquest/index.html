@@ -188,9 +188,10 @@
     /* FACTION */
     #sc-faction {
       background: var(--bg);
-      padding: clamp(8px, 1.2vh, 16px);
+      padding: clamp(8px, 1.2vh, 16px) clamp(8px, 1.2vh, 16px) 0;
       gap: clamp(6px, 1vh, 12px);
-      overflow-y: auto;
+      overflow: hidden;
+      justify-content: flex-start;
     }
 
     .faction-layout {
@@ -198,9 +199,12 @@
       gap: clamp(8px, 1.5vw, 20px);
       align-items: flex-start;
       justify-content: center;
-      flex: 1;
       width: 100%;
       max-width: 1400px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-bottom: clamp(8px, 1.5vh, 16px);
     }
 
     .faction-side {
@@ -210,6 +214,7 @@
       gap: clamp(5px, .8vh, 10px);
       max-width: 600px;
       min-width: 0;
+      flex-shrink: 0;
     }
 
     .faction-plabel {
@@ -251,7 +256,7 @@
       flex-direction: column;
       gap: clamp(5px, .8vw, 10px);
       overflow-y: auto;
-      max-height: clamp(400px, 72vh, 800px);
+      max-height: clamp(220px, 40vh, 500px);
       padding-right: 4px;
     }
 
@@ -425,6 +430,11 @@
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
+      flex-shrink: 0;
+      padding: clamp(6px, 1vh, 12px) clamp(8px, 1.2vw, 16px);
+      background: rgba(7, 7, 15, 0.85);
+      border-top: 1px solid var(--border);
+      width: 100%;
     }
 
     .mirror-warn {
@@ -560,14 +570,23 @@
 
 
     /* ── AI / SINGLEPLAYER ── */
+    #ai-p1-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(8px, 1.2vh, 14px);
+      width: 100%;
+      justify-content: flex-start;
+      padding: clamp(10px, 1.5vh, 20px) 0;
+    }
+
     #ai-p2-panel {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: clamp(8px, 1.2vh, 14px);
       width: 100%;
-      height: 100%;
-      justify-content: center;
+      justify-content: flex-start;
       padding: clamp(10px, 1.5vh, 20px) 0;
     }
 
@@ -3127,16 +3146,17 @@
         </div>
         <div class="faction-chosen" id="fchosen-p1">— No faction chosen —</div>
         <!-- P1 AI settings panel — shown only in aivsai mode -->
-        <div id="ai-p1-panel" style="display:none;margin-top:8px;">
-          <div class="ai-label" style="color:#2471a3;">🤖 AI 1 SETTINGS</div>
+        <div id="ai-p1-panel" style="display:none;">
+          <div class="ai-label" style="color:#2471a3;">🤖 AI 1</div>
           <div class="ai-diff-row" id="ai1-diff-row">
             <button class="diff-btn" data-diff1="easy">EASY</button>
             <button class="diff-btn active" data-diff1="medium">MEDIUM</button>
             <button class="diff-btn" data-diff1="hard">HARD</button>
             <button class="diff-btn" data-diff1="expert">EXPERT</button>
           </div>
-          <div class="ai-personality-badge" id="ai1-personality-display" style="margin-top:4px;font-size:.7rem;"></div>
+          <div class="ai-personality-badge" id="ai1-personality-display" style="font-size:.7rem;"></div>
           <div class="ai-pers-row" id="ai1-pers-row"></div>
+          <div class="ai-faction-chosen" id="ai1-faction-display">Faction: Random</div>
           <button class="ai-faction-reroll" id="ai1-reroll-btn">🎲 Re-roll P1 Faction</button>
         </div>
       </div>
@@ -3153,7 +3173,7 @@
         </div>
         <!-- AI opponent section (shown in solo + aivsai) -->
         <div id="ai-p2-panel" style="display:none">
-          <div class="ai-label">🤖 AI OPPONENT</div>
+          <div class="ai-label">🤖 AI 2</div>
           <div class="ai-diff-row" id="ai-diff-row">
             <button class="diff-btn" data-diff="easy">EASY</button>
             <button class="diff-btn active" data-diff="medium">MEDIUM</button>
@@ -8644,8 +8664,8 @@
         updateFactionHints();
         e.preventDefault(); return;
       }
-      // Faction selection keyboard nav
-      if (document.getElementById('sc-faction').classList.contains('active')) {
+      // Faction selection keyboard nav — disabled in AI vs AI (no human input needed)
+      if (document.getElementById('sc-faction').classList.contains('active') && GAME_MODE !== 'aivsai') {
         if (e.code === KEYS.p1Up) { factionCursorMove(1, -1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
@@ -8655,7 +8675,7 @@
           if (e.code === KEYS.p2Down) { factionCursorMove(2, 1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { factionConfirm(2); e.preventDefault(); return; }
         }
-        return; // Don't leak other keys out of faction screen
+        return;
       }
       // Tutorial arrow nav
       if (document.getElementById('sc-tutorial').classList.contains('active')) {
@@ -8876,6 +8896,11 @@
     function updateFactionHints() {
       const h1 = document.getElementById('faction-hint-p1');
       const h2 = document.getElementById('faction-hint-p2');
+      if (GAME_MODE === 'aivsai') {
+        if (h1) h1.querySelector('span').textContent = 'Click to pick faction · use settings below';
+        if (h2) h2.querySelector('span').textContent = 'Click to pick faction · use settings below';
+        return;
+      }
       if (h1) h1.querySelector('span').textContent = `${formatKey(KEYS.p1Up)}/${formatKey(KEYS.p1Down)} scroll · ${formatKey(KEYS.p1Act)} confirm`;
       if (h2) h2.querySelector('span').textContent = `${formatKey(KEYS.p2Up)}/${formatKey(KEYS.p2Down)} scroll · ${formatKey(KEYS.p2Act)} confirm`;
     }
@@ -8944,18 +8969,18 @@
     // ─── GAME MODE & AI SETUP ───────────────────────────────────────────────────
 
     const AI_PERS_DESCRIPTIONS = {
-      aggressive: '⚔ AGGRESSIVE — constant pressure, attack-heavy',
-      defensive: '🛡 DEFENSIVE — builds armies, holds mid firmly',
-      swarm: '🐝 SWARM — floods with cheap units',
-      economist: '💰 ECONOMIST — saves up for powerful units',
-      aerial: '🦅 AERIAL — fixates on flying units',
-      counter: '🔄 COUNTER — reads enemy and adapts',
-      saver: '💎 SAVER — hoards resources for big moves',
-      rusher: '💨 RUSHER — all-in speed and damage',
-      balanced: '⚖ BALANCED — mixed army composition',
-      berserker: '🩸 BERSERKER — glass cannon aggression',
-      turtler: '🐢 TURTLER — tanks, high-HP slow plays',
-      opportunist: '👁 OPPORTUNIST — adapts to game state',
+      aggressive: '⚔ AGGRESSIVE — favours aerials & fast units, ignores slow tanks',
+      defensive: '🛡 DEFENSIVE — stacks high-HP ranged units, panics when outnumbered',
+      swarm: '🐝 SWARM — spams the cheapest units possible, never saves',
+      economist: '💰 ECONOMIST — picks best damage-per-soul ratio, loves summon units',
+      aerial: '🦅 AERIAL — goes almost exclusively flying units, ignores ground',
+      counter: '🔄 COUNTER — watches your army type and hard-counters it directly',
+      saver: '💎 SAVER — hoards souls, only buys very cheap filler while saving',
+      rusher: '💨 RUSHER — highest damage + fastest units, sends glass cannons first',
+      balanced: '⚖ BALANCED — fills whichever unit type (melee/ranged/air) it is missing',
+      berserker: '🩸 BERSERKER — pure damage above all, fast attack rate, avoids tanks',
+      turtler: '🐢 TURTLER — maximum HP obsession, refuses any unit below 50 HP',
+      opportunist: '👁 OPPORTUNIST — all-in when winning, switches defensive when losing',
     };
 
     function setGameMode(mode) {
@@ -8980,12 +9005,14 @@
 
       // Show P1 AI settings panel only in aivsai mode
       document.getElementById('ai-p1-panel').style.display = aivsai ? '' : 'none';
+      // In aivsai, fchosen-p1 is redundant — ai1-faction-display in the panel covers it
+      document.getElementById('fchosen-p1').style.display = aivsai ? 'none' : '';
       // Update P2 faction panel label to show it's an AI in aivsai mode
       const p2lbl = document.getElementById('faction-hint-p2');
-      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2 (P2)' : 'PLAYER 2';
+      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : 'PLAYER 2';
       // Update P1 label
       const p1lbl2 = document.getElementById('faction-hint-p1');
-      if (p1lbl2) p1lbl2.firstChild.textContent = aivsai ? '🤖 AI 1 (P1)' : 'PLAYER 1';
+      if (p1lbl2) p1lbl2.firstChild.textContent = aivsai ? '🤖 AI 1' : 'PLAYER 1';
       // In aivsai: auto-pick P2 faction if not set
       if (aivsai && fSelected[1] === null) {
         if (AI_FACTION_IDX === null) AI_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
@@ -9012,6 +9039,8 @@
           if (AI1_FACTION_IDX === null) AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
           AI1_PERSONALITY = AI1_PERSONALITY; // keep existing or null for random
           fSelected[0] = AI1_FACTION_IDX;
+          // Clear keyboard cursor highlights — not used in aivsai
+          document.querySelectorAll('.fkey-cursor').forEach(c => c.classList.remove('fkey-cursor'));
           _updateAi1Display();
         }
         _updateStartBtn();
@@ -9026,7 +9055,7 @@
       const p1el = document.getElementById('ai1-personality-display');
       if (AI1_FACTION_IDX !== null && el1) {
         const f = FACTIONS[AI1_FACTION_IDX];
-        if (f && el1) el1.textContent = 'P1: ' + f.icon + ' ' + f.name;
+        if (f && el1) el1.textContent = f.icon + ' ' + f.name + ' — ' + f.tagline;
       }
       const _refreshP1Badge = () => {
         if (!p1el) return;
@@ -9041,13 +9070,21 @@
       _buildPersRow('ai1-pers-row', AI1_PERSONALITY, val => {
         AI1_PERSONALITY = val;
         _refreshP1Badge();
-        _buildPersRow('ai1-pers-row', val, arguments[0]);
       });
     }
 
     function _buildPersRow(rowId, currentPers, onSelect) {
       const row = document.getElementById(rowId);
       if (!row) return;
+      // If already built, just update active state
+      const existing = row.querySelectorAll('.pers-btn');
+      if (existing.length > 0) {
+        existing.forEach(b => {
+          const bVal = b.dataset.pers === '' ? null : b.dataset.pers;
+          b.classList.toggle('active', bVal === currentPers || (bVal === null && currentPers === null));
+        });
+        return;
+      }
       const opts = [{ key: null, label: '🎲 RANDOM' }, ...AI_PERSONALITIES.map(p => ({ key: p, label: p.toUpperCase() }))];
       row.innerHTML = opts.map(o => {
         const isActive = (o.key === currentPers) || (o.key === null && currentPers === null);
@@ -9113,6 +9150,8 @@
       // Highlight the new faction card on P1 side
       document.querySelectorAll('#fcards-p1 .fcard').forEach((c, i) => c.classList.toggle('sel1', i === AI1_FACTION_IDX));
       document.getElementById('fchosen-p1').textContent = FACTIONS[AI1_FACTION_IDX].icon + ' ' + FACTIONS[AI1_FACTION_IDX].name + ' — ' + FACTIONS[AI1_FACTION_IDX].tagline;
+      const _ai1fd = document.getElementById('ai1-faction-display');
+      if (_ai1fd) _ai1fd.textContent = FACTIONS[AI1_FACTION_IDX].icon + ' ' + FACTIONS[AI1_FACTION_IDX].name + ' — ' + FACTIONS[AI1_FACTION_IDX].tagline;
       _updateAi1Display();
       _updateStartBtn();
     });
@@ -9134,11 +9173,14 @@
       document.querySelectorAll(`#fcards-p${pid} .fcard`).forEach(c => { c.classList.remove('sel1', 'sel2'); });
       card.classList.add(`sel${pid}`);
       fSelected[pid - 1] = fi;
-      // In aivsai mode, track faction indices for both AIs
-      if (GAME_MODE === 'aivsai' && pid === 1) AI1_FACTION_IDX = fi;
+      // In aivsai mode, track faction indices for both AIs and sync display
+      if (GAME_MODE === 'aivsai' && pid === 1) {
+        AI1_FACTION_IDX = fi;
+        const afd1 = document.getElementById('ai1-faction-display');
+        if (afd1) afd1.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
+      }
       if (GAME_MODE === 'aivsai' && pid === 2) {
         AI_FACTION_IDX = fi;
-        // Sync the ai-faction-display text
         const afd = document.getElementById('ai-faction-display');
         if (afd) afd.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
       }
@@ -9169,6 +9211,7 @@
     }
 
     function highlightFactionCursor(pid) {
+      if (GAME_MODE === 'aivsai') return;
       const cards = document.querySelectorAll(`#fcards-p${pid} .fcard`);
       cards.forEach((c, i) => c.classList.toggle('fkey-cursor', i === fCursor[pid - 1]));
       // Scroll card into view
