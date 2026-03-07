@@ -4148,11 +4148,11 @@
         matchup: 'Best against: most factions | Weak to: Summoner shade swarms',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 0, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Collects bodies from mid-field.' },
-          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 2, hp: 70, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Reliable frontline fighter. Benefits from Veterans passive.' },
-          { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 2, hp: 40, speed: 65, dmg: 14, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.' },
+          { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Collects bodies from mid-field.' },
+          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Reliable frontline fighter. Benefits from Veterans passive.' },
+          { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 1, hp: 40, speed: 65, dmg: 14, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.' },
           { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 12, bodies: 3, hp: 140, speed: 50, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage.' },
-          { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 18, bodies: 4, hp: 90, speed: 85, dmg: 26, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3 },
+          { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 18, bodies: 5, hp: 90, speed: 85, dmg: 26, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3 },
         ],
         extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 200, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
         guardUnit: 'w_guard',
@@ -4171,9 +4171,9 @@
         matchup: 'Best against: melee-heavy factions (Brutes) | Weak to: AoE and aerial (Spirits)',
         startSouls: 22, startBodies: 8,
         units: [
-          { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 0, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Collects bodies. Fragile but cheap.' },
+          { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 1, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Collects bodies. Fragile but cheap.' },
           { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 5, bodies: 1, hp: 35, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
-          { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 2, hp: 35, speed: 60, dmg: 12, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
+          { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 1, hp: 35, speed: 60, dmg: 12, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
           { id: 'su_necro', name: 'Necromancer', icon: '🔮', souls: 14, bodies: 3, hp: 55, speed: 45, dmg: 18, range: 100, aerial: false, isWorker: false, attackRate: 0.8, radius: 12, color: '#8e44ad', type: 'sum', desc: 'Summons 2 Shades on kill. Passively summons 1 Shade every 12s.', summons: 's_shade', summonCount: 2, passiveSummon: 12 },
           { id: 'su_wraith2', name: 'Dark Wing', icon: '🦇', souls: 15, bodies: 3, hp: 55, speed: 95, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c3483', type: 'air', desc: 'Fast aerial harasser. Spawns a Shade on death.', deathSpawn: 's_shade' },
         ],
@@ -4197,12 +4197,12 @@
         matchup: 'Best against: other melee factions | Weak to: Spirits, Infernal (mobile/ranged)',
         startSouls: 18, startBodies: 12,
         units: [
-          { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 0, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Collects bodies. Slower but sturdier than most workers.' },
+          { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Collects bodies. Slower but sturdier than most workers.' },
           { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Slow but hits hard. Benefits from Fortify.' },
-          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 4, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. 180 HP. Fortify gives effective 257 HP. Devastating at close range.' },
-          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 6, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit in game. 160 HP, slow but crushing damage.' },
+          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. 180 HP. Fortify gives effective 257 HP. Devastating at close range.' },
+          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit in game. 160 HP, slow but crushing damage.' },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 16, bodies: 4, hp: 65, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
-          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 3, hp: 55, speed: 46, dmg: 20, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
+          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 55, speed: 46, dmg: 20, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
         ],
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 280, speed: 40, dmg: 44, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
@@ -4221,11 +4221,11 @@
         matchup: 'Best against: aerial-heavy factions | Weak to: Brutes, Glacial',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 0, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 2, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
+          { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
+          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
           { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
           { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 14, bodies: 3, hp: 60, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
-          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 18, bodies: 4, hp: 70, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.6× damage bonus vs aerial enemies.', aerialBonus: 1.6 },
+          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 18, bodies: 5, hp: 70, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.6× damage bonus vs aerial enemies.', aerialBonus: 1.6 },
         ],
         extraUnits: [{ id: 'sp_guard', name: 'Spirit Lord', icon: '✨', souls: 0, bodies: 0, hp: 180, speed: 85, dmg: 30, range: 60, aerial: true, isWorker: false, attackRate: 1.4, radius: 16, color: '#a29bfe', type: 'air', desc: 'Royal Guard. Aerial. Sky Bounty gives +18 souls. Despawns 30s.', isSpawned: true }],
         guardUnit: 'sp_guard',
@@ -4244,8 +4244,8 @@
         matchup: 'Best against: slow melee (Brutes) | Weak to: aerial harassers (Spirits, Infernal)',
         startSouls: 18, startBodies: 12,
         units: [
-          { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 0, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Collects bodies. Carries extra body from mid-field.', groveMidBonus: true },
-          { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 2, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
+          { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 1, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Collects bodies. Carries extra body from mid-field.', groveMidBonus: true },
+          { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 1, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
           { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
           { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 14, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies for 8 HP in 110px.', sylphHeal: 8, sylphHealRange: 110 },
           { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 150, speed: 42, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
@@ -4267,7 +4267,7 @@
         matchup: 'Best against: slow heavy armies (Brutes) | Weak to: ranged-heavy factions (Warriors, Spirits)',
         startSouls: 22, startBodies: 8,
         units: [
-          { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 0, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Collects bodies. Very fragile — keep away from combat.' },
+          { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 1, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Collects bodies. Very fragile — keep away from combat.' },
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 1, hp: 55, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
           { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
           { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 16, bodies: 4, hp: 60, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 60 },
@@ -4290,8 +4290,8 @@
         matchup: 'Best against: melee brawlers (Warriors, Brutes) | Weak to: fast aerial (Spirits)',
         startSouls: 18, startBodies: 10,
         units: [
-          { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 0, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Collects bodies. Carries an extra body from mid-field when you own it.', frostMidBonus: true },
-          { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 2, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.5s chill on every melee hit.', chillOnHit: true, chillDur: 1.5 },
+          { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 1, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Collects bodies. Carries an extra body from mid-field when you own it.', frostMidBonus: true },
+          { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 1, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.5s chill on every melee hit.', chillOnHit: true, chillDur: 1.5 },
           { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.5, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
           { id: 'gl_snowhawk', name: 'Snowhawk', icon: '🦅', souls: 15, bodies: 3, hp: 55, speed: 85, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#dfe6e9', type: 'air', desc: 'Aerial unit. First hit on each enemy stuns for 0.8s.', firstHitStun: true, stunDur: 0.8 },
           { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 200, speed: 36, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 2.0 },
@@ -4313,8 +4313,8 @@
         matchup: 'Best against: dense melee stacks (Brutes, Summoners) | Weak to: mobile spread armies (Spirits)',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 0, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Collects bodies.' },
-          { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 2, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
+          { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Collects bodies.' },
+          { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 1, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
           { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
           { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 14, bodies: 3, hp: 52, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.5 },
           { id: 'vb_stormcaller', name: 'Stormcaller', icon: '🌩️', souls: 20, bodies: 5, hp: 105, speed: 55, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#e17055', type: 'mel', desc: 'Heavy melee. Chain Lightning triggers every 5 attacks with 80px chain range.', chainRate: 5, chainRange: 80 },
@@ -4336,11 +4336,11 @@
         matchup: 'Best against: equal or smaller armies | Weak to: mass ranged (Warriors, Spirits)',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 0, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 2, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 5 stacks).', growOnKill: 2 },
+          { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 1, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
+          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 1, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 5 stacks).', growOnKill: 2 },
           { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 8, bodies: 2, hp: 42, speed: 62, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
           { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 12, bodies: 3, hp: 90, speed: 58, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
-          { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 16, bodies: 3, hp: 58, speed: 88, dmg: 20, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
+          { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 16, bodies: 4, hp: 58, speed: 88, dmg: 20, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
         ],
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
         guardUnit: 'bp_guard',
@@ -4359,11 +4359,11 @@
         matchup: 'Best against: burst/aggressive factions (Infernal, Bloodpact) | Weak to: fast kill factions (Spirits)',
         startSouls: 18, startBodies: 8,
         units: [
-          { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 0, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Collects bodies. Slightly faster when carrying.' },
-          { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 3, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
+          { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Collects bodies. Slightly faster when carrying.' },
+          { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 2, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
           { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 115, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
           { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 35% HP, returns healed. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
-          { id: 'me_seraph', name: 'Seraph', icon: '🕊️', souls: 16, bodies: 3, hp: 50, speed: 90, dmg: 12, range: 55, aerial: true, isWorker: false, attackRate: 1.4, radius: 14, color: '#81ecec', type: 'air', desc: 'Aerial support. Each attack heals the lowest-HP nearby friendly for 6 HP.', seraphHeal: 6, seraphHealRange: 120 },
+          { id: 'me_seraph', name: 'Seraph', icon: '🕊️', souls: 16, bodies: 4, hp: 50, speed: 90, dmg: 12, range: 55, aerial: true, isWorker: false, attackRate: 1.4, radius: 14, color: '#81ecec', type: 'air', desc: 'Aerial support. Each attack heals the lowest-HP nearby friendly for 6 HP.', seraphHeal: 6, seraphHealRange: 120 },
         ],
         extraUnits: [{ id: 'me_paladin', name: 'Grand Paladin', icon: '💚', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#00b894', type: 'mel', desc: 'Royal Guard. Regenerates 5 HP/sec. Despawns 30s.', isSpawned: true, regenPerSec: 5 }],
         guardUnit: 'me_paladin',
@@ -4399,7 +4399,7 @@
 
     // ── GLOBAL SPY UNIT ──────────────────────────────────────────────────────────
     const SPY_DEF = {
-      id: 'spy', name: 'Spy', icon: '🕵️', souls: 10, bodies: 2,
+      id: 'spy', name: 'Spy', icon: '🕵️', souls: 10, bodies: 4,
       desc: '🕵️ INFILTRATES enemy base · Steals the resource the enemy has MORE of (souls or bodies) every 7s · Detected by workers (35%) or combat units (15%) near base every 2s · Max 2 active · Countered by keeping workers near your base',
       type: 'spc', isWorker: false, isSpawned: false, aerial: false,
       hp: 18, speed: 0, dmg: 0, range: 0, attackRate: 0, radius: 10, color: '#636e72',
@@ -5097,8 +5097,9 @@
       // ── Priority order: workers > upgrades/buffs (if saving) > buffs > upgrades > spy > units ──
 
       // ── 1. Workers — always fill to cap ──
+      const _aiWorkerBodyCost = (p.workers || 0) === 0 ? 0 : (p.workers || 0) === 1 ? 1 : 2;
       if (!forceDefend && workerDef && p.workers < (p.workerCap || 3) &&
-        p.souls >= workerDef.souls && p.bodies >= workerDef.bodies) {
+        p.souls >= workerDef.souls && p.bodies >= _aiWorkerBodyCost) {
         const workerIdx = allUnitDefs.indexOf(workerDef);
         G[_actingKey] = true;
         _aiActWithDelay(pid, 0, workerIdx, () => { G[_actingKey] = false; trySpawn(pid, workerDef.id, null); });
@@ -5813,6 +5814,17 @@
         const minReturn = offWorkers.length > 0 ? Math.ceil(Math.min(...offWorkers.map(w => w.offTimer))) : 0;
         const wReturnStr = minReturn > 0 ? ` ⏳${minReturn}s` : '';
         document.getElementById(`p${pid}-worker-count`).textContent = `⛏ ${p.workers}/${p.workerCap || 3}${wReturnStr}`;
+        // Update worker card body cost display dynamically (graduated: 0/1/2)
+        const _wCard = document.querySelector(`#p${pid}-grid .ucard[data-idx='0']`);
+        if (_wCard) {
+          const _wDef = G.factions[pid - 1].units.find(d => d.isWorker);
+          if (_wDef) {
+            const _wc = p.workers || 0;
+            const _wBodyCost = _wc === 0 ? 0 : _wc === 1 ? 1 : 2;
+            const _wcb = _wCard.querySelector('.ctag.cb');
+            if (_wcb) _wcb.textContent = '🦴' + _wBodyCost;
+          }
+        }
         // Desp badge
         const despEl = document.getElementById(`p${pid}-desp`);
         despEl.style.display = p.despStacks > 0 ? 'inline' : 'none';
@@ -5947,9 +5959,14 @@
       const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
       if (!def.isWorker && combatUnits >= p.unitCap) { shakeCard(cardEl); return; }
       if (def.isWorker && p.workers >= (p.workerCap || 3)) { shakeCard(cardEl); return; }
-      const _bodyCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
+      // Graduated worker cost: 1st worker = free (0 bodies), 2nd = 1 body, 3rd+ = 2 bodies
+      let _bodyCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
+      if (def.isWorker) {
+        const workerCount = p.workers || 0;
+        _bodyCost = workerCount === 0 ? 0 : workerCount === 1 ? 1 : 2;
+      }
       if (p.souls < def.souls || p.bodies < _bodyCost) { shakeCard(cardEl); flashRes(pid, p.souls < def.souls ? 'souls' : 'bodies'); return; }
-      const _bCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
+      const _bCost = _bodyCost;
       p.souls -= def.souls; p.bodies -= _bCost; p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + _bCost; p.spawned++;
       if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
       // Blood Tithe refund
