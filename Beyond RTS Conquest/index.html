@@ -304,6 +304,66 @@
       outline-offset: -2px;
     }
 
+    /* Draft mode — banned faction */
+    .fcard.draft-banned {
+      opacity: 0.28;
+      pointer-events: none;
+      border-color: #555 !important;
+      background: rgba(0, 0, 0, .3) !important;
+      box-shadow: none !important;
+      cursor: not-allowed;
+      filter: grayscale(0.7);
+    }
+
+    .fcard.draft-banned::after {
+      content: '✕ BANNED';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(.8rem, 1.5vw, 1.1rem);
+      font-weight: 900;
+      color: #e74c3c;
+      letter-spacing: .2em;
+      pointer-events: none;
+    }
+
+    .fcard {
+      position: relative;
+    }
+
+    /* Draft turn indicator banner */
+    #draft-banner {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(.85rem, 1.8vw, 1.3rem);
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-align: center;
+      padding: clamp(7px, 1.2vh, 12px) 20px;
+      border-radius: 6px;
+      border: 1px solid currentColor;
+      width: 100%;
+      max-width: 700px;
+      transition: color .25s, border-color .25s, background .25s;
+    }
+
+    #draft-banner.p1-turn {
+      color: var(--p1);
+      background: rgba(36, 113, 163, .12);
+    }
+
+    #draft-banner.p2-turn {
+      color: var(--p2);
+      background: rgba(192, 57, 43, .12);
+    }
+
+    #draft-banner.done-turn {
+      color: var(--gold);
+      background: rgba(212, 168, 67, .1);
+    }
+
     .fcard.sel2 {
       border-color: var(--p2) !important;
       background: rgba(192, 57, 43, .1) !important;
@@ -402,6 +462,29 @@
       opacity: .8;
       border-top: 1px solid var(--border);
       padding-top: 4px;
+    }
+
+    .fcard-win-badge {
+      font-size: .72rem;
+      margin-left: auto;
+      letter-spacing: .02em;
+      animation: winBadgePop .35s ease-out;
+    }
+
+    @keyframes winBadgePop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      70% {
+        transform: scale(1.25);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .faction-vs {
@@ -1234,6 +1317,37 @@
       text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
     }
 
+    .rpop-emote {
+      position: fixed;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      pointer-events: none;
+      z-index: 999;
+      animation: emoteFloat 1.8s ease-out forwards;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+    }
+
+    @keyframes emoteFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.4);
+      }
+
+      15% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1.2);
+      }
+
+      40% {
+        opacity: 1;
+        transform: translateY(-40px) scale(1.0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-110px) scale(0.8);
+      }
+    }
+
     @keyframes popFloat {
       0% {
         opacity: 1;
@@ -1312,6 +1426,94 @@
     #event-overlay.show {
       display: flex;
       animation: evAnim 3.8s ease-out forwards;
+    }
+
+    #vote-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 98;
+      pointer-events: none;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(0, 0, 0, .68);
+    }
+
+    #vote-overlay.show {
+      display: flex;
+    }
+
+    .vote-header {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(.7rem, 1.4vw, .95rem);
+      letter-spacing: .3em;
+      color: rgba(255, 255, 255, .55);
+      text-transform: uppercase;
+    }
+
+    .vote-options {
+      display: flex;
+      gap: clamp(14px, 3vw, 32px);
+      align-items: stretch;
+    }
+
+    .vote-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 8px;
+      padding: clamp(8px, 1.5vw, 14px) clamp(12px, 2.5vw, 22px);
+      min-width: clamp(90px, 15vw, 160px);
+      transition: border-color .15s, background .15s;
+    }
+
+    .vote-card.voted {
+      background: rgba(212, 168, 67, .18);
+      border-color: #d4a843;
+    }
+
+    .vote-card-key {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(.6rem, 1.1vw, .78rem);
+      letter-spacing: .1em;
+      color: var(--gold);
+    }
+
+    .vote-card-name {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(.8rem, 1.6vw, 1.1rem);
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: .06em;
+    }
+
+    .vote-card-sub {
+      font-family: 'Crimson Text', serif;
+      font-size: clamp(.62rem, 1.1vw, .8rem);
+      color: rgba(255, 255, 255, .6);
+      text-align: center;
+    }
+
+    .vote-timer {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: .12em;
+      min-width: 2ch;
+      text-align: center;
+    }
+
+    .vote-tally {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(.62rem, 1.1vw, .8rem);
+      color: rgba(255, 255, 255, .55);
+      letter-spacing: .06em;
     }
 
     @keyframes evAnim {
@@ -3133,6 +3335,7 @@
       </div>
       <div class="menu-btns">
         <button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
+        <button class="btn" id="btn-draft">🃏 DRAFT MODE</button>
         <button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
         <button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
         <button class="btn" id="btn-aivsai">👁 AI VS AI</button>
@@ -3211,6 +3414,39 @@
       <button class="btn primary" id="btn-start" disabled>START BATTLE →</button>
     </div>
   </div>
+  <!-- DRAFT MODE -->
+  <div id="sc-draft" class="screen"
+    style="background:var(--bg);padding:clamp(8px,1.2vh,14px);gap:clamp(6px,1vh,10px);overflow:hidden;justify-content:flex-start;align-items:center;">
+    <div id="draft-banner" class="p1-turn">⚡ DRAFT MODE — P1: BAN A FACTION (W/S + Q)</div>
+    <div
+      style="display:flex;gap:clamp(8px,1.5vw,20px);align-items:flex-start;justify-content:center;width:100%;max-width:1400px;flex:1;min-height:0;overflow-y:auto;padding-bottom:8px;">
+      <div class="faction-side">
+        <div class="faction-plabel" id="draft-p1-label" style="color:var(--p1);">🔵 PLAYER 1</div>
+        <div id="draft-fcards-p1" class="fcards-scroll"></div>
+      </div>
+      <div
+        style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:30px;min-width:clamp(60px,8vw,100px);">
+        <div style="font-family:'Cinzel',serif;font-size:clamp(1rem,2.5vw,1.8rem);color:var(--gold);opacity:.35;">VS
+        </div>
+        <div id="draft-p1-status"
+          style="font-family:'Cinzel',serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p1);letter-spacing:.07em;text-align:center;min-height:2.5em;">
+        </div>
+        <div id="draft-p2-status"
+          style="font-family:'Cinzel',serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p2);letter-spacing:.07em;text-align:center;min-height:2.5em;">
+        </div>
+      </div>
+      <div class="faction-side">
+        <div class="faction-plabel" id="draft-p2-label" style="color:var(--p2);">🔴 PLAYER 2</div>
+        <div id="draft-fcards-p2" class="fcards-scroll"></div>
+      </div>
+    </div>
+    <div class="faction-footer">
+      <button class="btn" id="btn-draft-back">← BACK</button>
+      <span id="draft-footer-hint"
+        style="font-family:'Cinzel',serif;font-size:clamp(.55rem,.9vw,.72rem);color:var(--dim);letter-spacing:.07em;text-align:center;"></span>
+      <button class="btn primary" id="btn-draft-start" disabled>START BATTLE →</button>
+    </div>
+  </div>
   <!-- DEV PANEL -->
   <!-- Dev overlay is now just a small keep-alive element for legacy refs -->
   <div id="dev-overlay" style="display:none;"></div>
@@ -3269,6 +3505,7 @@
           <div class="rebind-row"><span>Mode Up</span><button class="rkey" id="rk-p1Up"></button></div>
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p1Down"></button></div>
           <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p1Act"></button></div>
+          <div class="rebind-row"><span>😤 Taunt</span><button class="rkey" id="rk-p1Taunt"></button></div>
         </div>
         <div class="rebind-col">
           <div class="rebind-head p2l">PLAYER 2 — NAVIGATION</div>
@@ -3277,6 +3514,7 @@
           <div class="rebind-row"><span>Mode Up</span><button class="rkey" id="rk-p2Up"></button></div>
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p2Down"></button></div>
           <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p2Act"></button></div>
+          <div class="rebind-row"><span>😤 Taunt</span><button class="rkey" id="rk-p2Taunt"></button></div>
         </div>
       </div>
       <div class="rebind-section-title">⚡ DIRECT SPAWN HOTKEYS <span
@@ -3366,6 +3604,23 @@
       <div class="ev-label" id="ev-label">⚡ RANDOM EVENT</div>
       <div class="ev-title" id="ev-title"></div>
       <div class="ev-sub" id="ev-sub"></div>
+    </div>
+    <div id="vote-overlay">
+      <div class="vote-header">⚡ EVENT VOTE — CHOOSE YOUR FATE</div>
+      <div class="vote-options">
+        <div class="vote-card" id="vote-card-a">
+          <div class="vote-card-key" id="vote-key-a">P1 — Q</div>
+          <div class="vote-card-name" id="vote-name-a"></div>
+          <div class="vote-card-sub" id="vote-sub-a"></div>
+        </div>
+        <div class="vote-timer" id="vote-timer-display">5</div>
+        <div class="vote-card" id="vote-card-b">
+          <div class="vote-card-key" id="vote-key-b">P2 — ENTER</div>
+          <div class="vote-card-name" id="vote-name-b"></div>
+          <div class="vote-card-sub" id="vote-sub-b"></div>
+        </div>
+      </div>
+      <div class="vote-tally" id="vote-tally"></div>
     </div>
     <div id="last-stand-overlay">
       <div class="ls-title" id="ls-title"></div>
@@ -3575,6 +3830,7 @@
       <div class="go-crown">👑</div>
       <h2 class="go-title" id="go-title"></h2>
       <p class="go-sub" id="go-sub-text">Get rekt.</p>
+      <p class="go-sub" id="go-grudge-taunt" style="font-size:.8em;opacity:.7;min-height:1.2em;margin-top:2px;"></p>
       <div class="go-time-row" id="go-match-time"
         style="text-align:center;font-family:Cinzel,serif;font-size:clamp(1rem,1.5vw,1.3rem);color:var(--gold);margin:8px 0 14px;letter-spacing:.08em;">
       </div>
@@ -4123,7 +4379,7 @@
 
 
     let G = null, P1_FACTION = null, P2_FACTION = null;
-    let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial' | 'aivsai'
+    let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial' | 'aivsai' | 'draft'
     let AI_DIFFICULTY = 'medium';   // 'easy'|'medium'|'hard'|'expert'|'tutorial'
     let AI1_DIFFICULTY = 'medium';  // P1 AI difficulty in aivsai mode
     let AI1_PERSONALITY = null;     // P1 AI personality in aivsai mode
@@ -4153,7 +4409,7 @@
     };
 
     // ── SESSION STATS (in-memory across rematches) ──
-    const SESSION = { wins: [0, 0], games: 0, factions: [null, null] };
+    const SESSION = { wins: [0, 0], games: 0, factions: [null, null], factionWins: {} };
 
     // ── FACTIONS ──
     const FACTIONS = [
@@ -4200,7 +4456,7 @@
         ],
         guardUnit: 'su_guard',
         upgrades: [
-          { id: 'dark_covenant', name: 'Dark Covenant', cost: { souls: 55, bodies: 6 }, desc: 'Shade power upgrade: shades gain +8 DMG and +12 HP. Necromancer passive summon interval halved (12s→6s).', effect: 'dark_covenant_new', value: 1 },
+          { id: 'dark_covenant', name: 'Dark Covenant', cost: { souls: 55, bodies: 6 }, desc: 'Shade power upgrade: shades gain +8 DMG and +12 HP. Shade cap raised 8→16. Necromancer passive summon interval halved (12s→6s).', effect: 'dark_covenant_new', value: 1 },
           { id: 'soul_drain', name: 'Soul Drain', cost: { souls: 65, bodies: 7 }, desc: 'Each Shade killed gives +2 souls. Wraith kills give +1 soul.', effect: 'shade_soul', value: 1 },
           { id: 'undying_will', name: 'Undying Will', cost: { souls: 85, bodies: 10 }, desc: 'Death Frenzy radius doubles (80→160px) and bonus increases to +25% attack rate.', effect: 'deathfrenzy_radius', value: 160 },
         ]
@@ -4224,7 +4480,7 @@
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 280, speed: 40, dmg: 44, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
         upgrades: [
-          { id: 'warbrand', name: 'Warbrand', cost: { souls: 60, bodies: 12 }, desc: 'All melee units gain +18 base DMG.', effect: 'melee_dmg', value: 10 },
+          { id: 'warbrand', name: 'Warbrand', cost: { souls: 60, bodies: 12 }, desc: 'All melee units gain +18 base DMG.', effect: 'melee_dmg', value: 18 },
           { id: 'siege_training', name: 'Siege Training', cost: { souls: 65, bodies: 10 }, desc: 'All units deal +35% damage to enemy base. Workers deal base damage.', effect: 'base_dmg', value: 0.2 },
           { id: 'armored_core', name: 'Armored Core', cost: { souls: 90, bodies: 15 }, desc: 'Warlord and Grave Brute gain +100 max HP and +8 DMG.', effect: 'heavy_hp', value: 60 },
         ]
@@ -4333,7 +4589,7 @@
           { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid.' },
           { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 1, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
           { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
-          { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 14, bodies: 3, hp: 52, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.5 },
+          { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 14, bodies: 3, hp: 65, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.5 },
           { id: 'vb_stormcaller', name: 'Stormcaller', icon: '🌩️', souls: 20, bodies: 5, hp: 105, speed: 55, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#e17055', type: 'mel', desc: 'Heavy melee. Chain Lightning triggers every 5 attacks with 80px chain range.', chainRate: 5, chainRange: 80 },
         ],
         extraUnits: [{ id: 'vb_guard', name: 'Thunder Titan', icon: '⚡', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 35, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Chain on every hit. 80px chain range. Despawns 30s.', isSpawned: true, alwaysChain: true, chainRange: 80 }],
@@ -4397,6 +4653,7 @@
     let KEYS = {
       p1Left: 'KeyA', p1Right: 'KeyD', p1Up: 'KeyW', p1Down: 'KeyS', p1Act: 'KeyQ',
       p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
+      p1Taunt: 'KeyF', p2Taunt: 'Numpad0',
       // Optional direct-spawn hotkeys (null = unassigned)
       p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null,
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null,
@@ -5559,6 +5816,7 @@
             unitTypeKills: {}, unitTypeDeaths: {}, unitTypeSecs: {}, unitTypeSpawned: {},
             maxKillStreak: 0, _killStreak: 0,
             buffUsed: 0, midCaptures: 0,
+            maxShades: 8,
           },
           {
             id: 2, souls: P2_FACTION.startSouls, bodies: P2_FACTION.startBodies,
@@ -5579,6 +5837,7 @@
             unitTypeKills: {}, unitTypeDeaths: {}, unitTypeSecs: {}, unitTypeSpawned: {},
             maxKillStreak: 0, _killStreak: 0,
             buffUsed: 0, midCaptures: 0,
+            maxShades: 8,
           },
         ],
         shadeCount: [0, 0], MAX_SHADES: 8,
@@ -5694,6 +5953,20 @@
       }, 100);
       // If dev panel was open before game started, refresh it now with live data
       if (document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
+      // Grudge Match: if this is a rematch, give the previous loser +5 soul head-start (quiet, no popup yet)
+      if (SESSION._lastLoserPid && SESSION.games >= 1 && GAME_MODE !== 'tournament') {
+        const gp = G.players[SESSION._lastLoserPid - 1];
+        if (gp) {
+          gp.souls += 5;
+          gp._grudgeBonus = true; // flag so we can show popup after brief delay
+          setTimeout(() => {
+            if (G && G.running && gp._grudgeBonus) {
+              showPopup(gp.baseX, G.groundY - 75, '🤜 GRUDGE +5💀', '#e67e22', SESSION._lastLoserPid);
+              gp._grudgeBonus = false;
+            }
+          }, 1800);
+        }
+      }
       requestAnimationFrame(gameLoop);
     }
     // ─── HUD ──────────────────────────────────────────────────────────────────────
@@ -5911,7 +6184,11 @@
           if (p.guardTimerDisplay <= 0) { p.guardTimerDisplay = 0; gtEl.style.display = 'none'; }
         }
         // Income rate
-        const _midTaperHUD = G.midOwner === pid ? Math.max(0.78, 1.2 - ((G.midOwnerTimer || 0) / 120) * 0.42) : 0;
+        const _mhsHUD = G.midOwner === pid ? (G.midOwnerTimer || 0) : 0;
+        const _midTaperHUD = G.midOwner === pid
+          ? (_mhsHUD < 30 ? 0.8 + (_mhsHUD / 30) * 0.7
+            : _mhsHUD < 60 ? 1.5 + ((_mhsHUD - 30) / 30) * 0.5
+              : 2.0) : 0;
         const soulRate = (0.45 + _midTaperHUD + (p.despStacks * 0.7) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(2);
         const bodyRate = ((4.5 + Math.floor(gameSec / 60) * 0.5) * p.workers).toFixed(1);
         const incEl = document.getElementById(`p${pid}-income-rate`);
@@ -6042,7 +6319,11 @@
       p.souls -= def.souls; p.bodies -= _bCost; p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + _bCost; p.spawned++;
       if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
       // Blood Tithe refund
-      if (G.factions[pid - 1].id === 'bloodpact') p.souls += p.bloodTitheRefund || 2;
+      if (G.factions[pid - 1].id === 'bloodpact') {
+        const refund = p.bloodTitheRefund || 2;
+        p.souls += refund;
+        showPopup(p.baseX, G.groundY - 85, `🩸 +${refund}💀 TITHE`, '#c0392b', pid);
+      }
       spawnUnit(pid, unitId, false);
       if (cardEl) { cardEl.classList.remove('spawn-flash'); void cardEl.offsetWidth; cardEl.classList.add('spawn-flash'); }
       // Tiered spawn audio
@@ -6123,6 +6404,8 @@
         case 'dark_covenant_new': {
           // Empower all existing and future shades for this player
           p._darkCovenantActive = true;
+          // Raise this player's personal shade cap 8→16
+          p.maxShades = 16;
           // Patch shade def in unitDefs
           const shadeDef = G.unitDefs[pid].find(d => d.id === 's_shade');
           if (shadeDef) { shadeDef.dmg += 8; shadeDef.hp += 12; }
@@ -6212,7 +6495,7 @@
       if (!def) return;
       const isShade = def.isSpawned && !def.guardUnit;
       if (isShade) {
-        if (G.shadeCount[pid - 1] >= G.MAX_SHADES) { p.souls += 4; showPopup(p.baseX, G.groundY - 60, '+4💀 (shade cap)', '#9b59b6', pid); return; }
+        if (G.shadeCount[pid - 1] >= (p.maxShades || 8)) { p.souls += 4; showPopup(p.baseX, G.groundY - 60, '+4💀 (shade cap)', '#9b59b6', pid); return; }
         G.shadeCount[pid - 1]++;
       }
       const yOff = def.aerial ? -85 : 0;
@@ -6253,7 +6536,9 @@
       if (G.factions[pid - 1].id === 'infernal' && !def.isWorker && !def.isSpawned) {
         p.infernalCount = (p.infernalCount || 0) + 1;
         const rate = p.hellfireRate || 8;
-        if (p.infernalCount % rate === 0) { u.dmgMult = 1.25; u._hellfire = true; }
+        // Inferno Lord guard: every spawn is empowered while she lives
+        const infernoGuardActive = G.units.some(gu => gu.player === pid && gu.isGuard && gu.defId === 'if_guard' && !gu.dead);
+        if (infernoGuardActive || p.infernalCount % rate === 0) { u.dmgMult = 1.25; u._hellfire = true; }
       }
       G.units.push(u);
       spawnParticles(x, G.groundY + yOff, def.color, 10);
@@ -6270,6 +6555,36 @@
       el.style.top = (cx.top + Math.max(y - 40, 10)) + 'px';
       document.getElementById('popups').appendChild(el);
       setTimeout(() => el.remove(), 1600);
+    }
+
+    // ── EMOTES ────────────────────────────────────────────────────────────────
+    const _EMOTE_SETS = {
+      winning: ['😤', '💪', '👑', '🔥', '😎', '🏆', '💀', '⚡'],
+      losing: ['😭', '😤', '🤡', '💔', '😡', '🙃', '👻', '😱'],
+      neutral: ['😤', '💪', '👻', '🔥', '☠️', '🤙', '😈', '🎯'],
+    };
+    const _emoteCooldown = [0, 0]; // per pid
+    function triggerEmote(pid) {
+      if (!G || !G.running || G.paused) return;
+      const now = Date.now();
+      if (now < _emoteCooldown[pid - 1]) return; // 3s cooldown
+      _emoteCooldown[pid - 1] = now + 3000;
+      const p = G.players[pid - 1];
+      const enemy = G.players[pid === 1 ? 1 : 0];
+      const myHp = p.baseHp, enemyHp = enemy.baseHp;
+      let set = myHp > enemyHp + 15 ? _EMOTE_SETS.winning : myHp < enemyHp - 15 ? _EMOTE_SETS.losing : _EMOTE_SETS.neutral;
+      const emoji = set[Math.floor(Math.random() * set.length)];
+      const cx = canvas.getBoundingClientRect();
+      const baseX = p.baseX;
+      const el = document.createElement('div');
+      el.className = 'rpop-emote';
+      el.textContent = emoji;
+      el.style.left = (cx.left + baseX - 24) + 'px';
+      el.style.top = (cx.top + G.groundY - 80) + 'px';
+      document.getElementById('popups').appendChild(el);
+      setTimeout(() => el.remove(), 1900);
+      // Tiny screen nudge for personality
+      G.shake = Math.max(G.shake || 0, 0.4);
     }
     function addKillFeed(txt, col) {
       const kf = document.getElementById('killfeed');
@@ -6341,10 +6656,12 @@
       const isRanged = attacker.def.range > 60;
       const berserkHPMult = (attacker.def.berserkHPThresh && attacker.hp < attacker.maxHp * attacker.def.berserkHPThresh) ? 2.0 : 1.0;
       let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0) * berserkHPMult;
-      if (isRanged && target.def.aerial) {
-        dmg *= 3.2; // Ranged strongly counters aerial
+      if (isRanged && target.def.aerial && !attacker.def.aerial) {
+        dmg *= 3.2; // Ranged strongly counters aerial (ground ranged only)
         // Extra attack rate for ranged vs aerial — simulate faster targeting
         if (attacker.attackCooldown > 0) attacker.attackCooldown *= 0.75; // 33% faster attacks vs aerial
+      } else if (isRanged && target.def.aerial && attacker.def.aerial) {
+        dmg *= 1.4; // Aerial ranged vs aerial: modest bonus, not the hard counter
       }
       if (isRanged && target.def.hp >= 120) dmg *= 1.3;
 
@@ -6536,6 +6853,13 @@
       const isShade = u.defId && (u.defId.endsWith('_shade') || u.def.isSpawned) && u.def.hp <= 30;
       if (isShade && kp) soulReward += (kp._shadeSoulReward || 0);
       if ((u.killCount || 0) >= 3) soulReward = Math.floor(soulReward * 1.5);
+      // Veteran bounty — killing a veteran unit earns bonus souls
+      if (u._veteran && kp) {
+        const bounty = 8;
+        soulReward += bounty;
+        showPopup(u.x, u.y - 44, `⭐ VETERAN SLAIN +${bounty}💀`, '#d4a843', killer.player);
+        addKillFeed(`💀 ${killer.def.icon} slew ⭐ ${u.def.icon} ${u.def.name}`, '#d4a843');
+      }
       if (killer && G.midOwner && G.midOwner !== killer.player) soulReward = Math.floor(soulReward * 1.5);
       if (kp) { kp.souls += soulReward; kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + soulReward; }
       if (kp) {
@@ -6543,6 +6867,10 @@
         if (!u.def.isSpawned && killer && !killer.def.isSpawned) { kp.unitTypeKills = kp.unitTypeKills || {}; kp.unitTypeKills[killer.def.id] = (kp.unitTypeKills[killer.def.id] || 0) + 1; }
         kp._killStreak = (kp._killStreak || 0) + 1;
         kp.maxKillStreak = Math.max(kp.maxKillStreak || 0, kp._killStreak);
+        // Wild Card: every 10 kills in a streak — free surprise unit from another faction for 20s
+        if (kp._killStreak % 10 === 0 && GAME_MODE !== 'tutorial') {
+          _triggerWildCard(killer.player);
+        }
       }
       // reset loser streak
       const losingP = G.players.find(p => p.id !== (kp ? kp.id : -1) && G.units.some(u2 => u2.id === u.id));
@@ -6559,7 +6887,7 @@
       }
       // Summoner summons on kill
       if (killer && killer.def.summons && !killer.def.isSpawned) {
-        const cap = G.MAX_SHADES;
+        const cap = G.players[killer.player - 1].maxShades || 8;
         for (let i = 0; i < (killer.def.summonCount || 1); i++) {
           if (G.shadeCount[killer.player - 1] < cap) {
             spawnUnit(killer.player, killer.def.summons, true, u.x, G.groundY);
@@ -6600,6 +6928,16 @@
       // Bloodpact grow on kill
       if (killer && killer.def.growOnKill) killer.def.dmg += killer.def.growOnKill;
       if (killer) killer.killCount = (killer.killCount || 0) + 1;
+      // Veteran milestone: 5 kills earns a permanent dmg bonus + star marker
+      if (killer && killer.killCount === 5 && !killer.def.isSpawned) {
+        killer.dmgMult = (killer.dmgMult || 1.0) * 1.15;
+        killer._veteran = true;
+        const kcp = G.players[killer.player - 1];
+        showPopup(killer.x, killer.y - 50, `⭐ VETERAN!`, '#d4a843', killer.player);
+        showPopup(killer.x, killer.y - 32, `+15% DMG`, '#f9ca24', killer.player);
+        spawnParticles(killer.x, killer.y, '#d4a843', 20);
+        addKillFeed(`⭐ ${killer.def.icon} ${killer.def.name} — VETERAN`, '#d4a843');
+      }
       // Shade count
       if (isShade) G.shadeCount[u.player - 1] = Math.max(0, G.shadeCount[u.player - 1] - 1);
       spawnParticles(u.x, u.y, u.def.color, 20);
@@ -6610,7 +6948,7 @@
       if (u.def.isWorker) G.players[u.player - 1].workers = Math.max(0, G.players[u.player - 1].workers - 1);
       // deathSpawn (e.g. Dark Wing) — spawn shade at death position
       if (u.def.deathSpawn) {
-        if (G.shadeCount[u.player - 1] < G.MAX_SHADES) {
+        if (G.shadeCount[u.player - 1] < (G.players[u.player - 1].maxShades || 8)) {
           spawnUnit(u.player, u.def.deathSpawn, true, u.x, G.groundY);
           spawnParticles(u.x, u.y, '#6c3483', 12);
         }
@@ -6755,6 +7093,126 @@
       G.activeEvent = { type: 'tremor', timer: 0, duration: 5 };
     }
 
+    // ── WILD CARD ─────────────────────────────────────────────────────────────────
+    // Triggered at a 10-kill streak. Spawns a free unit from a random OTHER faction
+    // that fights for the player for 20 seconds before vanishing.
+    function _triggerWildCard(pid) {
+      const myFid = G.factions[pid - 1].id;
+      const others = FACTIONS.filter(f => f.id !== myFid);
+      const src = others[Math.floor(Math.random() * others.length)];
+      const candidates = src.units.filter(u => !u.isWorker && !u.isSpawned && !u.isGuard);
+      if (!candidates.length) return;
+      const wcBase = candidates[Math.floor(Math.random() * candidates.length)];
+      const wcDef = { ...wcBase }; // shallow copy so we don't mutate faction data
+      const p = G.players[pid - 1];
+      const spawnX = pid === 1 ? p.baseX + 48 : p.baseX - 48;
+      const wc = {
+        id: G.nextId++, player: pid, defId: '_wc_' + wcDef.id, def: wcDef,
+        x: spawnX, y: G.groundY - (wcDef.radius || 13),
+        hp: wcDef.hp, maxHp: wcDef.hp, vx: 0, vy: 0,
+        attackCooldown: 0.4, target: null, carrying: false, carryCount: 0,
+        offscreen: false, offTimer: 0, goToMid: false,
+        hitFlash: 0, aliveSecs: 0, spawnTime: Date.now(), dmgMult: 1.15,
+        kiteChance: wcDef.type === 'rng' ? 0.5 : 0,
+        veteranTimer: 0, veteranStacks: 0, stillTimer: 0, fortified: false, frenzyTimer: 0,
+        chargeTimer: 0, _speedMult: 1.0, lastHitTime: 0,
+        slowTimer: 0, stunTimer: 0, burnTimer: 0, burnDmgTotal: 0,
+        poisonTimer: 0, poisonDmgPerSec: 0,
+        wolfFrenzied: false, _berserkActive: false, _attackCount: 0, _hellfire: false,
+        isGuard: false, guardTimer: 0, killCount: 0,
+        lastHitById: null, lastHitByPlayer: null, _stunnedTargets: null,
+        spawnProtectionTimer: 1.5,
+        retreating: false, retreatTimer: 0, returnCount: 0, retreatCooldown: 0, healingPhase: false,
+        _warcryed: 0, _ironwalled: 0, passiveSummonTimer: 0,
+        _wildCard: true, _wildCardTimer: 20,
+      };
+      G.units.push(wc);
+      spawnParticles(spawnX, G.groundY, '#d4a843', 28);
+      spawnParticles(spawnX, G.groundY - 30, src.units[0]?.color || '#fff', 15);
+      showPopup(spawnX, G.groundY - 90, '🃏 WILD CARD!', '#d4a843', pid);
+      showPopup(spawnX, G.groundY - 68, `${wcDef.icon} ${wcDef.name} (${src.name})`, '#f9ca24', pid);
+      addKillFeed(`🃏 P${pid} WILD CARD — ${wcDef.icon} ${wcDef.name}`, '#d4a843');
+    }
+
+    function _tickWildCards(dt) {
+      for (let i = G.units.length - 1; i >= 0; i--) {
+        const u = G.units[i];
+        if (!u._wildCard) continue;
+        u._wildCardTimer = (u._wildCardTimer || 0) - dt;
+        if (u._wildCardTimer <= 0) {
+          spawnParticles(u.x, u.y, '#d4a843', 15);
+          G.units.splice(i, 1);
+        }
+      }
+    }
+
+    // ── EVENT VOTING ──────────────────────────────────────────────────────────────
+    // VS mode only: two event candidates shown for 5 seconds. P1 votes Q, P2 votes Enter.
+    // Majority wins; tie broken randomly. The winning event fires normally.
+    let G_eventVote = null; // { candidates: [id,id], votes: [0,0], voted: [false,false], timer: 5 }
+
+    const EVENT_META = {
+      wanderer: { name: '☠ ROGUE WANDERER', sub: 'Neutral unit — kill for +25💀' },
+      champion: { name: '💀 ROGUE CHAMPION', sub: '200HP attacker — +40💀 bounty' },
+      soul_cache: { name: '💰 SOUL CACHE', sub: 'Both sides gain +30 souls' },
+      blood_moon: { name: '🌑 BLOOD MOON', sub: '+50% unit speed for 20s' },
+      ancient_curse: { name: '💸 ANCIENT CURSE', sub: 'Losing side loses 25 souls' },
+      veterans_rally: { name: '⚔ VETERANS RALLY', sub: 'All units get +15% DMG for 20s' },
+      supply_drop: { name: '📦 SUPPLY DROP', sub: 'Random player gets 15 bodies' },
+      dark_eclipse: { name: '🌑 DARK ECLIPSE', sub: 'Mid income halved · SURGE×2 · 15s' },
+      meteor: { name: '☄ METEOR STRIKE', sub: 'Destroys units near mid' },
+      gold_rush: { name: '✨ GOLD RUSH', sub: 'Both players gain +60 souls' },
+      tremor: { name: '🌍 TREMOR', sub: 'Knocks back all ground units' },
+    };
+
+    function _startEventVote(candidates) {
+      G_eventVote = { candidates, votes: [0, 0], voted: [false, false], timer: 5 };
+      const metaA = EVENT_META[candidates[0]] || { name: candidates[0], sub: '' };
+      const metaB = EVENT_META[candidates[1]] || { name: candidates[1], sub: '' };
+      document.getElementById('vote-name-a').textContent = metaA.name;
+      document.getElementById('vote-sub-a').textContent = metaA.sub;
+      document.getElementById('vote-name-b').textContent = metaB.name;
+      document.getElementById('vote-sub-b').textContent = metaB.sub;
+      document.getElementById('vote-card-a').classList.remove('voted');
+      document.getElementById('vote-card-b').classList.remove('voted');
+      document.getElementById('vote-timer-display').textContent = '5';
+      document.getElementById('vote-tally').textContent = '';
+      document.getElementById('vote-overlay').classList.add('show');
+    }
+
+    function _resolveEventVote() {
+      if (!G_eventVote) return;
+      const { candidates, votes } = G_eventVote;
+      let winner;
+      if (votes[0] > votes[1]) winner = candidates[0];
+      else if (votes[1] > votes[0]) winner = candidates[1];
+      else winner = candidates[Math.floor(Math.random() * 2)]; // tie → random
+      G_eventVote = null;
+      document.getElementById('vote-overlay').classList.remove('show');
+      // Fire the chosen event
+      G.activeEvent = { type: winner, timer: 0 };
+      _dispatchEvent(winner);
+    }
+
+    function _tickEventVote(dt) {
+      if (!G_eventVote) return;
+      G_eventVote.timer -= dt;
+      const secs = Math.ceil(Math.max(0, G_eventVote.timer));
+      document.getElementById('vote-timer-display').textContent = secs;
+      const ta = `P1: ${G_eventVote.votes[0]}`, tb = `P2: ${G_eventVote.votes[1]}`;
+      document.getElementById('vote-tally').textContent = `${ta}  ·  ${tb}`;
+      if (G_eventVote.timer <= 0) _resolveEventVote();
+    }
+
+    function voteForEvent(pid) {
+      if (!G_eventVote || !G || !G.running || G.paused) return;
+      const idx = pid - 1;
+      if (G_eventVote.voted[idx]) return; // already voted
+      G_eventVote.voted[idx] = true;
+      G_eventVote.votes[idx]++;
+      document.getElementById(`vote-card-${idx === 0 ? 'a' : 'b'}`).classList.add('voted');
+    }
+
     function fireRandomEvent() {
       const elapsed = G.elapsed || 0;
       // Build weighted pool based on game state
@@ -6777,14 +7235,36 @@
         ['meteor', elapsed > 60 ? 2 : 0],    // only after 1 min
         ['gold_rush', isLopsided ? 1 : 3],       // less likely when lopsided
         ['tremor', elapsed > 90 ? 2 : 0],
-      ];
+      ].filter(([, w]) => w > 0);
+
+      // Pick two distinct events for voting (VS mode) or one directly (solo/AI)
+      if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && pool.length >= 2) {
+        const totalWeight = pool.reduce((s, [, w]) => s + w, 0);
+        const pickOne = (exclude) => {
+          const subPool = pool.filter(([id]) => id !== exclude);
+          const tw = subPool.reduce((s, [, w]) => s + w, 0);
+          let r = Math.random() * tw;
+          for (const [id, w] of subPool) { r -= w; if (r <= 0) return id; }
+          return subPool[0][0];
+        };
+        let r = Math.random() * totalWeight;
+        let chosenA = pool[0][0];
+        for (const [id, w] of pool) { r -= w; if (r <= 0) { chosenA = id; break; } }
+        const chosenB = pickOne(chosenA);
+        _startEventVote([chosenA, chosenB]);
+        return; // event fires only after vote resolves
+      }
+
+      // Solo / AI / tournament: fire immediately
       const totalWeight = pool.reduce((s, [, w]) => s + w, 0);
       let r = Math.random() * totalWeight;
       let chosen = pool[0][0];
       for (const [id, w] of pool) { r -= w; if (r <= 0) { chosen = id; break; } }
-
       G.activeEvent = { type: chosen, timer: 0 };
+      _dispatchEvent(chosen);
+    }
 
+    function _dispatchEvent(chosen) {
       if (chosen === 'wanderer' || chosen === 'champion') {
         _spawnRogueUnit(chosen === 'champion');
       } else if (chosen === 'soul_cache') {
@@ -6926,6 +7406,9 @@
     // ── Main event update tick ─────────────────────────────────────────────────
     function updateRogueEvent(dt) {
       const elapsed = G.elapsed || 0;
+
+      // Tick event vote if active (VS mode only)
+      if (G_eventVote) { _tickEventVote(dt); return; }
 
       // Spawn next event when timer fires and no active event
       if (!G.activeEvent && elapsed > (G.nextEventTime || 90 + Math.random() * 60)) {
@@ -7191,8 +7674,8 @@
           }
           // Necromancer kill via projectile: summon shade even if caster died
           if (!atk && p.summons && p.summonCount > 0 && t.def && !t.def.isWorker) {
-            const sCap = G.MAX_SHADES;
             const sPid = p.attackerPlayer;
+            const sCap = (sPid >= 1 && sPid <= 2) ? (G.players[sPid - 1].maxShades || 8) : 8;
             if (sPid >= 1 && sPid <= 2) {
               for (let _si = 0; _si < p.summonCount; _si++) {
                 if (G.shadeCount[sPid - 1] < sCap) {
@@ -7292,7 +7775,7 @@
           u.passiveSummonTimer -= dt;
           if (u.passiveSummonTimer <= 0) {
             u.passiveSummonTimer = u.def.passiveSummon || u.def.passiveSummonInterval || 12;
-            if (G.shadeCount[u.player - 1] < G.MAX_SHADES) {
+            if (G.shadeCount[u.player - 1] < (G.players[u.player - 1].maxShades || 8)) {
               spawnUnit(u.player, 's_shade', true, u.x, G.groundY);
               spawnParticles(u.x, u.y, '#9b59b6', 12);
               showPopup(u.x, u.y - 40, '🔮 SUMMON', '#9b59b6', u.player);
@@ -7358,7 +7841,7 @@
             u.vx = Math.sign(dx) * actualSpd;
           }
           // ── Ranged kiting — some archers back away, others hold their ground ──
-          if (u.def.type === 'rng' && !enemy.def.aerial && !u.def.aerial) {
+          if (u.def.type === 'rng' && !enemy.def.aerial && !u.def.aerial && !u.retreating && !u.healingPhase) {
             const kc = u.kiteChance || 0;
             const ownBase = G.players[u.player - 1].baseX;
             const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
@@ -7439,11 +7922,25 @@
       G.players.forEach(p => {
         const soulsBefore = p.souls;
         const earlyBonus = gameSec < 90 ? 0.3 * (1 - gameSec / 90) : 0; // tapers from +0.3 to 0 over 90s
-        // Mid income tapers: 1.2 → 0.78 after 120s of unbroken hold (reduces snowball compounding)
-        if (G.midOwner === p.id) G.midOwnerTimer = (G.midOwnerTimer || 0) + dt;
-        else if (G._prevMidOwner === p.id) G.midOwnerTimer = 0;
+        // Mid Escalation: income RAMPS UP the longer you hold — makes recapture increasingly urgent
+        if (G.midOwner === p.id) {
+          const _prevMHT = G.midOwnerTimer || 0;
+          G.midOwnerTimer = _prevMHT + dt;
+          // Announce escalation milestones
+          if (_prevMHT < 30 && G.midOwnerTimer >= 30) {
+            showPopup(G.midX, G.groundY - 85, '⚠ MID ESCALATING +1.5💀/s', '#f39c12', p.id);
+          } else if (_prevMHT < 60 && G.midOwnerTimer >= 60) {
+            showPopup(G.midX, G.groundY - 85, '🔥 MID MAXED +2.0💀/s', '#e74c3c', p.id);
+          }
+        } else if (G._prevMidOwner === p.id) G.midOwnerTimer = 0;
         const _eclipseActive = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
-        const midTaper = G.midOwner === p.id ? Math.max(0.39, (Math.max(0.78, 1.2 - (G.midOwnerTimer / 120) * 0.42)) * (_eclipseActive ? 0.5 : 1.0)) : 0;
+        // 0.8 → 1.5 over first 30s, 1.5 → 2.0 over next 30s, caps at 2.0
+        const _mhs = G.midOwnerTimer || 0;
+        const _midRaw = G.midOwner === p.id
+          ? (_mhs < 30 ? 0.8 + (_mhs / 30) * 0.7
+            : _mhs < 60 ? 1.5 + ((_mhs - 30) / 30) * 0.5
+              : 2.0) : 0;
+        const midTaper = _midRaw * (_eclipseActive ? 0.5 : 1.0);
         const baseTick = (0.45 + earlyBonus + midTaper) * dt;
         const _eclipseDesp = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
         const despTick = (p.despStacks * (_eclipseDesp ? 1.4 : 0.7)) * dt;
@@ -7519,8 +8016,12 @@
             G.midCapPlayer = null;
             G.midHolder = null;
 
-            // SFX.capture();
-            spawnParticles(G.midX, G.groundY, G.midOwner === 1 ? '#2471a3' : '#c0392b', 20);
+            // Mid-capture announcement
+            const _capCol = G.midOwner === 1 ? '#2471a3' : '#c0392b';
+            const _capLbl = G.midOwner === 1 ? '🔵 P1 CAPTURES MID' : '🔴 P2 CAPTURES MID';
+            showPopup(G.midX, G.groundY - 100, _capLbl, _capCol, G.midOwner);
+            showPopup(G.midX, G.groundY - 75, '+1.5💀/s', _capCol, G.midOwner);
+            spawnParticles(G.midX, G.groundY, G.midOwner === 1 ? '#2471a3' : '#c0392b', 30);
           }
         } else {
           G.midCapPlayer = G.midHolder; G.midCapTimer = 0;
@@ -7561,9 +8062,11 @@
         ind.style.color = G.midHolder === 1 ? '#2471a3' : '#c0392b';
         ind.classList.add('capturing');
       } else if (G.midOwner === 1) {
-        ind.textContent = '🔵 MIDDLE — PLAYER 1 (+1.5💀/s)'; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
+        const _r1 = (() => { const s = G.midOwnerTimer || 0; return s < 30 ? 0.8 + (s / 30) * 0.7 : s < 60 ? 1.5 + ((s - 30) / 30) * 0.5 : 2.0; })();
+        ind.textContent = `🔵 MIDDLE — P1 (+${_r1.toFixed(1)}💀/s)`; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
       } else if (G.midOwner === 2) {
-        ind.textContent = '🔴 MIDDLE — PLAYER 2 (+1.5💀/s)'; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
+        const _r2 = (() => { const s = G.midOwnerTimer || 0; return s < 30 ? 0.8 + (s / 30) * 0.7 : s < 60 ? 1.5 + ((s - 30) / 30) * 0.5 : 2.0; })();
+        ind.textContent = `🔴 MIDDLE — P2 (+${_r2.toFixed(1)}💀/s)`; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
       } else {
         ind.textContent = '⚔ MIDDLE — UNCLAIMED'; ind.style.color = 'var(--gold)'; ind.classList.remove('capturing');
       }
@@ -7917,6 +8420,23 @@
         ctx.strokeStyle = 'rgba(231,76,60,0.7)'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(x, y, r + 3, 0, Math.PI * 2); ctx.stroke();
       }
+      // Wild Card — pulsing gold ring + countdown bar underneath
+      if (u._wildCard) {
+        const wcp = 0.5 + Math.sin(Date.now() / 140) * 0.4;
+        ctx.save();
+        ctx.globalAlpha = wcp;
+        ctx.strokeStyle = '#f9ca24'; ctx.lineWidth = 3;
+        ctx.shadowBlur = 12; ctx.shadowColor = '#d4a843';
+        ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+        // Countdown bar
+        const wcPct = Math.max(0, (u._wildCardTimer || 0) / 20);
+        const cbw = r * 2 + 8, cby = (u.def.aerial ? y + r * 1.5 : y + r + 4);
+        ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(x - cbw / 2, cby, cbw, 2.5);
+        ctx.fillStyle = wcPct > 0.35 ? '#f9ca24' : '#e74c3c';
+        ctx.fillRect(x - cbw / 2, cby, cbw * wcPct, 2.5);
+      }
       // Berserk glow
       if (u._berserkActive) {
         ctx.shadowBlur = 12; ctx.shadowColor = '#e74c3c';
@@ -8100,8 +8620,21 @@
         ctx.restore();
         return;
       }
-      // Kill marks (marked unit)
-      if ((u.killCount || 0) >= 3) {
+      // Kill marks (marked unit at 3+ kills = gold ring; veteran at 5+ = pulsing star)
+      if ((u.killCount || 0) >= 5 || u._veteran) {
+        // Veteran: pulsing gold ring + star
+        const pulse = 0.55 + Math.sin(Date.now() / 200) * 0.35;
+        ctx.save();
+        ctx.globalAlpha = pulse;
+        ctx.strokeStyle = '#d4a843'; ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 10; ctx.shadowColor = '#f9ca24';
+        ctx.beginPath(); ctx.arc(x, y, r + 3, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+        ctx.fillStyle = '#f9ca24'; ctx.font = `bold ${Math.max(8, r * 0.75)}px serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('⭐', x, y - r - 10);
+      } else if ((u.killCount || 0) >= 3) {
         ctx.strokeStyle = '#d4a843'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(x, y, r + 2, 0, Math.PI * 2); ctx.stroke();
       }
@@ -8169,6 +8702,7 @@
       updateMid(G.dt);
       updateSiege(G.dt);
       updateRogueEvent(G.dt);
+      _tickWildCards(G.dt);
       updateAI(G.dt);
       updateSpies(G.dt);
       if (_tutActive) _checkTutConditions();
@@ -8192,6 +8726,9 @@
       if (_tutActive) stopIngameTutorial();
       G.running = false;
       G.collapseTime = 0;
+      // Clear any pending event vote
+      G_eventVote = null;
+      document.getElementById('vote-overlay').classList.remove('show');
       if (dead.length >= 2) {
         const _G = G;
         setTimeout(() => {
@@ -8214,6 +8751,14 @@
       SESSION.games++;
       SESSION.wins[winner.id - 1]++;
       SESSION.factions = [G.factions[0].name, G.factions[1].name];
+      // Track per-faction wins for session badges on faction select screen
+      const _winFid = G.factions[winner.id - 1].id;
+      SESSION.factionWins[_winFid] = (SESSION.factionWins[_winFid] || 0) + 1;
+      // Grudge Match: remember loser for rematch bonus
+      const _loserPid = winner.id === 1 ? 2 : 1;
+      SESSION._lastLoserPid = _loserPid;
+      SESSION._lastWinFactionName = G.factions[winner.id - 1].name;
+      SESSION._lastWinFactionIcon = G.factions[winner.id - 1].icon;
       // Tournament: record match result (called after gameover renders)
       if (GAME_MODE === 'tournament' && TOURNAMENT) {
         TOURNAMENT._pendingWinnerPid = winner.id;
@@ -8228,6 +8773,10 @@
         const gt = document.getElementById('go-title');
         const _soloMode = GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
         const _isTournament = GAME_MODE === 'tournament' && TOURNAMENT;
+        const _isDraft = GAME_MODE === 'draft';
+        // Update change-faction button label contextually
+        const cfBtn = document.getElementById('btn-change-faction');
+        if (cfBtn) cfBtn.textContent = _isDraft ? '🃏 REDRAFT' : '🔄 CHANGE FACTION';
         const _tournamentWinner = _isTournament ? (_winner.id === 1 ? TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p1 : TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p2) : null;
         const _winnerName = _isTournament && _tournamentWinner
           ? `${_tournamentWinner.faction.icon} ${_tournamentWinner.name} WINS!`
@@ -8264,6 +8813,21 @@
           }
           else goSub.textContent = mockSubs[Math.floor(Math.random() * mockSubs.length)];
         }
+        // Grudge Match taunt
+        const goTaunt = document.getElementById('go-grudge-taunt');
+        if (goTaunt && SESSION.games >= 2 && GAME_MODE !== 'tournament') {
+          const _winIcon = SESSION._lastWinFactionIcon || '⚔';
+          const _winName = SESSION._lastWinFactionName || 'the victor';
+          const grudgeTaunts = [
+            `${_winIcon} ${_winName} mocks your defeat. Demand a rematch? (+5💀 bonus)`,
+            `${_winIcon} ${_winName} laughs at your collapse. Time to avenge yourself. (+5💀 bonus)`,
+            `The ${_winName} commander raises a fist. Will you let them have the last word? (+5💀 bonus)`,
+            `${_winIcon} ${_winName}: "Come back when you're ready." (+5💀 bonus)`,
+          ];
+          goTaunt.textContent = grudgeTaunts[Math.floor(Math.random() * grudgeTaunts.length)];
+        } else if (goTaunt) {
+          goTaunt.textContent = '';
+        }
         const gameMin = Math.floor((_G.elapsed || 0) / 60), gameSec2 = Math.floor((_G.elapsed || 0) % 60);
         const timeStr = `${gameMin}m ${String(gameSec2).padStart(2, '0')}s`;
         document.getElementById('go-match-time').textContent = '⏱ ' + timeStr;
@@ -8283,6 +8847,8 @@
         } else {
           sesEl.textContent = '';
         }
+        // Refresh win badges on faction cards
+        refreshFactionWinBadges();
         function buildUnitBreakdown(p) {
           const unitDefs = _G.unitDefs[p.id - 1] || [];
           const combatDefs = unitDefs.filter(d => !d.isSpawned && !d.isWorker);
@@ -8761,10 +9327,30 @@
         if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
         // P2 controls only active in VS mode
-        if (GAME_MODE === 'vs') {
+        if (GAME_MODE === 'vs' || GAME_MODE === 'draft') {
           if (e.code === KEYS.p2Up) { factionCursorMove(2, -1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Down) { factionCursorMove(2, 1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { factionConfirm(2); e.preventDefault(); return; }
+        }
+        return;
+      }
+      // Draft screen keyboard nav
+      if (document.getElementById('sc-draft').classList.contains('active') && DRAFT.state !== 'done') {
+        const ap = _draftActivePid();
+        if (ap === 1) {
+          if (e.code === KEYS.p1Up) { _draftMoveCursor(1, -1); e.preventDefault(); return; }
+          if (e.code === KEYS.p1Down) { _draftMoveCursor(1, 1); e.preventDefault(); return; }
+          if (e.code === KEYS.p1Act) { _draftConfirm(1, DRAFT.cursors[0]); e.preventDefault(); return; }
+        } else if (ap === 2) {
+          if (e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(2, -1); e.preventDefault(); return; }
+          if (e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(2, 1); e.preventDefault(); return; }
+          if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { _draftConfirm(2, DRAFT.cursors[1]); e.preventDefault(); return; }
+        }
+        return;
+      }
+      if (document.getElementById('sc-draft').classList.contains('active') && DRAFT.state === 'done') {
+        if (e.code === 'Enter' || e.code === KEYS.p1Act || e.code === KEYS.p2Act) {
+          initGame(); e.preventDefault();
         }
         return;
       }
@@ -8826,22 +9412,30 @@
       }
       if (!G || !G.running || G.paused) return;
 
+      // Event vote — intercept before normal controls during vote window (VS mode only)
+      if (G_eventVote && (GAME_MODE === 'vs' || GAME_MODE === 'draft')) {
+        if (e.code === KEYS.p1Act) { e.preventDefault(); voteForEvent(1); return; }
+        if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); voteForEvent(2); return; }
+      }
+
       // P1 controls — disabled in aivsai
       if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
+      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
       // P2 controls — disabled when AI controls P2
-      else if (GAME_MODE === 'vs' && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
-      else if (GAME_MODE === 'vs' && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
-      else if (GAME_MODE === 'vs' && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
-      else if (GAME_MODE === 'vs' && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
-      else if (GAME_MODE === 'vs' && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
       else {
         for (let s = 0; s < 5; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
-          if (GAME_MODE === 'vs' && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
+          if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
         }
       }
     });
@@ -8903,7 +9497,7 @@
         _applyFactionScreenMode();
         setTimeout(() => {
           highlightFactionCursor(1);
-          if (GAME_MODE === 'vs') highlightFactionCursor(2);
+          if (GAME_MODE === 'vs' || GAME_MODE === 'draft') highlightFactionCursor(2);
         }, 10);
       }
     }
@@ -8937,11 +9531,11 @@
       document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>` +
         kbdRow('Navigate Left', 'p1Left') + kbdRow('Navigate Right', 'p1Right') +
         kbdRow('Mode Up', 'p1Up') + kbdRow('Mode Down', 'p1Down') +
-        kbdRow('Spawn / Activate', 'p1Act') + slotRows(1);
+        kbdRow('Spawn / Activate', 'p1Act') + kbdRow('😤 Taunt', 'p1Taunt') + slotRows(1);
       document.getElementById('ctrl-p2-panel').innerHTML = `<h3>PLAYER 2</h3>` +
         kbdRow('Navigate Left', 'p2Left') + kbdRow('Navigate Right', 'p2Right') +
         kbdRow('Mode Up', 'p2Up') + kbdRow('Mode Down', 'p2Down') +
-        kbdRow('Spawn / Activate', 'p2Act') + slotRows(2);
+        kbdRow('Spawn / Activate', 'p2Act') + kbdRow('😤 Taunt', 'p2Taunt') + slotRows(2);
     }
 
 
@@ -8958,6 +9552,11 @@
     document.getElementById('btn-change-faction').addEventListener('click', () => {
       G = null; AI_FACTION_IDX = null;
       fSelected = [null, null];
+      // Draft mode — go back to draft screen for a new draft
+      if (GAME_MODE === 'draft') {
+        startDraftMode();
+        return;
+      }
       document.getElementById('btn-start').disabled = true;
       document.getElementById('btn-start').textContent = 'START BATTLE →';
       document.getElementById('fchosen-p1').textContent = '— No faction chosen —';
@@ -8997,7 +9596,7 @@
     }
 
     function refreshRebindUI() {
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt'].forEach(k => {
         const el = document.getElementById('rk-' + k);
         if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
@@ -9033,13 +9632,16 @@
         FACTIONS.forEach((f, fi) => {
           const card = document.createElement('div');
           card.className = 'fcard';
+          card.dataset.factionId = f.id;
           const unitTags = f.units.filter(u => !u.isSpawned).map(u => {
             const cls = u.type === 'air' ? 'air' : u.type === 'rng' ? 'rng' : '';
             return `<span class="futag ${cls}">${u.icon} ${u.name}</span>`;
           }).join('');
           const beginnerBadge = f.id === 'warriors' ? '<div style="display:inline-block;background:rgba(212,168,67,.18);border:1px solid rgba(212,168,67,.5);color:#d4a843;font-family:Cinzel,serif;font-size:.58rem;padding:2px 7px;border-radius:3px;margin-bottom:4px;letter-spacing:.06em;">⭐ BEGINNER FRIENDLY</div>' : '';
+          const wins = SESSION.factionWins[f.id] || 0;
+          const winBadge = wins > 0 ? `<span class="fcard-win-badge" title="${wins} win${wins !== 1 ? 's' : ''} this session">${wins >= 5 ? '🏆' : '🔥'.repeat(Math.min(wins, 4))} ${wins}W</span>` : '';
           card.innerHTML = `
-        <div class="fcard-head"><span class="fcard-icon">${f.icon}</span><span class="fcard-name">${f.name}</span></div>
+        <div class="fcard-head" style="display:flex;align-items:center;gap:4px;"><span class="fcard-icon">${f.icon}</span><span class="fcard-name">${f.name}</span>${winBadge}</div>
         ${beginnerBadge}<div class="fcard-tag">${f.tagline}</div>
         <div class="fcard-passive">✦ ${f.passive}</div>
         <div class="fcard-units">${unitTags}</div>
@@ -9053,6 +9655,28 @@
           container.appendChild(card);
         });
         document.getElementById(`fscroll-p${pid}`).textContent = `${FACTIONS.length} factions`;
+      });
+    }
+
+    // Lightweight badge refresh — updates win badge on existing cards without rebuilding
+    function refreshFactionWinBadges() {
+      document.querySelectorAll('.fcard[data-faction-id]').forEach(card => {
+        const fid = card.dataset.factionId;
+        const wins = SESSION.factionWins[fid] || 0;
+        const head = card.querySelector('.fcard-head');
+        if (!head) return;
+        let badge = head.querySelector('.fcard-win-badge');
+        if (wins > 0) {
+          const html = `${wins >= 5 ? '🏆' : '🔥'.repeat(Math.min(wins, 4))} ${wins}W`;
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'fcard-win-badge';
+            badge.title = `${wins} win${wins !== 1 ? 's' : ''} this session`;
+            head.appendChild(badge);
+          }
+          badge.textContent = html;
+          badge.title = `${wins} win${wins !== 1 ? 's' : ''} this session`;
+        }
       });
     }
 
@@ -9348,6 +9972,212 @@
     document.getElementById('btn-play').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-faction'); });
     document.getElementById('btn-solo').addEventListener('click', () => { setGameMode('solo'); showScreen('sc-faction'); });
     document.getElementById('btn-aivsai').addEventListener('click', () => { setGameMode('aivsai'); showScreen('sc-faction'); });
+    document.getElementById('btn-draft').addEventListener('click', () => { startDraftMode(); });
+    document.getElementById('btn-draft-back').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas(); });
+    document.getElementById('btn-draft-start').addEventListener('click', () => {
+      if (DRAFT.state === 'done') { initGame(); }
+    });
+
+    // ─── DRAFT MODE ──────────────────────────────────────────────────────────────
+    // Flow: P1 Bans → P2 Bans → P1 Picks → P2 Picks → START
+    // Each step is keyboard-navigated (same W/S + Q/Enter as faction screen).
+    // Banned cards are greyed out and skipped by cursor nav.
+
+    let DRAFT = {
+      state: 'idle',  // 'p1ban' | 'p2ban' | 'p1pick' | 'p2pick' | 'done'
+      banned: [],     // [factionIndex, ...]
+      picks: [null, null], // [p1Idx, p2Idx]
+      cursors: [0, 0],
+    };
+
+    const DRAFT_STEPS = ['p1ban', 'p2ban', 'p1pick', 'p2pick'];
+    const DRAFT_STEP_LABELS = {
+      p1ban: { text: '🔵 P1 — BAN A FACTION', cls: 'p1-turn', hint: 'W/S to browse · Q to ban' },
+      p2ban: { text: '🔴 P2 — BAN A FACTION', cls: 'p2-turn', hint: '↑/↓ to browse · ENTER to ban' },
+      p1pick: { text: '🔵 P1 — PICK YOUR FACTION', cls: 'p1-turn', hint: 'W/S to browse · Q to pick' },
+      p2pick: { text: '🔴 P2 — PICK YOUR FACTION', cls: 'p2-turn', hint: '↑/↓ to browse · ENTER to pick' },
+      done: { text: '⚔ READY — START BATTLE', cls: 'done-turn', hint: 'Press START or both confirm' },
+    };
+
+    function startDraftMode() {
+      setGameMode('draft');
+      DRAFT = { state: 'p1ban', banned: [], picks: [null, null], cursors: [0, 0] };
+      fSelected = [null, null];
+      P1_FACTION = null; P2_FACTION = null;
+      _buildDraftCards();
+      _updateDraftBanner();
+      document.getElementById('btn-draft-start').disabled = true;
+      showScreen('sc-draft');
+      _draftMoveCursor(1, 0); // highlight initial positions
+      _draftMoveCursor(2, 0);
+    }
+
+    function _buildDraftCards() {
+      [1, 2].forEach(pid => {
+        const container = document.getElementById(`draft-fcards-p${pid}`);
+        container.innerHTML = '';
+        FACTIONS.forEach((f, fi) => {
+          const card = document.createElement('div');
+          card.className = 'fcard';
+          card.dataset.fi = fi;
+          const wins = SESSION.factionWins[f.id] || 0;
+          const winBadge = wins > 0 ? `<span class="fcard-win-badge">${wins >= 5 ? '🏆' : '🔥'.repeat(Math.min(wins, 4))} ${wins}W</span>` : '';
+          card.innerHTML = `
+            <div class="fcard-head" style="display:flex;align-items:center;gap:4px;">
+              <span class="fcard-icon">${f.icon}</span>
+              <span class="fcard-name">${f.name}</span>${winBadge}
+            </div>
+            <div class="fcard-tag">${f.tagline}</div>
+            <div class="fcard-passive" style="font-size:clamp(.6rem,1vw,.78rem);color:rgba(255,255,255,.55);">✦ ${f.passive}</div>
+            <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
+          card.addEventListener('click', () => _draftConfirm(pid, fi));
+          container.appendChild(card);
+        });
+      });
+    }
+
+    function _draftActivePid() {
+      if (DRAFT.state === 'p1ban' || DRAFT.state === 'p1pick') return 1;
+      if (DRAFT.state === 'p2ban' || DRAFT.state === 'p2pick') return 2;
+      return null;
+    }
+
+    function _draftNextAvailableCursor(pid, from, dir) {
+      let idx = from;
+      for (let i = 0; i < FACTIONS.length; i++) {
+        idx = (idx + dir + FACTIONS.length) % FACTIONS.length;
+        if (!DRAFT.banned.includes(idx) && DRAFT.picks[0] !== idx && DRAFT.picks[1] !== idx) return idx;
+        // allow banned to be "browsed" just not selected — stop only at picked
+      }
+      return from;
+    }
+
+    function _draftMoveCursor(pid, dir) {
+      if (dir !== 0) {
+        // Skip over factions already banned (for browsing, just skip totally-unavailable)
+        let next = (DRAFT.cursors[pid - 1] + dir + FACTIONS.length) % FACTIONS.length;
+        // Keep stepping if this faction was already PICKED by someone
+        let steps = 0;
+        while ((DRAFT.picks[0] === next || DRAFT.picks[1] === next) && steps < FACTIONS.length) {
+          next = (next + dir + FACTIONS.length) % FACTIONS.length;
+          steps++;
+        }
+        DRAFT.cursors[pid - 1] = next;
+      }
+      // Highlight cursor on both card lists
+      [1, 2].forEach(p => {
+        const cards = document.querySelectorAll(`#draft-fcards-p${p} .fcard`);
+        cards.forEach((c, i) => {
+          c.classList.toggle('fkey-cursor',
+            i === DRAFT.cursors[pid - 1] && _draftActivePid() === pid
+          );
+        });
+        if (_draftActivePid() === pid) {
+          const active = cards[DRAFT.cursors[pid - 1]];
+          if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      });
+    }
+
+    function _draftConfirm(pid, fi) {
+      // Only the active player can act
+      if (_draftActivePid() !== pid) return;
+      // Can't pick an already-picked faction
+      if (DRAFT.picks[0] === fi || DRAFT.picks[1] === fi) return;
+      // Can't pick a banned faction during pick phase
+      if ((DRAFT.state === 'p1pick' || DRAFT.state === 'p2pick') && DRAFT.banned.includes(fi)) return;
+
+      if (DRAFT.state === 'p1ban' || DRAFT.state === 'p2ban') {
+        // Ban
+        if (DRAFT.banned.includes(fi)) return;
+        DRAFT.banned.push(fi);
+        _applyDraftBannedStyling();
+        // Flash the banned card red briefly
+        [1, 2].forEach(p => {
+          const card = document.querySelectorAll(`#draft-fcards-p${p} .fcard`)[fi];
+          if (card) { card.style.transition = 'none'; card.style.boxShadow = '0 0 18px #e74c3c'; setTimeout(() => { card.style.boxShadow = ''; card.style.transition = ''; }, 400); }
+        });
+      } else {
+        // Pick
+        const pidIdx = pid - 1;
+        DRAFT.picks[pidIdx] = fi;
+        fSelected[pidIdx] = fi;
+        if (pid === 1) { P1_FACTION = FACTIONS[fi]; }
+        else { P2_FACTION = FACTIONS[fi]; }
+        // Highlight picked card
+        [1, 2].forEach(p => {
+          const card = document.querySelectorAll(`#draft-fcards-p${p} .fcard`)[fi];
+          if (card) card.classList.add(pid === 1 ? 'sel1' : 'sel2');
+        });
+      }
+
+      // Advance state
+      const stepIdx = DRAFT_STEPS.indexOf(DRAFT.state);
+      if (stepIdx < DRAFT_STEPS.length - 1) {
+        DRAFT.state = DRAFT_STEPS[stepIdx + 1];
+        // Move cursor to first non-banned faction for new active player
+        const newPid = _draftActivePid();
+        if (newPid) {
+          let start = DRAFT.cursors[newPid - 1];
+          // Ensure cursor isn't on a banned or picked faction
+          if (DRAFT.banned.includes(start) || DRAFT.picks[0] === start || DRAFT.picks[1] === start) {
+            for (let i = 0; i < FACTIONS.length; i++) {
+              const candidate = (start + i) % FACTIONS.length;
+              if (!DRAFT.banned.includes(candidate) && DRAFT.picks[0] !== candidate && DRAFT.picks[1] !== candidate) {
+                DRAFT.cursors[newPid - 1] = candidate;
+                break;
+              }
+            }
+          }
+          _draftMoveCursor(newPid, 0);
+        }
+      } else {
+        DRAFT.state = 'done';
+      }
+
+      _updateDraftBanner();
+      _updateDraftStatus();
+
+      if (DRAFT.state === 'done') {
+        document.getElementById('btn-draft-start').disabled = false;
+        // Clear all cursors
+        document.querySelectorAll('#sc-draft .fcard').forEach(c => c.classList.remove('fkey-cursor'));
+      }
+    }
+
+    function _applyDraftBannedStyling() {
+      [1, 2].forEach(pid => {
+        document.querySelectorAll(`#draft-fcards-p${pid} .fcard`).forEach((card, fi) => {
+          card.classList.toggle('draft-banned', DRAFT.banned.includes(fi));
+        });
+      });
+    }
+
+    function _updateDraftBanner() {
+      const banner = document.getElementById('draft-banner');
+      const hint = document.getElementById('draft-footer-hint');
+      const info = DRAFT_STEP_LABELS[DRAFT.state] || DRAFT_STEP_LABELS['done'];
+      banner.textContent = info.text;
+      banner.className = `p${_draftActivePid() === 1 ? '1' : _draftActivePid() === 2 ? '2' : 'done'}-turn`;
+      // Use the correct class
+      banner.className = info.cls;
+      if (hint) hint.textContent = info.hint;
+    }
+
+    function _updateDraftStatus() {
+      const s1 = document.getElementById('draft-p1-status');
+      const s2 = document.getElementById('draft-p2-status');
+      if (s1) {
+        const b1 = DRAFT.banned[0] !== undefined ? `❌ Banned: ${FACTIONS[DRAFT.banned[0]].icon} ${FACTIONS[DRAFT.banned[0]].name}` : '❌ Ban pending...';
+        const p1 = DRAFT.picks[0] !== null ? `✅ Picked: ${FACTIONS[DRAFT.picks[0]].icon} ${FACTIONS[DRAFT.picks[0]].name}` : '⏳ Pick pending...';
+        s1.innerHTML = b1 + '<br>' + p1;
+      }
+      if (s2) {
+        const b2 = DRAFT.banned[1] !== undefined ? `❌ Banned: ${FACTIONS[DRAFT.banned[1]].icon} ${FACTIONS[DRAFT.banned[1]].name}` : '❌ Ban pending...';
+        const p2 = DRAFT.picks[1] !== null ? `✅ Picked: ${FACTIONS[DRAFT.picks[1]].icon} ${FACTIONS[DRAFT.picks[1]].name}` : '⏳ Pick pending...';
+        s2.innerHTML = b2 + '<br>' + p2;
+      }
+    }
     document.getElementById('btn-tutorial').addEventListener('click', () => {
       // Launch interactive in-game tutorial
       GAME_MODE = 'tutorial';
@@ -9384,11 +10214,11 @@
       document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>
         ${kbdRow('Navigate Left', 'p1Left')}${kbdRow('Navigate Right', 'p1Right')}
         ${kbdRow('Mode Up', 'p1Up')}${kbdRow('Mode Down', 'p1Down')}
-        ${kbdRow('Spawn / Activate', 'p1Act')}${slotRows(1)}`;
+        ${kbdRow('Spawn / Activate', 'p1Act')}${kbdRow('😤 Taunt', 'p1Taunt')}${slotRows(1)}`;
       document.getElementById('ctrl-p2-panel').innerHTML = `<h3>PLAYER 2</h3>
         ${kbdRow('Navigate Left', 'p2Left')}${kbdRow('Navigate Right', 'p2Right')}
         ${kbdRow('Mode Up', 'p2Up')}${kbdRow('Mode Down', 'p2Down')}
-        ${kbdRow('Spawn / Activate', 'p2Act')}${slotRows(2)}`;
+        ${kbdRow('Spawn / Activate', 'p2Act')}${kbdRow('😤 Taunt', 'p2Taunt')}${slotRows(2)}`;
     }
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
@@ -9439,7 +10269,7 @@
 
     function refreshRebindUI() {
       // Navigation keys
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt'].forEach(k => {
         const el = document.getElementById('rk-' + k);
         if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
