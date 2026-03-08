@@ -1767,10 +1767,29 @@
     }
 
     .income-rate {
-      font-size: clamp(.6rem, .9vw, .82rem);
-      color: var(--dim);
+      font-size: clamp(.7rem, 1.05vw, .92rem);
+      color: rgba(212, 168, 67, .75);
       letter-spacing: .04em;
       padding-left: 2px;
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Rotating in-game tip bar — lives below income rate */
+    .ingame-tip {
+      font-size: clamp(.72rem, 1.1vw, .9rem);
+      color: rgba(255, 255, 255, .72);
+      letter-spacing: .025em;
+      padding: 3px 6px 2px;
+      background: rgba(0, 0, 0, .28);
+      border-left: 2px solid rgba(212, 168, 67, .45);
+      border-radius: 0 3px 3px 0;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      transition: opacity .5s ease;
+      cursor: help;
     }
 
     .hp-wrap {
@@ -3668,6 +3687,7 @@
               </div>
             </div>
             <div class="income-rate" id="p1-income-rate">+0.6💀/s · +0🦴/m</div>
+            <div class="ingame-tip" id="p1-ingame-tip">💡 Deploy workers early — bodies are your army's fuel</div>
           </div>
           <div class="hp-wrap">
             <div class="rlabel" style="white-space:nowrap">🏰 BASE</div>
@@ -3717,6 +3737,7 @@
               </div>
             </div>
             <div class="income-rate" id="p2-income-rate">+0.6💀/s · +0🦴/m</div>
+            <div class="ingame-tip" id="p2-ingame-tip">💡 Deploy workers early — bodies are your army's fuel</div>
           </div>
           <div class="hp-wrap">
             <div class="rlabel" style="white-space:nowrap">🏰 BASE</div>
@@ -4415,14 +4436,14 @@
     const FACTIONS = [
       {
         id: 'warriors', name: 'Warriors', icon: '⚔️', tagline: 'Balanced veterans. Strong melee, capable archers, deadly aerial.',
-        passive: 'Veterans: melee units gain +8% DMG per 5 seconds alive (max 2 stacks).',
+        passive: 'Veterans: melee units gain +8% DMG per 5 seconds alive (max 2 stacks). Soldiers have Charge Strike — +80% damage on first hit after 1.5s of marching.',
         pros: ['Well-rounded roster with no hard weaknesses — good for beginners', 'Gryphon Rider excels at shredding aerial and high-HP targets', 'Shieldwall Knight has the highest base HP of any standard melee unit'],
         cons: ['No special economy mechanics — relies on pure army efficiency', 'Gryphon is expensive and a priority target — losing it hurts badly', 'No healing or revival — fallen units stay dead'],
         matchup: 'Best against: most factions | Weak to: Summoner shade swarms',
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid.' },
-          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Reliable frontline fighter. Benefits from Veterans passive.' },
+          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true },
           { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 1, hp: 40, speed: 65, dmg: 14, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.' },
           { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 12, bodies: 3, hp: 140, speed: 50, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage.' },
           { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 18, bodies: 5, hp: 90, speed: 85, dmg: 26, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3 },
@@ -4464,16 +4485,16 @@
 
       {
         id: 'brutes', name: 'Brutes', icon: '🪨', tagline: 'Unstoppable heavies. Fortified tanks that crush everything in their path.',
-        passive: 'Fortify: standing still for 1s grants 30% damage reduction (requires 0.5s without hits).',
+        passive: 'Fortify: standing still for 1s grants 30% damage reduction. Heavy units are immune to knockback. Warlord and Grave Brute: Ground Slam AoE every 4th hit.',
         pros: ['Highest average HP per unit — trades extremely well in sustained melee', 'Warlord with Fortify active becomes near-unkillable without focus fire', 'Grave Brute is the single most durable unit in the game at 180 HP'],
         cons: ['Extremely slow — fast melee and aerial units can easily disengage', 'No ranged options — purely melee-based and loses to ranged harassment', 'Fortify requires standing still — forced movement from slow-stun negates it'],
         matchup: 'Best against: other melee factions | Weak to: Spirits, Infernal (mobile/ranged)',
         startSouls: 18, startBodies: 12,
         units: [
           { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid. Sturdier than average.' },
-          { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Slow but hits hard. Benefits from Fortify.' },
-          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. 180 HP. Fortify gives effective 257 HP. Devastating at close range.' },
-          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit in game. 160 HP, slow but crushing damage.' },
+          { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
+          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 16, bodies: 4, hp: 65, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
           { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 55, speed: 46, dmg: 20, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
         ],
@@ -4488,7 +4509,7 @@
 
       {
         id: 'spirits', name: 'Spirits', icon: '✨', tagline: 'Swift sky hunters. Masters of aerial combat and soul gathering.',
-        passive: 'Sky Bounty: killing any aerial unit grants +6 souls instantly.',
+        passive: 'Ethereal: all units take 15% less damage from melee attacks. Sky Bounty: killing any aerial unit grants +6 souls instantly.',
         pros: ['Phantom ranged unit is the fastest-firing ranged in the game', 'Sky Bounty passive generates huge soul income against aerial-heavy factions', 'Specter aerial unit has the highest base speed of all aerial units'],
         cons: ['All units have lower HP than average — can be overwhelmed by heavy melee', 'No healing — once a unit is low, it will die', 'Sky Bounty only triggers on aerial kills — worthless vs ground-only factions'],
         matchup: 'Best against: aerial-heavy factions | Weak to: Brutes, Glacial',
@@ -4520,7 +4541,7 @@
           { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 1, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Returns 2 bodies per trip, 4 from mid (bonus).', groveMidBonus: true },
           { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 1, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
           { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
-          { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 14, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies for 8 HP in 110px.', sylphHeal: 8, sylphHealRange: 110 },
+          { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 14, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies 8 HP. On death: pollinates 3 nearby allies — 3 HP/s regen for 6s.', sylphHeal: 8, sylphHealRange: 110, pollenDeath: true },
           { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 150, speed: 42, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
         ],
         extraUnits: [{ id: 've_guard', name: 'Ancient Oak', icon: '🌳', souls: 0, bodies: 0, hp: 250, speed: 35, dmg: 22, range: 35, aerial: false, isWorker: false, attackRate: 0.7, radius: 22, color: '#27ae60', type: 'mel', desc: 'Royal Guard. Massive HP. Adjacent allies gain +1 HP regen/sec. Despawns 30s.', isSpawned: true, guardRegen: 1 }],
@@ -4603,7 +4624,7 @@
 
       {
         id: 'bloodpact', name: 'Bloodpact', icon: '🩸', tagline: 'Blood sacrifice. Spend HP to grow stronger. Kill or be killed.',
-        passive: 'Blood Tithe: each unit you spawn gives you back 2 souls — cheaper army but you bleed for it.',
+        passive: 'Blood Tithe: each unit spawned refunds 2 souls. Blood Pool: unit deaths leave slowing puddles for 8 seconds.',
         pros: ['Blood Tithe passive refunds 2 souls per spawn — effective 2 soul discount on everything', 'Dire Wolf grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 30% HP, doubling attack rate when near death'],
         cons: ['Wolfborn melee unit must kill to "grow" — weak until it has kills', 'No ranged options beyond the Plague Archer — limited damage at range', 'Army power depends heavily on kills — losing fights means losing your edge'],
         matchup: 'Best against: equal or smaller armies | Weak to: mass ranged (Warriors, Spirits)',
@@ -4801,7 +4822,7 @@
       { render(el) { el.innerHTML = `<div class="tut-title">MENDERS FACTION</div><div class="tut-sub">UNIQUE: RETREAT AND RETURN</div><div class="tut-body">The Menders have a unique mechanic — their units retreat when damaged instead of dying:<br><br>• Units below <b>35% HP</b> automatically turn and run back to base<br>• At base, they heal gradually over 6 seconds (vulnerable during this time!)<br>• After fully healed, they rejoin the fight and a <b>18s retreat cooldown</b> begins<br>• Veteran units gain a permanent <b>+10% DMG</b> each time they successfully retreat and return (max 3 times)<br><br>The Cleric fires healing projectiles at the lowest-HP friendly unit. The Seraph heals nearby allies on every attack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💚</span>Unit below 35% HP → retreats<br>Heals fully → returns stronger</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">KEY BINDINGS &amp; HOTKEYS</div><div class="tut-sub">CUSTOMISE YOUR CONTROLS</div><div class="tut-body">All controls can be rebound from the main menu's <b>⌨️ KEY Bindings</b> screen.<br><br>You can also assign <b>Direct Spawn Hotkeys</b> — optional keys that instantly spawn a specific unit slot without navigating the menu. For example, bind <kbd>Q</kbd> to Unit Slot 1 and tap it to immediately spawn your first unit.<br><br>Slot labels show the actual unit names if you've already picked a faction. Hotkeys are unassigned by default and reset on page refresh.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⌨️</span>Navigate = WASD / Arrow Keys<br>Direct spawn = any key (optional)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Controls screen updates live with your bindings</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">JUICY COMBAT</div><div class="tut-sub">KNOCKBACK · HIT SHAKE · PARTICLES</div><div class="tut-body">Combat is designed to <b>feel impactful</b>:<br><br>• Every melee hit <b>knocks the target back</b> slightly — heavier hits push further<br>• Units <b>shake visually</b> when taking heavy hits — harder hits shake more<br>• Units burst into coloured particles on death<br>• The losing tower shakes violently before toppling and collapsing in a shower of debris<br><br>These details are all real gameplay mechanics — knockback slightly delays enemy advance and can separate units from a pack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💥</span>Melee hit → knockback + unit shake<br>Base hit → screen shake<br>Tower death → violent collapse</div></div>`; } },
-    ];;
+    ];
 
     // ─── IN-GAME TUTORIAL ────────────────────────────────────────────────────────
 
@@ -5138,14 +5159,48 @@
     const AI_PERSONALITIES = ['aggressive', 'defensive', 'swarm', 'economist', 'aerial', 'counter', 'saver', 'rusher', 'balanced', 'berserker', 'turtler', 'opportunist'];
 
     const AI_DIFF_SETTINGS = {
-      // All AIs are active and aggressive — difficulty determines HOW smart they are,
-      // not whether they bother doing anything. Speed differences are secondary.
-      // Difficulty gaps are intentionally large — each tier should feel like a different opponent
-      tutorial: { interval: 3.5, spawnChance: 0.68, saveThreshold: 50, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
-      easy: { interval: 3.0, spawnChance: 0.72, saveThreshold: 42, usesBuffs: false, buysUpgrades: false, defenseReact: false, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
-      medium: { interval: 2.3, spawnChance: 0.79, saveThreshold: 32, usesBuffs: false, buysUpgrades: true, defenseReact: true, adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false },
-      hard: { interval: 1.1, spawnChance: 0.91, saveThreshold: 13, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false },
-      expert: { interval: 0.36, spawnChance: 0.99, saveThreshold: 2, usesBuffs: true, buysUpgrades: true, defenseReact: true, adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true },
+      // Each tier should FEEL like a completely different opponent, not just a faster one.
+      // New flags: midPressure, resourcePatience, aiWorkerCap, confusionChance, upgradeSmarts, counterStr
+      // ─────────────────────────────────────────────────────────────────────────────────────────────────
+      // TUTORIAL — gentle, slow, clueless. Teaches the game, not a real fight.
+      tutorial: {
+        interval: 3.5, spawnChance: 0.60, saveThreshold: 50,
+        usesBuffs: false, buysUpgrades: false, defenseReact: false,
+        adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
+        midPressure: false, resourcePatience: 0, aiWorkerCap: 2, confusionChance: 0, upgradeSmarts: false, counterStr: 0,
+      },
+      // EASY — plays randomly, ignores mid, only 2 workers, occasionally makes actively wrong decisions.
+      // Should feel like a new player stumbling around.
+      easy: {
+        interval: 2.8, spawnChance: 0.70, saveThreshold: 42,
+        usesBuffs: false, buysUpgrades: false, defenseReact: false,
+        adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
+        midPressure: false, resourcePatience: 0, aiWorkerCap: 2, confusionChance: 0.20, upgradeSmarts: false, counterStr: 0,
+      },
+      // MEDIUM — reactive but not proactive. Responds to threats slowly. Buys upgrades sometimes.
+      // Weak counter-picking. Never saves deliberately. Feels like a casual player.
+      medium: {
+        interval: 2.1, spawnChance: 0.80, saveThreshold: 32,
+        usesBuffs: false, buysUpgrades: true, defenseReact: true,
+        adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
+        midPressure: false, resourcePatience: 0, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: false, counterStr: 0.25,
+      },
+      // HARD — strategic and deliberate. Counter-builds, saves for upgrades, uses buffs well.
+      // Actively contests mid, occasionally waits for premium units. Feels like an experienced player.
+      hard: {
+        interval: 0.95, spawnChance: 0.93, saveThreshold: 10,
+        usesBuffs: true, buysUpgrades: true, defenseReact: true,
+        adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false,
+        midPressure: true, resourcePatience: 0.38, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 0.65,
+      },
+      // EXPERT — reads your composition, hard-counters it, optimal timing on everything.
+      // Mid pressure is immediate. Spy is a real weapon. Nearly perfect decision-making.
+      expert: {
+        interval: 0.30, spawnChance: 0.99, saveThreshold: 2,
+        usesBuffs: true, buysUpgrades: true, defenseReact: true,
+        adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true,
+        midPressure: true, resourcePatience: 0.62, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 1.0,
+      },
     };
 
     // Delay between AI "thinking" (showing highlight) and actually executing the action
@@ -5159,7 +5214,6 @@
 
     function _aiIdleBrowse(pid, dt) {
       const pidx = pid - 1;
-      const pidxIdle = pid - 1;
       if (!G || !G.running || G.paused) return;
       if (G[pid === 1 ? '_aiActing1' : '_aiActing']) return;
       _aiIdleTimer[pidx] = (_aiIdleTimer[pidx] || 0) + dt;
@@ -5333,7 +5387,7 @@
       const enCount = enemyUnits.length;
       const midOwned = G.midOwner === pid;
       const midEmpty = G.midOwner === null;
-      const gameSecs = G.time || 0;
+      const gameSecs = G.elapsed || 0;
       const enemyTypes = { mel: 0, rng: 0, air: 0 };
       enemyUnits.forEach(u => { if (enemyTypes[u.def.type] !== undefined) enemyTypes[u.def.type]++; });
 
@@ -5373,7 +5427,8 @@
 
       // ── 1. Workers — always fill to cap ──
       const _aiWorkerBodyCost = (p.workers || 0) === 0 ? 0 : (p.workers || 0) === 1 ? 1 : 2;
-      if (!forceDefend && workerDef && p.workers < (p.workerCap || 3) &&
+      const _aiEffectiveWorkerCap = Math.min(cfg.aiWorkerCap || 3, p.workerCap || 3);
+      if (!forceDefend && workerDef && p.workers < _aiEffectiveWorkerCap &&
         p.souls >= workerDef.souls && p.bodies >= _aiWorkerBodyCost) {
         const workerIdx = allUnitDefs.indexOf(workerDef);
         G[_actingKey] = true;
@@ -5384,9 +5439,12 @@
       // ── 2. Upgrades — buy when can afford + good timing ──
       if (!forceDefend && cfg.buysUpgrades && nextUpgrade) {
         const canAfford = p.souls >= nextUpgrade.cost.souls + cfg.saveThreshold && p.bodies >= nextUpgrade.cost.bodies;
+        // upgradeSmarts: hard/expert won't buy during active heavy pressure (too risky to spend big)
+        const _activelyPressured = cfg.upgradeSmarts &&
+          (myCount < enCount - 2 || (p.baseHp < 55 && myCount <= enCount));
         // Buy immediately when in saving mode and threshold met; or buy with probability otherwise
-        const upgradeChance = saving ? 1.0 : diff === 'expert' ? 0.97 : diff === 'hard' ? 0.72 : 0.12; // medium rarely times upgrades well
-        if (canAfford && Math.random() < upgradeChance) {
+        const upgradeChance = saving ? 1.0 : diff === 'expert' ? 0.97 : diff === 'hard' ? 0.72 : 0.12;
+        if (canAfford && !_activelyPressured && Math.random() < upgradeChance) {
           const upIdx = allUpgrades.indexOf(nextUpgrade);
           G[_actingKey] = true; G[savKey] = false;
           _aiActWithDelay(pid, 1, upIdx, () => { G[_actingKey] = false; tryBuyUpgrade(pid, upIdx, null); });
@@ -5426,7 +5484,22 @@
         }
       }
 
-      // ── 6. Choose combat unit ──
+      // ── 6. Resource patience — hard/expert sometimes wait for a premium unit ──
+      // If we're close to affording a high-value unit, don't waste souls on something inferior
+      if (cfg.resourcePatience > 0 && !forceDefend && !saving && myCount >= 1) {
+        const premiumUnits = units.filter(u => (u.souls + u.bodies * 0.8) >= 16 && u.souls > p.souls);
+        if (premiumUnits.length > 0) {
+          // Find the one we're closest to affording
+          const closest = premiumUnits.reduce((best, u) => (p.souls / u.souls > p.souls / best.souls ? u : best));
+          const progress = p.souls / closest.souls;
+          const bodiesOk = p.bodies >= closest.bodies;
+          if (progress >= 0.62 && bodiesOk && Math.random() < cfg.resourcePatience) {
+            return; // hold back — saving up for something better
+          }
+        }
+      }
+
+      // ── 7. Choose combat unit ──
       const chosen = _aiChooseUnit(pid, units, pers, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend, factionId, gameSecs);
       if (chosen) {
         const allGridDefs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
@@ -5440,31 +5513,48 @@
     function _aiChooseBuff(pid, p, myCount, enCount, enemy, diff, factionId) {
       const bf = RALLY_BUFFS;
       if (!diff) diff = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
-      const can0 = p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost;
-      const can1 = p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost;
-      const can2 = p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost;
+      const can0 = p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost; // War Cry
+      const can1 = p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost; // Iron Wall
+      const can2 = p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost; // Body Boon
       const winning = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
+      const winningBig = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
       const losing = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
+      const losingBadly = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
+      const midOwned = G.midOwner === pid;
       const lowBodies = p.bodies < 8;
+      const critBodies = p.bodies < 4; // critically low
       const richSouls = p.souls > bf[2].cost + 20;
+      const pushingSouls = p.souls > bf[2].cost + 40; // very rich
 
       if (diff === 'expert') {
-        // Very aggressive — uses any available buff in the right context
-        if (can0 && winning) return 0; // war cry when ahead — push advantage
-        if (can1 && losing) return 1; // iron wall when behind — survive
-        if (can2 && lowBodies && richSouls) return 2; // body boon when economy is unbalanced
-        if (can0 && myCount >= enCount && Math.random() < 0.4) return 0; // war cry to maintain edge
-        if (can1 && p.baseHp < 55) return 1; // defensive wall when base hurting
-        if (can2 && p.bodies < 5 && p.souls > 70) return 2; // body boon emergency
+        // EXPERT: Proactive — doesn't wait until dire straits. Uses buffs as weapons AND shields.
+        // War Cry: push when winning OR when owning mid + matched strength
+        if (can0 && winningBig) return 0;                             // decisive push
+        if (can0 && winning && midOwned) return 0;                    // mid control + ahead = press it
+        if (can0 && myCount >= enCount && midOwned) return 0;         // owning mid with even armies
+        if (can0 && myCount >= enCount && Math.random() < 0.38) return 0; // proactive edge
+        // Iron Wall: preemptive — don't wait until base is critical
+        if (can1 && losingBadly) return 1;                            // emergency wall
+        if (can1 && losing) return 1;                                 // standard defense
+        if (can1 && p.baseHp < 65 && Math.random() < 0.6) return 1;  // preemptive — don't let base decay
+        // Body Boon: economy management — use before it becomes a crisis
+        if (can2 && critBodies && p.souls > 70) return 2;             // emergency restock
+        if (can2 && lowBodies && pushingSouls) return 2;              // optimal conversion
+        if (can2 && lowBodies && richSouls && Math.random() < 0.55) return 2; // opportunistic
       } else if (diff === 'hard') {
-        if (can0 && winning && Math.random() < 0.7) return 0;
-        if (can1 && p.baseHp < 45 && Math.random() < 0.8) return 1;
-        if (can2 && lowBodies && richSouls && Math.random() < 0.5) return 2;
-      } else {
-        // Medium baseline — only very obvious situations
-        if (can0 && myCount > enCount + 3) return 0;
-        if (can1 && p.baseHp < 35) return 1;
+        // HARD: Reactive — responds well to situations but doesn't plan several steps ahead.
+        // War Cry: uses when ahead, but won't waste it on marginal leads
+        if (can0 && winningBig) return 0;                             // clear push moment
+        if (can0 && winning && Math.random() < 0.80) return 0;        // good time to press
+        if (can0 && midOwned && myCount >= enCount && Math.random() < 0.35) return 0; // mid bonus
+        // Iron Wall: uses when threatened, reasonable threshold
+        if (can1 && losingBadly) return 1;                            // clear emergency
+        if (can1 && p.baseHp < 50 && Math.random() < 0.85) return 1; // base threat
+        // Body Boon: uses when economically lopsided
+        if (can2 && critBodies && richSouls) return 2;                // clear body shortage
+        if (can2 && lowBodies && richSouls && Math.random() < 0.55) return 2; // good time
       }
+      // Medium and below: usesBuffs: false so this function never runs for them
       return -1;
     }
 
@@ -5583,25 +5673,39 @@
           score -= cost * 0.08;
         }
 
-        // Hard/expert: strong counter-picking based on enemy army
-        if (cfg.counterPlays && totalEnemy > 2) {
-          if (isRng && dominantEnemy === 'air') score += 6;
-          if (isAir && dominantEnemy === 'mel') score += 5;
-          if (isMel && dominantEnemy === 'rng') score += 4;
-          // Also react to specific counts
-          if (isRng && enemyTypes.air >= 3) score += 3;
-          if (isAir && enemyTypes.mel >= 4) score += 3;
-        } else if (diff === 'medium' && totalEnemy > 2) {
-          // Partial counter-picking for medium
-          if (isRng && enemyTypes.air >= 2) score += 3;
-          if (isAir && enemyTypes.mel >= 3) score += 2;
+        // Counter-picking — scaled by counterStr (0 = none, 0.25 = medium partial, 0.65 = hard, 1.0 = expert)
+        if (cfg.counterStr > 0 && totalEnemy > 2) {
+          const cs = cfg.counterStr;
+          // Primary counters: ranged beats air, air beats melee, melee beats ranged
+          if (isRng && dominantEnemy === 'air') score += 14 * cs;
+          if (isAir && dominantEnemy === 'mel') score += 11 * cs;
+          if (isMel && dominantEnemy === 'rng') score += 9 * cs;
+          // Secondary: react to heavy counts of a type
+          if (isRng && enemyTypes.air >= 3) score += 5 * cs;
+          if (isAir && enemyTypes.mel >= 4) score += 5 * cs;
+          if (isMel && enemyTypes.rng >= 3) score += 4 * cs;
+          // Expert/hard also penalise the WRONG counter (anti-synergy units are actively bad picks)
+          if (cs >= 0.6 && diff !== 'medium') {
+            if (isMel && dominantEnemy === 'air' && enemyTypes.air >= 3) score -= 6 * cs;  // melee can't hit air
+            if (isAir && dominantEnemy === 'rng' && enemyTypes.rng >= 3) score -= 4 * cs;  // air gets shredded by ranged
+          }
         }
 
-        // Mid control urgency
-        if (midEmpty && (isMel || isAir) && myCount < 3) score += 2;
+        // Mid control urgency — easy/tutorial don't care about mid at all
+        if (midEmpty && (isMel || isAir)) {
+          const midUrgency = diff === 'expert' ? 8 : diff === 'hard' ? 5 : diff === 'medium' ? 2 : 0;
+          if (midUrgency > 0 && myCount < 5) score += midUrgency;
+        }
 
         // Winning push: add damage weight when ahead
         if (cfg.adapts && enemy.baseHp < p.baseHp - 20) score += u.dmg * 0.08;
+
+        // Expert closing out: when decisively ahead, prioritise fast high-damage units to end it
+        if (diff === 'expert' && enemy.baseHp < 40 && enemy.baseHp < p.baseHp - 25) {
+          score += u.dmg * 0.14;
+          if (u.speed > 70) score += 4;
+          if (isAir) score += 3; // aerials bypass melee walls
+        }
 
         // Defense emergency
         if (forceDefend) {
@@ -5688,6 +5792,12 @@
 
       scored.sort((a, b) => b.score - a.score);
 
+      // Easy confusion: occasionally picks the WORST unit for the situation.
+      // This makes easy feel genuinely clueless, not just slow.
+      if (diff === 'easy' && cfg.confusionChance > 0 && scored.length > 1 && Math.random() < cfg.confusionChance) {
+        return scored[scored.length - 1].unit; // actively wrong choice
+      }
+
       // Selection randomness — gaps are deliberately wide so each tier is clearly distinct
       const top = scored.length;
       if (diff === 'tutorial') {
@@ -5705,23 +5815,23 @@
         return affordable[0];
       }
       if (diff === 'medium') {
-        // 60% of the time: completely ignores scoring, pure random pick
-        // 40% of the time: picks from the bottom 70% of scored units (occasionally lucky, never optimal)
-        if (Math.random() < 0.60) return affordable[Math.floor(Math.random() * affordable.length)];
-        const pool = Math.max(1, Math.floor(top * 0.70));
-        // Picks from the middle of the scored list — misses best options
-        const offset = Math.floor(top * 0.15);
-        return scored[Math.min(offset + Math.floor(Math.random() * (pool - offset)), top - 1)].unit;
+        // 50% random (up from 40% effective skill): medium has grown a tiny bit more consistent
+        // but still mostly ignores strategy — never picks optimally
+        if (Math.random() < 0.50) return affordable[Math.floor(Math.random() * affordable.length)];
+        // Remaining 50%: picks from the bottom 65% of scored list — occasionally lucky
+        const pool = Math.max(1, Math.floor(top * 0.65));
+        const offset = Math.floor(top * 0.20); // skip the very best options
+        return scored[Math.min(offset + Math.floor(Math.random() * Math.max(1, pool - offset)), top - 1)].unit;
       }
       if (diff === 'hard') {
-        // 82% best pick, 12% second best, 6% third — smart but not perfect
+        // 88% best pick, 10% second, 2% third — decisive, but has rare suboptimal moments
         const r = Math.random();
-        if (r < 0.82) return scored[0].unit;
-        if (r < 0.94 && scored[1]) return scored[1].unit;
+        if (r < 0.88) return scored[0].unit;
+        if (r < 0.98 && scored[1]) return scored[1].unit;
         return scored[Math.min(2, top - 1)].unit;
       }
-      // Expert: 97% optimal pick, 3% second-best for unpredictability — nearly perfect
-      return (Math.random() < 0.03 && scored[1]) ? scored[1].unit : scored[0].unit;
+      // Expert: 98% optimal, 2% second-best — nearly unbeatable but not robotic
+      return (Math.random() < 0.02 && scored[1]) ? scored[1].unit : scored[0].unit;
     }
 
     function updateAI(dt) {
@@ -5761,20 +5871,44 @@
           if (!G[_ak]) { G.aiDifficulty = diffKey; if (pid === 1) { G.ai1Personality = G.ai1Personality || AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)]; } runAI(pid, false); }
         }
 
-        // ── Base defense reaction — all difficulties react, just at different speeds/thresholds ──
+        // ── Base defense reaction ──
         {
           if (!G._aiDefTimers) G._aiDefTimers = [0, 0];
           G._aiDefTimers[pid - 1] = (G._aiDefTimers[pid - 1] || 0) + dt;
-          // Defense reaction speed — much wider gaps between tiers
-          const defReactTime = { tutorial: 6.0, easy: 4.5, medium: 3.2, hard: 1.6, expert: 0.7 }[diffKey] || 3.2;
-          // Enemies near base needed to trigger: medium needs 3, hard/expert react to 1
-          const defThreshold = { tutorial: 5, easy: 4, medium: 3, hard: 1, expert: 1 }[diffKey] || 3;
+          // Defense reaction speed — wider gaps make each tier feel different
+          const defReactTime = { tutorial: 7.0, easy: 5.0, medium: 3.5, hard: 1.4, expert: 0.55 }[diffKey] || 3.5;
+          // How many enemies near base triggers a response
+          const defThreshold = { tutorial: 6, easy: 5, medium: 3, hard: 1, expert: 1 }[diffKey] || 3;
           if (G._aiDefTimers[pid - 1] >= defReactTime) {
             G._aiDefTimers[pid - 1] = 0;
             const aiBase = G.players[pid - 1];
             const threatZone = G.w * 0.30;
             const enemiesNearBase = G.units.filter(u => u.player !== pid && !u.def.isWorker && Math.abs(u.x - aiBase.baseX) < threatZone);
             if (enemiesNearBase.length >= defThreshold && !G[pid === 1 ? '_aiActing1' : '_aiActing']) { G.aiDifficulty = diffKey; runAI(pid, true); }
+          }
+        }
+
+        // ── Mid pressure override — hard/expert actively contest empty/unowned mid ──
+        // This fires on its own separate timer, independent of the main AI timer,
+        // so hard/expert will interrupt their normal rhythm to contest mid.
+        if (cfg.midPressure) {
+          if (!G._aiMidTimers) G._aiMidTimers = [0, 0];
+          G._aiMidTimers[pid - 1] = (G._aiMidTimers[pid - 1] || 0) + dt;
+          const midPressInterval = diffKey === 'expert' ? 1.0 : 2.2; // expert reacts fast
+          if (G._aiMidTimers[pid - 1] >= midPressInterval) {
+            G._aiMidTimers[pid - 1] = 0;
+            const _actKey = pid === 1 ? '_aiActing1' : '_aiActing';
+            if (G.midOwner !== pid && !G[_actKey]) {
+              // Count friendly units near mid — if none, send something
+              const myNearMid = G.units.filter(u =>
+                u.player === pid && !u.def.isWorker && !u.isGuard &&
+                Math.abs(u.x - G.midX) < G.w * 0.32
+              ).length;
+              if (myNearMid === 0) {
+                G.aiDifficulty = diffKey;
+                runAI(pid, false); // urgent mid-contest spawn
+              }
+            }
           }
         }
       });
@@ -5845,6 +5979,7 @@
         rogueEvent: null, nextRogueTime: 90 + Math.random() * 60, // first rogue 90-150s in
         capFlash: 0, capFlashPlayer: 0,
         lastCapAnnounce: 0,
+        bloodPools: [],
       };
       P1_SEL = 0; P2_SEL = 0; P1_MODE = 0; P2_MODE = 0;
       // ── AI config on game object ──
@@ -5976,6 +6111,8 @@
         const grid = document.getElementById(`p${pid}-grid`);
         grid.innerHTML = '';
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+        const totalCards = defs.length + (GAME_MODE !== 'tutorial' ? 1 : 0);
+        grid.style.setProperty('--unit-cols', totalCards);
         defs.forEach((def, i) => {
           const card = document.createElement('div');
           card.className = 'ucard'; card.dataset.idx = i;
@@ -6200,17 +6337,44 @@
         incEl.textContent = `+${soulRate}💀/s · +${bodyRate}🦴/m${eventTag}`;
         const passiveText = G.factions[pid - 1].passive || '';
         incEl.title = passiveText ? `PASSIVE: ${passiveText}` : '';
-        let passiveEl = document.getElementById(`p${pid}-passive-hint`);
-        if (!passiveEl) {
-          passiveEl = document.createElement('div');
-          passiveEl.id = `p${pid}-passive-hint`;
-          passiveEl.style.cssText = 'font-size:.58rem;color:rgba(212,168,67,.7);font-family:Cinzel,serif;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:1px 0 0;cursor:help;';
-          incEl.insertAdjacentElement('afterend', passiveEl);
-        }
-        if (passiveText) {
-          const passShort = passiveText.length > 52 ? passiveText.slice(0, 52) + '…' : passiveText;
-          passiveEl.textContent = '⚡ ' + passShort;
-          passiveEl.title = passiveText;
+        // Rotating in-game tips — faction passive + gameplay hints cycle every 9s
+        if (!G._tipTimers) G._tipTimers = [0, 0];
+        if (!G._tipIdx) G._tipIdx = [0, 0];
+        G._tipTimers[pid - 1] = (G._tipTimers[pid - 1] || 0) + G.dt;
+        const _tipEl = document.getElementById(`p${pid}-ingame-tip`);
+        if (_tipEl) {
+          if (G._tipTimers[pid - 1] >= 9 || !_tipEl._inited) {
+            G._tipTimers[pid - 1] = 0;
+            _tipEl._inited = true;
+            G._tipIdx[pid - 1] = (G._tipIdx[pid - 1] || 0) + 1;
+            const _faction = G.factions[pid - 1];
+            const _passiveTip = _faction.passive ? { text: '⚡ ' + _faction.passive, title: 'Your faction passive ability' } : null;
+            const _allTips = [
+              ...(G._tipIdx[pid - 1] % 3 === 0 && _passiveTip ? [_passiveTip] : []),
+              { text: '💡 Hold mid to ramp up soul income — up to +2.0/s after 60s', title: 'Mid control income scales over time' },
+              { text: '💡 Workers can path to mid — deploy yours when you own it for bonus bodies', title: 'Mid workers return extra bodies' },
+              { text: '💡 3+ ranged units on one target deal less damage — mix your army', title: 'Focus fire penalty' },
+              { text: '💡 Melee walls block incoming projectiles — put them up front', title: 'Projectile blocking' },
+              { text: '💡 Body Boon converts 60 souls into +14 bodies — great when body-starved', title: 'Body Boon buff tip' },
+              { text: '💡 War Cry gives +25% speed and +15% attack rate for 6s — use it to push', title: 'War Cry buff tip' },
+              { text: '💡 Upgrades are permanent — buy them early for the biggest time advantage', title: 'Upgrade timing tip' },
+              { text: '💡 At 30 HP your base triggers Last Stand: +40💀 and Royal Guards spawn', title: 'Last Stand trigger' },
+              { text: '💡 Aerial units fly over melee — only ranged or other aerial can hit them', title: 'Aerial combat tip' },
+              { text: "💡 Siege Decay starts at 3 minutes — don't let the game drag on", title: 'Siege Decay timer' },
+              { text: '💡 Enemy holding mid? Desperation Surge gives you +0.7💀/s per stack (max 3)', title: 'Desperation Surge tip' },
+              { text: '💡 Ranged archers kite backward from melee — back them with a melee wall', title: 'Kiting behaviour tip' },
+              ...(G._tipIdx[pid - 1] % 2 === 1 && _passiveTip ? [_passiveTip] : []),
+            ];
+            const tip = _allTips[(G._tipIdx[pid - 1] - 1) % _allTips.length];
+            _tipEl.style.opacity = '0';
+            setTimeout(() => {
+              if (_tipEl) {
+                _tipEl.textContent = tip.text;
+                _tipEl.title = tip.title;
+                _tipEl.style.opacity = '1';
+              }
+            }, 320);
+          }
         }
         // Affordability + cap warn (throttled — every 4 frames)
         const mode = pid === 1 ? P1_MODE : P2_MODE;
@@ -6476,6 +6640,7 @@
         showPopup(p.baseX, G.groundY - 80, '🛡 IRON WALL!', '#bdc3c7', pid);
       } else if (bf.id === 'bodyboon') {
         p.bodies += 14;
+        p.totalBodiesEarned = (p.totalBodiesEarned || 0) + 14;
         SFX.bodyboon(); spawnParticles(p.baseX, G.groundY - 60, '#9b59b6', 30);
         showPopup(p.baseX, G.groundY - 80, '+14🦴 BODY BOON', '#9b59b6', pid);
       }
@@ -6766,6 +6931,17 @@
           blocked: false,
         });
       } else {
+        // Warriors Charge Strike — +80% damage on first hit after 1.5s of marching
+        if (attacker.def.chargeStrike && (attacker.chargeTimer || 0) > 1.5) {
+          dmg *= 1.8;
+          attacker.chargeTimer = 0;
+          spawnParticles(attacker.x, attacker.y, '#f1c40f', 10);
+          spawnParticles(target.x, target.y, '#f39c12', 8);
+        }
+        // Spirits Ethereal — 15% resistance to melee-type attacks
+        if (attacker.def.type === 'mel' && G.factions[target.player - 1] && G.factions[target.player - 1].id === 'spirits') {
+          dmg *= 0.85;
+        }
         // Melee direct
         let actualDmg = dmg;
         if (target._ironwalled > 0) actualDmg *= 0.6;
@@ -6789,10 +6965,10 @@
           spawnParticles(target.x, target.y, '#95a5a6', 3);
         }
         if (attacker.def.lifeSteal) attacker.hp = Math.min(attacker.maxHp, attacker.hp + actualDmg * attacker.def.lifeSteal);
-        // Knockback
+        // Knockback — immune units (Brutes heavies) cannot be pushed
         const kbDir = target.x > attacker.x ? 1 : -1;
         const kbForce = Math.min(7, actualDmg * 0.22); // stronger knockback
-        target.vx = (target.vx || 0) + kbDir * kbForce;
+        if (!target.def.immuneKnockback) target.vx = (target.vx || 0) + kbDir * kbForce;
         if (actualDmg > 15) G.shake = Math.max(G.shake || 0, 0.18);
         else if (actualDmg > 8) G.shake = Math.max(G.shake || 0, 0.08);
         // Chain lightning (melee)
@@ -6803,6 +6979,20 @@
           const chainR = attacker.def.chainRange || 100;
           const ct = G.units.filter(e => e.player !== attacker.player && e !== target && !e.offscreen && dist2d(attacker, e) < chainR);
           if (ct.length > 0) { const c = ct[0]; c.hp -= attacker.def.dmg * cdmg; c.hitFlash = 1; spawnParticles(c.x, c.y, '#fdcb6e', 6); }
+        }
+        // Ground Slam (Brutes Warlord / Grave Brute) — AoE every 4th hit
+        if (attacker.def.groundSlam && attacker._attackCount % 4 === 0) {
+          const _slamTargets = [...G.units].filter(e => e.player !== attacker.player && !e.offscreen && dist2d(attacker, e) < 55);
+          _slamTargets.forEach(e => {
+            const sdmg = Math.max(1, attacker.def.dmg * 0.55 * (attacker.dmgMult || 1));
+            e.hp -= sdmg; e.hitFlash = 1;
+            if (!e.def.immuneDebuff) { e.slowTimer = Math.max(e.slowTimer || 0, 0.5); e._speedMult = Math.min(e._speedMult || 1, 0.7); }
+            if (e.hp <= 0) handleDeath(e, attacker);
+          });
+          G.shake = Math.max(G.shake || 0, 0.5);
+          spawnParticles(attacker.x, G.groundY - 8, '#922b21', 24);
+          spawnParticles(attacker.x - 30, G.groundY - 4, '#c0392b', 8);
+          spawnParticles(attacker.x + 30, G.groundY - 4, '#c0392b', 8);
         }
         // Seraph heal on attack
         if (attacker.def.seraphHeal) {
@@ -6897,7 +7087,9 @@
       }
       // Infernal death explosion
       if (u.def.deathSplash) {
-        G.units.forEach(e => {
+        // Snapshot array before iterating — handleDeath splices G.units and would skip units
+        const _splashTargets = [...G.units];
+        _splashTargets.forEach(e => {
           if (e === u || e.offscreen) return;
           if (dist2d(e, u) < u.def.deathSplashRange) {
             const isFriendly = e.player === u.player;
@@ -6907,11 +7099,16 @@
         });
         spawnParticles(u.x, u.y, '#e74c3c', 25);
       }
+      // Bloodpact Blood Pool — leaves a slow-zone at death location for 8s
+      if (G.factions[u.player - 1].id === 'bloodpact' && !u.def.isWorker && !u.def.isSpawned && G.bloodPools) {
+        G.bloodPools.push({ x: u.x, y: G.groundY - 4, r: 30, life: 8.0, owner: u.player });
+        spawnParticles(u.x, G.groundY - 8, '#b71c1c', 12);
+      }
       // Glacial Permafrost
       if (G.factions[u.player - 1].id === 'glacial' && killer) {
         const p = G.players[u.player - 1];
         if (!killer.def.immuneDebuff) { killer.slowTimer = 3.0; killer._speedMult = p.chillSpeedMult || 0.65; }
-        G.units.forEach(e => { if (e.player !== u.player && dist2d(e, u) < 60 && !e.def.immuneDebuff) { e.slowTimer = 3.0; e._speedMult = p.chillSpeedMult || 0.65; } });
+        [...G.units].forEach(e => { if (e.player !== u.player && dist2d(e, u) < 60 && !e.def.immuneDebuff) { e.slowTimer = 3.0; e._speedMult = p.chillSpeedMult || 0.65; } });
       }
       // Summoner Death Frenzy
       if (G.factions[u.player - 1].id === 'summoners') {
@@ -6924,6 +7121,19 @@
         const healR = killer.def.sylphHealRange || 80;
         G.units.filter(a => a.player === killer.player && dist2d(a, killer) < healR)
           .forEach(a => { a.hp = Math.min(a.maxHp, a.hp + killer.def.sylphHeal); });
+      }
+      // Verdant Sylph pollen death — pollinates 3 nearest allies with regen
+      if (u.def.pollenDeath) {
+        const _pollenAllies = G.units
+          .filter(a => a.player === u.player && !a.def.isWorker && a !== u)
+          .sort((a, b) => dist2d(a, u) - dist2d(b, u))
+          .slice(0, 3);
+        _pollenAllies.forEach(a => {
+          a._sylphRegen = 6.0;
+          a._sylphRegenRate = 3;
+          spawnParticles(a.x, a.y, '#a8ff78', 14);
+        });
+        if (_pollenAllies.length > 0) showPopup(u.x, u.y - 50, '🌸 POLLEN BURST!', '#a8ff78', u.player);
       }
       // Bloodpact grow on kill
       if (killer && killer.def.growOnKill) killer.def.dmg += killer.def.growOnKill;
@@ -7100,7 +7310,7 @@
       const myFid = G.factions[pid - 1].id;
       const others = FACTIONS.filter(f => f.id !== myFid);
       const src = others[Math.floor(Math.random() * others.length)];
-      const candidates = src.units.filter(u => !u.isWorker && !u.isSpawned && !u.isGuard);
+      const candidates = src.units.filter(u => !u.isWorker && !u.isSpawned && !u.isGuard && !u.summons && !u.deathSpawn && !u.passiveSummon);
       if (!candidates.length) return;
       const wcBase = candidates[Math.floor(Math.random() * candidates.length)];
       const wcDef = { ...wcBase }; // shallow copy so we don't mutate faction data
@@ -7152,17 +7362,17 @@
     let G_eventVote = null; // { candidates: [id,id], votes: [0,0], voted: [false,false], timer: 5 }
 
     const EVENT_META = {
-      wanderer: { name: '☠ ROGUE WANDERER', sub: 'Neutral unit — kill for +25💀' },
-      champion: { name: '💀 ROGUE CHAMPION', sub: '200HP attacker — +40💀 bounty' },
-      soul_cache: { name: '💰 SOUL CACHE', sub: 'Both sides gain +30 souls' },
-      blood_moon: { name: '🌑 BLOOD MOON', sub: '+50% unit speed for 20s' },
-      ancient_curse: { name: '💸 ANCIENT CURSE', sub: 'Losing side loses 25 souls' },
-      veterans_rally: { name: '⚔ VETERANS RALLY', sub: 'All units get +15% DMG for 20s' },
-      supply_drop: { name: '📦 SUPPLY DROP', sub: 'Random player gets 15 bodies' },
-      dark_eclipse: { name: '🌑 DARK ECLIPSE', sub: 'Mid income halved · SURGE×2 · 15s' },
-      meteor: { name: '☄ METEOR STRIKE', sub: 'Destroys units near mid' },
-      gold_rush: { name: '✨ GOLD RUSH', sub: 'Both players gain +60 souls' },
-      tremor: { name: '🌍 TREMOR', sub: 'Knocks back all ground units' },
+      wanderer: { name: '☠ ROGUE WANDERER', sub: 'Neutral unit at mid — kill it for +25💀' },
+      champion: { name: '💀 ROGUE CHAMPION', sub: '200HP fighter — attacks nearby units · +40💀 bounty · 22s' },
+      soul_cache: { name: '💰 SOUL CACHE', sub: 'Hold mid uncontested 2s to claim +30💀 · expires 20s' },
+      blood_moon: { name: '🩸 BLOOD MOON', sub: 'All units cost half bodies to spawn · 18 seconds' },
+      ancient_curse: { name: '💸 ANCIENT CURSE', sub: 'Both players: −15💀 souls · +25🦴 bodies' },
+      veterans_rally: { name: '⚡ VETERANS RALLY', sub: 'All combat units gain +20% speed for 12s' },
+      supply_drop: { name: '📦 SUPPLY DROP', sub: 'Losing player receives +20💀 and +12🦴' },
+      dark_eclipse: { name: '🌑 DARK ECLIPSE', sub: 'Mid income halved · SURGE stacks give double · 15s' },
+      meteor: { name: '☄ METEOR STRIKE', sub: 'Meteor hits mid — up to 35 splash dmg in 110px radius' },
+      gold_rush: { name: '💰 GOLD RUSH', sub: 'Both players gain +30💀 souls and +8🦴 bodies' },
+      tremor: { name: '🌋 TREMOR', sub: 'All ground units slowed 45% for 5 seconds' },
     };
 
     function _startEventVote(candidates) {
@@ -7177,6 +7387,11 @@
       document.getElementById('vote-card-b').classList.remove('voted');
       document.getElementById('vote-timer-display').textContent = '5';
       document.getElementById('vote-tally').textContent = '';
+      // Update key labels dynamically from actual keybindings
+      const p1Key = formatKey ? formatKey(KEYS.p1Act) : 'Q';
+      const p2Key = formatKey ? formatKey(KEYS.p2Act) : 'ENTER';
+      const ka = document.getElementById('vote-key-a'); if (ka) ka.textContent = `P1 — ${p1Key}`;
+      const kb = document.getElementById('vote-key-b'); if (kb) kb.textContent = `P2 — ${p2Key}`;
       document.getElementById('vote-overlay').classList.add('show');
     }
 
@@ -7351,6 +7566,7 @@
         const lost = Math.min(p.souls, 15);
         p.souls -= lost;
         p.bodies += 25;
+        p.totalBodiesEarned = (p.totalBodiesEarned || 0) + 25;
         showPopup(p.baseX, G.groundY - 70, `-${lost}💀 +25🦴 CURSED`, '#9b59b6', p.id);
         spawnParticles(p.baseX, G.groundY - 30, '#9b59b6', 20);
       });
@@ -7386,6 +7602,7 @@
       }
       recipient.souls = Math.min(900, recipient.souls + 20);
       recipient.bodies += 12;
+      recipient.totalBodiesEarned = (recipient.totalBodiesEarned || 0) + 12;
       _announceEvent('📦 SUPPLY DROP', '#27ae60', `Player ${recipient.id} receives +20💀 souls and +12🦴 bodies`);
       spawnParticles(recipient.baseX, G.groundY - 40, '#27ae60', 30);
       showPopup(recipient.baseX, G.groundY - 80, '📦 SUPPLY DROP +20💀 +12🦴', '#27ae60', recipient.id);
@@ -7545,6 +7762,9 @@
       const spd = Math.max(30, u.def.speed * (u._speedMult || 1));
       u._midRing = u.goToMid && !u.offscreen;
       u._carryGlow = u.carrying;
+      // Always snap to ground — workers skip the per-frame Y snap that combat units get,
+      // so we do it here to handle canvas resizes and any first-frame stale groundY
+      if (!u.offscreen) u.y = G.groundY - (u.def.radius || 10);
       if (u.offscreen) {
         u.offTimer -= dt;
         if (u.offTimer <= 0) {
@@ -7561,6 +7781,7 @@
         const home = p.baseX + (u.player === 1 ? G.baseW * .3 : -G.baseW * .3);
         if ((u.player === 1 && u.x >= home) || (u.player === 2 && u.x <= home)) {
           p.bodies += u.carryCount;
+          p.totalBodiesEarned = (p.totalBodiesEarned || 0) + u.carryCount;
           showPopup(u.x, u.y - 35, `+${u.carryCount}🦴`, '#27ae60', u.player);
           u.carrying = false; u.carryCount = 0;
         }
@@ -7725,6 +7946,11 @@
         // Hit flash
         if (u.hitFlash > 0) u.hitFlash = Math.max(0, u.hitFlash - dt * 6);
         if (u.hitShake > 0) u.hitShake = Math.max(0, u.hitShake - dt * 12);
+        // Sylph pollen regen
+        if (u._sylphRegen > 0) {
+          u._sylphRegen = Math.max(0, u._sylphRegen - dt);
+          u.hp = Math.min(u.maxHp, u.hp + (u._sylphRegenRate || 3) * dt);
+        }
         u.aliveSecs += dt;
         // Workers
         if (u.def.isWorker) { updateWorker(u, dt); continue; }
@@ -7948,14 +8174,16 @@
         const soulCap = 900;
         if (p.souls + soulTick > soulCap) {
           const overflow = (p.souls + soulTick) - soulCap;
-          p.bodies += overflow * 0.3; // overflow converts to bodies at 30%
+          const _overflowBodies = overflow * 0.3;
+          p.bodies += _overflowBodies;
+          p.totalBodiesEarned = (p.totalBodiesEarned || 0) + _overflowBodies;
         }
         p.souls = Math.min(soulCap, p.souls + soulTick);
         p.totalSoulsEarned = (p.totalSoulsEarned || 0) + soulTick;
         if (G.midOwner === p.id) p.midCaptures = (p.midCaptures || 0); // already incremented elsewhere
         if (p.noMidTimer > 15) {
           p.bodyDespTimer = (p.bodyDespTimer || 0) + dt;
-          if (p.bodyDespTimer >= 15) { p.bodyDespTimer = 0; p.bodies += 1; showPopup(p.baseX, G.groundY - 50, '+1🦴 SURGE', '#27ae60', p.id); }
+          if (p.bodyDespTimer >= 15) { p.bodyDespTimer = 0; p.bodies += 1; p.totalBodiesEarned = (p.totalBodiesEarned || 0) + 1; showPopup(p.baseX, G.groundY - 50, '+1🦴 SURGE', '#27ae60', p.id); }
         }
         const bodyRate = 4.5 + Math.floor(gameSec / 60) * .5;
         p.bodyAccum += bodyRate / 60 * dt;
@@ -8141,6 +8369,24 @@
       });
     }
 
+    function updateBloodPools(dt) {
+      if (!G.bloodPools || !G.bloodPools.length) return;
+      G.bloodPools = G.bloodPools.filter(pool => {
+        pool.life -= dt;
+        if (pool.life <= 0) return false;
+        // Slow enemies walking through the pool
+        G.units.forEach(u => {
+          if (u.player === pool.owner || u.def.isWorker || u.offscreen) return;
+          if (Math.abs(u.x - pool.x) < pool.r && Math.abs(u.y - G.groundY) < 20) {
+            if (!u.def.immuneDebuff) {
+              u.slowTimer = Math.max(u.slowTimer || 0, 1.2);
+              u._speedMult = Math.min(u._speedMult || 1, 0.62);
+            }
+          }
+        });
+        return true;
+      });
+    }
     function updateParticles(dt) {
       G.particles = G.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 200 * dt; p.life -= dt; return p.life > 0; });
       if (G.particles.length > 600) G.particles.splice(0, G.particles.length - 600);
@@ -8160,6 +8406,23 @@
       G.players.forEach(p => drawBase(p));
       // Mid circle with capture arc
       drawMid();
+      // Blood pools (Bloodpact) — draw before particles and units
+      if (G.bloodPools && G.bloodPools.length) {
+        G.bloodPools.forEach(pool => {
+          const alpha = Math.min(0.45, (pool.life / 8.0) * 0.45);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          const grad = ctx.createRadialGradient(pool.x, pool.y, 0, pool.x, pool.y, pool.r);
+          grad.addColorStop(0, '#b71c1c');
+          grad.addColorStop(0.6, '#7f0000');
+          grad.addColorStop(1, 'transparent');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.ellipse(pool.x, pool.y, pool.r, pool.r * 0.38, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+      }
       // Particles behind units
       ctx.save();
       G.particles.forEach(p => {
@@ -8398,6 +8661,17 @@
         ctx.beginPath(); ctx.arc(x, y, r + 7, 0, Math.PI * 2); ctx.stroke();
         ctx.shadowBlur = 0; ctx.globalAlpha = 1;
       }
+      // Warriors Charge Strike — gold glow when charged up (chargeTimer > 1.5s)
+      if (u.def.chargeStrike && (u.chargeTimer || 0) > 1.5) {
+        const _cp = 0.4 + Math.sin(Date.now() / 130) * 0.3;
+        ctx.save();
+        ctx.globalAlpha = _cp;
+        ctx.shadowBlur = 14; ctx.shadowColor = '#f1c40f';
+        ctx.strokeStyle = '#f1c40f'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(x, y, r + 6, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
       // Iron wall buff ring
       if (u._ironwalled > 0) {
         ctx.strokeStyle = 'rgba(189,195,199,0.6)'; ctx.lineWidth = 2.5;
@@ -8414,6 +8688,17 @@
         ctx.setLineDash([4, 3]);
         ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke();
         ctx.setLineDash([]);
+      }
+      // Sylph pollen regen — soft green pulsing glow
+      if ((u._sylphRegen || 0) > 0) {
+        const _sp = 0.3 + Math.sin(Date.now() / 200) * 0.2;
+        ctx.save();
+        ctx.globalAlpha = _sp;
+        ctx.shadowBlur = 10; ctx.shadowColor = '#a8ff78';
+        ctx.strokeStyle = '#a8ff78'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
       }
       // Frenzy ring
       if (u.frenzyTimer > 0) {
@@ -8710,6 +8995,7 @@
       updateProjectiles(G.dt);
       _tickLastStandGrace(G.dt);
       checkLastStand();   // AFTER units attack — prevents same-frame bypass
+      updateBloodPools(G.dt);
       updateParticles(G.dt);
       drawGame();
       updateHUD();
@@ -8957,12 +9243,22 @@
               if (workerIds.every(id => (workers[id] || 0) < 2) && soulsEarned > 60)
                 tips.push(`${ppName} deployed few workers — more workers = more bodies = stronger army.`);
             });
-            const tipHtml = tips.length ? tips.slice(0, 3).map(t => `<div style="font-size:.68rem;color:var(--dim);padding:2px 0;border-top:1px solid rgba(255,255,255,.05);">💡 ${t}</div>`).join('') : '';
-            return `<div style="margin-top:14px;padding:10px 16px;background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.2);border-radius:5px;max-width:560px;margin-left:auto;margin-right:auto;">
-              <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
-                <span style="font-family:Cinzel,serif;font-size:.65rem;color:var(--gold);letter-spacing:.08em;white-space:nowrap;">${GAME_MODE === 'tournament' ? 'UP NEXT IN BRACKET →' : 'TRY NEXT: ' + sug.f}</span>
-                <span style="font-size:.67rem;color:var(--dim);">${sug.tip}</span>
-              </div>
+            // Build faction suggestion as one of the tips when not in tournament
+            const _factionTip = GAME_MODE !== 'tournament'
+              ? `Try ${sug.f} next — ${sug.tip}`
+              : null;
+            const allTips = [...tips.slice(0, 4), ...(_factionTip ? [_factionTip] : [])];
+            if (allTips.length === 0) return '';
+            const tipHtml = allTips.map((t, i) => {
+              const isFirst = i === 0;
+              const icon = t.startsWith('Try ') ? '🎯' : '💡';
+              return `<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;${i > 0 ? 'border-top:1px solid rgba(255,255,255,.07);' : ''}">
+                <span style="font-size:1.05rem;line-height:1.3;flex-shrink:0;">${icon}</span>
+                <span style="font-size:.88rem;color:rgba(255,255,255,.82);line-height:1.45;">${t}</span>
+              </div>`;
+            }).join('');
+            return `<div style="margin-top:16px;padding:14px 18px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.22);border-radius:6px;max-width:580px;margin-left:auto;margin-right:auto;">
+              <div style="font-family:Cinzel,serif;font-size:.78rem;color:rgba(212,168,67,.9);letter-spacing:.12em;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(212,168,67,.18);">${GAME_MODE === 'tournament' ? '⚔ UP NEXT IN BRACKET' : '💡 TIPS FROM THIS GAME'}</div>
               ${tipHtml}
             </div>`;
           })();
@@ -9979,21 +10275,25 @@
     });
 
     // ─── DRAFT MODE ──────────────────────────────────────────────────────────────
-    // Flow: P1 Bans → P2 Bans → P1 Picks → P2 Picks → START
+    // Flow: P1 Ban1 → P2 Ban1 → P1 Ban2 → P2 Ban2 → P1 Pick → P2 Pick → START
+    // 4 bans total (2 per player), then each picks 1. 6 factions remain unused.
     // Each step is keyboard-navigated (same W/S + Q/Enter as faction screen).
     // Banned cards are greyed out and skipped by cursor nav.
 
     let DRAFT = {
-      state: 'idle',  // 'p1ban' | 'p2ban' | 'p1pick' | 'p2pick' | 'done'
-      banned: [],     // [factionIndex, ...]
-      picks: [null, null], // [p1Idx, p2Idx]
+      state: 'idle',  // 'p1ban1'|'p2ban1'|'p1ban2'|'p2ban2'|'p1pick'|'p2pick'|'done'
+      banned: [],         // flat list of banned faction indexes (for quick includes checks)
+      bansByPlayer: [[], []], // [[p1ban1fi, p1ban2fi], [p2ban1fi, p2ban2fi]] — for display
+      picks: [null, null],
       cursors: [0, 0],
     };
 
-    const DRAFT_STEPS = ['p1ban', 'p2ban', 'p1pick', 'p2pick'];
+    const DRAFT_STEPS = ['p1ban1', 'p2ban1', 'p1ban2', 'p2ban2', 'p1pick', 'p2pick'];
     const DRAFT_STEP_LABELS = {
-      p1ban: { text: '🔵 P1 — BAN A FACTION', cls: 'p1-turn', hint: 'W/S to browse · Q to ban' },
-      p2ban: { text: '🔴 P2 — BAN A FACTION', cls: 'p2-turn', hint: '↑/↓ to browse · ENTER to ban' },
+      p1ban1: { text: '🔵 P1 — BAN 1 OF 2', cls: 'p1-turn', hint: 'W/S to browse · Q to ban' },
+      p2ban1: { text: '🔴 P2 — BAN 1 OF 2', cls: 'p2-turn', hint: '↑/↓ to browse · ENTER to ban' },
+      p1ban2: { text: '🔵 P1 — BAN 2 OF 2', cls: 'p1-turn', hint: 'W/S to browse · Q to ban' },
+      p2ban2: { text: '🔴 P2 — BAN 2 OF 2', cls: 'p2-turn', hint: '↑/↓ to browse · ENTER to ban' },
       p1pick: { text: '🔵 P1 — PICK YOUR FACTION', cls: 'p1-turn', hint: 'W/S to browse · Q to pick' },
       p2pick: { text: '🔴 P2 — PICK YOUR FACTION', cls: 'p2-turn', hint: '↑/↓ to browse · ENTER to pick' },
       done: { text: '⚔ READY — START BATTLE', cls: 'done-turn', hint: 'Press START or both confirm' },
@@ -10001,7 +10301,7 @@
 
     function startDraftMode() {
       setGameMode('draft');
-      DRAFT = { state: 'p1ban', banned: [], picks: [null, null], cursors: [0, 0] };
+      DRAFT = { state: 'p1ban1', banned: [], bansByPlayer: [[], []], picks: [null, null], cursors: [0, 0] };
       fSelected = [null, null];
       P1_FACTION = null; P2_FACTION = null;
       _buildDraftCards();
@@ -10037,19 +10337,9 @@
     }
 
     function _draftActivePid() {
-      if (DRAFT.state === 'p1ban' || DRAFT.state === 'p1pick') return 1;
-      if (DRAFT.state === 'p2ban' || DRAFT.state === 'p2pick') return 2;
+      if (DRAFT.state === 'p1ban1' || DRAFT.state === 'p1ban2' || DRAFT.state === 'p1pick') return 1;
+      if (DRAFT.state === 'p2ban1' || DRAFT.state === 'p2ban2' || DRAFT.state === 'p2pick') return 2;
       return null;
-    }
-
-    function _draftNextAvailableCursor(pid, from, dir) {
-      let idx = from;
-      for (let i = 0; i < FACTIONS.length; i++) {
-        idx = (idx + dir + FACTIONS.length) % FACTIONS.length;
-        if (!DRAFT.banned.includes(idx) && DRAFT.picks[0] !== idx && DRAFT.picks[1] !== idx) return idx;
-        // allow banned to be "browsed" just not selected — stop only at picked
-      }
-      return from;
     }
 
     function _draftMoveCursor(pid, dir) {
@@ -10085,12 +10375,13 @@
       // Can't pick an already-picked faction
       if (DRAFT.picks[0] === fi || DRAFT.picks[1] === fi) return;
       // Can't pick a banned faction during pick phase
-      if ((DRAFT.state === 'p1pick' || DRAFT.state === 'p2pick') && DRAFT.banned.includes(fi)) return;
+      if ((DRAFT.state === 'p1pick' || DRAFT.state === 'p2pick') && DRAFT.banned.includes(fi)) return; // can't pick a banned faction
 
-      if (DRAFT.state === 'p1ban' || DRAFT.state === 'p2ban') {
+      if (DRAFT.state.includes('ban')) {
         // Ban
         if (DRAFT.banned.includes(fi)) return;
         DRAFT.banned.push(fi);
+        DRAFT.bansByPlayer[pid - 1].push(fi);
         _applyDraftBannedStyling();
         // Flash the banned card red briefly
         [1, 2].forEach(p => {
@@ -10158,8 +10449,6 @@
       const hint = document.getElementById('draft-footer-hint');
       const info = DRAFT_STEP_LABELS[DRAFT.state] || DRAFT_STEP_LABELS['done'];
       banner.textContent = info.text;
-      banner.className = `p${_draftActivePid() === 1 ? '1' : _draftActivePid() === 2 ? '2' : 'done'}-turn`;
-      // Use the correct class
       banner.className = info.cls;
       if (hint) hint.textContent = info.hint;
     }
@@ -10167,26 +10456,29 @@
     function _updateDraftStatus() {
       const s1 = document.getElementById('draft-p1-status');
       const s2 = document.getElementById('draft-p2-status');
-      if (s1) {
-        const b1 = DRAFT.banned[0] !== undefined ? `❌ Banned: ${FACTIONS[DRAFT.banned[0]].icon} ${FACTIONS[DRAFT.banned[0]].name}` : '❌ Ban pending...';
-        const p1 = DRAFT.picks[0] !== null ? `✅ Picked: ${FACTIONS[DRAFT.picks[0]].icon} ${FACTIONS[DRAFT.picks[0]].name}` : '⏳ Pick pending...';
-        s1.innerHTML = b1 + '<br>' + p1;
-      }
-      if (s2) {
-        const b2 = DRAFT.banned[1] !== undefined ? `❌ Banned: ${FACTIONS[DRAFT.banned[1]].icon} ${FACTIONS[DRAFT.banned[1]].name}` : '❌ Ban pending...';
-        const p2 = DRAFT.picks[1] !== null ? `✅ Picked: ${FACTIONS[DRAFT.picks[1]].icon} ${FACTIONS[DRAFT.picks[1]].name}` : '⏳ Pick pending...';
-        s2.innerHTML = b2 + '<br>' + p2;
-      }
+      [s1, s2].forEach((el, pidx) => {
+        if (!el) return;
+        const bans = DRAFT.bansByPlayer[pidx];
+        const banLines = [0, 1].map(i => {
+          if (bans[i] !== undefined) return `❌ Ban ${i + 1}: ${FACTIONS[bans[i]].icon} ${FACTIONS[bans[i]].name}`;
+          return `❌ Ban ${i + 1}: pending...`;
+        });
+        const pick = DRAFT.picks[pidx];
+        const pickLine = pick !== null
+          ? `✅ Picked: ${FACTIONS[pick].icon} ${FACTIONS[pick].name}`
+          : '⏳ Pick pending...';
+        el.innerHTML = banLines.join('<br>') + '<br>' + pickLine;
+      });
     }
     document.getElementById('btn-tutorial').addEventListener('click', () => {
       // Launch interactive in-game tutorial
       GAME_MODE = 'tutorial';
       AI_DIFFICULTY = 'tutorial';
-      AI_FACTION_IDX = 0; // Warriors for tutorial AI — simple and familiar
+      AI_FACTION_IDX = 4; // Verdant for tutorial AI — different units to illustrate the combat triangle
       AI_PERSONALITY = 'defensive';
-      // Auto-pick warriors for player too, pre-fill both factions
+      // Auto-pick warriors for player, Verdant for AI
       P1_FACTION = FACTIONS[0]; // Warriors
-      P2_FACTION = FACTIONS[0]; // Warriors
+      P2_FACTION = FACTIONS[4]; // Verdant
       fSelected = [0, 0];
       if (AC.state === 'suspended') AC.resume();
       initGame();
