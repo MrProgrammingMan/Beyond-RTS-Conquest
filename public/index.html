@@ -7151,6 +7151,7 @@
 
       const units = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
       const workerDef = G.factions[pid - 1].units.find(d => d.isWorker);
+      const _isSuddenAI = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
       const allUnitDefs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
       const allUpgrades = G.factions[pid - 1].upgrades || [];
       const availUpgrades = allUpgrades.filter(u => !p.ownedUpgrades.has(u.id));
@@ -7186,7 +7187,7 @@
       // ── 1. Workers — always fill to cap ──
       const _aiWorkerBodyCost = (p.workers || 0) === 0 ? 0 : (p.workers || 0) === 1 ? 1 : 2;
       const _aiEffectiveWorkerCap = Math.min(cfg.aiWorkerCap || 3, p.workerCap || 3);
-      if (!forceDefend && workerDef && p.workers < _aiEffectiveWorkerCap &&
+      if (!forceDefend && !_isSuddenAI && workerDef && p.workers < _aiEffectiveWorkerCap &&
         p.souls >= workerDef.souls && p.bodies >= _aiWorkerBodyCost) {
         const workerIdx = allUnitDefs.indexOf(workerDef);
         G[_actingKey] = true;
@@ -7952,10 +7953,16 @@
         const grid = document.getElementById(`p${pid}-grid`);
         grid.innerHTML = '';
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
-        const totalCols = defs.length + 1; // +1 always for spy card (hidden in tutorial until spy step)
+        const _isSuddenCols = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+        const totalCols = (_isSuddenCols ? defs.filter(d=>!d.isWorker).length : defs.length) + 1;
         grid.style.gridTemplateColumns = `repeat(${totalCols}, 1fr)`;
+        const _isSuddenBuild = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+        let _cardIdx = 0; // visual index excluding hidden cards
         defs.forEach((def, i) => {
           const card = document.createElement('div');
+          // Hide worker cards entirely in sudden death — no workers in this mode
+          if (_isSuddenBuild && def.isWorker) return;
+          const _ci = _cardIdx++; // use running counter so sel indices stay valid
           card.className = 'ucard'; card.dataset.idx = i; card.id = `p${pid}-ucard-${i}`;
           const TL = { mel: 'MEL', rng: 'RNG', air: 'AIR', wrk: 'WRK', sum: 'SUM' };
           const TC = { mel: 't-mel', rng: 't-rng', air: 't-air', wrk: 't-wrk', sum: 't-sum' };
@@ -7988,7 +7995,8 @@
           spyCard.addEventListener('mouseleave', () => { hideTT(); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           grid.appendChild(spyCard);
         }
-        grid.style.gridTemplateColumns = `repeat(${defs.length + 1}, 1fr)`;
+        const _visibleCards = _isSuddenBuild ? defs.filter(d => !d.isWorker).length : defs.length;
+        grid.style.gridTemplateColumns = `repeat(${_visibleCards + 1}, 1fr)`;
         // Upgrade cards
         const upgEl = document.getElementById(`p${pid}-upgrades`);
         upgEl.innerHTML = '';
@@ -8145,16 +8153,23 @@
         const _wmOn = G.workerMidMode && G.workerMidMode[pid - 1];
         const _wmOwned = _wmOn && G.midOwner === pid;
         const _wmEl = document.getElementById(`p${pid}-worker-count`);
-        _wmEl.textContent = `⛏ ${p.workers}/${p.workerCap || 3}${wReturnStr}`;
-        _wmEl.style.color = '';
-        // Mid button visibility + state
+        const _isSuddenWM = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+        if (_isSuddenWM) {
+          _wmEl.textContent = '🦴 passive'; _wmEl.style.color = 'rgba(149,165,166,.5)';
+        } else {
+          _wmEl.textContent = `⛏ ${p.workers}/${p.workerCap || 3}${wReturnStr}`; _wmEl.style.color = '';
+        }
+        // Mid button visibility + state — hidden in sudden death (no workers)
+        const _isSuddenHUD = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
         const _midBtnEl = document.getElementById(`p${pid}-mid-btn`);
         if (_midBtnEl) {
-          _midBtnEl.style.display = 'inline-block';
-          _midBtnEl.className = 'worker-mid-btn' + (_wmOwned ? ' active' : _wmOn ? ' waiting' : '');
-          const _wKey = pid === 1 ? 'E' : 'NP1';
-          _midBtnEl.textContent = _wmOwned ? `⛏ →MID ✓ [${_wKey}]` : _wmOn ? `⛏ →MID? [${_wKey}]` : `⛏ →MID [${_wKey}]`;
-          _midBtnEl.title = _wmOn ? 'Workers routing to mid (click or press E/NP1 to cancel)' : 'Click or press E/NP1 to send workers to mid when you own it';
+          if (_isSuddenHUD) { _midBtnEl.style.display = 'none'; } else {
+            _midBtnEl.style.display = 'inline-block';
+            _midBtnEl.className = 'worker-mid-btn' + (_wmOwned ? ' active' : _wmOn ? ' waiting' : '');
+            const _wKey = pid === 1 ? 'E' : 'NP1';
+            _midBtnEl.textContent = _wmOwned ? `⛏ →MID ✓ [${_wKey}]` : _wmOn ? `⛏ →MID? [${_wKey}]` : `⛏ →MID [${_wKey}]`;
+            _midBtnEl.title = _wmOn ? 'Workers routing to mid (click or press E/NP1 to cancel)' : 'Click or press E/NP1 to send workers to mid when you own it';
+          }
         }
         // Spy count
         const _spyCountEl = document.getElementById(`p${pid}-spy-count`);
@@ -8220,7 +8235,7 @@
             const _allTips = [
               ...(G._tipIdx[pid - 1] % 3 === 0 && _passiveTip ? [_passiveTip] : []),
               { text: '💡 Hold mid to ramp up soul income — up to +2.0/s after 60s', title: 'Mid control income scales over time' },
-              { text: '💡 Workers pathing to mid return with 12 bodies (vs 2 normally) — own mid to enable this', title: 'Mid workers return extra bodies' },
+              ...((GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai') ? [] : [{ text: '💡 Workers pathing to mid return with 12 bodies (vs 2 normally) — own mid to enable this', title: 'Mid workers return extra bodies' }]),
               { text: '💡 3+ ranged units on one target deal less damage — mix your army', title: 'Focus fire penalty' },
               { text: '💡 Melee walls block incoming projectiles — put them up front', title: 'Projectile blocking' },
               { text: '💡 Body Boon converts 60 souls into +14 bodies — great when body-starved', title: 'Body Boon buff tip' },
@@ -8363,6 +8378,9 @@
       if (!def || def.isSpawned) return;
       const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
       if (!def.isWorker && combatUnits >= p.unitCap) { shakeCard(cardEl); return; }
+      // No workers in sudden death — passive bodies replace them
+      const _isSuddenSpawn = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+      if (_isSuddenSpawn && def.isWorker) { shakeCard(cardEl); return; }
       if (def.isWorker && p.workers >= (p.workerCap || 3)) { shakeCard(cardEl); return; }
       // Graduated worker cost: 1st worker = free (0 bodies), 2nd = 1 body, 3rd+ = 2 bodies
       let _bodyCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
@@ -10590,13 +10608,14 @@
           p.baseHp = Math.max(p.baseHp, threshold); // restore to full threshold, not below
           p.souls += 40;
           const ov = document.getElementById('last-stand-overlay');
-          if (GAME_MODE === 'sudden_death' && !G._suddenDeathAnnounced) {
+          const _isSuddenLS = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+          if (_isSuddenLS && !G._suddenDeathAnnounced) {
             G._suddenDeathAnnounced = true;
             document.getElementById('ls-title').textContent = '⚡ SUDDEN DEATH';
             document.getElementById('ls-title').style.color = '#e67e22';
             document.querySelector('#last-stand-overlay .ls-sub').textContent = 'BOTH SIDES ARE DESPERATE — GUARDS INBOUND';
             ov.classList.add('show'); setTimeout(() => ov.classList.remove('show'), 3000);
-          } else if (GAME_MODE !== 'sudden_death') {
+          } else if (!_isSuddenLS) {
             document.getElementById('ls-title').textContent = `PLAYER ${p.id} — LAST STAND`;
             document.getElementById('ls-title').style.color = p.id === 1 ? '#2471a3' : '#c0392b';
             document.querySelector('#last-stand-overlay .ls-sub').textContent = 'THE ROYAL GUARD HAS BEEN SUMMONED';
@@ -13171,12 +13190,14 @@
         'Hold all three zones for <span class="st">0.8❤/s</span> drain. A base falls in ~2 minutes of full control.',
       ]],
       ['btn-sudden-death', '⚡ SUDDEN DEATH', [
-        '<span class="st">Both bases start at 30 HP.</span>',
+        '<span class="st">Both bases start at 30 HP. No workers. Pure combat.</span>',
         ' ',
-        'Last Stand triggers for both players <span class="st">immediately</span> — guards spawn at the very start, souls are boosted, and the game is a desperate brawl from second one.',
+        '<span class="st">Workers are removed</span> from the unit list — you start with a large body pool and earn passive bodies every 8 seconds instead.',
+        'Soul income is <span class="st">doubled</span>. Last Stand triggers for both players immediately.',
         ' ',
-        'Matches are short and chaotic. Great as a quick rematch mode after a long game.',
-        'Same controls and rules as Multiplayer otherwise.',
+        'After 90 seconds, a <span class="st">Doom Clock</span> kicks in — bases start crumbling on their own, accelerating until someone falls.',
+        ' ',
+        'Matches are short and brutal. Great as a quick rematch mode.',
       ]],
       ['btn-solo', '🤖 SINGLEPLAYER', [
         '<span class="st">You vs an AI opponent.</span>',
