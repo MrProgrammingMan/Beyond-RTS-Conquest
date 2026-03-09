@@ -37,6 +37,99 @@
     }
 
 
+
+    /* ── LARGE SCREEN HUD — more breathing room at 1080p+ ─────────────────────── */
+    @media (min-width: 1400px) and (min-height: 800px) {
+      :root {
+        --hud: clamp(180px, 18vh, 240px);
+        --gap: clamp(4px, .5vw, 8px);
+      }
+
+      .hud-info {
+        width: clamp(150px, 13vw, 210px);
+      }
+
+      .ucard {
+        min-height: clamp(72px, 10vh, 130px);
+        padding: clamp(3px, .6vh, 7px) clamp(3px, .4vw, 6px);
+      }
+
+      .uicon {
+        font-size: clamp(1.5rem, 3.2vh, 2.8rem);
+      }
+
+      .uname {
+        font-size: clamp(.8rem, 1.15vw, 1.05rem);
+      }
+
+      .ctag {
+        font-size: clamp(.72rem, 1vw, .88rem);
+        padding: 2px clamp(3px, .35vw, 5px);
+      }
+
+      .rval {
+        font-size: clamp(1.1rem, 2vw, 1.8rem);
+      }
+
+      .rlabel {
+        font-size: clamp(.55rem, .72vw, .68rem);
+      }
+
+      .pname {
+        font-size: clamp(.85rem, 1.2vw, 1.2rem);
+      }
+
+      .income-rate {
+        font-size: clamp(.62rem, .9vw, .85rem);
+      }
+
+      .ingame-tip {
+        font-size: clamp(.6rem, .88vw, .8rem);
+      }
+
+      .unit-count,
+      .worker-count {
+        font-size: clamp(.6rem, .88vw, .8rem);
+      }
+
+      .hud-meta {
+        gap: clamp(3px, .4vw, 7px);
+      }
+    }
+
+    /* ── EXTRA LARGE — 1440p / ultrawide ─────────────────────────────────────── */
+    @media (min-width: 1800px) and (min-height: 900px) {
+      :root {
+        --hud: clamp(200px, 17vh, 260px);
+        --gap: clamp(5px, .55vw, 9px);
+      }
+
+      .hud-info {
+        width: clamp(170px, 12vw, 230px);
+      }
+
+      .ucard {
+        min-height: clamp(80px, 11vh, 145px);
+        padding: clamp(4px, .7vh, 8px) clamp(4px, .45vw, 7px);
+      }
+
+      .uicon {
+        font-size: clamp(1.6rem, 3.5vh, 3rem);
+      }
+
+      .uname {
+        font-size: clamp(.85rem, 1.2vw, 1.1rem);
+      }
+
+      .ctag {
+        font-size: clamp(.75rem, 1.05vw, .92rem);
+      }
+
+      .rval {
+        font-size: clamp(1.2rem, 2.1vw, 2rem);
+      }
+    }
+
     /* ── COMPACT HUD for small screens ──────────────────────────────────────── */
     @media (max-height: 650px) {
       :root {
@@ -3465,6 +3558,80 @@
       width: 0%;
     }
 
+    /* NEW PLAYER POPUP */
+    #newplayer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #newplayer-overlay.show {
+      display: flex;
+    }
+
+    #newplayer-box {
+      background: #0d0d1a;
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: clamp(24px, 4vh, 44px) clamp(28px, 4vw, 56px);
+      max-width: 480px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(212, 168, 67, .15);
+    }
+
+    #newplayer-icon {
+      font-size: clamp(2.2rem, 5vw, 3rem);
+    }
+
+    #newplayer-title {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .12em;
+    }
+
+    #newplayer-body {
+      font-size: clamp(.72rem, 1.1vw, .9rem);
+      color: var(--dim);
+      line-height: 1.65;
+      max-width: 360px;
+    }
+
+    #newplayer-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    #btn-newplayer-yes {
+      min-width: 160px;
+    }
+
+    #btn-newplayer-no {
+      min-width: 130px;
+      background: transparent;
+      border-color: var(--border);
+      color: var(--dim);
+      font-size: clamp(.72rem, 1vw, .85rem);
+    }
+
+    #btn-newplayer-no:hover {
+      color: var(--text);
+      border-color: var(--dim);
+    }
+
     /* MODE BRIEFING POPUP */
     #mode-brief-overlay {
       display: none;
@@ -4624,6 +4791,10 @@
               id="rk-p1Slot3"></button><button class="rkey-clear" onclick="clearSlot('p1Slot3')">✕</button></div>
           <div class="rebind-row"><span id="rk-p1Slot4-label">Unit Slot 5</span><button class="rkey slot-key"
               id="rk-p1Slot4"></button><button class="rkey-clear" onclick="clearSlot('p1Slot4')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p1Slot5-label">Unit Slot 6</span><button class="rkey slot-key"
+              id="rk-p1Slot5"></button><button class="rkey-clear" onclick="clearSlot('p1Slot5')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p1Slot6-label">🕵️ Spy</span><button class="rkey slot-key"
+              id="rk-p1Slot6"></button><button class="rkey-clear" onclick="clearSlot('p1Slot6')">✕</button></div>
         </div>
         <div class="rebind-col">
           <div class="rebind-head p2l">PLAYER 2 — UNIT SLOTS</div>
@@ -4637,6 +4808,10 @@
               id="rk-p2Slot3"></button><button class="rkey-clear" onclick="clearSlot('p2Slot3')">✕</button></div>
           <div class="rebind-row"><span id="rk-p2Slot4-label">Unit Slot 5</span><button class="rkey slot-key"
               id="rk-p2Slot4"></button><button class="rkey-clear" onclick="clearSlot('p2Slot4')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p2Slot5-label">Unit Slot 6</span><button class="rkey slot-key"
+              id="rk-p2Slot5"></button><button class="rkey-clear" onclick="clearSlot('p2Slot5')">✕</button></div>
+          <div class="rebind-row"><span id="rk-p2Slot6-label">🕵️ Spy</span><button class="rkey slot-key"
+              id="rk-p2Slot6"></button><button class="rkey-clear" onclick="clearSlot('p2Slot6')">✕</button></div>
         </div>
       </div>
       <button class="btn" id="btn-rebind-back">← BACK</button>
@@ -6170,8 +6345,8 @@
       p1Taunt: 'KeyF', p2Taunt: 'Numpad0',
       p1WorkerMid: 'KeyE', p2WorkerMid: 'Numpad1',
       // Optional direct-spawn hotkeys (null = unassigned)
-      p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null,
-      p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null,
+      p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null, p1Slot5: null, p1Slot6: null,
+      p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null, p2Slot5: null, p2Slot6: null,
     };
     let _rebinding = null; // { key: 'p1Left', el: element }
     let _devUnlocked = false; // true once correct password entered
@@ -11967,7 +12142,7 @@
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
       else {
-        for (let s = 0; s < 5; s++) {
+        for (let s = 0; s < 7; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
           if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'conquest' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'tournament') && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
         }
@@ -11991,12 +12166,24 @@
     }
     function directSpawnSlot(pid, slotIdx) {
       if (!G || !G.running || G.paused) return;
-      const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
+      const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned); // includes worker
+      const spySlotIdx = defs.length; // spy is always after all faction units
+      if (slotIdx === 6 || slotIdx === spySlotIdx) {
+        // Spy hotkey
+        if (pid === 1) { P1_MODE = 0; P1_SEL = spySlotIdx; } else { P2_MODE = 0; P2_SEL = spySlotIdx; }
+        switchMode(pid, 0); refreshSel(pid);
+        trySpawnSpy(pid);
+        return;
+      }
       const def = defs[slotIdx]; if (!def) return;
       if (pid === 1) { P1_MODE = 0; P1_SEL = slotIdx; } else { P2_MODE = 0; P2_SEL = slotIdx; }
       switchMode(pid, 0); refreshSel(pid);
       const cardEl = document.querySelector(`#p${pid}-grid .ucard[data-idx='${slotIdx}']`);
-      trySpawn(pid, def.id, cardEl);
+      if (def.isWorker) {
+        trySpawn(pid, def.id, cardEl);
+      } else {
+        trySpawn(pid, def.id, cardEl);
+      }
     }
 
     function cycleMode(pid, dir) {
@@ -12074,9 +12261,16 @@
       }
       function slotRows(pid) {
         let rows = '';
-        for (let s = 0; s < 5; s++) {
+        const fac = typeof fSelected !== 'undefined' && fSelected[pid - 1] !== null ? FACTIONS[fSelected[pid - 1]] : null;
+        const allDefs = fac ? fac.units.filter(u => !u.isSpawned) : [];
+        for (let s = 0; s < 7; s++) {
           const k = `p${pid}Slot${s}`;
-          if (KEYS[k]) rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> Spawn Unit ${s + 1}</div>`;
+          if (!KEYS[k]) continue;
+          let label;
+          if (s === 6) label = '🕵️ Spy';
+          else if (allDefs[s]) label = `${allDefs[s].icon} ${allDefs[s].name}${allDefs[s].isWorker ? ' (Worker)' : ''}`;
+          else label = `Unit Slot ${s + 1}`;
+          rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> ${label}</div>`;
         }
         return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Rajdhani,sans-serif;'>DIRECT SPAWN</div>${rows}` : '';
       }
@@ -12154,8 +12348,8 @@
       });
       [1, 2].forEach(pid => {
         const faction = typeof fSelected !== 'undefined' ? FACTIONS[fSelected[pid - 1]] : null;
-        const units = faction ? faction.units.filter(u => !u.isSpawned && !u.isWorker) : [];
-        for (let s = 0; s < 5; s++) {
+        const allDefs2 = faction ? faction.units.filter(u => !u.isSpawned) : [];
+        for (let s = 0; s < 7; s++) {
           const k = `p${pid}Slot${s}`;
           const el = document.getElementById('rk-' + k);
           const lbl = document.getElementById('rk-' + k + '-label');
@@ -12166,7 +12360,13 @@
             el.onclick = () => startRebind(k, el);
           }
           if (lbl) {
-            lbl.textContent = units[s] ? `${units[s].icon} ${units[s].name}` : `Unit Slot ${s + 1}`;
+            if (s === 6) {
+              lbl.textContent = '🕵️ Spy';
+            } else if (allDefs2[s]) {
+              lbl.textContent = `${allDefs2[s].icon} ${allDefs2[s].name}${allDefs2[s].isWorker ? ' (Worker)' : ''}`;
+            } else {
+              lbl.textContent = `Unit Slot ${s + 1}`;
+            }
           }
         }
       });
@@ -12909,9 +13109,16 @@
       }
       function slotRows(pid) {
         let rows = '';
-        for (let s = 0; s < 5; s++) {
+        const fac = typeof fSelected !== 'undefined' && fSelected[pid - 1] !== null ? FACTIONS[fSelected[pid - 1]] : null;
+        const allDefs = fac ? fac.units.filter(u => !u.isSpawned) : [];
+        for (let s = 0; s < 7; s++) {
           const k = `p${pid}Slot${s}`;
-          if (KEYS[k]) rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> Spawn Unit ${s + 1}</div>`;
+          if (!KEYS[k]) continue;
+          let label;
+          if (s === 6) label = '🕵️ Spy';
+          else if (allDefs[s]) label = `${allDefs[s].icon} ${allDefs[s].name}${allDefs[s].isWorker ? ' (Worker)' : ''}`;
+          else label = `Unit Slot ${s + 1}`;
+          rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> ${label}</div>`;
         }
         return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Rajdhani,sans-serif;'>DIRECT SPAWN</div>${rows}` : '';
       }
@@ -12997,8 +13204,9 @@
       // Slot keys — show unit names if faction selected, else generic label
       [1, 2].forEach(pid => {
         const faction = typeof fSelected !== 'undefined' ? FACTIONS[fSelected[pid - 1]] : null;
-        const units = faction ? faction.units.filter(u => !u.isSpawned && !u.isWorker) : [];
-        for (let s = 0; s < 5; s++) {
+        // All non-spawned units (combat + worker), then spy as slot 6
+        const allDefs = faction ? faction.units.filter(u => !u.isSpawned) : [];
+        for (let s = 0; s < 7; s++) {
           const k = `p${pid}Slot${s}`;
           const el = document.getElementById('rk-' + k);
           const lbl = document.getElementById('rk-' + k + '-label');
@@ -13009,7 +13217,13 @@
             el.onclick = () => startRebind(k, el);
           }
           if (lbl) {
-            lbl.textContent = units[s] ? `${units[s].icon} ${units[s].name}` : `Unit Slot ${s + 1}`;
+            if (s === 6) {
+              lbl.textContent = '🕵️ Spy';
+            } else if (allDefs[s]) {
+              lbl.textContent = `${allDefs[s].icon} ${allDefs[s].name}${allDefs[s].isWorker ? ' (Worker)' : ''}`;
+            } else {
+              lbl.textContent = `Unit Slot ${s + 1}`;
+            }
           }
         }
       });
@@ -13330,6 +13544,19 @@
     })();
 
   </script>
+  <!-- NEW PLAYER POPUP -->
+  <div id="newplayer-overlay">
+    <div id="newplayer-box">
+      <div id="newplayer-icon">⚔️</div>
+      <div id="newplayer-title">LOOKS LIKE YOU'RE NEW HERE</div>
+      <div id="newplayer-body">Beyond RTS Conquest is a two-player keyboard RTS with 10 factions, upgrades, and a
+        mid-zone economy. The tutorial takes about 5 minutes and covers everything you need to know.</div>
+      <div id="newplayer-btns">
+        <button class="btn primary" id="btn-newplayer-yes">📖 TAKE THE TUTORIAL</button>
+        <button class="btn" id="btn-newplayer-no">I'll FIGURE IT OUT</button>
+      </div>
+    </div>
+  </div>
   <!-- MODE BRIEFING -->
   <div id="mode-brief-overlay">
     <div id="mode-brief-box">
