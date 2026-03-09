@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Beyond Kings' Conquest</title>
+  <title>Beyond RTS Conquest</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
 
@@ -469,17 +469,17 @@
     .menu-btns {
       display: flex;
       flex-direction: column;
-      gap: clamp(9px, 1.6vh, 20px);
+      gap: clamp(4px, .7vh, 9px);
       align-items: center;
-      min-width: clamp(220px, 30vw, 380px);
+      width: clamp(240px, 28vw, 360px);
     }
 
     .menu-btns .btn {
       width: 100%;
       text-align: center;
-      font-size: clamp(.85rem, 1.3vw, 1.05rem);
-      padding: clamp(10px, 1.5vh, 18px) clamp(24px, 3.5vw, 52px);
-      letter-spacing: .14em;
+      font-size: clamp(.8rem, 1.2vw, .96rem);
+      padding: clamp(8px, 1.1vh, 13px) clamp(18px, 2.2vw, 36px);
+      letter-spacing: .13em;
     }
 
     /* FACTION */
@@ -2289,7 +2289,7 @@
 
     .hp-bar {
       flex: 1;
-      height: clamp(4px, .7vh, 8px);
+      height: clamp(6px, 1vh, 10px);
       background: #1a1a2e;
       border-radius: 4px;
       overflow: hidden;
@@ -3085,33 +3085,450 @@
 
     /* ── ONLINE MULTIPLAYER ─────────────────────────────────── */
     #sc-online {
-      display: flex; flex-direction: column; align-items: center;
+      background: #07070f;
+      flex-direction: column;
+      align-items: center;
       justify-content: flex-start;
       padding: clamp(20px, 4vh, 50px) clamp(16px, 4vw, 60px);
-      gap: clamp(14px, 2.5vh, 28px); overflow-y: auto;
+      gap: clamp(14px, 2.5vh, 28px);
+      overflow-y: auto;
     }
-    #online-status-bar { font-family: 'Rajdhani', sans-serif; font-size: clamp(.7rem, 1.1vw, .9rem); color: rgba(212,168,67,.7); letter-spacing: .08em; min-height: 1.4em; text-align: center; }
-    #online-panels { display: flex; gap: clamp(16px, 3vw, 48px); align-items: stretch; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 780px; }
-    .online-panel { flex: 1; min-width: 220px; max-width: 320px; background: rgba(0,0,0,.4); border: 1px solid var(--border); border-radius: 8px; padding: clamp(16px, 2.5vh, 28px) clamp(14px, 2vw, 24px); display: flex; flex-direction: column; gap: 10px; align-items: center; }
-    .online-panel-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(1rem, 1.6vw, 1.3rem); font-weight: 700; color: var(--gold); letter-spacing: .1em; }
-    .online-panel-sub { font-size: clamp(.65rem, 1vw, .82rem); color: var(--dim); text-align: center; letter-spacing: .04em; }
-    .online-btn { width: 100%; padding: 10px 0; font-size: clamp(.8rem, 1.2vw, 1rem) !important; }
-    .online-hint { font-family: 'Rajdhani', sans-serif; font-size: clamp(.65rem, 1vw, .8rem); color: var(--dim); text-align: center; letter-spacing: .05em; }
-    .online-error { font-family: 'Rajdhani', sans-serif; font-size: clamp(.65rem, 1vw, .8rem); color: #e74c3c; text-align: center; min-height: 1.2em; }
-    #room-code-display { font-family: 'Rajdhani', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: var(--p1); letter-spacing: .25em; text-align: center; text-shadow: 0 0 20px var(--p1g); cursor: pointer; user-select: all; }
-    .online-join-row { display: flex; gap: 8px; width: 100%; }
-    .online-input { flex: 1; background: rgba(0,0,0,.5); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: clamp(.9rem, 1.4vw, 1.1rem); letter-spacing: .2em; padding: 6px 10px; text-align: center; text-transform: uppercase; outline: none; }
-    .online-input:focus { border-color: var(--gold); }
-    .online-divider { display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-size: .9rem; color: var(--dim); letter-spacing: .1em; padding: 0 4px; }
-    #online-connecting { position: fixed; inset: 0; background: rgba(0,0,0,.82); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 500; }
-    .online-spinner { width: 40px; height: 40px; border: 3px solid rgba(212,168,67,.2); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #online-connecting-msg { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; color: var(--gold); letter-spacing: .1em; }
-    .online-back-btn { margin-top: auto; font-size: clamp(.7rem, 1vw, .85rem) !important; padding: 6px 18px !important; background: transparent !important; border-color: var(--border) !important; color: var(--dim) !important; }
-    #online-badge { position: fixed; top: 6px; left: 50%; transform: translateX(-50%); font-family: 'Rajdhani', sans-serif; font-size: clamp(.55rem, .85vw, .72rem); color: rgba(46,204,113,.8); letter-spacing: .08em; background: rgba(0,0,0,.5); border: 1px solid rgba(46,204,113,.3); border-radius: 3px; padding: 2px 8px; z-index: 50; display: none; pointer-events: none; }
-    #online-dc-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 600; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
-    #online-dc-overlay.show { display: flex; }
-    #online-dc-overlay .dc-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(1.4rem, 3vw, 2.2rem); color: #e74c3c; letter-spacing: .1em; }
+
+    #online-status-bar {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.7rem, 1.1vw, .9rem);
+      color: rgba(212, 168, 67, .7);
+      letter-spacing: .08em;
+      min-height: 1.4em;
+      text-align: center;
+    }
+
+    #online-panels {
+      display: flex;
+      gap: clamp(16px, 3vw, 48px);
+      align-items: stretch;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 780px;
+    }
+
+    .online-panel {
+      flex: 1;
+      min-width: 220px;
+      max-width: 320px;
+      background: rgba(0, 0, 0, .4);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: clamp(16px, 2.5vh, 28px) clamp(14px, 2vw, 24px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .online-panel-title {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(1rem, 1.6vw, 1.3rem);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .1em;
+    }
+
+    .online-panel-sub {
+      font-size: clamp(.65rem, 1vw, .82rem);
+      color: var(--dim);
+      text-align: center;
+      letter-spacing: .04em;
+    }
+
+    .online-btn {
+      width: 100%;
+      padding: 10px 0;
+      font-size: clamp(.8rem, 1.2vw, 1rem) !important;
+    }
+
+    .online-hint {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.65rem, 1vw, .8rem);
+      color: var(--dim);
+      text-align: center;
+      letter-spacing: .05em;
+    }
+
+    .online-error {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.65rem, 1vw, .8rem);
+      color: #e74c3c;
+      text-align: center;
+      min-height: 1.2em;
+    }
+
+    #room-code-display {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      color: var(--p1);
+      letter-spacing: .25em;
+      text-align: center;
+      text-shadow: 0 0 20px var(--p1g);
+      cursor: pointer;
+      user-select: all;
+    }
+
+    .online-join-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .online-input {
+      flex: 1;
+      background: rgba(0, 0, 0, .5);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.9rem, 1.4vw, 1.1rem);
+      letter-spacing: .2em;
+      padding: 6px 10px;
+      text-align: center;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .online-input:focus {
+      border-color: var(--gold);
+    }
+
+    .online-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Rajdhani, sans-serif;
+      font-size: .9rem;
+      color: var(--dim);
+      letter-spacing: .1em;
+      padding: 0 4px;
+    }
+
+    #online-connecting {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .82);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 500;
+    }
+
+    .online-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(212, 168, 67, .2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #online-connecting-msg {
+      font-family: Rajdhani, sans-serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: .1em;
+    }
+
+    .online-back-btn {
+      margin-top: auto;
+      font-size: clamp(.7rem, 1vw, .85rem) !important;
+      padding: 6px 18px !important;
+      background: transparent !important;
+      border-color: var(--border) !important;
+      color: var(--dim) !important;
+    }
+
+    #online-badge {
+      position: fixed;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.55rem, .85vw, .72rem);
+      color: rgba(46, 204, 113, .8);
+      letter-spacing: .08em;
+      background: rgba(0, 0, 0, .5);
+      border: 1px solid rgba(46, 204, 113, .3);
+      border-radius: 3px;
+      padding: 2px 8px;
+      z-index: 50;
+      display: none;
+      pointer-events: none;
+    }
+
+    #online-dc-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .85);
+      z-index: 600;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    #online-dc-overlay.show {
+      display: flex;
+    }
+
+    #online-dc-overlay .dc-title {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      color: #e74c3c;
+      letter-spacing: .1em;
+    }
+
+    .menu-mode-tabs {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 2px;
+      width: 100%;
+    }
+
+    .menu-mode-tab {
+      flex: 1;
+      font-family: Rajdhani, sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      padding: 6px 0;
+      background: transparent;
+      border: none;
+      color: var(--dim);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+
+    .menu-mode-tab.active {
+      background: rgba(212, 168, 67, .15);
+      color: var(--gold);
+    }
+
+    .menu-mode-tab:hover:not(.active) {
+      background: rgba(255, 255, 255, .05);
+      color: var(--text);
+    }
+
+    .menu-online-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .menu-online-desc {
+      font-family: Rajdhani, sans-serif;
+      font-size: .67rem;
+      color: var(--dim);
+      text-align: center;
+      letter-spacing: .06em;
+    }
+
+    /* Menu button subtitles */
+    .menu-btn-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+    }
+
+    .menu-btn-sub {
+      font-family: Rajdhani, sans-serif;
+      font-size: .62rem;
+      color: var(--dim);
+      text-align: center;
+      letter-spacing: .06em;
+      opacity: .8;
+    }
+
+    /* Mode badge in-game */
+    #ingame-mode-badge {
+      position: fixed;
+      top: 6px;
+      right: 10px;
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.52rem, .8vw, .7rem);
+      color: rgba(255, 255, 255, .4);
+      letter-spacing: .1em;
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 3px;
+      padding: 2px 7px;
+      z-index: 15;
+      pointer-events: none;
+      display: none;
+    }
+
+    #sc-game.active #ingame-mode-badge {
+      display: block;
+    }
+
+    /* Faction badge in HUD */
+    .faction-badge {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.5rem, .75vw, .68rem);
+      letter-spacing: .08em;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border2);
+      color: var(--dim);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Fullscreen + mute buttons in-game */
+    #ingame-util-btns {
+      position: fixed;
+      bottom: calc(var(--hud) + 6px);
+      right: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 15;
+    }
+
+    #sc-game.active #ingame-util-btns {
+      display: flex;
+    }
+
+    .ingame-util-btn {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.48rem, .7vw, .62rem);
+      letter-spacing: .08em;
+      padding: 3px 7px;
+      background: rgba(0, 0, 0, .5);
+      border: 1px solid rgba(255, 255, 255, .1);
+      color: rgba(255, 255, 255, .35);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .ingame-util-btn:hover {
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(0, 0, 0, .7);
+    }
+
+    /* Vote overlay hint */
+    #vote-controls-hint {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.55rem, .9vw, .75rem);
+      color: rgba(255, 255, 255, .38);
+      letter-spacing: .08em;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* Mid capture progress bar */
+    #mid-cap-progress {
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: rgba(255, 255, 255, .12);
+      border-radius: 2px;
+      pointer-events: none;
+      display: none;
+    }
+
+    #mid-cap-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--gold);
+      transition: width .1s;
+      width: 0%;
+    }
+
+    /* MODE BRIEFING POPUP */
+    #mode-brief-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .88);
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 24px;
+    }
+
+    #mode-brief-overlay.show {
+      display: flex;
+    }
+
+    #mode-brief-box {
+      background: #0b0b16;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: clamp(20px, 3.5vh, 40px) clamp(22px, 4vw, 50px);
+      max-width: 560px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    #mode-brief-icon {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      text-align: center;
+    }
+
+    #mode-brief-title {
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(1.2rem, 2.5vw, 1.9rem);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .12em;
+      text-align: center;
+    }
+
+    #mode-brief-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .mode-brief-line {
+      font-size: clamp(.72rem, 1.1vw, .9rem);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .mode-brief-line b {
+      color: var(--gold);
+    }
+
+    #mode-brief-continue {
+      align-self: center;
+      margin-top: 6px;
+    }
 
     /* GAMEOVER */
     #sc-gameover {
@@ -3896,20 +4313,56 @@
     <div class="menu-content">
       <div>
         <div class="menu-eyebrow">A REALM OF PERPETUAL WAR</div>
-        <h1 class="menu-title">BEYOND KINGS'<br>CONQUEST</h1>
+        <h1 class="menu-title">BEYOND RTS<br>CONQUEST</h1>
       </div>
       <div class="menu-btns">
-        <button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
-        <button class="btn btn-sudden" id="btn-sudden-death">⚡ SUDDEN DEATH</button>
-        <button class="btn btn-conquest" id="btn-conquest">🏴 CONQUEST</button>
-        <button class="btn" id="btn-draft">🃏 DRAFT MODE</button>
-        <button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
-        <button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
-        <button class="btn primary" id="btn-online" onclick="showScreen('sc-online')">🌐 PLAY ONLINE</button>
-        <button class="btn" id="btn-aivsai">👁 AI VS AI</button>
-        <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
-        <button class="btn" id="btn-controls">🎮 CONTROLS &amp; KEY BINDS</button>
-        <!-- hidden elements kept for JS compatibility -->
+        <div class="menu-mode-tabs">
+          <button class="menu-mode-tab active" id="tab-local" onclick="_menuTab('local')">🎮 LOCAL</button>
+          <button class="menu-mode-tab" id="tab-online" onclick="_menuTab('online')">🌐 ONLINE</button>
+        </div>
+        <div id="menu-local-btns">
+          <div class="menu-btn-entry"><button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
+            <div class="menu-btn-sub">Two players, same keyboard</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn btn-sudden" id="btn-sudden-death">⚡ SUDDEN DEATH</button>
+            <div class="menu-btn-sub">Both start at 30 HP — instant chaos</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn btn-conquest" id="btn-conquest">🏴 CONQUEST</button>
+            <div class="menu-btn-sub">Hold zones to drain enemy base</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-draft">🃏 DRAFT MODE</button>
+            <div class="menu-btn-sub">Ban 2, pick 1 — counter-pick your opponent</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
+            <div class="menu-btn-sub">You vs the AI — 4 difficulty levels</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
+            <div class="menu-btn-sub">Single-elimination bracket, 2–10 players</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-aivsai">👁 AI VS AI</button>
+            <div class="menu-btn-sub">Watch two AIs battle it out</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
+            <div class="menu-btn-sub">Learn the game — recommended for new players</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-controls">🎮 CONTROLS &amp; KEY BINDS</button>
+            <div class="menu-btn-sub">Rebind keys and set direct-spawn hotkeys</div>
+          </div>
+        </div>
+        <div id="menu-online-btns" style="display:none;flex-direction:column;gap:8px;width:100%;">
+          <div class="menu-online-entry">
+            <button class="btn primary" id="btn-quickmatch-menu">🌐 QUICK MATCH</button>
+            <div class="menu-online-desc">Find a random opponent online</div>
+          </div>
+          <div class="menu-online-entry">
+            <button class="btn" id="btn-createroom-menu">🔒 PRIVATE ROOM</button>
+            <div class="menu-online-desc">Create a room and invite a friend</div>
+          </div>
+          <div class="menu-online-entry">
+            <button class="btn" id="btn-joinroom-menu">🔑 JOIN WITH CODE</button>
+            <div class="menu-online-desc">Enter a room code to join a friend</div>
+          </div>
+        </div>
         <div style="display:none">
           <button id="mode-vs"></button><button id="mode-solo"></button>
           <button id="btn-rebind"></button>
@@ -3919,42 +4372,65 @@
         style="margin-top:14px;font-family:Rajdhani,sans-serif;font-size:.65rem;color:rgba(212,168,67,.55);letter-spacing:.08em;text-align:center;line-height:1.8;">
         P1: WASD + Q TO SPAWN &nbsp;·&nbsp; P2: ↑↓←→ + ENTER &nbsp;·&nbsp; KEYBOARD ONLY</div>
     </div>
+    <div id="menu-footer"
+      style="position:absolute;bottom:clamp(6px,1.2vh,14px);left:0;right:0;display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.6vw,18px);z-index:3;flex-wrap:wrap;pointer-events:auto;">
+      <button class="btn mute-btn" onclick="toggleMute()"
+        style="font-size:clamp(.52rem,.78vw,.68rem);padding:3px 10px;letter-spacing:.1em;background:transparent;">🔊
+        MUTE</button>
+      <button class="btn" onclick="_goFullscreen()"
+        style="font-size:clamp(.52rem,.78vw,.68rem);padding:3px 10px;letter-spacing:.1em;background:transparent;">⛶
+        FULLSCREEN</button>
+      <span
+        style="font-family:Rajdhani,sans-serif;font-size:clamp(.44rem,.68vw,.58rem);color:var(--dim);letter-spacing:.07em;opacity:.55;">BEYOND
+        RTS CONQUEST · v1.0</span>
+    </div>
   </div>
   <!-- AI VS AI mode label inlined into faction screen JS -->
   <!-- ONLINE MULTIPLAYER -->
-  <div id="sc-online" class="screen">
-    <div class="sc-title">⚔ ONLINE MULTIPLAYER</div>
-    <div id="online-status-bar"></div>
+  <div id="sc-online" class="screen" style="background:#07070f;">
+    <div class="sc-title" style="font-size:clamp(1.1rem,2vw,1.6rem);">🌐 ONLINE PLAY</div>
+    <div id="online-status-bar">Connecting to server…</div>
     <div id="online-panels">
-      <div class="online-panel" id="online-panel-quick">
+      <div class="online-panel" id="panel-quickmatch">
         <div class="online-panel-title">🌐 QUICK MATCH</div>
-        <div class="online-panel-sub">Join a random opponent instantly</div>
-        <button class="btn online-btn" id="btn-quickmatch">FIND MATCH</button>
-        <div id="quickmatch-status" class="online-hint"></div>
+        <div class="online-panel-sub">Get matched against a random opponent. Both players choose factions normally.
+        </div>
+        <button class="btn primary online-btn" id="btn-quickmatch" onclick="NET.quickMatch()">FIND MATCH</button>
+        <div class="online-error" id="qm-error"></div>
+        <div class="online-hint" id="qm-hint">Waiting for players…</div>
       </div>
-      <div class="online-divider">OR</div>
-      <div class="online-panel" id="online-panel-private">
+      <div class="online-divider">— OR —</div>
+      <div class="online-panel" id="panel-private">
         <div class="online-panel-title">🔒 PRIVATE ROOM</div>
-        <div class="online-panel-sub">Play with a friend using a room code</div>
-        <button class="btn online-btn" id="btn-createroom">CREATE ROOM</button>
-        <div id="created-room-info" style="display:none">
-          <div class="online-hint">Share this code with your friend:</div>
-          <div id="room-code-display"></div>
-          <div class="online-hint" id="waiting-for-friend">Waiting for opponent…</div>
-        </div>
+        <div class="online-panel-sub">Create a room, share the code with your friend. They enter it below to join.</div>
+        <button class="btn online-btn" id="btn-createroom" onclick="NET.createRoom()">CREATE ROOM</button>
+        <div id="room-code-display" style="display:none" title="Click to copy"
+          onclick="navigator.clipboard&&navigator.clipboard.writeText(this.textContent)">——</div>
         <div class="online-join-row">
-          <input id="room-code-input" class="online-input" type="text" maxlength="4" placeholder="ROOM CODE" autocomplete="off" spellcheck="false">
-          <button class="btn online-btn" id="btn-joinroom">JOIN</button>
+          <input class="online-input" id="room-code-input" maxlength="6" placeholder="ENTER CODE" autocomplete="off" />
+          <button class="btn online-btn" id="btn-joinroom"
+            onclick="NET.joinRoom(document.getElementById('room-code-input').value)"
+            style="flex:0;white-space:nowrap;padding:6px 14px;">JOIN</button>
         </div>
-        <div id="join-error" class="online-error"></div>
+        <div class="online-error" id="room-error"></div>
       </div>
     </div>
-    <div id="online-connecting" style="display:none">
+    <button class="btn online-back-btn" onclick="NET.cleanup();showScreen('sc-menu');animMenuCanvas();">← BACK TO
+      MENU</button>
+    <div id="online-connecting" style="display:none;">
       <div class="online-spinner"></div>
       <div id="online-connecting-msg">Connecting…</div>
+      <button class="btn" style="margin-top:12px;font-size:.8rem;" onclick="NET.cleanup();">CANCEL</button>
     </div>
-    <button class="btn online-back-btn" onclick="showScreen('sc-menu')">← BACK</button>
+    <div id="online-badge" style="display:none;">🟢 ONLINE</div>
+    <div id="online-dc-overlay">
+      <div class="dc-title">⚠ DISCONNECTED</div>
+      <div style="font-family:Rajdhani,sans-serif;font-size:.9rem;color:var(--dim);">Connection to opponent lost.</div>
+      <button class="btn" onclick="NET.cleanup();showScreen('sc-menu');animMenuCanvas();" style="margin-top:8px;">←
+        RETURN TO MENU</button>
+    </div>
   </div>
+
   <!-- FACTION -->
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
@@ -4197,17 +4673,16 @@
             Go to Key Bindings to<br>set direct-spawn hotkeys</div>
         </div>
       </div>
+      <div
+        style="font-family:Rajdhani,sans-serif;font-size:clamp(.6rem,.9vw,.75rem);color:var(--dim);letter-spacing:.06em;text-align:center;margin-top:8px;line-height:1.8;border-top:1px solid var(--border);padding-top:10px;max-width:620px;margin-left:auto;margin-right:auto;">
+        GLOBAL KEYS: &nbsp;<b style="color:var(--text)">ESC</b> = Pause &nbsp;·&nbsp; <b style="color:var(--text)">M</b>
+        = Mute audio &nbsp;·&nbsp; <b style="color:var(--text)">F11</b> = Fullscreen &nbsp;·&nbsp; <b
+          style="color:var(--text)">←/→</b> = Vote during events</div>
       <button class="btn" id="btn-ctrl-back">← BACK</button>
     </div>
   </div>
   <!-- GAME -->
   <div id="sc-game" class="screen">
-    <div id="online-badge">🟢 ONLINE</div>
-    <div id="online-dc-overlay">
-      <div class="dc-title">⚠ OPPONENT DISCONNECTED</div>
-      <div style="font-family:Rajdhani,sans-serif;color:var(--dim);letter-spacing:.06em;font-size:.9rem;">The connection was lost.</div>
-      <button class="btn" onclick="NET.cleanup(); showScreen('sc-menu')">RETURN TO MENU</button>
-    </div>
     <div id="momentum-bar-wrap"
       title="MOMENTUM — shows who controls the battlefield. Wider bar = more map presence from kills and mid control.">
       <div id="momentum-p1" style="width:50%"></div>
@@ -4218,6 +4693,9 @@
     </div>
     <canvas id="battlefield"></canvas>
     <div id="mid-indicator">⚔ MIDDLE — UNCLAIMED</div>
+    <div id="mid-cap-progress">
+      <div id="mid-cap-fill"></div>
+    </div>
     <div id="killfeed"></div>
     <div id="popups"></div>
     <div id="siege-indicator">⏳ SIEGE DECAY ACTIVE</div>
@@ -4245,6 +4723,7 @@
         </div>
       </div>
       <div class="vote-instructions" id="vote-instructions"></div>
+      <div id="vote-controls-hint">P1: ← A/D → then Q to vote &nbsp;·&nbsp; P2: ← → then ENTER to vote</div>
       <div class="vote-tally" id="vote-tally"></div>
     </div>
     <div id="last-stand-overlay">
@@ -4273,11 +4752,15 @@
         onmouseover="this.style.borderColor='#ff0000';this.style.color='#ff0000';"
         onmouseout="this.style.borderColor='#8B0000';this.style.color='#ff4444';">☠ RAGEQUIT</button>
     </div>
+    <div id="ingame-mode-badge">VS</div>
+    <div id="ingame-util-btns"><button class="ingame-util-btn mute-btn" onclick="toggleMute()">🔊 MUTE</button><button
+        class="ingame-util-btn" onclick="_goFullscreen()">⛶ FULL</button></div>
     <div id="hud">
       <div class="player-hud" id="p1-hud">
         <div class="hud-info">
           <div class="hud-top">
             <span class="pname pname1">PLAYER 1</span>
+            <span class="faction-badge" id="p1-faction-badge">—</span>
             <div class="hp-wrap">
               <div class="rlabel" style="white-space:nowrap">🏰</div>
               <div class="hp-bar">
@@ -4333,6 +4816,7 @@
         <div class="hud-info">
           <div class="hud-top">
             <span class="pname pname2">PLAYER 2</span>
+            <span class="faction-badge" id="p2-faction-badge">—</span>
             <div class="hp-wrap">
               <div class="rlabel" style="white-space:nowrap">🏰</div>
               <div class="hp-bar">
@@ -4774,7 +5258,7 @@
         document.getElementById('online-dc-overlay').classList.remove('show');
         if (socket) { socket.disconnect(); socket = null; }
         // Restore faction screen panels
-        [1,2].forEach(pid => {
+        [1, 2].forEach(pid => {
           const panel = document.getElementById(`fcards-p${pid}`);
           if (panel) { panel.style.opacity = ''; panel.style.pointerEvents = ''; }
         });
@@ -4795,9 +5279,11 @@
         if (el) el.style.display = 'none';
       }
 
-      return { isOnline, getPid, sendAction, sendFaction, requestEvent,
-               reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
-               joinRoom, cleanup, setStatus };
+      return {
+        isOnline, getPid, sendAction, sendFaction, requestEvent,
+        reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
+        joinRoom, cleanup, setStatus
+      };
     })();
 
     // Wire up online lobby buttons (after DOM ready)
@@ -4813,6 +5299,64 @@
     });
 
 
+    // ── FULLSCREEN ──
+    function _goFullscreen() {
+      const el = document.documentElement;
+      if (!document.fullscreenElement) {
+        (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullscreen || function () { }).call(el);
+      } else {
+        (document.exitFullscreen || document.webkitExitFullscreen || function () { }).call(document);
+      }
+    }
+
+    // ── MENU TAB SWITCHER ──
+    function _menuTab(tab) {
+      document.getElementById('menu-local-btns').style.display = tab === 'local' ? 'flex' : 'none';
+      document.getElementById('menu-online-btns').style.display = tab === 'online' ? 'flex' : 'none';
+      document.getElementById('tab-local').classList.toggle('active', tab === 'local');
+      document.getElementById('tab-online').classList.toggle('active', tab === 'online');
+      if (tab === 'online') { showScreen('sc-online'); }
+    }
+
+
+    // ── MODE BRIEFING ──
+    let _briefCallback = null;
+    const _BRIEF_DATA = {
+      sudden_death: {
+        icon: '⚡', title: 'SUDDEN DEATH',
+        lines: [
+          'Both bases start at <b>30 HP</b> instead of 100.',
+          'Last Stand triggers for <b>both players immediately</b> — Royal Guards spawn at the very start, souls are boosted, and it\'s a desperate brawl from second one.',
+          'Matches are short and chaotic. Pick an aggressive faction and go all-in.',
+          '<b>Same controls and rules</b> as Multiplayer otherwise.',
+        ]
+      },
+      conquest: {
+        icon: '🏴', title: 'CONQUEST MODE',
+        lines: [
+          'Bases are <b>immune to direct unit damage</b>. The only way to deal damage is to hold zones.',
+          'Three capture zones: <b>Left, Mid, Right</b>. Hold any zone uncontested for 2.5s to capture it.',
+          'Each zone drains the enemy base: side zones deal <b>−0.2 HP/s</b>, mid deals <b>−0.4 HP/s</b>.',
+          'Zone owners also earn <b>+0.6💀/s</b> per zone held. Hold all three for maximum pressure.',
+          'The match ends when a base hits 0 — just like normal, but through sustained zone control.',
+        ]
+      }
+    };
+    function _showBrief(mode, cb) {
+      const data = _BRIEF_DATA[mode];
+      if (!data) { cb(); return; }
+      _briefCallback = cb;
+      document.getElementById('mode-brief-icon').textContent = data.icon;
+      document.getElementById('mode-brief-title').textContent = data.title;
+      const linesEl = document.getElementById('mode-brief-lines');
+      linesEl.innerHTML = data.lines.map(l => `<div class="mode-brief-line">${l}</div>`).join('');
+      document.getElementById('mode-brief-overlay').classList.add('show');
+    }
+    function _closeBrief() {
+      document.getElementById('mode-brief-overlay').classList.remove('show');
+      if (_briefCallback) { const cb = _briefCallback; _briefCallback = null; cb(); }
+    }
+
     // ── AUDIO ──
     const AC = new (window.AudioContext || window.webkitAudioContext)();
     // Master limiter/compressor — prevents audio from peaking when many units hit at once
@@ -4824,6 +5368,16 @@
     _compressor.attack.value = 0.003;
     _compressor.release.value = 0.08;
     _masterGain.gain.value = 0.55;
+    let _muted = false;
+    function toggleMute() {
+      _muted = !_muted;
+      _masterGain.gain.value = _muted ? 0 : 0.55;
+      document.querySelectorAll('.mute-btn').forEach(b => {
+        b.textContent = _muted ? '🔇 UNMUTE' : '🔊 MUTE';
+        b.style.borderColor = _muted ? '#e74c3c' : '';
+        b.style.color = _muted ? '#e74c3c' : '';
+      });
+    }
     _masterGain.connect(_compressor);
     _compressor.connect(AC.destination);
 
@@ -4837,6 +5391,7 @@
 
     function resizeGameCanvas() {
       const wrap = canvas.parentElement;
+      if (!wrap || wrap.offsetWidth < 10) return; // guard against minimize/hidden
       const hudH = document.getElementById('hud').offsetHeight;
       const mbH = document.getElementById('momentum-bar-wrap').offsetHeight;
       canvas.width = wrap.offsetWidth;
@@ -4844,6 +5399,8 @@
     }
 
     // Live resize: scale positions proportionally
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && G) G.lastTime = null; });
+
     window.addEventListener('resize', () => {
       if (!G || !G.running) return;
       const oldW = G.w, oldH = G.h;
@@ -5462,7 +6019,7 @@
         upgrades: [
           { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 50, bodies: 6 }, desc: 'All Spirit units gain +22% movement speed and +10% attack rate.', effect: 'all_speed', value: 0.12 },
           { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 60, bodies: 6 }, desc: 'Sky Bounty grants +12 souls per aerial kill (was +6).', effect: 'sky_bounty', value: 10 },
-          { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 75, bodies: 8 }, desc: 'Phantom attack rate increases to 2.0 and gains +6 DMG.', effect: 'phantom_atkrate', value: 2.2 },
+          { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 75, bodies: 8 }, desc: 'Phantom attack rate increases to 1.9 and gains +6 DMG.', effect: 'phantom_atkrate', value: 1.9 },
         ]
       },
 
@@ -5567,7 +6124,7 @@
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 1, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 1, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 5 stacks).', growOnKill: 2 },
+          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 1, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 4 stacks).', growOnKill: 2, growMaxStacks: 4 },
           { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 8, bodies: 2, hp: 42, speed: 62, dmg: 16, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
           { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 12, bodies: 3, hp: 90, speed: 58, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
           { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 16, bodies: 4, hp: 58, speed: 88, dmg: 20, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
@@ -5576,7 +6133,7 @@
         guardUnit: 'bp_guard',
         upgrades: [
           { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 55, bodies: 8 }, desc: 'Blood Tithe refund increases to 5 souls per spawn. Also refunds 1 body.', effect: 'blood_tithe', value: 4 },
-          { id: 'pack_alpha', name: 'Pack Alpha', cost: { souls: 65, bodies: 10 }, desc: 'Wolfborn grow-on-kill becomes +4 DMG per kill and max stacks increase from 5 to 8.', effect: 'wolf_grow', value: 5 },
+          { id: 'pack_alpha', name: 'Pack Alpha', cost: { souls: 65, bodies: 10 }, desc: 'Wolfborn grow-on-kill becomes +4 DMG per kill and max stacks increase from 4 to 6.', effect: 'wolf_grow', value: 5, newMax: 6 },
           { id: 'death_rage', name: 'Death Rage', cost: { souls: 75, bodies: 10 }, desc: 'Berserk threshold raises to 60% HP and Berserk now also grants +20% DMG.', effect: 'berserk_thresh', value: 0.5 },
         ]
       },
@@ -5638,8 +6195,7 @@
     };
 
     function trySpawnSpy(pid) {
-      if (NET.isOnline() && pid !== NET.getPid()) return;
-      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'spawnSpy', pid });
+      if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
       const p = G.players[pid - 1];
       if (p.souls < SPY_DEF.souls || p.bodies < SPY_DEF.bodies) return;
       if (G.spies.filter(s => s.owner === pid).length >= 2) { showPopup(p.baseX, G.groundY - 60, 'SPY MAX (2)', '#636e72', pid); return; }
@@ -5740,16 +6296,18 @@
     // ── TUTORIAL ──
     let tutIdx = 0;
     const TUT = [
-      { render(el) { el.innerHTML = `<div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div><div class="tut-sub">A TWO-PLAYER REAL-TIME STRATEGY GAME</div><div class="tut-body">Two players face off across a battlefield, spending <b>💀 Souls</b> and <b>🦴 Bodies</b> to spawn units that automatically fight toward the enemy base. Destroy the enemy base to win.<br><br>Controls are entirely keyboard-based — no mouse required during gameplay. Use the ← PREV / NEXT → buttons or <kbd>Arrow Keys</kbd> to navigate.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Primary currency. Earned passively, from kills, and by holding mid.</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Secondary currency. Earned over time and brought in by workers.</div></div><div class="tstat"><div class="tstat-icon">🏰</div><div class="tstat-name">BASE</div><div class="tstat-desc">Your base has 100 HP. When it hits 0, you lose. Protect it at all costs.</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">WELCOME TO BEYOND RTS CONQUEST</div><div class="tut-sub">A TWO-PLAYER REAL-TIME STRATEGY GAME</div><div class="tut-body">Two players face off across a battlefield, spending <b>💀 Souls</b> and <b>🦴 Bodies</b> to spawn units that automatically fight toward the enemy base. Destroy the enemy base to win.<br><br>Controls are entirely keyboard-based — no mouse required during gameplay. Use the ← PREV / NEXT → buttons or <kbd>Arrow Keys</kbd> to navigate.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Primary currency. Earned passively, from kills, and by holding mid.</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Secondary currency. Earned over time and brought in by workers.</div></div><div class="tstat"><div class="tstat-icon">🏰</div><div class="tstat-name">BASE</div><div class="tstat-desc">Your base has 100 HP. When it hits 0, you lose. Protect it at all costs.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
+      ,
+      { render(el) { el.innerHTML = `<div class="tut-title">PLAYER CONTROLS</div><div class="tut-sub">P1 · WASD + Q &nbsp;&nbsp; P2 · ARROW KEYS + ENTER</div><div class="tut-body">This is a two-player keyboard game. Each player uses a different part of the keyboard so both can play simultaneously.<br><br><span class="tut-step-badge">⭐ KEY INFO</span><br>If you are playing <b>solo vs AI</b>, you only need P1 controls.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1 — LEFT BASE</div><div class="tstat-desc"><kbd>A</kbd>/<kbd>D</kbd> navigate &nbsp; <kbd>W</kbd>/<kbd>S</kbd> switch mode<br><kbd>Q</kbd> spawn/activate &nbsp; <kbd>E</kbd> worker-mid toggle<br><kbd>F</kbd> taunt</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2 — RIGHT BASE</div><div class="tstat-desc"><kbd>←</kbd>/<kbd>→</kbd> navigate &nbsp; <kbd>↑</kbd>/<kbd>↓</kbd> switch mode<br><kbd>Enter</kbd> spawn/activate &nbsp; <kbd>NP1</kbd> worker-mid toggle<br><kbd>NP0</kbd> taunt</div></div><div class="tstat" style="border-color:var(--border)"><div class="tstat-icon">🔧</div><div class="tstat-name">FULLY REBINDABLE</div><div class="tstat-desc">Open Controls & Key Binds from the main menu to change any key, including optional direct-spawn hotkeys.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE ×N', 'Desperation stacks. Appear if enemy holds mid 15+ seconds. Each stack: +0.7💀/s (max 3).'], ['💀/s Rate', 'Your live soul income per second — accounts for mid, surge stacks, and active buffs.'], ['⛏→MID Button', 'Toggle workers to route through mid for 12 bodies/trip instead of 2. Press E or NP1.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:130px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and return <b>2 bodies per home trip</b>, or <b>12 bodies per mid trip</b> (if you own mid). Deploy up to 3 workers — keep them alive, they are your economy.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +0.8→2.0/s (escalates over 60s)<br>Each desp surge stack: +0.7/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Home trip: +2 per trip (~8s)<br>Mid trip: +12 per trip (~30s)<br>Passive body trickle scales with game time</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body"><span class="tut-step-badge">⭐ KEY MECHANIC</span><br>Workers automatically patrol off-screen to collect bodies. Deploy them early and keep them alive — they are your economy.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers cannot be directly attacked but CAN be hit by area-of-effect damage.<br><br><b>Two routes to choose from:</b> Workers patrol at home by default, but you can send them to the mid-field using the <b>⛏→MID</b> button in your HUD (or press <kbd>E</kbd> / <kbd>NP1</kbd>). Mid trips take longer but pay out far more bodies per run. Workers automatically retreat home if you lose mid or enemies get too close.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:500px;margin:0 auto;width:100%"><div class="hl-box" style="display:flex;align-items:center;gap:12px;text-align:left;"><span style="font-size:clamp(1.4rem,2.3vw,2rem);">🏠</span><div><div style="font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--dim);letter-spacing:.08em;">HOME ROUTE (default)</div><div style="font-size:var(--fs-xs);">~2 bodies per trip · ~8s round trip · Always available</div></div></div><div class="hl-box tut-highlight-step" style="display:flex;align-items:center;gap:12px;text-align:left;"><span style="font-size:clamp(1.4rem,2.3vw,2rem);">⛏→MID</span><div><div style="font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);letter-spacing:.08em;">MID ROUTE — press E / NP1</div><div style="font-size:var(--fs-xs);">12 bodies per trip · ~30s round trip · Requires mid control<br><span style="color:var(--dim);">Workers retreat automatically if mid is lost</span></div></div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>Q</kbd> (P1) or <kbd>ENTER</kbd> (P2) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body"><span class="tut-step-badge">⭐ KEY MECHANIC</span><br>Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat tut-highlight-step" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name" style="color:#e74c3c">SOLDIER (MELEE)</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div><div class="tstat tut-highlight-step" style="border-color:#27ae60"><div class="tstat-icon">⛏</div><div class="tstat-name" style="color:#27ae60">WORKER</div><div class="tstat-desc">Collects Bodies off-screen. Cannot fight. Your economy — keep them alive.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT INTERACTIONS</div><div class="tut-sub">THE COMBAT TRIANGLE</div><div class="tut-body">Combat has built-in counters. Exploit them to win:<br><br>🦅 <b>AERIAL beats MELEE</b> — ground melee units can't target aerial at all. Aerial units move freely over a melee wall.<br><br>🏹 <b>RANGED beats AERIAL</b> — ranged units deal 2.2× damage to aerial. One archer is worth two swords against a Gryphon.<br><br>🗡️ <b>MELEE beats RANGED</b> — every melee hit slows the target's movement. Ranged units can't permanently kite melee — once slowed, they get caught.</div><div class="tut-visual"><div class="hl-box" style="font-size:var(--fs-md);">🦅 → 🗡️ → 🏹 → 🦅<br><span style="font-size:var(--fs-xs);color:var(--dim);">Counter in this direction</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it <b>uncontested for 2 seconds</b> captures it.<br><br><b>Mid income escalates the longer you hold it</b> — don't just capture it and forget. Holding it for 60 seconds maxes your advantage. Recapturing a long-held mid is always an emergency.<br><br>If you lose mid for <b>15+ seconds</b>, you gain 🔥 <b>SURGE stacks</b> — each gives +0.7💀/s bonus income to keep you competitive. Max 3 stacks.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No mid income for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">⚡</div><div class="tstat-name">OWNED — ESCALATING</div><div class="tstat-desc">0s: +0.8💀/s → 30s: +1.5💀/s → 60s: +2.0💀/s (max)</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold 2s to recapture.</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press Q (P1) or ENTER (P2) to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀40 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀35 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">BODY BOON</div><div class="tstat-desc">💀60 · Instant · 75s CD<br>converts 60 souls → +14 bodies</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RANDOM EVENTS</div><div class="tut-sub">CHAOS YOU MUST ADAPT TO</div><div class="tut-body">Throughout a match, <b>random events</b> fire every 30–60 seconds, announced with a banner at the top of the screen. React quickly — some reward action, others punish passivity.<br><br>Events are <b>weighted by the game state</b>: losing players are more likely to see helpful events, and the longer mid is held the more dangerous the escalation events become.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:560px;margin:0 auto;width:100%;">${[['☄️ METEOR STRIKE', 'Units near mid take heavy damage — clear mid or take losses'], ['💰 GOLD RUSH', 'Both players gain +30💀 and +8🦴 — spend them immediately'], ['🩸 BLOOD MOON', 'All units cost half bodies to spawn for 18s — flood the field'], ['☠ ROGUE WANDERER', 'A neutral unit appears — kill it for a soul bounty'], ['💀 ROGUE CHAMPION', 'Powerful 200-HP neutral — teamwork required, big reward'], ['💰 SOUL CACHE', 'Hold mid for 2 seconds to claim +30💀 — act fast, it expires'], ['🌑 DARK ECLIPSE', 'Mid income halved · SURGE stacks give double for 15s'], ['🌋 TREMOR', 'All ground units slowed 45% for 5s — rethink your timing'], ['📦 SUPPLY DROP', 'One player receives +20💀 and +12🦴 — adapts to who\'s losing']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:160px;font-family:Rajdhani,sans-serif;font-size:calc(var(--fs-xs)*0.9);color:var(--gold);">${k}</div><div style="font-size:calc(var(--fs-xs)*0.9);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">🕵️ THE SPY</div><div class="tut-sub">UNIVERSAL UNIT — AVAILABLE TO ALL FACTIONS</div><div class="tut-body">The <b>Spy</b> card is always at the far right of your unit grid. Unlike your faction units, it is shared by everyone.<br><br>The Spy infiltrates the enemy base and <b>steals souls and bodies over time</b>. You can have up to 2 active spies at once. The enemy's workers and guarding combat units can detect and remove it — but detection chances are low with just workers nearby.<br><br>The Spy is not a replacement for combat — it is sustained economic pressure. Deploy one whenever you have the resources and a moment's breathing room.</div><div class="tut-visual"><div class="tstat" style="border-color:#636e72"><div class="tstat-icon">🕵️</div><div class="tstat-name">SPY</div><div class="tstat-desc">💀10 · 🦴4 · Max 2 active<br>Steals resources over time<br>Workers: 15% detect · Guards: 15% detect each</div></div></div>`; } },
@@ -5777,7 +6335,7 @@
       // ── Step 1: Welcome ──
       {
         title: '⚔ WELCOME, COMMANDER',
-        body: 'This is Beyond Kings\' Conquest — a real-time strategy battle.\n\nYour goal: destroy the enemy base on the RIGHT side of the screen. Your base is on the LEFT.\n\nUnits you spawn will march automatically and fight anyone in their path.',
+        body: 'This is Beyond RTS Conquest — a real-time strategy battle.\n\nYour goal: destroy the enemy base on the RIGHT side of the screen. Your base is on the LEFT.\n\nUnits you spawn will march automatically and fight anyone in their path.',
         highlight: null,
         pause: true,
         btn: 'CONTINUE →',
@@ -5843,7 +6401,7 @@
       // ── Step 6c: Spy card ──
       {
         title: '🕵️ THE SPY CARD',
-        body: 'The last card in your UNITS grid is the <b>Spy</b> — a universal unit available to all factions.\n\nThe Spy infiltrates the enemy base and steals resources over time. It costs 💀10 + 🦴4 and can be deployed up to 2 at once.\n\nThe Spy card is always at the far right of your unit grid. Navigate to it with <kbd>D</kbd> and press <kbd>TAB</kbd> to deploy.',
+        body: 'The last card in your UNITS grid is the <b>Spy</b> — a universal unit available to all factions.\n\nThe Spy infiltrates the enemy base and steals resources over time. It costs 💀10 + 🦴4 and can be deployed up to 2 at once.\n\nThe Spy card is always at the far right of your unit grid. Navigate to it with <kbd>D</kbd> and press <kbd>Q</kbd> to deploy.',
         highlight: 'p1-spy-card',
         arrowDir: 'down',
         pause: true,
@@ -6852,7 +7410,7 @@
     function updateAI(dt) {
       if (!G || !G.running || G.paused) return;
       const _playerSetup = window._pendingPlayerSetup || 'vs';
-      const _aiActive = !NET.isOnline() && (_playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai');
+      const _aiActive = (_playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai');
       if (!_aiActive && !(GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) return;
 
       // Idle browsing for all active AIs
@@ -7176,6 +7734,18 @@
             }
           }, 1800);
         }
+      }
+      // Update faction badges in HUD
+      [1, 2].forEach(pid => {
+        const f = G.factions[pid - 1];
+        const fbEl = document.getElementById(`p${pid}-faction-badge`);
+        if (fbEl) fbEl.textContent = f.icon + ' ' + f.name.toUpperCase();
+      });
+      // Update in-game mode badge
+      const _modeBadgeEl = document.getElementById('ingame-mode-badge');
+      if (_modeBadgeEl) {
+        const _modeNames = { vs: '⚔ VS', solo: '🤖 SOLO', aivsai: '👁 AI', draft: '🃏 DRAFT', sudden: '⚡ SD', conquest: '🏴 CONQ', tournament: '🏆 TOURNEY' };
+        _modeBadgeEl.textContent = _modeNames[GAME_MODE] || GAME_MODE.toUpperCase();
       }
       requestAnimationFrame(gameLoop);
     }
@@ -7591,13 +8161,7 @@
     }
     // ─── SPAWN & UPGRADES & BUFFS ─────────────────────────────────────────────────
     function trySpawn(pid, unitId, cardEl) {
-      if (NET.isOnline() && pid !== NET.getPid()) return;
       if (!G || !G.running || G.paused) return;
-      if (NET.isOnline() && pid === NET.getPid()) {
-        const grid = document.getElementById(`p${pid}-grid`);
-        const cardIdx = grid ? Array.from(grid.children).indexOf(cardEl) : -1;
-        NET.sendAction({ type: 'spawn', pid, unitId, cardIdx });
-      }
       const p = G.players[pid - 1];
       const def = G.factions[pid - 1].units.find(d => d.id === unitId);
       if (!def || def.isSpawned) return;
@@ -7633,9 +8197,7 @@
     }
 
     function tryBuyUpgrade(pid, idx, cardEl) {
-      if (NET.isOnline() && pid !== NET.getPid()) return;
       if (!G || !G.running || G.paused) return;
-      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'buyUpgrade', pid, idx });
       const p = G.players[pid - 1];
       const upgrades = G.factions[pid - 1].upgrades || [];
       const up = upgrades[idx]; if (!up) return;
@@ -7688,7 +8250,7 @@
             if (up.stunDur) def.stunDur = (def.stunDur || 0) + up.stunDur;
             if (up.healAmt) def.healAmt = (def.healAmt || 0) + up.healAmt;
             if (up.returnDmgBonus) def.returnDmgBonus = (def.returnDmgBonus || 0) + up.returnDmgBonus;
-            if (up.growOnKill) def.growOnKill = (def.growOnKill || 0) + up.growOnKill;
+            if (up.growOnKill) { def.growOnKill = (def.growOnKill || 0) + up.growOnKill; if (up.newMax) def.growMaxStacks = up.newMax; }
             if (up.poisonDmg) def.poisonDmg = (def.poisonDmg || 0) + up.poisonDmg;
             if (up.poisonDur) def.poisonDur = (def.poisonDur || 0) + up.poisonDur;
           });
@@ -7756,9 +8318,7 @@
     }
 
     function tryActivateBuff(pid, idx, cardEl) {
-      if (NET.isOnline() && pid !== NET.getPid()) return;
       if (!G || !G.running || G.paused) return;
-      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'activateBuff', pid, idx });
       const p = G.players[pid - 1];
       const bf = RALLY_BUFFS[idx];
       if (p.buffCooldowns[idx] > 0) { shakeCard(cardEl); return; }
@@ -8121,7 +8681,13 @@
         if (allyMeleeInFront) dmg *= 1.28; // Firing from cover
       }
 
-      if (attacker.def.aerialBonus && target.def.aerial) dmg *= attacker.def.aerialBonus;
+      // aerialBonus on an aerial attacker already accounts for the aerial-vs-aerial baseline
+      if (attacker.def.aerialBonus && target.def.aerial && attacker.def.aerial) {
+        // Already got 1.4x above; replace it with aerialBonus (divide out, multiply in)
+        dmg = dmg / 1.4 * attacker.def.aerialBonus;
+      } else if (attacker.def.aerialBonus && target.def.aerial) {
+        dmg *= attacker.def.aerialBonus;
+      }
       dmg *= 1 + (attacker.veteranStacks || 0) * 0.08;
       // Melee disruption: ranged takes +20% damage AND fires slower when enemy melee is close
       if (target.def.type === 'rng') {
@@ -8681,7 +9247,6 @@
     function _resolveEventVote() {
       if (!G_eventVote) return;
       const { candidates, votes } = G_eventVote;
-      if (NET.isOnline()) { NET.reportVoteResult(candidates, votes); return; }
       let winner;
       if (votes[0] > votes[1]) winner = candidates[0];
       else if (votes[1] > votes[0]) winner = candidates[1];
@@ -8713,8 +9278,6 @@
 
     function voteForEvent(pid) {
       if (!G_eventVote || !G || !G.running) return;
-      if (NET.isOnline() && pid !== NET.getPid()) return;
-      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'voteForEvent', pid });
       const pidx = pid - 1;
       if (G_eventVote.voted[pidx]) return;
       const choice = G_eventVote.cursors[pidx]; // 0=A, 1=B
@@ -8728,20 +9291,16 @@
     }
 
     function voteMoveCursor(pid, dir) {
-      if (!G_eventVote || !G || !G.running) return;
-      if (NET.isOnline() && pid !== NET.getPid()) return;
-      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'voteMoveCursor', pid, dir });
-      const pidx = pid - 1;
-      if (G_eventVote.voted[pidx]) return;
-      G_eventVote.cursors[pidx] = dir > 0 ? 1 : 0;
-      _updateVoteDisplay();
+      if (!G_eventVote) return;
+      const choices = G_eventVote.choices;
+      if (!choices || choices.length === 0) return;
+      if (!G_eventVote._cursors) G_eventVote._cursors = [0, 0];
+      G_eventVote._cursors[pid - 1] = (G_eventVote._cursors[pid - 1] + dir + choices.length) % choices.length;
+      const voteEls = document.querySelectorAll(`#p${pid}-vote .vote-choice`);
+      voteEls.forEach((el, i) => el.classList.toggle('vote-cursor', i === G_eventVote._cursors[pid - 1]));
     }
 
     function fireRandomEvent() {
-      if (NET.isOnline()) {
-        NET.requestEvent(G.elapsed || 0, G.players[0].baseHp, G.players[1].baseHp, G.midOwner);
-        return;
-      }
       const elapsed = G.elapsed || 0;
       // Build weighted pool based on game state
       const p1hp = G.players[0].baseHp, p2hp = G.players[1].baseHp;
@@ -9627,6 +10186,8 @@
 
     function updateMidIndicator() {
       const ind = document.getElementById('mid-indicator');
+      const capBar = document.getElementById('mid-cap-progress');
+      const capFill = document.getElementById('mid-cap-fill');
       // Check if truly contested (both players have units in mid)
       const p1InMid = G.units.some(u => u.player === 1 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x - G.midX) < G.midR);
       const p2InMid = G.units.some(u => u.player === 2 && !u.offscreen && !u.def.isWorker && !u.retreating && Math.abs(u.x - G.midX) < G.midR);
@@ -9634,18 +10195,25 @@
       if (contested) {
         ind.textContent = '⚔ MIDDLE — CONTESTED'; ind.style.color = '#f39c12';
         ind.classList.remove('capturing');
+        if (capBar) capBar.style.display = 'none';
       } else if (G.midHolder !== null && G.midHolder !== G.midOwner) {
-        ind.textContent = G.midHolder === 1 ? '⏳ P1 CAPTURING...' : '⏳ P2 CAPTURING...';
-        ind.style.color = G.midHolder === 1 ? '#2471a3' : '#c0392b';
+        const capPct = Math.min(100, ((G.midCapTimer || 0) / 2.0) * 100);
+        const capColor = G.midHolder === 1 ? '#2471a3' : '#c0392b';
+        ind.textContent = G.midHolder === 1 ? `⏳ P1 CAPTURING... HOLD 2s` : `⏳ P2 CAPTURING... HOLD 2s`;
+        ind.style.color = capColor;
         ind.classList.add('capturing');
+        if (capBar) { capBar.style.display = 'block'; capFill.style.width = capPct + '%'; capFill.style.background = capColor; }
       } else if (G.midOwner === 1) {
         const _r1 = (() => { const s = G.midOwnerTimer || 0; return s < 30 ? 0.8 + (s / 30) * 0.7 : s < 60 ? 1.5 + ((s - 30) / 30) * 0.5 : 2.0; })();
         ind.textContent = `🔵 MIDDLE — P1 (+${_r1.toFixed(1)}💀/s)`; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
+        if (capBar) capBar.style.display = 'none';
       } else if (G.midOwner === 2) {
         const _r2 = (() => { const s = G.midOwnerTimer || 0; return s < 30 ? 0.8 + (s / 30) * 0.7 : s < 60 ? 1.5 + ((s - 30) / 30) * 0.5 : 2.0; })();
         ind.textContent = `🔴 MIDDLE — P2 (+${_r2.toFixed(1)}💀/s)`; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
+        if (capBar) capBar.style.display = 'none';
       } else {
         ind.textContent = '⚔ MIDDLE — UNCLAIMED'; ind.style.color = 'var(--gold)'; ind.classList.remove('capturing');
+        if (capBar) capBar.style.display = 'none';
       }
     }
 
@@ -11263,6 +11831,8 @@
 
     // ─── INPUT ───────────────────────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
+      // M = mute toggle (global)
+      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_isRebinding) { toggleMute(); return; }
       // Rebinding intercept
       if (_rebinding) {
         if (e.code === 'Escape') { _rebinding.el.textContent = formatKey(KEYS[_rebinding.key]); _rebinding.el.classList.remove('rebinding'); _rebinding = null; return; }
@@ -11317,8 +11887,8 @@
           e.preventDefault(); return;
         }
       }
-      // Dev panel open (M key)
-      if (e.code === 'KeyM') {
+      // Dev panel open (Shift+M)
+      if (e.code === 'KeyM' && e.shiftKey) {
         const _active = document.activeElement;
         if (_active && (_active.tagName === 'INPUT' || _active.tagName === 'TEXTAREA')) return;
         e.preventDefault();
@@ -11405,8 +11975,7 @@
     });
 
     function toggleWorkerMid(pid) {
-      if (NET.isOnline() && pid !== NET.getPid()) return;
-      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'toggleWorkerMid', pid });
+      if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
       if (!G || !G.running || G.paused) return;
       G.workerMidMode[pid - 1] = !G.workerMidMode[pid - 1];
       const on = G.workerMidMode[pid - 1];
@@ -11549,7 +12118,6 @@
     });
     document.getElementById('btn-to-menu').addEventListener('click', () => {
       G = null; stopIngameTutorial();
-      NET.cleanup();
       // Clean up tournament state if quitting mid-tournament
       if (GAME_MODE === 'tournament' && TOURNAMENT) {
         TOURNAMENT = null;
@@ -11942,10 +12510,10 @@
 
     function factionConfirm(pid) {
       if (!document.getElementById('sc-faction').classList.contains('active')) return;
-      if (NET.isOnline() && pid !== NET.getPid()) return;
+      if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
       const fi = fCursor[pid - 1];
       const card = document.querySelectorAll(`#fcards-p${pid} .fcard`)[fi];
-      if (card) { selectFaction(pid, fi, card); if (NET.isOnline()) { const f = FACTIONS[fi]; NET.sendFaction(f.id); } }
+      if (card) { selectFaction(pid, fi, card); if (typeof NET !== 'undefined' && NET.isOnline()) NET.sendFaction(fi); }
     }
 
     function highlightFactionCursor(pid) {
@@ -11993,15 +12561,19 @@
     });
     document.getElementById('btn-sudden-death').addEventListener('click', () => {
       _rulesetMode = 'sudden_death'; setGameMode('sudden_death');
-      const row = document.getElementById('faction-mode-row');
-      if (row) { row.style.display = 'flex'; row.querySelectorAll('.fmode-btn').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'pvp')); }
-      showScreen('sc-faction');
+      _showBrief('sudden_death', () => {
+        const row = document.getElementById('faction-mode-row');
+        if (row) { row.style.display = 'flex'; row.querySelectorAll('.fmode-btn').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'pvp')); }
+        showScreen('sc-faction');
+      });
     });
     document.getElementById('btn-conquest').addEventListener('click', () => {
       _rulesetMode = 'conquest'; setGameMode('conquest');
-      const row = document.getElementById('faction-mode-row');
-      if (row) { row.style.display = 'flex'; row.querySelectorAll('.fmode-btn').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'pvp')); }
-      showScreen('sc-faction');
+      _showBrief('conquest', () => {
+        const row = document.getElementById('faction-mode-row');
+        if (row) { row.style.display = 'flex'; row.querySelectorAll('.fmode-btn').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'pvp')); }
+        showScreen('sc-faction');
+      });
     });
     document.getElementById('btn-solo').addEventListener('click', () => {
       _rulesetMode = null; setGameMode('solo');
@@ -12442,6 +13014,32 @@
         }
       });
     }
+
+    // ── ONLINE MENU BUTTONS ──
+    document.getElementById('btn-quickmatch-menu').addEventListener('click', () => {
+      showScreen('sc-online');
+      document.getElementById('panel-quickmatch').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    document.getElementById('btn-createroom-menu').addEventListener('click', () => {
+      showScreen('sc-online');
+      document.getElementById('panel-private').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    document.getElementById('btn-joinroom-menu').addEventListener('click', () => {
+      showScreen('sc-online');
+      const inp = document.getElementById('room-code-input');
+      if (inp) { document.getElementById('panel-private').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => inp.focus(), 300); }
+    });
+    // Initialise NET module if server URL is set
+    if (window._BKC_SERVER_URL && typeof NET !== 'undefined') {
+      NET.init().catch(e => {
+        const bar = document.getElementById('online-status-bar');
+        if (bar) bar.textContent = '⚠ Could not reach server — online play unavailable';
+      });
+    } else {
+      const bar = document.getElementById('online-status-bar');
+      if (bar) bar.textContent = window._BKC_SERVER_URL ? 'Connecting…' : '⚠ No server configured — set window._BKC_SERVER_URL';
+    }
+
     refreshRebindUI();
     document.getElementById('btn-rebind').addEventListener('click', () => { refreshRebindUI(); showScreen('sc-rebind'); });
     document.getElementById('btn-rebind-back').addEventListener('click', () => showScreen('sc-menu'));
@@ -12732,6 +13330,15 @@
     })();
 
   </script>
+  <!-- MODE BRIEFING -->
+  <div id="mode-brief-overlay">
+    <div id="mode-brief-box">
+      <div id="mode-brief-icon">⚡</div>
+      <div id="mode-brief-title">SUDDEN DEATH</div>
+      <div id="mode-brief-lines"></div>
+      <button class="btn primary" id="mode-brief-continue" onclick="_closeBrief()">CONTINUE TO FACTION SELECT →</button>
+    </div>
+  </div>
 </body>
 
 </html>
