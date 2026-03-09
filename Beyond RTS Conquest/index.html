@@ -175,14 +175,17 @@
     .menu-btns {
       display: flex;
       flex-direction: column;
-      gap: clamp(8px, 1.5vh, 18px);
+      gap: clamp(9px, 1.6vh, 20px);
       align-items: center;
-      min-width: clamp(180px, 25vw, 320px);
+      min-width: clamp(220px, 30vw, 380px);
     }
 
     .menu-btns .btn {
       width: 100%;
       text-align: center;
+      font-size: clamp(.85rem, 1.3vw, 1.05rem);
+      padding: clamp(10px, 1.5vh, 18px) clamp(24px, 3.5vw, 52px);
+      letter-spacing: .14em;
     }
 
     /* FACTION */
@@ -1283,12 +1286,37 @@
       font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       text-align: right;
-      animation: kfFade 2.8s ease-out forwards;
-      background: rgba(0, 0, 0, .5);
+      animation: kfSlide 3.0s ease-out forwards;
+      background: rgba(0, 0, 0, .55);
+      border-left: 2px solid rgba(255,255,255,.12);
       padding: 2px 8px;
       border-radius: 3px;
     }
 
+    .btn-sudden {
+      background: linear-gradient(135deg, rgba(180,30,10,.18), rgba(220,80,10,.10));
+      border-color: rgba(231,76,60,.5);
+      color: #e87060;
+    }
+    .btn-sudden:hover {
+      background: linear-gradient(135deg, rgba(231,76,60,.3), rgba(243,156,18,.15));
+      border-color: rgba(231,76,60,.9);
+    }
+    .btn-conquest {
+      background: linear-gradient(135deg, rgba(39,174,96,.12), rgba(52,152,219,.08));
+      border-color: rgba(39,174,96,.4);
+      color: #a8e063;
+    }
+    .btn-conquest:hover {
+      background: linear-gradient(135deg, rgba(39,174,96,.25), rgba(52,152,219,.15));
+      border-color: rgba(39,174,96,.85);
+    }
+    @keyframes kfSlide {
+      0%   { opacity: 0; transform: translateX(24px); }
+      12%  { opacity: 1; transform: translateX(0); }
+      80%  { opacity: 1; transform: translateX(0); }
+      100% { opacity: 0; transform: translateX(8px); }
+    }
     @keyframes kfFade {
       0% {
         opacity: 1
@@ -1863,6 +1891,24 @@
       border: 1px solid var(--border2);
       background: rgba(0, 0, 0, .35);
     }
+    .worker-mid-btn {
+      display: none;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.5rem, .7vw, .62rem);
+      letter-spacing: .07em;
+      padding: 2px 6px;
+      background: rgba(243,156,18,.08);
+      border: 1px solid rgba(243,156,18,.3);
+      border-radius: 3px;
+      color: rgba(243,156,18,.6);
+      cursor: pointer;
+      transition: all .15s;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    .worker-mid-btn:hover { background: rgba(243,156,18,.2); border-color: rgba(243,156,18,.7); color: #f39c12; }
+    .worker-mid-btn.active { background: rgba(243,156,18,.2); border-color: #f39c12; color: #f39c12; }
+    .worker-mid-btn.waiting { border-color: rgba(149,165,166,.35); color: rgba(149,165,166,.45); background: none; }
 
     .worker-count {
       background: rgba(39, 174, 96, .12);
@@ -2321,27 +2367,28 @@
       right: 0;
       top: 0;
       bottom: 0;
-      width: clamp(110px, 13vw, 160px);
+      width: clamp(95px, 11vw, 130px);
       pointer-events: none;
       background: rgba(5, 5, 20, .92);
       border-left: 1px solid var(--border);
-      padding: clamp(6px, 1vh, 14px) clamp(6px, .8vw, 12px);
+      padding: clamp(4px, .7vh, 10px) clamp(4px, .6vw, 9px);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       z-index: 2;
-      transition: all .2s;
+      transition: opacity .15s;
+      opacity: 1;
     }
 
     .usp-name {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.75rem, 1.2vw, 1.1rem);
+      font-size: clamp(.68rem, 1.05vw, .95rem);
       color: var(--gold);
-      letter-spacing: .06em;
+      letter-spacing: .05em;
       text-align: center;
       border-bottom: 1px solid var(--border);
-      padding-bottom: 3px;
-      margin-bottom: 2px;
+      padding-bottom: 2px;
+      margin-bottom: 1px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -2355,38 +2402,35 @@
 
     .usp-label {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.68rem, 1.1vw, .95rem);
+      font-size: clamp(.6rem, .92vw, .82rem);
       color: var(--dim);
-      letter-spacing: .07em;
+      letter-spacing: .06em;
     }
 
     .usp-val {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.68rem, 1.1vw, .95rem);
+      font-size: clamp(.6rem, .92vw, .82rem);
       color: var(--text);
       font-weight: 700;
     }
 
     .usp-special {
       overflow-y: auto;
-      max-height: 7em;
-      line-height: 1.4;
-      font-size: clamp(.6rem, .9vw, .8rem);
+      max-height: 5em;
+      line-height: 1.35;
+      font-size: clamp(.54rem, .78vw, .7rem);
       color: #9b59b6;
-      line-height: 1.4;
-      margin-top: 3px;
+      margin-top: 2px;
       text-align: center;
       font-style: italic;
       white-space: pre-line;
     }
 
-    .player-hud:hover .unit-stat-panel {
-      width: clamp(160px, 20vw, 240px);
-    }
+    /* stat panel is always the same width — no hover expansion */
 
     .usp-cost {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.62rem, .95vw, .85rem);
+      font-size: clamp(.58rem, .85vw, .76rem);
       color: var(--gold);
       text-align: center;
       margin-top: 2px;
@@ -3361,6 +3405,8 @@
       </div>
       <div class="menu-btns">
         <button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
+        <button class="btn btn-sudden" id="btn-sudden-death">⚡ SUDDEN DEATH</button>
+        <button class="btn btn-conquest" id="btn-conquest">🏴 CONQUEST</button>
         <button class="btn" id="btn-draft">🃏 DRAFT MODE</button>
         <button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
         <button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
@@ -3532,6 +3578,7 @@
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p1Down"></button></div>
           <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p1Act"></button></div>
           <div class="rebind-row"><span>😤 Taunt</span><button class="rkey" id="rk-p1Taunt"></button></div>
+          <div class="rebind-row"><span>⛏ Worker Mid Toggle</span><button class="rkey" id="rk-p1WorkerMid"></button></div>
         </div>
         <div class="rebind-col">
           <div class="rebind-head p2l">PLAYER 2 — NAVIGATION</div>
@@ -3541,6 +3588,7 @@
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p2Down"></button></div>
           <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p2Act"></button></div>
           <div class="rebind-row"><span>😤 Taunt</span><button class="rkey" id="rk-p2Taunt"></button></div>
+          <div class="rebind-row"><span>⛏ Worker Mid Toggle</span><button class="rkey" id="rk-p2WorkerMid"></button></div>
         </div>
       </div>
       <div class="rebind-section-title">⚡ DIRECT SPAWN HOTKEYS <span
@@ -3702,8 +3750,7 @@
               <div class="hp-fill hp1" id="p1-hp-bar" style="width:100%"></div>
             </div><span class="hp-txt" id="p1-hp-txt">100</span>
           </div>
-          <div class="hud-meta"><span class="unit-count" id="p1-unit-count">⚔ 0/12</span><span class="worker-count"
-              id="p1-worker-count">⛏ 0/3</span><span class="desperation-badge" id="p1-desp">🔥 SURGE ×1</span><span
+          <div class="hud-meta"><span class="unit-count" id="p1-unit-count">⚔ 0/12</span><span class="worker-count" id="p1-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p1-mid-btn" onclick="toggleWorkerMid(1)" title="Toggle workers between home and mid route (key: E)">⛏→MID</button><span class="worker-count" id="p1-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p1-desp">🔥 SURGE ×1</span><span
               class="guard-timer" id="p1-guard-timer">👑 GUARD: 30s</span></div>
         </div>
         <div class="hud-mode-tabs" id="p1-tabs">
@@ -3752,8 +3799,7 @@
               <div class="hp-fill hp2" id="p2-hp-bar" style="width:100%"></div>
             </div><span class="hp-txt" id="p2-hp-txt">100</span>
           </div>
-          <div class="hud-meta"><span class="unit-count" id="p2-unit-count">⚔ 0/12</span><span class="worker-count"
-              id="p2-worker-count">⛏ 0/3</span><span class="desperation-badge" id="p2-desp">🔥 SURGE ×1</span><span
+          <div class="hud-meta"><span class="unit-count" id="p2-unit-count">⚔ 0/12</span><span class="worker-count" id="p2-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p2-mid-btn" onclick="toggleWorkerMid(2)" title="Toggle workers between home and mid route (key: Numpad 1)">⛏→MID</button><span class="worker-count" id="p2-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p2-desp">🔥 SURGE ×1</span><span
               class="guard-timer" id="p2-guard-timer">👑 GUARD: 30s</span></div>
         </div>
         <div class="hud-mode-tabs" id="p2-tabs">
@@ -4407,7 +4453,7 @@
 
 
     let G = null, P1_FACTION = null, P2_FACTION = null;
-    let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial' | 'aivsai' | 'draft'
+    let GAME_MODE = 'vs';           // 'vs' | 'solo' | 'tutorial' | 'aivsai' | 'draft' | 'sudden_death' | 'conquest'
     let AI_DIFFICULTY = 'medium';   // 'easy'|'medium'|'hard'|'expert'|'tutorial'
     let AI1_DIFFICULTY = 'medium';  // P1 AI difficulty in aivsai mode
     let AI1_PERSONALITY = null;     // P1 AI personality in aivsai mode
@@ -4449,9 +4495,9 @@
         matchup: 'Best against: most factions | Weak to: Summoner shade swarms',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid.' },
+          { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid (own mid only).' },
           { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true },
-          { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 1, hp: 40, speed: 65, dmg: 14, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.' },
+          { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 1, hp: 40, speed: 65, dmg: 17, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.' },
           { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 12, bodies: 3, hp: 140, speed: 50, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage.' },
           { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 18, bodies: 5, hp: 90, speed: 85, dmg: 26, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3 },
         ],
@@ -4472,9 +4518,9 @@
         matchup: 'Best against: melee-heavy factions (Brutes) | Weak to: AoE and aerial (Spirits)',
         startSouls: 22, startBodies: 8,
         units: [
-          { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 1, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid.' },
+          { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 1, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid (own mid only).' },
           { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 5, bodies: 1, hp: 35, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
-          { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 1, hp: 35, speed: 60, dmg: 12, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
+          { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 1, hp: 35, speed: 60, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
           { id: 'su_necro', name: 'Necromancer', icon: '🔮', souls: 14, bodies: 3, hp: 55, speed: 45, dmg: 18, range: 100, aerial: false, isWorker: false, attackRate: 0.8, radius: 12, color: '#8e44ad', type: 'sum', desc: 'Summons 2 Shades on kill. Passively summons 1 Shade every 12s.', summons: 's_shade', summonCount: 2, passiveSummon: 12 },
           { id: 'su_wraith2', name: 'Dark Wing', icon: '🦇', souls: 15, bodies: 3, hp: 55, speed: 95, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c3483', type: 'air', desc: 'Fast aerial harasser. Spawns a Shade on death.', deathSpawn: 's_shade' },
         ],
@@ -4498,12 +4544,12 @@
         matchup: 'Best against: other melee factions | Weak to: Spirits, Infernal (mobile/ranged)',
         startSouls: 18, startBodies: 12,
         units: [
-          { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid. Sturdier than average.' },
+          { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Sturdier than average.' },
           { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
           { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 16, bodies: 4, hp: 65, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
-          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 55, speed: 46, dmg: 20, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
+          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 55, speed: 46, dmg: 24, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
         ],
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 280, speed: 40, dmg: 44, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
@@ -4522,9 +4568,9 @@
         matchup: 'Best against: aerial-heavy factions | Weak to: Brutes, Glacial',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid. Slightly faster.' },
+          { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Slightly faster.' },
           { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
-          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
+          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
           { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 14, bodies: 3, hp: 60, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
           { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 18, bodies: 5, hp: 70, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.6× damage bonus vs aerial enemies.', aerialBonus: 1.6 },
         ],
@@ -4539,15 +4585,15 @@
 
       {
         id: 'verdant', name: 'Verdant', icon: '🌿', tagline: 'Nature\'s endurance. Regen, thorns, and a fearsome bear.',
-        passive: 'Regrowth: units not in combat regenerate 1 HP/sec. Workers carry +1 body from mid-field.',
+        passive: 'Regrowth: units not in combat regenerate 1 HP/sec. Workers carry +2 extra bodies from mid.',
         pros: ['Regrowth makes your units self-sustaining in prolonged battles', 'Thornwhip ranged unit applies a 35% slow on every hit', 'Grove Bear is the best single unit for controlling choke points'],
         cons: ['Regen only works out of combat — useless while actively being attacked', 'Relies on terrain control and forward pressure — weak when pushed back to base', 'No aerial combat options — air units from the enemy will freely harass ranged'],
         matchup: 'Best against: slow melee (Brutes) | Weak to: aerial harassers (Spirits, Infernal)',
         startSouls: 18, startBodies: 12,
         units: [
-          { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 1, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Returns 2 bodies per trip, 4 from mid (bonus).', groveMidBonus: true },
+          { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 1, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Returns 2 bodies per trip, 8 from mid (bonus).', groveMidBonus: true },
           { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 1, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
-          { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
+          { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 16, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
           { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 14, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies 8 HP. On death: pollinates 3 nearby allies — 3 HP/s regen for 6s.', sylphHeal: 8, sylphHealRange: 110, pollenDeath: true },
           { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 150, speed: 42, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
         ],
@@ -4568,9 +4614,9 @@
         matchup: 'Best against: slow heavy armies (Brutes) | Weak to: ranged-heavy factions (Warriors, Spirits)',
         startSouls: 22, startBodies: 8,
         units: [
-          { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 1, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid. Very fragile.' },
+          { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 1, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Very fragile.' },
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 1, hp: 55, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
-          { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
+          { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 18, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
           { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 16, bodies: 4, hp: 60, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 60 },
           { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 5, hp: 130, speed: 44, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 8 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 8 },
         ],
@@ -4591,9 +4637,9 @@
         matchup: 'Best against: melee brawlers (Warriors, Brutes) | Weak to: fast aerial (Spirits)',
         startSouls: 18, startBodies: 10,
         units: [
-          { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 1, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 4 from mid (bonus).', frostMidBonus: true },
+          { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 1, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 8 from mid (bonus).', frostMidBonus: true },
           { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 1, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.5s chill on every melee hit.', chillOnHit: true, chillDur: 1.5 },
-          { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.5, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
+          { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.5, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
           { id: 'gl_snowhawk', name: 'Snowhawk', icon: '🦅', souls: 15, bodies: 3, hp: 55, speed: 85, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#dfe6e9', type: 'air', desc: 'Aerial unit. First hit on each enemy stuns for 0.8s.', firstHitStun: true, stunDur: 0.8 },
           { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 200, speed: 36, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 2.0 },
         ],
@@ -4614,9 +4660,9 @@
         matchup: 'Best against: dense melee stacks (Brutes, Summoners) | Weak to: mobile spread armies (Spirits)',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid.' },
+          { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid (own mid only).' },
           { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 1, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
-          { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
+          { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 17, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
           { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 14, bodies: 3, hp: 65, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.5 },
           { id: 'vb_stormcaller', name: 'Stormcaller', icon: '🌩️', souls: 20, bodies: 5, hp: 105, speed: 55, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#e17055', type: 'mel', desc: 'Heavy melee. Chain Lightning triggers every 5 attacks with 80px chain range.', chainRate: 5, chainRange: 80 },
         ],
@@ -4639,7 +4685,7 @@
         units: [
           { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 1, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
           { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 5, bodies: 1, hp: 60, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 5 stacks).', growOnKill: 2 },
-          { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 8, bodies: 2, hp: 42, speed: 62, dmg: 13, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
+          { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 8, bodies: 2, hp: 42, speed: 62, dmg: 16, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
           { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 12, bodies: 3, hp: 90, speed: 58, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
           { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 16, bodies: 4, hp: 58, speed: 88, dmg: 20, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
         ],
@@ -4660,7 +4706,7 @@
         matchup: 'Best against: burst/aggressive factions (Infernal, Bloodpact) | Weak to: fast kill factions (Spirits)',
         startSouls: 18, startBodies: 8,
         units: [
-          { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 3 from mid. Slightly faster when loaded.' },
+          { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Slightly faster when loaded.' },
           { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 2, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
           { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 115, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
           { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 35% HP, returns healed. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
@@ -4682,6 +4728,7 @@
       p1Left: 'KeyA', p1Right: 'KeyD', p1Up: 'KeyW', p1Down: 'KeyS', p1Act: 'KeyQ',
       p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
       p1Taunt: 'KeyF', p2Taunt: 'Numpad0',
+      p1WorkerMid: 'KeyE', p2WorkerMid: 'Numpad1',
       // Optional direct-spawn hotkeys (null = unassigned)
       p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null,
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null,
@@ -4813,7 +4860,7 @@
       { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and bring back 3 bodies per trip. Deploy up to 3 workers — more workers means faster body income.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +1.2/s more<br>Each desp stack: +0.4/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Worker trips: +3 per trip<br>1 worker ≈ +4.5/min<br>3 workers ≈ +13.5/min</div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Worker → off-screen → returns with 2 bodies<br>Mid-owned worker → returns with 3 bodies</div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.<br><br><b>⛏→MID ROUTE</b>: Click the <b>⛏→MID</b> button in your HUD (or press <kbd>E</kbd> for P1, <kbd>NP1</kbd> for P2) to send workers to the mid-field instead of patrolling at home. Mid trips take longer but return <b>6 bodies</b> — three times a normal trip. Workers automatically retreat if mid is lost or enemies appear.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Home trip → 2 bodies, ~8s round trip<br>Mid trip → 6 bodies, ~30s round trip<br>Toggle: HUD button or E / NP1 key</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body">Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name">MELEE</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT INTERACTIONS</div><div class="tut-sub">THE COMBAT TRIANGLE</div><div class="tut-body">Combat has built-in counters. Exploit them to win:<br><br>🦅 <b>AERIAL beats MELEE</b> — ground melee units can't target aerial at all. Aerial units move freely over a melee wall.<br><br>🏹 <b>RANGED beats AERIAL</b> — ranged units deal 2.2× damage to aerial. One archer is worth two swords against a Gryphon.<br><br>🗡️ <b>MELEE beats RANGED</b> — every melee hit slows the target's movement. Ranged units can't permanently kite melee — once slowed, they get caught.</div><div class="tut-visual"><div class="hl-box" style="font-size:var(--fs-md);">🦅 → 🗡️ → 🏹 → 🦅<br><span style="font-size:var(--fs-xs);color:var(--dim);">Counter in this direction</span></div></div>`; } },
@@ -5986,8 +6033,25 @@
         rogueEvent: null, nextRogueTime: 90 + Math.random() * 60, // first rogue 90-150s in
         capFlash: 0, capFlashPlayer: 0,
         lastCapAnnounce: 0,
-        bloodPools: [],
+        bloodPools: [], groundFX: [], _upgradeFlash: [0, 0], workerMidMode: [false, false],
+        // Conquest mode: 3 zones [left, mid, right], owner = 1|2|null, capTimer per zone
+        zones: null,
       };
+      // Sudden Death — both bases start at 30 HP (Last Stand triggers immediately)
+      if (GAME_MODE === 'sudden_death') {
+        G.players.forEach(p => { p.baseHp = 30; p.baseMaxHp = 30; });
+      }
+      // Conquest — 3 zones; bases indestructible until you own 2/3
+      if (GAME_MODE === 'conquest') {
+        G.zones = [
+          { id: 0, x: null, r: null, owner: null, capTimer: 0, capPlayer: null, _label: 'LEFT' },
+          { id: 1, x: null, r: null, owner: null, capTimer: 0, capPlayer: null, _label: 'MID' },
+          { id: 2, x: null, r: null, owner: null, capTimer: 0, capPlayer: null, _label: 'RIGHT' },
+        ];
+        // Zone positions set after canvas is known — done in updateConquest
+        // Bases are indestructible until conquest win condition triggers
+        G.players.forEach(p => { p._conquestShield = true; });
+      }
       P1_SEL = 0; P2_SEL = 0; P1_MODE = 0; P2_MODE = 0;
       // ── AI config on game object ──
       G.aiTimer = 0;
@@ -6302,7 +6366,27 @@
         const offWorkers = G.units.filter(u => u.player === pid && u.def.isWorker && u.offscreen);
         const minReturn = offWorkers.length > 0 ? Math.ceil(Math.min(...offWorkers.map(w => w.offTimer))) : 0;
         const wReturnStr = minReturn > 0 ? ` ⏳${minReturn}s` : '';
-        document.getElementById(`p${pid}-worker-count`).textContent = `⛏ ${p.workers}/${p.workerCap || 3}${wReturnStr}`;
+        const _wmOn = G.workerMidMode && G.workerMidMode[pid - 1];
+        const _wmOwned = _wmOn && G.midOwner === pid;
+        const _wmEl = document.getElementById(`p${pid}-worker-count`);
+        _wmEl.textContent = `⛏ ${p.workers}/${p.workerCap || 3}${wReturnStr}`;
+        _wmEl.style.color = '';
+        // Mid button visibility + state
+        const _midBtnEl = document.getElementById(`p${pid}-mid-btn`);
+        if (_midBtnEl && GAME_MODE !== 'tutorial') {
+          _midBtnEl.style.display = '';
+          _midBtnEl.className = 'worker-mid-btn' + (_wmOwned ? ' active' : _wmOn ? ' waiting' : '');
+          _midBtnEl.textContent = _wmOwned ? '⛏ →MID ✓' : _wmOn ? '⛏ →MID?' : '⛏ →MID';
+          _midBtnEl.title = _wmOn ? 'Workers routing to mid (click or press E/NP1 to cancel)' : 'Click or press E/NP1 to send workers to mid when you own it';
+        }
+        // Spy count
+        const _spyCountEl = document.getElementById(`p${pid}-spy-count`);
+        if (_spyCountEl && GAME_MODE !== 'tutorial') {
+          const _activeSpies = G.spies ? G.spies.filter(s => s.owner === pid).length : 0;
+          _spyCountEl.textContent = `🕵️ ${_activeSpies}/2`;
+          _spyCountEl.style.display = '';
+          _spyCountEl.style.color = _activeSpies >= 2 ? 'rgba(99,110,114,.6)' : '';
+        }
         // Update worker card body cost display dynamically (graduated: 0/1/2)
         const _wCard = document.querySelector(`#p${pid}-grid .ucard[data-idx='0']`);
         if (_wCard) {
@@ -6359,7 +6443,7 @@
             const _allTips = [
               ...(G._tipIdx[pid - 1] % 3 === 0 && _passiveTip ? [_passiveTip] : []),
               { text: '💡 Hold mid to ramp up soul income — up to +2.0/s after 60s', title: 'Mid control income scales over time' },
-              { text: '💡 Workers can path to mid — deploy yours when you own it for bonus bodies', title: 'Mid workers return extra bodies' },
+              { text: '💡 Workers pathing to mid return with 6 bodies (vs 2 normally) — own mid to enable this', title: 'Mid workers return extra bodies' },
               { text: '💡 3+ ranged units on one target deal less damage — mix your army', title: 'Focus fire penalty' },
               { text: '💡 Melee walls block incoming projectiles — put them up front', title: 'Projectile blocking' },
               { text: '💡 Body Boon converts 60 souls into +14 bodies — great when body-starved', title: 'Body Boon buff tip' },
@@ -6388,6 +6472,14 @@
         if (mode === 0 && _fullUpdate) {
           const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
           document.getElementById(`p${pid}-grid`).querySelectorAll('.ucard').forEach((card, i) => {
+            const isSpyCard = parseInt(card.dataset.idx) === 99;
+            if (isSpyCard) {
+              // Spy affordability: costs SPY_DEF.souls/bodies, max 2 active spies
+              const spyCount = G.spies ? G.spies.filter(s => s.owner === pid).length : 0;
+              const canAffordSpy = p.souls >= SPY_DEF.souls && p.bodies >= SPY_DEF.bodies && spyCount < 2;
+              card.classList.toggle('cant', !canAffordSpy);
+              return;
+            }
             const def = defs[i]; if (!def) return;
             const canAfford = p.souls >= def.souls && p.bodies >= def.bodies;
             const atCap = !def.isWorker && combatUnits >= p.unitCap;
@@ -6470,6 +6562,20 @@
       tt.style.top = (r.top - tt.offsetHeight - 8) + 'px';
     }
     function hideTT() { document.getElementById('tooltip').style.display = 'none'; }
+
+    function showMenuTT(e, title, lines) {
+      const tt = document.getElementById('tooltip');
+      document.getElementById('tt-name').textContent = title;
+      document.getElementById('tt-body').innerHTML = lines.join('<br>');
+      tt.style.display = 'block';
+      tt.style.maxWidth = '300px';
+      // Position to the right of the button so it doesn't obscure the list
+      const r = e.currentTarget.getBoundingClientRect();
+      const left = Math.min(r.right + 14, window.innerWidth - 320);
+      const top  = Math.max(8, r.top + r.height / 2 - tt.offsetHeight / 2);
+      tt.style.left = left + 'px';
+      tt.style.top  = top  + 'px';
+    }
     // ─── SPAWN & UPGRADES & BUFFS ─────────────────────────────────────────────────
     function trySpawn(pid, unitId, cardEl) {
       if (!G || !G.running || G.paused) return;
@@ -6519,6 +6625,8 @@
       applyUpgrade(pid, up);
       showPopup(p.baseX, G.groundY - 70, `✦ ${up.name}`, up.cost.souls > 35 ? '#d4a843' : '#a8e063', pid);
       SFX.upgrade(); updateHUD();
+      // Gold flash ripple across all friendly units
+      if (G._upgradeFlash) G._upgradeFlash[pid - 1] = 1.4;
     }
 
     function applyUpgrade(pid, up) {
@@ -6766,6 +6874,102 @@
       while (kf.children.length > 6) kf.removeChild(kf.firstChild);
       setTimeout(() => el.remove(), 2800);
     }
+    function spawnFactionDeath(u) {
+      const fid = G.factions[u.player - 1] ? G.factions[u.player - 1].id : null;
+      const x = u.x, y = u.y;
+      switch (fid) {
+        case 'infernal':
+          // Fire burst — hot orange/red particles rising fast, plus a ground fire patch
+          for (let i = 0; i < 22; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 40 + Math.random() * 120;
+            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: -50 - Math.random()*100,
+              life: 0.4 + Math.random()*0.5, maxLife: 0.9, r: 2 + Math.random()*4,
+              col: Math.random() < 0.6 ? '#ff6b35' : Math.random() < 0.5 ? '#e74c3c' : '#f9ca24' });
+          }
+          G.groundFX.push({ x, y: G.groundY, type: 'fire', life: 2.2, maxLife: 2.2, r: 16 + Math.random()*12 });
+          break;
+        case 'glacial':
+          // Ring of ice shards bursting outward
+          for (let i = 0; i < 14; i++) {
+            const a = (i / 14) * Math.PI * 2 + Math.random() * 0.3;
+            const spd = 70 + Math.random() * 60;
+            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd * 0.4 - 40,
+              life: 0.5 + Math.random()*0.45, maxLife: 0.95, r: 2 + Math.random()*3,
+              col: Math.random() < 0.5 ? '#74b9ff' : Math.random() < 0.5 ? '#dfe6e9' : '#a8dadc' });
+          }
+          G.groundFX.push({ x, y: G.groundY, type: 'ice', life: 1.8, maxLife: 1.8, r: 18 + Math.random()*10 });
+          break;
+        case 'summoners':
+          // Slow-rising purple wisps — float upward, minimal gravity
+          for (let i = 0; i < 12; i++) {
+            G.particles.push({ x: x + (Math.random()-0.5)*24, y, vx: (Math.random()-0.5)*28, vy: -25 - Math.random()*55,
+              life: 1.0 + Math.random()*0.7, maxLife: 1.7, r: 3 + Math.random()*4,
+              col: Math.random() < 0.5 ? '#9b59b6' : '#6c3483', noFall: true });
+          }
+          spawnParticles(x, y, '#9b59b6', 8);
+          break;
+        case 'voltborn':
+          // Electric spark burst — bright yellow/white crackle
+          for (let i = 0; i < 18; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 60 + Math.random() * 130;
+            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd*0.5 - 60,
+              life: 0.25 + Math.random()*0.3, maxLife: 0.55, r: 1.5 + Math.random()*2.5,
+              col: Math.random() < 0.5 ? '#fdcb6e' : '#ffffff' });
+          }
+          spawnParticles(x, y, '#f9ca24', 6);
+          break;
+        case 'spirits':
+          // Ethereal dissipation — soft blue wisps float upward
+          for (let i = 0; i < 10; i++) {
+            G.particles.push({ x: x + (Math.random()-0.5)*16, y, vx: (Math.random()-0.5)*20, vy: -18 - Math.random()*40,
+              life: 0.9 + Math.random()*0.6, maxLife: 1.5, r: 3 + Math.random()*4,
+              col: Math.random() < 0.5 ? '#74b9ff' : '#a29bfe', noFall: true });
+          }
+          spawnParticles(x, y, '#6c5ce7', 6);
+          break;
+        case 'verdant':
+          // Leaf burst — green flecks spiral outward
+          for (let i = 0; i < 16; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 30 + Math.random() * 80;
+            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd*0.3 - 50,
+              life: 0.5 + Math.random()*0.5, maxLife: 1.0, r: 2 + Math.random()*3,
+              col: Math.random() < 0.6 ? '#2ecc71' : Math.random() < 0.5 ? '#a8ff78' : '#27ae60' });
+          }
+          spawnParticles(x, y, '#27ae60', 4);
+          break;
+        case 'menders':
+          // Healing light scatter — soft green sparkles
+          for (let i = 0; i < 14; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 20 + Math.random() * 70;
+            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: -30 - Math.random()*70,
+              life: 0.6 + Math.random()*0.5, maxLife: 1.1, r: 2 + Math.random()*3,
+              col: Math.random() < 0.5 ? '#2ecc71' : '#a8e063' });
+          }
+          spawnParticles(x, y, '#81ecec', 4);
+          break;
+        case 'bloodpact':
+          // Heavy blood splatter — dark red, low trajectory
+          for (let i = 0; i < 14; i++) {
+            G.particles.push({ x, y, vx: (Math.random()-0.5)*110, vy: -10 - Math.random()*50,
+              life: 0.35 + Math.random()*0.35, maxLife: 0.7, r: 3 + Math.random()*4,
+              col: Math.random() < 0.5 ? '#b71c1c' : '#7f0000' });
+          }
+          spawnParticles(x, y, '#c0392b', 6);
+          break;
+        case 'brutes':
+          // Rock chunk burst — brown/orange heavy particles
+          for (let i = 0; i < 14; i++) {
+            G.particles.push({ x, y, vx: (Math.random()-0.5)*100, vy: -30 - Math.random()*80,
+              life: 0.4 + Math.random()*0.4, maxLife: 0.8, r: 3 + Math.random()*4,
+              col: Math.random() < 0.5 ? '#d35400' : Math.random() < 0.5 ? '#a04000' : '#795548' });
+          }
+          spawnParticles(x, y, '#e67e22', 4);
+          break;
+        default: // warriors and any others
+          spawnParticles(x, y, u.def.color, 22);
+          spawnParticles(x, y - 8, '#ffffff', 6);
+      }
+    }
     function spawnParticles(x, y, col, count) {
       for (let i = 0; i < count; i++) {
         G.particles.push({ x, y, vx: (Math.random() - .5) * 120, vy: (Math.random() - 1.2) * 90, life: .5 + Math.random() * .4, maxLife: .5 + Math.random() * .4, r: 2 + Math.random() * 3, col: col || '#fff' });
@@ -6841,40 +7045,39 @@
       if (isRanged) {
         const attackerCount = G.units.filter(a => a.player === attacker.player && a.target === target && a !== attacker && a.def.range > 60).length + 1;
         if (attackerCount >= 2) {
-          const mult = attackerCount === 2 ? 0.80 : attackerCount === 3 ? 0.58 : attackerCount === 4 ? 0.42 : 0.30;
+          // Old: 0.80 / 0.58 / 0.42 / 0.30 — 3 archers were barely better than 1
+          // New: gentler falloff so grouping ranged is still rewarded, just not as oppressive as melee focus
+          const mult = attackerCount === 2 ? 0.88 : attackerCount === 3 ? 0.76 : attackerCount === 4 ? 0.64 : 0.55;
           dmg *= mult;
         }
         target._focused = (attackerCount >= 2);
 
-        // Density penalty: above 4 friendly ranged, each extra imposes -10% DMG
-        // AND slows attack rate (-10% per stack, capped at -50%)
-        // Applied here to damage; attack rate slowdown applied via _densitySlowMult
+        // Density penalty: raised threshold from 4→6, reduced penalty from 10%→6% per stack
         const friendlyRanged = G.units.filter(a => a.player === attacker.player && a.def.type === 'rng' && !a.offscreen).length;
-        if (friendlyRanged > 4) {
-          const stacks = Math.min(5, friendlyRanged - 4);
-          const dmgPenalty = stacks * 0.10;
+        if (friendlyRanged > 6) {
+          const stacks = Math.min(4, friendlyRanged - 6);
+          const dmgPenalty = stacks * 0.06;
           dmg *= (1 - dmgPenalty);
-          // Store density slow for attack cooldown calc below
-          attacker._densitySlowMult = 1 + stacks * 0.10; // 1.1 → 1.5x cooldown
+          attacker._densitySlowMult = 1 + stacks * 0.07; // 1.07 → 1.28x cooldown
         } else {
           attacker._densitySlowMult = 1;
         }
 
-        // Obstruction penalty: friendly ranged standing directly between attacker and target
+        // Obstruction penalty: raised threshold from 2→3 obstructors before it kicks in
         const ax = attacker.x, tx = target.x;
         const obstructors = G.units.filter(a =>
           a !== attacker && a.player === attacker.player && a.def.type === 'rng' && !a.offscreen &&
           ((ax < tx && a.x > ax && a.x < tx) || (ax > tx && a.x < ax && a.x > tx)) &&
           Math.abs(a.y - attacker.y) < 30
         ).length;
-        if (obstructors >= 2) dmg *= Math.max(0.4, 1 - obstructors * 0.18);
-        // Shield bonus: ranged unit firing from BEHIND a friendly melee gets +22% DMG
+        if (obstructors >= 3) dmg *= Math.max(0.5, 1 - obstructors * 0.14);
+        // Shield bonus: ranged unit firing from BEHIND a friendly melee gets +28% DMG (was +22%)
         const allyMeleeInFront = G.units.some(a =>
           a !== attacker && a.player === attacker.player && a.def.type === 'mel' && !a.offscreen &&
           ((ax < tx && a.x > ax && a.x < tx) || (ax > tx && a.x < ax && a.x > tx)) &&
           Math.abs(a.y - attacker.y) < 40
         );
-        if (allyMeleeInFront) dmg *= 1.22; // Firing from cover
+        if (allyMeleeInFront) dmg *= 1.28; // Firing from cover
       }
 
       if (attacker.def.aerialBonus && target.def.aerial) dmg *= attacker.def.aerialBonus;
@@ -7157,8 +7360,7 @@
       }
       // Shade count
       if (isShade) G.shadeCount[u.player - 1] = Math.max(0, G.shadeCount[u.player - 1] - 1);
-      spawnParticles(u.x, u.y, u.def.color, 20);
-      spawnParticles(u.x, u.y - 10, '#ffffff', 4);
+      spawnFactionDeath(u);
       const killerNum = killer ? `P${killer.player} ⚔ ` : '';
       const killerCol = killer ? killer.player === 1 ? '#e8a0a0' : '#a0c0e8' : '#888';
       addKillFeed(`${killerNum}${u.def.icon} ${u.def.name}`, killerCol);
@@ -7776,17 +7978,23 @@
         u.offTimer -= dt;
         if (u.offTimer <= 0) {
           u.offscreen = false; u.carrying = true;
-          let _baseCarry = u.goToMid ? 3 : 2;
-          if (u.goToMid && (u.def.groveMidBonus || u.def.frostMidBonus)) _baseCarry += 1;
+          // Read _wasGoingMid BEFORE clearing — old code cleared goToMid first so bonus bodies never applied
+          // Mid trips take ~3× as long as normal trips, so reward 6 bodies (vs 2 at home)
+          let _baseCarry = u._wasGoingMid ? 6 : 2;
+          if (u._wasGoingMid && (u.def.groveMidBonus || u.def.frostMidBonus)) _baseCarry += 2;
           u.carryCount = _baseCarry;
-          u.goToMid = false; u.x = offX; u.y = G.groundY - (u.def.radius || 10);
+          // Mid workers reappear at mid and walk home visibly; normal trips reappear behind base edge
+          u.x = u._wasGoingMid ? G.midX : offX;
+          u.goToMid = false; u._wasGoingMid = false;
+          u.y = G.groundY - (u.def.radius || 10);
         }
         return;
       }
       if (u.carrying) {
-        u.x += dir * spd * dt;
         const home = p.baseX + (u.player === 1 ? G.baseW * .3 : -G.baseW * .3);
-        if ((u.player === 1 && u.x >= home) || (u.player === 2 && u.x <= home)) {
+        const toHome = Math.sign(home - u.x);
+        u.x += toHome * spd * dt;
+        if (toHome === 0 || (toHome > 0 ? u.x >= home : u.x <= home)) {
           p.bodies += u.carryCount;
           p.totalBodiesEarned = (p.totalBodiesEarned || 0) + u.carryCount;
           showPopup(u.x, u.y - 35, `+${u.carryCount}🦴`, '#27ae60', u.player);
@@ -7794,11 +8002,23 @@
         }
         return;
       }
-      const midDist = Math.abs(u.x - G.midX);
-      if (G.midOwner === u.player && midDist < G.w * .4 && !u.goToMid && Math.random() < .004) u.goToMid = true;
+      // Mid mode toggle — only go to mid if player enabled it, owns mid, and no enemies nearby
+      const _midModeOn = G.workerMidMode && G.workerMidMode[u.player - 1];
+      const _enemyNearMid = G.units.some(e =>
+        e.player !== u.player && !e.def.isWorker && !e.offscreen &&
+        Math.abs(e.x - G.midX) < 95
+      );
+      // Abort mid trip if mid lost or enemies arrived
+      if (u.goToMid && (G.midOwner !== u.player || _enemyNearMid)) {
+        u.goToMid = false; u._wasGoingMid = false;
+      }
+      // Start mid trip on new outbound leg if conditions met
+      if (!u.goToMid && _midModeOn && G.midOwner === u.player && !_enemyNearMid) {
+        u.goToMid = true; u._wasGoingMid = true;
+      }
       if (u.goToMid) {
         const dx = G.midX - u.x; u.x += Math.sign(dx) * spd * dt;
-        if (Math.abs(dx) < 12) { u.offscreen = true; u.offTimer = 3 + Math.random() * 3; u.x = G.midX; }
+        if (Math.abs(dx) < 12) { u._wasGoingMid = true; u.offscreen = true; u.offTimer = 3 + Math.random() * 3; u.x = G.midX; }
         return;
       }
       u.x -= dir * spd * dt;
@@ -8124,7 +8344,7 @@
             if (Math.abs(u.x - ebase.baseX) < G.baseW * .7 + u.def.range) {
               if (u.attackCooldown <= 0) {
                 const baseMult = G.players[u.player - 1]._baseDmgMult || 1;
-                ebase.baseHp -= u.def.dmg * (u.dmgMult || 1) * baseMult;
+                if (!ebase._conquestShield) ebase.baseHp -= u.def.dmg * (u.dmgMult || 1) * baseMult;
                 // Grace period: base can't die while Last Stand guards are spawning
                 if (ebase.lastStandGrace > 0 && ebase.baseHp <= 0) {
                   ebase.baseHp = 1;
@@ -8356,9 +8576,18 @@
           p.baseHp = Math.max(p.baseHp, threshold); // restore to full threshold, not below
           p.souls += 40;
           const ov = document.getElementById('last-stand-overlay');
-          document.getElementById('ls-title').textContent = `PLAYER ${p.id} — LAST STAND`;
-          document.getElementById('ls-title').style.color = p.id === 1 ? '#2471a3' : '#c0392b';
-          ov.classList.add('show'); setTimeout(() => ov.classList.remove('show'), 3000);
+          if (GAME_MODE === 'sudden_death' && !G._suddenDeathAnnounced) {
+            G._suddenDeathAnnounced = true;
+            document.getElementById('ls-title').textContent = '⚡ SUDDEN DEATH';
+            document.getElementById('ls-title').style.color = '#e67e22';
+            document.querySelector('#last-stand-overlay .ls-sub').textContent = 'BOTH SIDES ARE DESPERATE — GUARDS INBOUND';
+            ov.classList.add('show'); setTimeout(() => ov.classList.remove('show'), 3000);
+          } else if (GAME_MODE !== 'sudden_death') {
+            document.getElementById('ls-title').textContent = `PLAYER ${p.id} — LAST STAND`;
+            document.getElementById('ls-title').style.color = p.id === 1 ? '#2471a3' : '#c0392b';
+            document.querySelector('#last-stand-overlay .ls-sub').textContent = 'THE ROYAL GUARD HAS BEEN SUMMONED';
+            ov.classList.add('show'); setTimeout(() => ov.classList.remove('show'), 3000);
+          }
           SFX.lastStand();
           showPopup(p.baseX, G.groundY - 80, '+40💀 LAST STAND', '#d4a843', p.id);
           p.guardTimerDisplay = 30;
@@ -8376,6 +8605,90 @@
       });
     }
 
+    function updateConquest(dt) {
+      if (!G.zones) return;
+      const w = G.w, zr = Math.max(38, w * 0.045);
+      // Zone x positions: left quarter, mid, right quarter
+      const zx = [w * 0.25, w * 0.5, w * 0.75];
+      G.zones.forEach((z, i) => { z.x = zx[i]; z.r = zr; });
+
+      G.zones.forEach(z => {
+        // Count non-worker, non-offscreen units near zone
+        let p1In = false, p2In = false;
+        G.units.forEach(u => {
+          if (u.offscreen || u.def.isWorker || u.retreating) return;
+          if (Math.abs(u.x - z.x) < z.r) { if (u.player === 1) p1In = true; else p2In = true; }
+        });
+        const contested = p1In && p2In;
+        const holder = p1In && !p2In ? 1 : p2In && !p1In ? 2 : null;
+
+        if (holder !== null && holder !== z.owner && !contested) {
+          if (z.capPlayer === holder) {
+            z.capTimer += dt;
+            if (z.capTimer >= 2.5) {
+              const prev = z.owner;
+              z.owner = holder;
+              z.capTimer = 0; z.capPlayer = null;
+              const col = holder === 1 ? '#2471a3' : '#c0392b';
+              showPopup(z.x, G.groundY - 80, `${holder === 1 ? '🔵 P1' : '🔴 P2'} CAPTURES ${z._label}`, col, holder);
+              spawnParticles(z.x, G.groundY - 20, col, 25);
+              addKillFeed(`${holder === 1 ? '🔵 P1' : '🔴 P2'} captured ${z._label} zone`, col);
+              _checkConquestWin();
+            }
+          } else { z.capPlayer = holder; z.capTimer = 0; }
+        } else if (contested || holder === null) {
+          z.capTimer = 0; z.capPlayer = null;
+        }
+      });
+
+      // Soul income per owned zone (0.6/s each)
+      G.players.forEach(p => {
+        const owned = G.zones.filter(z => z.owner === p.id).length;
+        const tick = owned * 0.6 * dt;
+        if (tick > 0) { p.souls = Math.min(999, p.souls + tick); p.totalSoulsEarned = (p.totalSoulsEarned||0) + tick; }
+      });
+
+      // Update conquest zone indicator in mid display
+      _updateConquestHUD();
+    }
+
+    function _checkConquestWin() {
+      if (!G.zones) return;
+      G.players.forEach(p => {
+        const owned = G.zones.filter(z => z.owner === p.id).length;
+        if (owned >= 2) {
+          // Drop base shield — enemy base can now take damage and die instantly (already at current HP)
+          const enemy = G.players[p.id === 1 ? 1 : 0];
+          enemy._conquestShield = false;
+          p._conquestShield = false; // also remove own shield
+          enemy.baseHp = 0; // trigger immediate win
+          showPopup(p.baseX, G.groundY - 100, '🏴 CONQUEST VICTORY', p.id === 1 ? '#2471a3' : '#c0392b', p.id);
+          showPopup(enemy.baseX, G.groundY - 80, '💀 TERRITORY LOST', '#e74c3c', p.id === 1 ? 2 : 1);
+          checkWin();
+        }
+      });
+    }
+
+    function _updateConquestHUD() {
+      const ind = document.getElementById('mid-indicator');
+      if (!ind || !G.zones) return;
+      const sym = G.zones.map(z => {
+        if (z.owner === 1) return '🔵';
+        if (z.owner === 2) return '🔴';
+        return '⬜';
+      });
+      const p1owned = G.zones.filter(z=>z.owner===1).length;
+      const p2owned = G.zones.filter(z=>z.owner===2).length;
+      ind.textContent = `${sym[0]} ${sym[1]} ${sym[2]}  (P1:${p1owned} P2:${p2owned} · first to 2 wins)`;
+    }
+
+    function updateGroundFX(dt) {
+      if (!G.groundFX || !G.groundFX.length) return;
+      G.groundFX = G.groundFX.filter(fx => {
+        fx.life -= dt;
+        return fx.life > 0;
+      });
+    }
     function updateBloodPools(dt) {
       if (!G.bloodPools || !G.bloodPools.length) return;
       G.bloodPools = G.bloodPools.filter(pool => {
@@ -8395,7 +8708,7 @@
       });
     }
     function updateParticles(dt) {
-      G.particles = G.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 200 * dt; p.life -= dt; return p.life > 0; });
+      G.particles = G.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; if (!p.noFall) p.vy += 200 * dt; p.life -= dt; return p.life > 0; });
       if (G.particles.length > 600) G.particles.splice(0, G.particles.length - 600);
     }
     // ─── DRAWING ─────────────────────────────────────────────────────────────────
@@ -8413,6 +8726,8 @@
       G.players.forEach(p => drawBase(p));
       // Mid circle with capture arc
       drawMid();
+      // Conquest zones
+      if (GAME_MODE === 'conquest' && G.zones) drawConquestZones();
       // Blood pools (Bloodpact) — draw before particles and units
       if (G.bloodPools && G.bloodPools.length) {
         G.bloodPools.forEach(pool => {
@@ -8429,6 +8744,33 @@
           ctx.fill();
           ctx.restore();
         });
+      }
+      // Ground FX — fire patches (Infernal), ice crystals (Glacial)
+      if (G.groundFX && G.groundFX.length) {
+        G.groundFX.forEach(fx => {
+          const frac = fx.life / fx.maxLife;
+          ctx.save();
+          if (fx.type === 'fire') {
+            const pulse = 0.5 + Math.sin(Date.now() / 80 + fx.x) * 0.25;
+            ctx.globalAlpha = frac * pulse * 0.7;
+            const fg = ctx.createRadialGradient(fx.x, fx.y, 0, fx.x, fx.y, fx.r);
+            fg.addColorStop(0, '#f9ca24'); fg.addColorStop(0.4, '#ff6b35'); fg.addColorStop(1, 'transparent');
+            ctx.fillStyle = fg;
+            ctx.beginPath(); ctx.ellipse(fx.x, fx.y, fx.r, fx.r * 0.4, 0, 0, Math.PI * 2); ctx.fill();
+          } else if (fx.type === 'ice') {
+            ctx.globalAlpha = frac * 0.55;
+            const ig = ctx.createRadialGradient(fx.x, fx.y, 0, fx.x, fx.y, fx.r);
+            ig.addColorStop(0, '#dfe6e9'); ig.addColorStop(0.5, '#74b9ff'); ig.addColorStop(1, 'transparent');
+            ctx.fillStyle = ig;
+            ctx.beginPath(); ctx.ellipse(fx.x, fx.y, fx.r, fx.r * 0.35, 0, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.restore();
+        });
+      }
+      // Tick upgrade flash
+      if (G._upgradeFlash) {
+        G._upgradeFlash[0] = Math.max(0, G._upgradeFlash[0] - G.dt);
+        G._upgradeFlash[1] = Math.max(0, G._upgradeFlash[1] - G.dt);
       }
       // Particles behind units
       ctx.save();
@@ -8534,6 +8876,42 @@
       ctx.beginPath(); ctx.moveTo(0, G.groundY); ctx.lineTo(G.w, G.groundY); ctx.stroke();
     }
 
+    function drawConquestZones() {
+      if (!G.zones) return;
+      G.zones.forEach(z => {
+        if (!z.x) return;
+        const pulse = 0.12 + Math.sin(Date.now() / 700 + z.id * 2.1) * 0.06;
+        const col = z.owner === 1 ? '#2471a3' : z.owner === 2 ? '#c0392b' : '#666';
+        const alpha = z.owner ? 0.22 : 0.1;
+        // Zone fill
+        ctx.save();
+        ctx.globalAlpha = alpha + pulse;
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(z.x, G.groundY, z.r, Math.PI, 0); ctx.fill();
+        ctx.globalAlpha = (z.owner ? 0.55 : 0.25) + pulse;
+        ctx.strokeStyle = col; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(z.x, G.groundY, z.r, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+        // Capture progress arc
+        if (z.capPlayer !== null && z.capTimer > 0) {
+          const prog = z.capTimer / 2.5;
+          const capCol = z.capPlayer === 1 ? '#2471a3' : '#c0392b';
+          ctx.save(); ctx.globalAlpha = 0.85;
+          ctx.strokeStyle = capCol; ctx.lineWidth = 4;
+          ctx.shadowBlur = 8; ctx.shadowColor = capCol;
+          ctx.beginPath(); ctx.arc(z.x, G.groundY, z.r + 6, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2); ctx.stroke();
+          ctx.shadowBlur = 0; ctx.restore();
+        }
+        // Zone label
+        ctx.save();
+        ctx.fillStyle = z.owner ? col : '#888';
+        ctx.globalAlpha = 0.7;
+        ctx.font = `bold ${Math.max(9, G.w * 0.009)}px Rajdhani,sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(z._label, z.x, G.groundY - z.r - 8);
+        ctx.restore();
+      });
+    }
     function drawBase(p) {
       const x = p.baseX, bw = G.baseW, h = G.h, gy = G.groundY;
       const col = p.id === 1 ? '#2471a3' : '#c0392b';
@@ -8552,6 +8930,19 @@
         ctx.translate(-cx2 + violentShake, -cy2 + prog * 50 + Math.sin(Date.now() / 40) * prog * 5);
         ctx.globalAlpha = Math.max(0.1, 1 - prog * 0.9);
       } else { ctx.translate(shakeX, 0); }
+      // Danger glow — pulsing red canvas shadow when base HP < 40
+      if (p.baseHp > 0 && p.baseHp < 40) {
+        const dangerFrac = 1 - (p.baseHp / 40);
+        const pulse = 0.35 + Math.sin(Date.now() / (280 - dangerFrac * 180)) * 0.22;
+        ctx.save();
+        const dgrd = ctx.createRadialGradient(x, gy, 0, x, gy, bw * 3.5);
+        dgrd.addColorStop(0,   `rgba(231,76,60,${dangerFrac * pulse * 0.75})`);
+        dgrd.addColorStop(0.35,`rgba(231,76,60,${dangerFrac * pulse * 0.35})`);
+        dgrd.addColorStop(1,   'rgba(231,76,60,0)');
+        ctx.fillStyle = dgrd;
+        ctx.fillRect(x - bw * 3.5, 0, bw * 7, G.h);
+        ctx.restore();
+      }
       // Base wall
       const wallH = gy * 0.32;
       const wx = x - bw / 2, wy = gy - wallH;
@@ -8679,6 +9070,19 @@
         ctx.shadowBlur = 0;
         ctx.restore();
       }
+      // Upgrade flash — gold ripple across all friendly units when upgrade is purchased
+      if (G._upgradeFlash && G._upgradeFlash[u.player - 1] > 0 && !u.def.isWorker) {
+        const _uf = G._upgradeFlash[u.player - 1];
+        const _ufPulse = _uf / 1.4; // 0→1 normalized
+        const _ufRing = r + 4 + (1 - _ufPulse) * 12; // ring expands outward
+        ctx.save();
+        ctx.globalAlpha = _ufPulse * 0.9;
+        ctx.strokeStyle = '#d4a843'; ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 12; ctx.shadowColor = '#f9ca24';
+        ctx.beginPath(); ctx.arc(x, y, _ufRing, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
       // Iron wall buff ring
       if (u._ironwalled > 0) {
         ctx.strokeStyle = 'rgba(189,195,199,0.6)'; ctx.lineWidth = 2.5;
@@ -8784,8 +9188,24 @@
         ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.moveTo(x - r * .5, y - r * 1.4); ctx.lineTo(x + r * .5, y - r * .6); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x, y - r * 1.5); ctx.lineTo(x - r * .4, y - r * .7); ctx.stroke();
-        // Carry glow ring
-        if (u._carryGlow) { ctx.strokeStyle = 'rgba(39,174,96,0.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke(); }
+        // Carry glow ring + floating pack indicator
+        if (u._carryGlow) {
+          ctx.strokeStyle = 'rgba(39,174,96,0.6)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke();
+          // Small glowing pack drawn above worker
+          const _packX = x + (u.player === 1 ? r * .5 : -r * .5);
+          ctx.save();
+          ctx.globalAlpha = 0.85;
+          ctx.shadowBlur = 8; ctx.shadowColor = '#27ae60';
+          ctx.fillStyle = '#27ae60';
+          ctx.fillRect(_packX - 4, y - r * 1.8, 8, 6);
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = '#ffffff';
+          ctx.font = `bold ${Math.max(7, r * .65)}px Rajdhani,sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillText('+' + (u.carryCount || 2) + '🦴', _packX, y - r * 2.2);
+          ctx.restore();
+        }
         if (u._midRing) { ctx.strokeStyle = 'rgba(243,156,18,0.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke(); }
       }
       // ── SUMMONER ──
@@ -9002,6 +9422,8 @@
       updateProjectiles(G.dt);
       _tickLastStandGrace(G.dt);
       checkLastStand();   // AFTER units attack — prevents same-frame bypass
+      if (GAME_MODE === 'conquest') updateConquest(G.dt);
+      updateGroundFX(G.dt);
       updateBloodPools(G.dt);
       updateParticles(G.dt);
       drawGame();
@@ -9728,6 +10150,7 @@
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
       else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
+      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
@@ -9735,6 +10158,7 @@
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
       else {
         for (let s = 0; s < 5; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
@@ -9743,6 +10167,20 @@
       }
     });
 
+    function toggleWorkerMid(pid) {
+      if (!G || !G.running || G.paused) return;
+      G.workerMidMode[pid - 1] = !G.workerMidMode[pid - 1];
+      const on = G.workerMidMode[pid - 1];
+      const p = G.players[pid - 1];
+      // When turning OFF, abort any workers currently en route to mid
+      if (!on) {
+        G.units.filter(u => u.player === pid && u.def.isWorker && u.goToMid && !u.offscreen)
+          .forEach(u => { u.goToMid = false; u._wasGoingMid = false; });
+      }
+      showPopup(p.baseX, G.groundY - 55,
+        on ? '⛏ → MID ROUTE' : '⛏ → HOME ROUTE',
+        on ? '#f39c12' : '#95a5a6', pid);
+    }
     function directSpawnSlot(pid, slotIdx) {
       if (!G || !G.running || G.paused) return;
       const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && !d.isWorker);
@@ -9834,11 +10272,11 @@
       document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>` +
         kbdRow('Navigate Left', 'p1Left') + kbdRow('Navigate Right', 'p1Right') +
         kbdRow('Mode Up', 'p1Up') + kbdRow('Mode Down', 'p1Down') +
-        kbdRow('Spawn / Activate', 'p1Act') + kbdRow('😤 Taunt', 'p1Taunt') + slotRows(1);
+        kbdRow('Spawn / Activate', 'p1Act') + kbdRow('😤 Taunt', 'p1Taunt') + kbdRow('⛏ Worker Mid', 'p1WorkerMid') + slotRows(1);
       document.getElementById('ctrl-p2-panel').innerHTML = `<h3>PLAYER 2</h3>` +
         kbdRow('Navigate Left', 'p2Left') + kbdRow('Navigate Right', 'p2Right') +
         kbdRow('Mode Up', 'p2Up') + kbdRow('Mode Down', 'p2Down') +
-        kbdRow('Spawn / Activate', 'p2Act') + kbdRow('😤 Taunt', 'p2Taunt') + slotRows(2);
+        kbdRow('Spawn / Activate', 'p2Act') + kbdRow('😤 Taunt', 'p2Taunt') + kbdRow('⛏ Worker Mid', 'p2WorkerMid') + slotRows(2);
     }
 
 
@@ -9899,7 +10337,7 @@
     }
 
     function refreshRebindUI() {
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid'].forEach(k => {
         const el = document.getElementById('rk-' + k);
         if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
@@ -10023,8 +10461,10 @@
 
     function _applyFactionScreenMode() {
       const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
+      const isVsLike = (GAME_MODE === 'vs' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest');
       const aivsai = GAME_MODE === 'aivsai';
-      document.getElementById('p2-human-section').style.display = solo ? 'none' : '';
+      // In solo: show the P2 card grid (relabelled) so player can pick the AI faction
+      document.getElementById('p2-human-section').style.display = (solo || aivsai) ? '' : '';
       document.getElementById('ai-p2-panel').style.display = (solo || aivsai) ? 'flex' : 'none';
       document.querySelector('.faction-vs').textContent = (solo || aivsai) ? '🤖' : 'VS';
 
@@ -10032,9 +10472,9 @@
       document.getElementById('ai-p1-panel').style.display = aivsai ? '' : 'none';
       // In aivsai, fchosen-p1 is redundant — ai1-faction-display in the panel covers it
       document.getElementById('fchosen-p1').style.display = aivsai ? 'none' : '';
-      // Update P2 faction panel label to show it's an AI in aivsai mode
+      // Update P2 faction panel label
       const p2lbl = document.getElementById('faction-hint-p2');
-      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : 'PLAYER 2';
+      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : solo ? '🤖 AI FACTION' : 'PLAYER 2';
       // Update P1 label
       const p1lbl2 = document.getElementById('faction-hint-p1');
       if (p1lbl2) p1lbl2.firstChild.textContent = aivsai ? '🤖 AI 1' : 'PLAYER 1';
@@ -10131,6 +10571,9 @@
       const f = FACTIONS[AI_FACTION_IDX];
       document.getElementById('ai-faction-display').textContent = f.icon + ' ' + f.name + ' — ' + f.tagline;
       fSelected[1] = AI_FACTION_IDX;
+      // Sync the P2 card grid highlight (visible in solo mode)
+      document.querySelectorAll('#fcards-p2 .fcard').forEach((c, i) => c.classList.toggle('sel2', i === AI_FACTION_IDX));
+      document.getElementById('fchosen-p2').textContent = f.icon + ' ' + f.name + ' — ' + f.tagline;
       // Only randomize personality if set to random (null)
       if (AI_PERSONALITY === null) {
         const resolved = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
@@ -10156,7 +10599,7 @@
       if (bothChosen) {
         const f1 = FACTIONS[fSelected[0]], f2 = FACTIONS[fSelected[1]];
         const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
-        startBtn.textContent = solo ? f1.icon + ' VS 🤖 — START →' : f1.icon + ' VS ' + f2.icon + ' — START →';
+        startBtn.textContent = solo ? f1.icon + ' VS 🤖 ' + f2.icon + ' — START →' : f1.icon + ' VS ' + f2.icon + ' — START →';
       } else {
         startBtn.textContent = 'START BATTLE →';
       }
@@ -10166,6 +10609,9 @@
       AI_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
       _aiAutoPickFaction();
       fSelected[1] = AI_FACTION_IDX;
+      // Sync highlight on P2 card grid (visible in solo mode)
+      document.querySelectorAll('#fcards-p2 .fcard').forEach((c, i) => c.classList.toggle('sel2', i === AI_FACTION_IDX));
+      document.getElementById('fchosen-p2').textContent = FACTIONS[AI_FACTION_IDX].icon + ' ' + FACTIONS[AI_FACTION_IDX].name + ' — ' + FACTIONS[AI_FACTION_IDX].tagline;
       _updateStartBtn();
     });
     document.getElementById('ai1-reroll-btn').addEventListener('click', () => {
@@ -10204,7 +10650,7 @@
         const afd1 = document.getElementById('ai1-faction-display');
         if (afd1) afd1.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
       }
-      if (GAME_MODE === 'aivsai' && pid === 2) {
+      if ((GAME_MODE === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'sudden_death') && pid === 2) {
         AI_FACTION_IDX = fi;
         const afd = document.getElementById('ai-faction-display');
         if (afd) afd.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
@@ -10273,9 +10719,106 @@
 
     // ─── BUTTON WIRING ───────────────────────────────────────────────────────────
     document.getElementById('btn-play').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-faction'); });
+    document.getElementById('btn-sudden-death').addEventListener('click', () => { setGameMode('sudden_death'); showScreen('sc-faction'); });
+    document.getElementById('btn-conquest').addEventListener('click', () => { setGameMode('conquest'); showScreen('sc-faction'); });
     document.getElementById('btn-solo').addEventListener('click', () => { setGameMode('solo'); showScreen('sc-faction'); });
     document.getElementById('btn-aivsai').addEventListener('click', () => { setGameMode('aivsai'); showScreen('sc-faction'); });
     document.getElementById('btn-draft').addEventListener('click', () => { startDraftMode(); });
+
+    // ── Menu button tooltips ─────────────────────────────────────────────────────
+    const _menuTips = [
+      ['btn-play', '⚔ MULTIPLAYER', [
+        '<span class="st">Two players on the same keyboard.</span>',
+        ' ',
+        'P1 uses <span class="st">WASD + Q</span> to navigate and spawn.',
+        'P2 uses <span class="st">Arrow keys + Enter</span>.',
+        ' ',
+        'Both factions are chosen before the match. Bases start at <span class="st">100 HP</span>.',
+        'First to destroy the enemy base wins.',
+        ' ',
+        'Mid-circle control gives a passive soul bonus.',
+        'At <span class="st">30 HP</span> your base triggers Last Stand — +40 souls and 3 Royal Guards spawn.',
+      ]],
+      ['btn-conquest', '🏴 CONQUEST', [
+        '<span class="st">Capture zones to win — bases are indestructible until you do.</span>',
+        ' ',
+        'Three zones on the map: <span class="st">LEFT</span>, <span class="st">MID</span>, and <span class="st">RIGHT</span>.',
+        'Stand in a zone uncontested for <span class="st">2.5 seconds</span> to capture it.',
+        'Each zone you own gives <span class="st">+0.6💀/s</span> income.',
+        ' ',
+        'Own <span class="st">2 of 3 zones</span> and the enemy base immediately falls.',
+        'Bases cannot be damaged by direct attacks until the conquest win condition triggers.',
+        ' ',
+        'Forces map-wide aggression — you can not just turtle at home.',
+      ]],
+      ['btn-sudden-death', '⚡ SUDDEN DEATH', [
+        '<span class="st">Both bases start at 30 HP.</span>',
+        ' ',
+        'Last Stand triggers for both players <span class="st">immediately</span> — guards spawn at the very start, souls are boosted, and the game is a desperate brawl from second one.',
+        ' ',
+        'Matches are short and chaotic. Great as a quick rematch mode after a long game.',
+        'Same controls and rules as Multiplayer otherwise.',
+      ]],
+      ['btn-solo', '🤖 SINGLEPLAYER', [
+        '<span class="st">You vs an AI opponent.</span>',
+        ' ',
+        'Choose a difficulty before the match:',
+        '<span class="st">Easy</span> — slow reactions, no strategy.',
+        '<span class="st">Medium</span> — adapts to your economy.',
+        '<span class="st">Hard</span> — aggressive, uses upgrades and spies.',
+        '<span class="st">Expert</span> — near-optimal play, punishes mistakes fast.',
+        ' ',
+        'P1 controls only. The AI picks its own personality and adapts over time.',
+      ]],
+      ['btn-draft', '🃏 DRAFT MODE', [
+        '<span class="st">Ban and pick factions before the match.</span>',
+        ' ',
+        'Each player bans <span class="st">2 factions</span>, then picks <span class="st">1</span> from what remains.',
+        'Banning eliminates a faction entirely — your opponent can\'t pick it.',
+        ' ',
+        'Adds a metagame layer of counter-picking and denial.',
+        'Good for competitive play between experienced players.',
+      ]],
+      ['btn-tournament', '🏆 TOURNAMENT', [
+        '<span class="st">A bracketed tournament for 3–10 players.</span>',
+        ' ',
+        'Add any mix of human and AI players, then run a single-elimination bracket.',
+        'Odd player counts get a play-in round to seed into the main bracket.',
+        ' ',
+        'Great for group sessions. Each match tracks stats independently.',
+        'AI players can fill any slot at any difficulty.',
+      ]],
+      ['btn-aivsai', '👁 AI VS AI', [
+        '<span class="st">Watch two AIs fight each other.</span>',
+        ' ',
+        'Pick factions and difficulty for both sides, then sit back.',
+        'Good for testing faction matchups or just watching chaos unfold.',
+        ' ',
+        'You can assign different personalities and difficulties to each AI.',
+      ]],
+      ['btn-tutorial', '📖 TUTORIAL', [
+        '<span class="st">Learn the game step by step.</span>',
+        ' ',
+        'Covers: spawning units, workers, the mid-circle, upgrades, buffs, spies, and Last Stand.',
+        ' ',
+        'Recommended if this is your first time. Takes about 5 minutes.',
+        'Controls and key bindings are explained at the end.',
+      ]],
+      ['btn-controls', '🎮 CONTROLS & KEY BINDS', [
+        '<span class="st">View and rebind all keys.</span>',
+        ' ',
+        'Default P1: <span class="st">WASD</span> navigate · <span class="st">Q</span> spawn · <span class="st">F</span> taunt · <span class="st">E</span> worker mid toggle',
+        'Default P2: <span class="st">Arrows</span> navigate · <span class="st">Enter</span> spawn · <span class="st">NP0</span> taunt · <span class="st">NP1</span> worker mid toggle',
+        ' ',
+        'You can also assign optional <span class="st">Direct Spawn Hotkeys</span> — press a key to instantly spawn a unit slot without navigating the menu.',
+      ]],
+    ];
+    _menuTips.forEach(([id, title, lines]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('mouseenter', e => showMenuTT(e, title, lines));
+      el.addEventListener('mouseleave', hideTT);
+    });
     document.getElementById('btn-draft-back').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas(); });
     document.getElementById('btn-draft-start').addEventListener('click', () => {
       if (DRAFT.state === 'done') { initGame(); }
@@ -10513,11 +11056,11 @@
       document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>
         ${kbdRow('Navigate Left', 'p1Left')}${kbdRow('Navigate Right', 'p1Right')}
         ${kbdRow('Mode Up', 'p1Up')}${kbdRow('Mode Down', 'p1Down')}
-        ${kbdRow('Spawn / Activate', 'p1Act')}${kbdRow('😤 Taunt', 'p1Taunt')}${slotRows(1)}`;
+        ${kbdRow('Spawn / Activate', 'p1Act')}${kbdRow('😤 Taunt', 'p1Taunt')}${kbdRow('⛏ Worker Mid', 'p1WorkerMid')}${slotRows(1)}`;
       document.getElementById('ctrl-p2-panel').innerHTML = `<h3>PLAYER 2</h3>
         ${kbdRow('Navigate Left', 'p2Left')}${kbdRow('Navigate Right', 'p2Right')}
         ${kbdRow('Mode Up', 'p2Up')}${kbdRow('Mode Down', 'p2Down')}
-        ${kbdRow('Spawn / Activate', 'p2Act')}${kbdRow('😤 Taunt', 'p2Taunt')}${slotRows(2)}`;
+        ${kbdRow('Spawn / Activate', 'p2Act')}${kbdRow('😤 Taunt', 'p2Taunt')}${kbdRow('⛏ Worker Mid', 'p2WorkerMid')}${slotRows(2)}`;
     }
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
@@ -10568,7 +11111,7 @@
 
     function refreshRebindUI() {
       // Navigation keys
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid'].forEach(k => {
         const el = document.getElementById('rk-' + k);
         if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
