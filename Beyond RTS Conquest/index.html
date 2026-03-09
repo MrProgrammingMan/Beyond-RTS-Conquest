@@ -32,9 +32,153 @@
       --fs-lg: clamp(1rem, 1.8vw, 1.5rem);
       --fs-xl: clamp(1.3rem, 3vw, 2.6rem);
       --fs-xxl: clamp(1.8rem, 5vw, 4rem);
-      --hud: clamp(240px, 33vh, 380px);
+      --hud: clamp(130px, 22vh, 200px);
       --gap: clamp(3px, .4vw, 7px);
     }
+
+
+    /* ── COMPACT HUD for small screens ──────────────────────────────────────── */
+    @media (max-height: 650px) {
+      :root { --hud: clamp(110px, 20vh, 150px); }
+      .ingame-tip { display: none; }
+      .unit-stat-panel { display: none; }
+      .hud-info { width: clamp(100px, 12vw, 150px); }
+    }
+    @media (max-height: 480px) {
+      :root { --hud: clamp(95px, 22vh, 120px); }
+      .hud-meta { display: none; }
+      .income-rate { display: none; }
+      .ucard { min-height: clamp(40px, 7vh, 70px); }
+    }
+
+    /* ── PORTRAIT PHONE — stack players vertically, ultra-compact rows ───────── */
+    @media (max-width: 600px) and (orientation: portrait),
+           (max-width: 480px) {
+      :root { --hud: clamp(180px, 42vw, 260px); }
+
+      /* HUD becomes a vertical stack of two player panels */
+      #hud { flex-direction: column; height: var(--hud); }
+
+      /* Each player panel is a single horizontal row */
+      .player-hud {
+        flex: 1;
+        flex-direction: row;
+        padding: 4px 6px;
+        gap: 5px;
+        border-right: none !important;
+        min-height: 0;
+      }
+      #p1-hud { border-bottom: 1px solid var(--border); }
+
+      /* Info column — very narrow on phones */
+      .hud-info {
+        width: clamp(80px, 22vw, 120px);
+        gap: 2px;
+        justify-content: center;
+      }
+      .pname { font-size: clamp(.62rem, 3.5vw, .85rem); letter-spacing: .05em; }
+      .res-item2 { padding: 1px 3px; gap: 2px; }
+      .ricon { font-size: clamp(.65rem, 3vw, .85rem); }
+      .rlabel { font-size: clamp(.42rem, 2vw, .55rem); }
+      .rval { font-size: clamp(.72rem, 3.8vw, 1rem); }
+      .hp-wrap { display: none; }
+      .income-rate { font-size: clamp(.48rem, 2.2vw, .6rem); }
+      .hud-meta { gap: 2px; }
+      .unit-count, .worker-count { font-size: clamp(.44rem, 2vw, .58rem); padding: 1px 3px; }
+      .worker-mid-btn { font-size: clamp(.4rem, 1.8vw, .52rem); padding: 1px 3px; }
+      .ingame-tip { display: none; }
+      .unit-stat-panel { display: none; }
+
+      /* Cards column */
+      .hud-cards { gap: 2px; }
+      .hud-tab { font-size: clamp(.5rem, 2.5vw, .65rem); padding: 1px 4px; }
+      .unit-grid { gap: 2px; }
+      .ucard { min-height: clamp(38px, 9vw, 58px); padding: 1px; }
+      .uicon { font-size: clamp(.9rem, 4.5vw, 1.5rem); }
+      .uname { font-size: clamp(.5rem, 2.2vw, .65rem); }
+      .ctag { font-size: clamp(.44rem, 2vw, .58rem); padding: 0 2px; }
+      .utypetag { font-size: clamp(.38rem, 1.6vw, .5rem); padding: 1px 3px; }
+    }
+
+    /* ── LANDSCAPE PHONE — side-by-side works but very short, trim height ─────── */
+    @media (max-height: 420px) {
+      :root { --hud: clamp(90px, 24vh, 120px); }
+      .ingame-tip { display: none; }
+      .unit-stat-panel { display: none; }
+      .hud-meta { display: none; }
+      .hud-info { width: clamp(85px, 10vw, 120px); }
+      .ucard { min-height: clamp(38px, 8vh, 60px); }
+      .uicon { font-size: clamp(.9rem, 2.5vh, 1.6rem); }
+    }
+
+    /* ── TOUCH CONTROLS ────────────────────────────────────────────────────────── */
+    #touch-controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      display: flex;
+      z-index: 200;
+      background: rgba(0,0,0,.75);
+      border-top: 1px solid rgba(255,255,255,.12);
+      pointer-events: all;
+    }
+    .touch-half {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 5px;
+      align-items: center;
+      justify-content: center;
+    }
+    #touch-p1 { border-right: 1px solid rgba(255,255,255,.1); }
+    .touch-row {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    .touch-btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.65rem, 2.8vw, .9rem);
+      font-weight: 700;
+      letter-spacing: .04em;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.2);
+      color: var(--text);
+      border-radius: 5px;
+      padding: 0;
+      width: clamp(40px, 10vw, 60px);
+      height: 26px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+    }
+    .touch-btn:active { background: rgba(255,255,255,.22); }
+    .touch-btn.touch-act {
+      background: rgba(231,76,60,.25);
+      border-color: rgba(231,76,60,.5);
+      color: #ff8a80;
+      min-width: clamp(50px, 13vw, 75px);
+    }
+    .touch-btn.touch-sm {
+      font-size: clamp(.5rem, 2vw, .68rem);
+      height: 20px;
+      width: clamp(34px, 9vw, 52px);
+    }
+    /* On portrait phones, stack the two player touch zones vertically */
+    @media (max-width: 600px) and (orientation: portrait),
+           (max-width: 480px) {
+      #touch-controls { height: 100px; flex-direction: column; }
+      .touch-half { flex-direction: row; gap: 6px; padding: 4px 8px; }
+      #touch-p1 { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+      .touch-btn { height: 30px; }
+      .touch-btn.touch-sm { height: 24px; }
+    }
+    /* When touch controls are showing, the HUD needs to shrink to fit above them */
+    /* touch controls are fixed-position, no layout shift needed for sc-game */
 
     * {
       margin: 0;
@@ -1586,12 +1730,36 @@
       background: rgba(212, 168, 67, .18);
       border-color: #d4a843;
     }
-
-    .vote-card-key {
+    .vote-card.voted-p1 { border-top: 3px solid var(--p1); }
+    .vote-card.voted-p2 { border-top: 3px solid var(--p2); }
+    .vote-picks {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      min-height: 18px;
+      margin-top: 4px;
+    }
+    .vote-pick-badge {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.6rem, 1.1vw, .78rem);
-      letter-spacing: .1em;
-      color: var(--gold);
+      font-size: clamp(.55rem, .9vw, .7rem);
+      padding: 1px 5px;
+      border-radius: 3px;
+      letter-spacing: .06em;
+    }
+    .vote-pick-p1 { background: rgba(52,152,219,.35); color: #7cc6f0; border: 1px solid rgba(52,152,219,.5); }
+    .vote-pick-p2 { background: rgba(231,76,60,.35); color: #f5a89a; border: 1px solid rgba(231,76,60,.5); }
+    .vote-vs {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.7rem, 1.2vw, .9rem);
+      color: rgba(255,255,255,.3);
+      letter-spacing: .2em;
+    }
+    .vote-instructions {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.6rem, 1vw, .8rem);
+      color: rgba(255,255,255,.5);
+      letter-spacing: .08em;
+      text-align: center;
     }
 
     .vote-card-name {
@@ -1764,12 +1932,12 @@
     .player-hud {
       flex: 1;
       display: flex;
-      flex-direction: column;
-      padding: clamp(4px, .6vh, 9px) clamp(5px, .7vw, 12px);
-      padding-right: calc(clamp(110px, 13vw, 160px) + clamp(5px, .7vw, 12px));
-      gap: clamp(3px, .4vh, 6px);
+      flex-direction: row;
+      padding: clamp(4px, .6vh, 8px) clamp(4px, .5vw, 10px);
+      gap: clamp(4px, .6vw, 10px);
       position: relative;
       overflow: hidden;
+      min-width: 0;
     }
 
     .player-hud::before {
@@ -1784,28 +1952,44 @@
       border-right: 2px solid var(--border);
     }
 
-    #p1-hud::before {
-      background: var(--p1);
+    #p1-hud::before { background: var(--p1); }
+    #p2-hud::before { background: var(--p2); }
+
+    /* Left info column — fixed width, all the stats */
+    .hud-info {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(2px, .35vh, 5px);
+      flex-shrink: 0;
+      width: clamp(120px, 14vw, 190px);
+      justify-content: center;
     }
 
-    #p2-hud::before {
-      background: var(--p2);
+    /* Right cards column — tabs + grid, takes all remaining space */
+    .hud-cards {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(2px, .3vh, 4px);
+      min-width: 0;
+      min-height: 0;
     }
 
     .hud-top {
       display: flex;
       align-items: center;
-      gap: clamp(4px, .7vw, 11px);
-      flex-wrap: wrap;
+      gap: clamp(3px, .5vw, 8px);
+      flex-wrap: nowrap;
       flex-shrink: 0;
     }
 
     .pname {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.9rem, 1.5vw, 1.4rem);
+      font-size: clamp(.75rem, 1.1vw, 1.1rem);
       font-weight: 700;
-      letter-spacing: .18em;
+      letter-spacing: .12em;
       flex-shrink: 0;
+      white-space: nowrap;
     }
 
     .pname1 {
@@ -1828,16 +2012,17 @@
 
     .res-row {
       display: flex;
-      gap: clamp(4px, .6vw, 9px);
+      gap: clamp(3px, .4vw, 6px);
       align-items: center;
+      flex-shrink: 0;
     }
 
     .res-item2 {
       display: flex;
       align-items: center;
-      gap: clamp(3px, .4vw, 5px);
+      gap: clamp(2px, .3vw, 4px);
       background: rgba(0, 0, 0, .35);
-      padding: clamp(2px, .35vh, 5px) clamp(3px, .6vw, 8px);
+      padding: clamp(2px, .3vh, 4px) clamp(2px, .4vw, 6px);
       border-radius: 4px;
       border: 1px solid var(--border2);
       transition: background .2s;
@@ -1848,7 +2033,7 @@
     }
 
     .ricon {
-      font-size: clamp(.8rem, 1.3vw, 1.2rem);
+      font-size: clamp(.75rem, 1.1vw, 1rem);
     }
 
     .rtxt {
@@ -1857,7 +2042,7 @@
     }
 
     .rlabel {
-      font-size: clamp(.55rem, .8vw, .72rem);
+      font-size: clamp(.5rem, .7vw, .65rem);
       color: var(--dim);
       letter-spacing: .07em;
       line-height: 1;
@@ -1865,7 +2050,7 @@
 
     .rval {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(1.2rem, 2.2vw, 2rem);
+      font-size: clamp(1rem, 1.8vw, 1.6rem);
       font-weight: 700;
       line-height: 1.1;
     }
@@ -1879,29 +2064,26 @@
     }
 
     .income-rate {
-      font-size: clamp(.7rem, 1.05vw, .92rem);
+      font-size: clamp(.58rem, .85vw, .8rem);
       color: rgba(212, 168, 67, .75);
       letter-spacing: .04em;
-      padding-left: 2px;
       font-family: 'Rajdhani', sans-serif;
-    }
-
-    /* Rotating in-game tip bar — lives below income rate */
-    .ingame-tip {
-      font-size: clamp(.72rem, 1.1vw, .9rem);
-      color: rgba(255, 255, 255, .72);
-      letter-spacing: .025em;
-      padding: 3px 6px 2px;
-      background: rgba(0, 0, 0, .28);
-      border-left: 2px solid rgba(212, 168, 67, .45);
-      border-radius: 0 3px 3px 0;
-      margin-top: 2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 100%;
-      min-width: 0;
-      flex-shrink: 1;
+    }
+
+    .ingame-tip {
+      font-size: clamp(.56rem, .82vw, .75rem);
+      color: rgba(255, 255, 255, .6);
+      letter-spacing: .02em;
+      padding: 2px 5px 2px;
+      background: rgba(0, 0, 0, .28);
+      border-left: 2px solid rgba(212, 168, 67, .4);
+      border-radius: 0 3px 3px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       transition: opacity .5s ease;
       cursor: help;
     }
@@ -1909,20 +2091,19 @@
     .hp-wrap {
       display: flex;
       align-items: center;
-      gap: clamp(3px, .4vw, 6px);
-      flex: 0 0 auto;
-      width: clamp(90px, 12vw, 160px);
+      gap: clamp(2px, .3vw, 5px);
+      flex: 1;
       min-width: 0;
     }
 
     .hp-bar {
       flex: 1;
-      height: clamp(5px, .8vh, 10px);
+      height: clamp(4px, .7vh, 8px);
       background: #1a1a2e;
       border-radius: 4px;
       overflow: hidden;
       border: 1px solid var(--border);
-      min-width: 28px;
+      min-width: 20px;
     }
 
     .hp-fill {
@@ -1941,16 +2122,16 @@
 
     .hp-txt {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.85rem, 1.3vw, 1.2rem);
+      font-size: clamp(.72rem, 1.1vw, 1rem);
       font-weight: 700;
-      min-width: 2.2em;
+      min-width: 1.8em;
       text-align: right;
       flex-shrink: 0;
     }
 
     .guard-timer {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.68rem, 1vw, .9rem);
+      font-size: clamp(.58rem, .85vw, .78rem);
       color: var(--gold);
       display: none;
     }
@@ -1958,27 +2139,29 @@
     .hud-meta {
       display: flex;
       align-items: center;
-      gap: clamp(3px, .4vw, 6px);
+      gap: clamp(2px, .3vw, 5px);
       flex-shrink: 0;
+      flex-grow: 0;
       flex-wrap: wrap;
     }
 
     .unit-count,
     .worker-count {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.68rem, 1vw, .9rem);
-      padding: 3px 7px;
+      font-size: clamp(.55rem, .82vw, .75rem);
+      padding: 1px 4px;
       border-radius: 3px;
       border: 1px solid var(--border2);
       background: rgba(0, 0, 0, .35);
+      white-space: nowrap;
     }
 
     .worker-mid-btn {
       display: none;
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.5rem, .7vw, .62rem);
-      letter-spacing: .07em;
-      padding: 2px 6px;
+      font-size: clamp(.48rem, .68vw, .6rem);
+      letter-spacing: .06em;
+      padding: 1px 5px;
       background: rgba(243, 156, 18, .08);
       border: 1px solid rgba(243, 156, 18, .3);
       border-radius: 3px;
@@ -2015,40 +2198,33 @@
 
     .desperation-badge {
       font-family: 'Rajdhani', sans-serif;
-      font-size: var(--fs-xs);
-      padding: 2px 5px;
+      font-size: clamp(.5rem, .72vw, .65rem);
+      padding: 1px 4px;
       border-radius: 3px;
       background: rgba(231, 76, 60, .12);
       border: 1px solid #e74c3c;
       color: #e74c3c;
       animation: despPulse 1.5s infinite;
       display: none;
+      white-space: nowrap;
     }
 
     @keyframes despPulse {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: .5
-      }
+      0%, 100% { opacity: 1 }
+      50% { opacity: .5 }
     }
 
     /* HUD MODE TABS */
     .hud-mode-tabs {
       display: flex;
-      gap: 5px;
+      gap: 4px;
       flex-shrink: 0;
-      margin-bottom: 2px;
     }
 
     .hud-tab {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.78rem, 1.1vw, 1rem);
-      padding: 4px 10px;
+      font-size: clamp(.62rem, .92vw, .82rem);
+      padding: 2px 8px;
       border-radius: 2px;
       border: 1px solid var(--border2);
       color: var(--dim);
@@ -2073,9 +2249,9 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: var(--gap);
-      flex: 1;
+      flex: 1 1 0;
       min-height: 0;
-      overflow: visible;
+      overflow: hidden;
       align-content: start;
     }
 
@@ -2087,13 +2263,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: clamp(3px, .45vh, 5px) clamp(2px, .3vw, 4px);
+      padding: clamp(2px, .4vh, 5px) clamp(2px, .3vw, 4px);
       cursor: pointer;
       transition: all .14s;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
       min-width: 0;
-      min-height: clamp(78px, 11vh, 120px);
+      min-height: clamp(52px, 8.5vh, 110px);
     }
 
     .ucard:hover {
@@ -2206,7 +2382,7 @@
     }
 
     .uicon {
-      font-size: clamp(1.6rem, 3.5vh, 3rem);
+      font-size: clamp(1.2rem, 2.8vh, 2.4rem);
       line-height: 1;
     }
 
@@ -2460,21 +2636,17 @@
 
     /* STAT PANEL */
     .unit-stat-panel {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: clamp(95px, 11vw, 130px);
+      flex-shrink: 0;
+      width: clamp(70px, 8.5vw, 115px);
       pointer-events: none;
-      background: rgba(5, 5, 20, .92);
+      background: rgba(5, 5, 20, .6);
       border-left: 1px solid var(--border);
-      padding: clamp(4px, .7vh, 10px) clamp(4px, .6vw, 9px);
+      padding: clamp(4px, .6vh, 8px) clamp(3px, .4vw, 7px);
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
       z-index: 2;
-      transition: opacity .15s;
-      opacity: 1;
+      overflow: hidden;
     }
 
     .usp-name {
@@ -2499,40 +2671,38 @@
 
     .usp-label {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.6rem, .92vw, .82rem);
+      font-size: clamp(.52rem, .78vw, .7rem);
       color: var(--dim);
-      letter-spacing: .06em;
+      letter-spacing: .04em;
     }
 
     .usp-val {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.6rem, .92vw, .82rem);
+      font-size: clamp(.52rem, .78vw, .7rem);
       color: var(--text);
       font-weight: 700;
     }
 
     .usp-special {
       overflow-y: auto;
-      max-height: 5em;
-      line-height: 1.35;
-      font-size: clamp(.54rem, .78vw, .7rem);
+      max-height: 4em;
+      line-height: 1.3;
+      font-size: clamp(.48rem, .68vw, .62rem);
       color: #9b59b6;
-      margin-top: 2px;
+      margin-top: 1px;
       text-align: center;
       font-style: italic;
       white-space: pre-line;
     }
 
-    /* stat panel is always the same width — no hover expansion */
-
     .usp-cost {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.58rem, .85vw, .76rem);
+      font-size: clamp(.5rem, .75vw, .68rem);
       color: var(--gold);
       text-align: center;
-      margin-top: 2px;
+      margin-top: 1px;
       border-top: 1px solid var(--border);
-      padding-top: 2px;
+      padding-top: 1px;
     }
 
     .dev-section {
@@ -3791,17 +3961,21 @@
       <div class="vote-header">⚡ EVENT VOTE — CHOOSE YOUR FATE</div>
       <div class="vote-options">
         <div class="vote-card" id="vote-card-a">
-          <div class="vote-card-key" id="vote-key-a">P1 — Q</div>
           <div class="vote-card-name" id="vote-name-a"></div>
           <div class="vote-card-sub" id="vote-sub-a"></div>
+          <div class="vote-picks" id="vote-picks-a"></div>
         </div>
-        <div class="vote-timer" id="vote-timer-display">5</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+          <div class="vote-timer" id="vote-timer-display">10</div>
+          <div class="vote-vs">VS</div>
+        </div>
         <div class="vote-card" id="vote-card-b">
-          <div class="vote-card-key" id="vote-key-b">P2 — ENTER</div>
           <div class="vote-card-name" id="vote-name-b"></div>
           <div class="vote-card-sub" id="vote-sub-b"></div>
+          <div class="vote-picks" id="vote-picks-b"></div>
         </div>
       </div>
+      <div class="vote-instructions" id="vote-instructions"></div>
       <div class="vote-tally" id="vote-tally"></div>
     </div>
     <div id="last-stand-overlay">
@@ -3832,47 +4006,49 @@
     </div>
     <div id="hud">
       <div class="player-hud" id="p1-hud">
-        <div class="hud-top">
-          <span class="pname pname1">PLAYER 1</span>
-          <div class="res-grp">
-            <div class="res-row">
-              <div class="res-item2" id="p1-souls-wrap"><span class="ricon">💀</span>
-                <div class="rtxt">
-                  <div class="rlabel">SOULS</div>
-                  <div class="rval s" id="p1-souls">20</div>
-                </div>
-              </div>
-              <div class="res-item2" id="p1-bodies-wrap"><span class="ricon">🦴</span>
-                <div class="rtxt">
-                  <div class="rlabel">BODIES</div>
-                  <div class="rval b" id="p1-bodies">10</div>
-                </div>
+        <div class="hud-info">
+          <div class="hud-top">
+            <span class="pname pname1">PLAYER 1</span>
+            <div class="hp-wrap">
+              <div class="rlabel" style="white-space:nowrap">🏰</div>
+              <div class="hp-bar">
+                <div class="hp-fill hp1" id="p1-hp-bar" style="width:100%"></div>
+              </div><span class="hp-txt" id="p1-hp-txt">100</span>
+            </div>
+          </div>
+          <div class="res-row">
+            <div class="res-item2" id="p1-souls-wrap"><span class="ricon">💀</span>
+              <div class="rtxt">
+                <div class="rlabel">SOULS</div>
+                <div class="rval s" id="p1-souls">20</div>
               </div>
             </div>
-            <div class="income-rate" id="p1-income-rate">+0.6💀/s · +0🦴/m</div>
-            <div class="ingame-tip" id="p1-ingame-tip">💡 Deploy workers early — bodies are your army's fuel</div>
+            <div class="res-item2" id="p1-bodies-wrap"><span class="ricon">🦴</span>
+              <div class="rtxt">
+                <div class="rlabel">BODIES</div>
+                <div class="rval b" id="p1-bodies">10</div>
+              </div>
+            </div>
           </div>
-          <div class="hp-wrap">
-            <div class="rlabel" style="white-space:nowrap">🏰 BASE</div>
-            <div class="hp-bar">
-              <div class="hp-fill hp1" id="p1-hp-bar" style="width:100%"></div>
-            </div><span class="hp-txt" id="p1-hp-txt">100</span>
-          </div>
+          <div class="income-rate" id="p1-income-rate">+0.6💀/s</div>
           <div class="hud-meta"><span class="unit-count" id="p1-unit-count">⚔ 0/12</span><span class="worker-count"
               id="p1-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p1-mid-btn"
               onclick="toggleWorkerMid(1)"
               title="Toggle workers between home and mid route (key: E)">⛏→MID</button><span class="worker-count"
               id="p1-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p1-desp">🔥
               SURGE ×1</span><span class="guard-timer" id="p1-guard-timer">👑 GUARD: 30s</span></div>
+          <div class="ingame-tip" id="p1-ingame-tip">💡 Deploy workers early</div>
         </div>
-        <div class="hud-mode-tabs" id="p1-tabs">
-          <span class="hud-tab active1" data-mode="0">UNITS</span>
-          <span class="hud-tab" data-mode="1">UPGRADES</span>
-          <span class="hud-tab" data-mode="2">BUFFS</span>
+        <div class="hud-cards">
+          <div class="hud-mode-tabs" id="p1-tabs">
+            <span class="hud-tab active1" data-mode="0">UNITS</span>
+            <span class="hud-tab" data-mode="1">UPGRADES</span>
+            <span class="hud-tab" data-mode="2">BUFFS</span>
+          </div>
+          <div class="unit-grid" id="p1-grid"></div>
+          <div class="upgrade-grid" id="p1-upgrades" style="display:none"></div>
+          <div class="buff-grid" id="p1-buffs" style="display:none"></div>
         </div>
-        <div class="unit-grid" id="p1-grid"></div>
-        <div class="upgrade-grid" id="p1-upgrades" style="display:none"></div>
-        <div class="buff-grid" id="p1-buffs" style="display:none"></div>
         <div class="unit-stat-panel">
           <div class="usp-name" id="p1-sp-name">— SELECT —</div>
           <div class="usp-row"><span class="usp-label">TYPE</span><span class="usp-val" id="p1-sp-type">—</span></div>
@@ -3885,47 +4061,49 @@
         </div>
       </div>
       <div class="player-hud" id="p2-hud">
-        <div class="hud-top">
-          <span class="pname pname2">PLAYER 2</span>
-          <div class="res-grp">
-            <div class="res-row">
-              <div class="res-item2" id="p2-souls-wrap"><span class="ricon">💀</span>
-                <div class="rtxt">
-                  <div class="rlabel">SOULS</div>
-                  <div class="rval s" id="p2-souls">20</div>
-                </div>
-              </div>
-              <div class="res-item2" id="p2-bodies-wrap"><span class="ricon">🦴</span>
-                <div class="rtxt">
-                  <div class="rlabel">BODIES</div>
-                  <div class="rval b" id="p2-bodies">10</div>
-                </div>
+        <div class="hud-info">
+          <div class="hud-top">
+            <span class="pname pname2">PLAYER 2</span>
+            <div class="hp-wrap">
+              <div class="rlabel" style="white-space:nowrap">🏰</div>
+              <div class="hp-bar">
+                <div class="hp-fill hp2" id="p2-hp-bar" style="width:100%"></div>
+              </div><span class="hp-txt" id="p2-hp-txt">100</span>
+            </div>
+          </div>
+          <div class="res-row">
+            <div class="res-item2" id="p2-souls-wrap"><span class="ricon">💀</span>
+              <div class="rtxt">
+                <div class="rlabel">SOULS</div>
+                <div class="rval s" id="p2-souls">20</div>
               </div>
             </div>
-            <div class="income-rate" id="p2-income-rate">+0.6💀/s · +0🦴/m</div>
-            <div class="ingame-tip" id="p2-ingame-tip">💡 Deploy workers early — bodies are your army's fuel</div>
+            <div class="res-item2" id="p2-bodies-wrap"><span class="ricon">🦴</span>
+              <div class="rtxt">
+                <div class="rlabel">BODIES</div>
+                <div class="rval b" id="p2-bodies">10</div>
+              </div>
+            </div>
           </div>
-          <div class="hp-wrap">
-            <div class="rlabel" style="white-space:nowrap">🏰 BASE</div>
-            <div class="hp-bar">
-              <div class="hp-fill hp2" id="p2-hp-bar" style="width:100%"></div>
-            </div><span class="hp-txt" id="p2-hp-txt">100</span>
-          </div>
+          <div class="income-rate" id="p2-income-rate">+0.6💀/s</div>
           <div class="hud-meta"><span class="unit-count" id="p2-unit-count">⚔ 0/12</span><span class="worker-count"
               id="p2-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p2-mid-btn"
               onclick="toggleWorkerMid(2)"
               title="Toggle workers between home and mid route (key: Numpad 1)">⛏→MID</button><span class="worker-count"
               id="p2-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p2-desp">🔥
               SURGE ×1</span><span class="guard-timer" id="p2-guard-timer">👑 GUARD: 30s</span></div>
+          <div class="ingame-tip" id="p2-ingame-tip">💡 Deploy workers early</div>
         </div>
-        <div class="hud-mode-tabs" id="p2-tabs">
-          <span class="hud-tab active2" data-mode="0">UNITS</span>
-          <span class="hud-tab" data-mode="1">UPGRADES</span>
-          <span class="hud-tab" data-mode="2">BUFFS</span>
+        <div class="hud-cards">
+          <div class="hud-mode-tabs" id="p2-tabs">
+            <span class="hud-tab active2" data-mode="0">UNITS</span>
+            <span class="hud-tab" data-mode="1">UPGRADES</span>
+            <span class="hud-tab" data-mode="2">BUFFS</span>
+          </div>
+          <div class="unit-grid" id="p2-grid"></div>
+          <div class="upgrade-grid" id="p2-upgrades" style="display:none"></div>
+          <div class="buff-grid" id="p2-buffs" style="display:none"></div>
         </div>
-        <div class="unit-grid" id="p2-grid"></div>
-        <div class="upgrade-grid" id="p2-upgrades" style="display:none"></div>
-        <div class="buff-grid" id="p2-buffs" style="display:none"></div>
         <div class="unit-stat-panel">
           <div class="usp-name" id="p2-sp-name">— SELECT —</div>
           <div class="usp-row"><span class="usp-label">TYPE</span><span class="usp-val" id="p2-sp-type">—</span></div>
@@ -3939,7 +4117,33 @@
       </div>
     </div>
   </div>
-  <!-- TOURNAMENT SETUP -->
+  <!-- TOUCH CONTROLS (mobile only — hidden on desktop) -->
+  <div id="touch-controls" style="display:none">
+    <div class="touch-half" id="touch-p1">
+      <div class="touch-row">
+        <button class="touch-btn" ontouchstart="navigate(1,-1)" ontouchend="">◀</button>
+        <button class="touch-btn touch-act" ontouchstart="activate(1)" ontouchend="">SPAWN</button>
+        <button class="touch-btn" ontouchstart="navigate(1,1)" ontouchend="">▶</button>
+      </div>
+      <div class="touch-row">
+        <button class="touch-btn touch-sm" ontouchstart="cycleMode(1,-1)" ontouchend="">↑TAB</button>
+        <button class="touch-btn touch-sm" ontouchstart="cycleMode(1,1)" ontouchend="">↓TAB</button>
+        <button class="touch-btn touch-sm" ontouchstart="toggleWorkerMid(1)" ontouchend="">⛏MID</button>
+      </div>
+    </div>
+    <div class="touch-half" id="touch-p2">
+      <div class="touch-row">
+        <button class="touch-btn" ontouchstart="navigate(2,-1)" ontouchend="">◀</button>
+        <button class="touch-btn touch-act" ontouchstart="activate(2)" ontouchend="">SPAWN</button>
+        <button class="touch-btn" ontouchstart="navigate(2,1)" ontouchend="">▶</button>
+      </div>
+      <div class="touch-row">
+        <button class="touch-btn touch-sm" ontouchstart="cycleMode(2,-1)" ontouchend="">↑TAB</button>
+        <button class="touch-btn touch-sm" ontouchstart="cycleMode(2,1)" ontouchend="">↓TAB</button>
+        <button class="touch-btn touch-sm" ontouchstart="toggleWorkerMid(2)" ontouchend="">⛏MID</button>
+      </div>
+    </div>
+  </div>
   <div id="sc-tournament-setup" class="screen">
     <div class="t-screen-title">🏆 TOURNAMENT SETUP</div>
     <div class="t-hint" id="t-setup-hint">Add 2–10 players. Each player picks a unique faction.</div>
@@ -6504,7 +6708,10 @@
       const mode = pid === 1 ? P1_MODE : P2_MODE;
       if (mode === 0) {
         const base = G.factions[pid - 1].units.filter(d => !d.isSpawned).length - 1;
-        return base + (GAME_MODE !== 'tutorial' ? 1 : 0); // +1 for spy card
+        // In tutorial: allow spy card navigation only after the spy step has revealed it
+        const _spyEl = document.querySelector(`#p${pid}-grid .spy-card`);
+        const spyUnlocked = GAME_MODE !== 'tutorial' || (_spyEl && _spyEl._tutRevealed);
+        return base + (spyUnlocked ? 1 : 0);
       }
       if (mode === 1) return (G.factions[pid - 1].upgrades || []).length - 1;
       return RALLY_BUFFS.length - 1;
@@ -7823,9 +8030,9 @@
     }
 
     // ── EVENT VOTING ──────────────────────────────────────────────────────────────
-    // VS mode only: two event candidates shown for 5 seconds. P1 votes Q, P2 votes Enter.
-    // Majority wins; tie broken randomly. The winning event fires normally.
-    let G_eventVote = null; // { candidates: [id,id], votes: [0,0], voted: [false,false], timer: 5 }
+    // VS mode only: two event candidates. Each player picks A or B, majority wins. Timer 10s.
+    // P1: left/right to move cursor, act key to confirm. P2: same with their keys.
+    let G_eventVote = null; // { candidates, votes:[0,0], voted:[false,false], cursors:[0,0], timer:10 }
 
     const EVENT_META = {
       wanderer: { name: '☠ ROGUE WANDERER', sub: 'Neutral unit at mid — kill it for +25💀' },
@@ -7842,23 +8049,55 @@
     };
 
     function _startEventVote(candidates) {
-      G_eventVote = { candidates, votes: [0, 0], voted: [false, false], timer: 5 };
+      G_eventVote = { candidates, votes: [0, 0], voted: [false, false], cursors: [0, 0], timer: 10 };
       const metaA = EVENT_META[candidates[0]] || { name: candidates[0], sub: '' };
       const metaB = EVENT_META[candidates[1]] || { name: candidates[1], sub: '' };
       document.getElementById('vote-name-a').textContent = metaA.name;
       document.getElementById('vote-sub-a').textContent = metaA.sub;
       document.getElementById('vote-name-b').textContent = metaB.name;
       document.getElementById('vote-sub-b').textContent = metaB.sub;
-      document.getElementById('vote-card-a').classList.remove('voted');
-      document.getElementById('vote-card-b').classList.remove('voted');
-      document.getElementById('vote-timer-display').textContent = '5';
+      document.getElementById('vote-card-a').className = 'vote-card';
+      document.getElementById('vote-card-b').className = 'vote-card';
+      document.getElementById('vote-picks-a').innerHTML = '';
+      document.getElementById('vote-picks-b').innerHTML = '';
+      document.getElementById('vote-timer-display').textContent = '10';
       document.getElementById('vote-tally').textContent = '';
-      // Update key labels dynamically from actual keybindings
-      const p1Key = formatKey ? formatKey(KEYS.p1Act) : 'Q';
-      const p2Key = formatKey ? formatKey(KEYS.p2Act) : 'ENTER';
-      const ka = document.getElementById('vote-key-a'); if (ka) ka.textContent = `P1 — ${p1Key}`;
-      const kb = document.getElementById('vote-key-b'); if (kb) kb.textContent = `P2 — ${p2Key}`;
+      // Show controls instructions
+      const p1L = formatKey ? formatKey(KEYS.p1Left) : '←';
+      const p1R = formatKey ? formatKey(KEYS.p1Right) : '→';
+      const p1A = formatKey ? formatKey(KEYS.p1Act) : 'Q';
+      const p2L = formatKey ? formatKey(KEYS.p2Left) : '←';
+      const p2R = formatKey ? formatKey(KEYS.p2Right) : '→';
+      const p2A = formatKey ? formatKey(KEYS.p2Act) : 'ENTER';
+      document.getElementById('vote-instructions').textContent =
+        `P1: ${p1L}/${p1R} to choose · ${p1A} to vote   |   P2: ${p2L}/${p2R} to choose · ${p2A} to vote`;
+      _updateVoteDisplay();
       document.getElementById('vote-overlay').classList.add('show');
+    }
+
+    function _updateVoteDisplay() {
+      if (!G_eventVote) return;
+      const { cursors, voted, votes } = G_eventVote;
+      // Update card highlight based on each player's cursor and voted state
+      ['a', 'b'].forEach((side, si) => {
+        const card = document.getElementById(`vote-card-${side}`);
+        card.className = 'vote-card';
+        if (votes[si] > 0) card.classList.add('voted');
+      });
+      // Show player badges on whichever card each player has their cursor on / voted for
+      const picksA = document.getElementById('vote-picks-a');
+      const picksB = document.getElementById('vote-picks-b');
+      picksA.innerHTML = ''; picksB.innerHTML = '';
+      [1, 2].forEach(pid => {
+        const pidx = pid - 1;
+        const cursor = cursors[pidx]; // 0=A, 1=B
+        const col = pid === 1 ? 'p1' : 'p2';
+        const targetPicks = cursor === 0 ? picksA : picksB;
+        const badge = document.createElement('span');
+        badge.className = `vote-pick-badge vote-pick-${col}`;
+        badge.textContent = voted[pidx] ? `P${pid} ✓` : `P${pid}`;
+        targetPicks.appendChild(badge);
+      });
     }
 
     function _resolveEventVote() {
@@ -7870,7 +8109,6 @@
       else winner = candidates[Math.floor(Math.random() * 2)]; // tie → random
       G_eventVote = null;
       document.getElementById('vote-overlay').classList.remove('show');
-      // Fire the chosen event
       G.activeEvent = { type: winner, timer: 0 };
       _dispatchEvent(winner);
     }
@@ -7880,18 +8118,31 @@
       G_eventVote.timer -= dt;
       const secs = Math.ceil(Math.max(0, G_eventVote.timer));
       document.getElementById('vote-timer-display').textContent = secs;
-      const ta = `P1: ${G_eventVote.votes[0]}`, tb = `P2: ${G_eventVote.votes[1]}`;
-      document.getElementById('vote-tally').textContent = `${ta}  ·  ${tb}`;
+      const ta = `${G_eventVote.votes[0]}`, tb = `${G_eventVote.votes[1]}`;
+      document.getElementById('vote-tally').textContent = `Left: ${ta} vote${ta!=='1'?'s':''}  ·  Right: ${tb} vote${tb!=='1'?'s':''}`;
       if (G_eventVote.timer <= 0) _resolveEventVote();
+    }
+
+    function voteMoveCursor(pid, dir) {
+      if (!G_eventVote || !G || !G.running || G.paused) return;
+      const pidx = pid - 1;
+      if (G_eventVote.voted[pidx]) return; // already confirmed
+      G_eventVote.cursors[pidx] = dir > 0 ? 1 : 0; // left=0=A, right=1=B
+      _updateVoteDisplay();
     }
 
     function voteForEvent(pid) {
       if (!G_eventVote || !G || !G.running || G.paused) return;
-      const idx = pid - 1;
-      if (G_eventVote.voted[idx]) return; // already voted
-      G_eventVote.voted[idx] = true;
-      G_eventVote.votes[idx]++;
-      document.getElementById(`vote-card-${idx === 0 ? 'a' : 'b'}`).classList.add('voted');
+      const pidx = pid - 1;
+      if (G_eventVote.voted[pidx]) return;
+      const choice = G_eventVote.cursors[pidx]; // 0=A, 1=B
+      G_eventVote.voted[pidx] = true;
+      G_eventVote.votes[choice]++;
+      _updateVoteDisplay();
+      // If both voted, resolve immediately
+      if (G_eventVote.voted[0] && G_eventVote.voted[1]) {
+        setTimeout(_resolveEventVote, 400); // brief pause so players see the result
+      }
     }
 
     function fireRandomEvent() {
@@ -8581,7 +8832,7 @@
           // Disabled in tutorial — units should march freely.
           const midDist = Math.abs(u.x - G.midX);
           const midNotOwned = G.midOwner !== u.player;
-          const enemyNearMid = G.units.some(e => e.player !== u.player && !e.def.isWorker && !e.offscreen && Math.abs(e.x - G.midX) < G.midR * 4);
+          const enemyNearMid = G.units.some(e => e.player !== u.player && !e.def.isWorker && !e.offscreen && Math.abs(e.x - G.midX) < G.midR * 1.5);
           const insideCircle = midDist < G.midR;
           // "about to leave" = just past edge, still marching away from center
           const marchDir = u.player === 1 ? 1 : -1;
@@ -8619,16 +8870,23 @@
           }
         }
         // Conquest frontier clamp — applied after ALL movement so nothing bypasses it
-        if (GAME_MODE === 'conquest' && G.zones && !u.def.isWorker && !u.def.aerial) {
+        if (GAME_MODE === 'conquest' && G.zones && !u.def.isWorker) {
           const _mDir = u.player === 1 ? 1 : -1;
           const _ordZ = _mDir === 1 ? G.zones : [...G.zones].reverse();
+          // Find the furthest zone this player owns (can advance past it freely)
+          let _clampZone = null;
           for (const _z of _ordZ) {
-            if (!_z.x || _z.owner === u.player) continue;
-            // Clamp to zone center so units enter and contest the zone rather than freezing at the rim
-            if (_mDir === 1) u.x = Math.min(u.x, _z.x);
-            else u.x = Math.max(u.x, _z.x);
+            if (!_z.x) continue;
+            if (_z.owner === u.player) continue; // own zone — can pass through
+            _clampZone = _z; // first unowned zone encountered in march direction
             break;
           }
+          if (_clampZone) {
+            // Clamp to zone center — units must stay inside to contest, can't bypass
+            if (_mDir === 1) u.x = Math.min(u.x, _clampZone.x);
+            else u.x = Math.max(u.x, _clampZone.x);
+          }
+          // If no clamp zone (player owns all zones), units march freely to base — no clamp
         }
         // Clamp X; aerial bobs
         const minX = G.players[0].baseX + G.baseW / 2 + 2, maxX = G.players[1].baseX - G.baseW / 2 - 2;
@@ -8914,16 +9172,51 @@
       const _zWeights = [1, 2, 1];
       G.players.forEach(p => {
         const enemy = G.players[p.id === 1 ? 1 : 0];
-        // Soul income per owned zone (0.6/s each)
-        const ownedCount = G.zones.filter(z => z.owner === p.id).length;
-        const soulTick = ownedCount * 0.6 * dt;
+        // Soul income: side zones give flat 0.5/s each; mid zone escalates 0.8→2.0/s like normal mid
+        let soulTick = 0;
+        G.zones.forEach((z, i) => {
+          if (z.owner !== p.id) return;
+          if (i === 1) {
+            // Mid zone — escalating income (tracks midOwnerTimer)
+            const _mhs = G.midOwnerTimer || 0;
+            const midIncome = _mhs < 30 ? 0.8 + (_mhs / 30) * 0.7
+              : _mhs < 60 ? 1.5 + ((_mhs - 30) / 30) * 0.5 : 2.0;
+            soulTick += midIncome * dt;
+          } else {
+            // Side zones — flat 0.5/s
+            soulTick += 0.5 * dt;
+          }
+        });
         if (soulTick > 0) { p.souls = Math.min(999, p.souls + soulTick); p.totalSoulsEarned = (p.totalSoulsEarned || 0) + soulTick; }
+
+        // Comeback mechanic: if enemy owns all 3 zones, losing player gets escalating bonus income
+        const enemyOwnsAll = G.zones.every(z => z.owner === enemy.id);
+        const _myZones = G.zones.filter(z => z.owner === p.id).length;
+        if (enemyOwnsAll) {
+          if (!p._conquestSurgeTimer) p._conquestSurgeTimer = 0;
+          p._conquestSurgeTimer += dt;
+          // Ramp up fast: +0.8/s per 10s, max 2.4/s after 30s — makes full domination risky
+          const surgeBonus = Math.min(2.4, Math.floor(p._conquestSurgeTimer / 10) * 0.8);
+          if (surgeBonus > 0) p.souls = Math.min(999, p.souls + surgeBonus * dt);
+          // Also give body bonus every 20s of being fully shut out
+          if (!p._conquestBodyTimer) p._conquestBodyTimer = 0;
+          p._conquestBodyTimer += dt;
+          if (p._conquestBodyTimer >= 20) {
+            p._conquestBodyTimer = 0;
+            p.bodies = Math.min(99, p.bodies + 8);
+            p.totalBodiesEarned = (p.totalBodiesEarned || 0) + 8;
+            showPopup(p.baseX, G.groundY - 60, '+8🦴 COMEBACK', '#e67e22', p.id);
+          }
+        } else {
+          p._conquestSurgeTimer = 0;
+          p._conquestBodyTimer = 0;
+        }
+
         // Sustained base damage based on zone weight (1 side zone = 0.2 dmg/s, mid = 0.4 dmg/s)
         const dmgWeight = G.zones.reduce((sum, z, i) => sum + (z.owner === p.id ? _zWeights[i] : 0), 0);
         if (dmgWeight > 0 && G.running) {
           const dmgTick = dmgWeight * 0.2 * dt;
           enemy.baseHp = Math.max(0, enemy.baseHp - dmgTick);
-          // Flash popup roughly every 1 HP of damage dealt
           if (!G._zDmgAccum) G._zDmgAccum = [0, 0];
           G._zDmgAccum[p.id - 1] = (G._zDmgAccum[p.id - 1] || 0) + dmgTick;
           if (G._zDmgAccum[p.id - 1] >= 1.0) {
@@ -10391,10 +10684,11 @@
         if (e.code === KEYS.p1Up) { factionCursorMove(1, -1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
-        // P2 controls only active in VS mode
-        if (GAME_MODE === 'vs' || GAME_MODE === 'draft') {
-          if (e.code === KEYS.p2Up) { factionCursorMove(2, -1); e.preventDefault(); return; }
-          if (e.code === KEYS.p2Down) { factionCursorMove(2, 1); e.preventDefault(); return; }
+        // P2 controls active in all human-vs-human modes (vs, draft, conquest, sudden_death, etc.)
+        const _isHumanVsHuman = GAME_MODE !== 'solo' && GAME_MODE !== 'conquest_solo' && GAME_MODE !== 'sudden_death_solo' && _fKbSetup !== 'solo';
+        if (_isHumanVsHuman) {
+          if (e.code === KEYS.p2Up || e.code === KEYS.p2Left) { factionCursorMove(2, -1); e.preventDefault(); return; }
+          if (e.code === KEYS.p2Down || e.code === KEYS.p2Right) { factionCursorMove(2, 1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { factionConfirm(2); e.preventDefault(); return; }
         }
         return;
@@ -10479,7 +10773,13 @@
 
       // Event vote — intercept before normal controls during vote window (VS mode only)
       if (G_eventVote && (GAME_MODE === 'vs' || GAME_MODE === 'draft')) {
+        // P1 moves cursor with their left/right, confirms with act key
+        if (e.code === KEYS.p1Left) { e.preventDefault(); voteMoveCursor(1, -1); return; }
+        if (e.code === KEYS.p1Right) { e.preventDefault(); voteMoveCursor(1, 1); return; }
         if (e.code === KEYS.p1Act) { e.preventDefault(); voteForEvent(1); return; }
+        // P2 same with their keys
+        if (e.code === KEYS.p2Left) { e.preventDefault(); voteMoveCursor(2, -1); return; }
+        if (e.code === KEYS.p2Right) { e.preventDefault(); voteMoveCursor(2, 1); return; }
         if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); voteForEvent(2); return; }
       }
 
@@ -10553,7 +10853,9 @@
       if (mode === 0) {
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
         // Last slot (beyond faction units) = spy card
-        if (sel >= defs.length && GAME_MODE !== 'tutorial') {
+        const _tutSpyEl = document.querySelector(`#p${pid}-grid .spy-card`);
+        const _spySelectable = GAME_MODE !== 'tutorial' || (_tutSpyEl && _tutSpyEl._tutRevealed);
+        if (sel >= defs.length && _spySelectable) {
           trySpawnSpy(pid);
           return;
         }
@@ -10579,7 +10881,8 @@
         _applyFactionScreenMode();
         setTimeout(() => {
           highlightFactionCursor(1);
-          if (GAME_MODE === 'vs' || GAME_MODE === 'draft') highlightFactionCursor(2);
+          const _fModeSetup = window._pendingPlayerSetup || 'vs';
+          if (GAME_MODE !== 'solo' && GAME_MODE !== 'conquest_solo' && GAME_MODE !== 'sudden_death_solo' && _fModeSetup !== 'solo') highlightFactionCursor(2);
         }, 10);
       }
     }
@@ -11810,6 +12113,23 @@
       TOURNAMENT = null;
       setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas();
     });
+
+    // ── TOUCH DEVICE DETECTION ────────────────────────────────────────────────
+    (function _initTouchControls() {
+      const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+      if (!isTouchDevice) return;
+      document.body.classList.add('touch-mode');
+      const tc = document.getElementById('touch-controls');
+      if (!tc) return;
+      // tc stays hidden (display:none) until sc-game becomes active
+      tc.addEventListener('touchend', e => e.preventDefault(), { passive: false });
+      // Hook into showScreen (defined earlier in this script) to toggle visibility
+      const _origShow = showScreen;
+      showScreen = function(id) {
+        _origShow(id);
+        tc.style.display = id === 'sc-game' ? 'flex' : 'none';
+      };
+    })();
 
   </script>
 </body>
