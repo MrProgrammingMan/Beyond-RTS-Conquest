@@ -39,25 +39,53 @@
 
     /* ── COMPACT HUD for small screens ──────────────────────────────────────── */
     @media (max-height: 650px) {
-      :root { --hud: clamp(110px, 20vh, 150px); }
-      .ingame-tip { display: none; }
-      .unit-stat-panel { display: none; }
-      .hud-info { width: clamp(100px, 12vw, 150px); }
+      :root {
+        --hud: clamp(110px, 20vh, 150px);
+      }
+
+      .ingame-tip {
+        display: none;
+      }
+
+      .unit-stat-panel {
+        display: none;
+      }
+
+      .hud-info {
+        width: clamp(100px, 12vw, 150px);
+      }
     }
+
     @media (max-height: 480px) {
-      :root { --hud: clamp(95px, 22vh, 120px); }
-      .hud-meta { display: none; }
-      .income-rate { display: none; }
-      .ucard { min-height: clamp(40px, 7vh, 70px); }
+      :root {
+        --hud: clamp(95px, 22vh, 120px);
+      }
+
+      .hud-meta {
+        display: none;
+      }
+
+      .income-rate {
+        display: none;
+      }
+
+      .ucard {
+        min-height: clamp(40px, 7vh, 70px);
+      }
     }
 
     /* ── PORTRAIT PHONE — stack players vertically, ultra-compact rows ───────── */
     @media (max-width: 600px) and (orientation: portrait),
-           (max-width: 480px) {
-      :root { --hud: clamp(180px, 42vw, 260px); }
+    (max-width: 480px) {
+      :root {
+        --hud: clamp(180px, 42vw, 260px);
+      }
 
       /* HUD becomes a vertical stack of two player panels */
-      #hud { flex-direction: column; height: var(--hud); }
+      #hud {
+        flex-direction: column;
+        height: var(--hud);
+      }
 
       /* Each player panel is a single horizontal row */
       .player-hud {
@@ -68,7 +96,10 @@
         border-right: none !important;
         min-height: 0;
       }
-      #p1-hud { border-bottom: 1px solid var(--border); }
+
+      #p1-hud {
+        border-bottom: 1px solid var(--border);
+      }
 
       /* Info column — very narrow on phones */
       .hud-info {
@@ -76,39 +107,127 @@
         gap: 2px;
         justify-content: center;
       }
-      .pname { font-size: clamp(.62rem, 3.5vw, .85rem); letter-spacing: .05em; }
-      .res-item2 { padding: 1px 3px; gap: 2px; }
-      .ricon { font-size: clamp(.65rem, 3vw, .85rem); }
-      .rlabel { font-size: clamp(.42rem, 2vw, .55rem); }
-      .rval { font-size: clamp(.72rem, 3.8vw, 1rem); }
-      .hp-wrap { display: none; }
-      .income-rate { font-size: clamp(.48rem, 2.2vw, .6rem); }
-      .hud-meta { gap: 2px; }
-      .unit-count, .worker-count { font-size: clamp(.44rem, 2vw, .58rem); padding: 1px 3px; }
-      .worker-mid-btn { font-size: clamp(.4rem, 1.8vw, .52rem); padding: 1px 3px; }
-      .ingame-tip { display: none; }
-      .unit-stat-panel { display: none; }
+
+      .pname {
+        font-size: clamp(.62rem, 3.5vw, .85rem);
+        letter-spacing: .05em;
+      }
+
+      .res-item2 {
+        padding: 1px 3px;
+        gap: 2px;
+      }
+
+      .ricon {
+        font-size: clamp(.65rem, 3vw, .85rem);
+      }
+
+      .rlabel {
+        font-size: clamp(.42rem, 2vw, .55rem);
+      }
+
+      .rval {
+        font-size: clamp(.72rem, 3.8vw, 1rem);
+      }
+
+      .hp-wrap {
+        display: none;
+      }
+
+      .income-rate {
+        font-size: clamp(.48rem, 2.2vw, .6rem);
+      }
+
+      .hud-meta {
+        gap: 2px;
+      }
+
+      .unit-count,
+      .worker-count {
+        font-size: clamp(.44rem, 2vw, .58rem);
+        padding: 1px 3px;
+      }
+
+      .worker-mid-btn {
+        font-size: clamp(.4rem, 1.8vw, .52rem);
+        padding: 1px 3px;
+      }
+
+      .ingame-tip {
+        display: none;
+      }
+
+      .unit-stat-panel {
+        display: none;
+      }
 
       /* Cards column */
-      .hud-cards { gap: 2px; }
-      .hud-tab { font-size: clamp(.5rem, 2.5vw, .65rem); padding: 1px 4px; }
-      .unit-grid { gap: 2px; }
-      .ucard { min-height: clamp(38px, 9vw, 58px); padding: 1px; }
-      .uicon { font-size: clamp(.9rem, 4.5vw, 1.5rem); }
-      .uname { font-size: clamp(.5rem, 2.2vw, .65rem); }
-      .ctag { font-size: clamp(.44rem, 2vw, .58rem); padding: 0 2px; }
-      .utypetag { font-size: clamp(.38rem, 1.6vw, .5rem); padding: 1px 3px; }
+      .hud-cards {
+        gap: 2px;
+      }
+
+      .hud-tab {
+        font-size: clamp(.5rem, 2.5vw, .65rem);
+        padding: 1px 4px;
+      }
+
+      .unit-grid {
+        gap: 2px;
+      }
+
+      .ucard {
+        min-height: clamp(38px, 9vw, 58px);
+        padding: 1px;
+      }
+
+      .uicon {
+        font-size: clamp(.9rem, 4.5vw, 1.5rem);
+      }
+
+      .uname {
+        font-size: clamp(.5rem, 2.2vw, .65rem);
+      }
+
+      .ctag {
+        font-size: clamp(.44rem, 2vw, .58rem);
+        padding: 0 2px;
+      }
+
+      .utypetag {
+        font-size: clamp(.38rem, 1.6vw, .5rem);
+        padding: 1px 3px;
+      }
     }
 
     /* ── LANDSCAPE PHONE — side-by-side works but very short, trim height ─────── */
     @media (max-height: 420px) {
-      :root { --hud: clamp(90px, 24vh, 120px); }
-      .ingame-tip { display: none; }
-      .unit-stat-panel { display: none; }
-      .hud-meta { display: none; }
-      .hud-info { width: clamp(85px, 10vw, 120px); }
-      .ucard { min-height: clamp(38px, 8vh, 60px); }
-      .uicon { font-size: clamp(.9rem, 2.5vh, 1.6rem); }
+      :root {
+        --hud: clamp(90px, 24vh, 120px);
+      }
+
+      .ingame-tip {
+        display: none;
+      }
+
+      .unit-stat-panel {
+        display: none;
+      }
+
+      .hud-meta {
+        display: none;
+      }
+
+      .hud-info {
+        width: clamp(85px, 10vw, 120px);
+      }
+
+      .ucard {
+        min-height: clamp(38px, 8vh, 60px);
+      }
+
+      .uicon {
+        font-size: clamp(.9rem, 2.5vh, 1.6rem);
+      }
     }
 
     /* ── TOUCH CONTROLS ────────────────────────────────────────────────────────── */
@@ -120,10 +239,11 @@
       height: 80px;
       display: flex;
       z-index: 200;
-      background: rgba(0,0,0,.75);
-      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(0, 0, 0, .75);
+      border-top: 1px solid rgba(255, 255, 255, .12);
       pointer-events: all;
     }
+
     .touch-half {
       flex: 1;
       display: flex;
@@ -133,19 +253,24 @@
       align-items: center;
       justify-content: center;
     }
-    #touch-p1 { border-right: 1px solid rgba(255,255,255,.1); }
+
+    #touch-p1 {
+      border-right: 1px solid rgba(255, 255, 255, .1);
+    }
+
     .touch-row {
       display: flex;
       gap: 5px;
       align-items: center;
     }
+
     .touch-btn {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.65rem, 2.8vw, .9rem);
       font-weight: 700;
       letter-spacing: .04em;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .2);
       color: var(--text);
       border-radius: 5px;
       padding: 0;
@@ -156,27 +281,52 @@
       touch-action: manipulation;
       user-select: none;
     }
-    .touch-btn:active { background: rgba(255,255,255,.22); }
+
+    .touch-btn:active {
+      background: rgba(255, 255, 255, .22);
+    }
+
     .touch-btn.touch-act {
-      background: rgba(231,76,60,.25);
-      border-color: rgba(231,76,60,.5);
+      background: rgba(231, 76, 60, .25);
+      border-color: rgba(231, 76, 60, .5);
       color: #ff8a80;
       min-width: clamp(50px, 13vw, 75px);
     }
+
     .touch-btn.touch-sm {
       font-size: clamp(.5rem, 2vw, .68rem);
       height: 20px;
       width: clamp(34px, 9vw, 52px);
     }
+
     /* On portrait phones, stack the two player touch zones vertically */
     @media (max-width: 600px) and (orientation: portrait),
-           (max-width: 480px) {
-      #touch-controls { height: 100px; flex-direction: column; }
-      .touch-half { flex-direction: row; gap: 6px; padding: 4px 8px; }
-      #touch-p1 { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
-      .touch-btn { height: 30px; }
-      .touch-btn.touch-sm { height: 24px; }
+    (max-width: 480px) {
+      #touch-controls {
+        height: 100px;
+        flex-direction: column;
+      }
+
+      .touch-half {
+        flex-direction: row;
+        gap: 6px;
+        padding: 4px 8px;
+      }
+
+      #touch-p1 {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, .1);
+      }
+
+      .touch-btn {
+        height: 30px;
+      }
+
+      .touch-btn.touch-sm {
+        height: 24px;
+      }
     }
+
     /* When touch controls are showing, the HUD needs to shrink to fit above them */
     /* touch controls are fixed-position, no layout shift needed for sc-game */
 
@@ -829,8 +979,15 @@
     }
 
     @keyframes tutPulse {
-      0%, 100% { box-shadow: 0 0 14px rgba(212, 168, 67, .2), inset 0 0 10px rgba(212, 168, 67, .04); }
-      50% { box-shadow: 0 0 28px rgba(212, 168, 67, .45), inset 0 0 16px rgba(212, 168, 67, .1); }
+
+      0%,
+      100% {
+        box-shadow: 0 0 14px rgba(212, 168, 67, .2), inset 0 0 10px rgba(212, 168, 67, .04);
+      }
+
+      50% {
+        box-shadow: 0 0 28px rgba(212, 168, 67, .45), inset 0 0 16px rgba(212, 168, 67, .1);
+      }
     }
 
     .tut-step-badge {
@@ -1438,6 +1595,7 @@
     }
 
     #mid-indicator {
+      display: none;
       position: absolute;
       top: clamp(10px, 1.5vh, 16px);
       left: 50%;
@@ -1454,6 +1612,10 @@
       padding: 3px 12px;
       transition: border-color .3s;
       border: 1px solid transparent;
+    }
+
+    #sc-game.active #mid-indicator {
+      display: block;
     }
 
     #mid-indicator.capturing {
@@ -1730,8 +1892,15 @@
       background: rgba(212, 168, 67, .18);
       border-color: #d4a843;
     }
-    .vote-card.voted-p1 { border-top: 3px solid var(--p1); }
-    .vote-card.voted-p2 { border-top: 3px solid var(--p2); }
+
+    .vote-card.voted-p1 {
+      border-top: 3px solid var(--p1);
+    }
+
+    .vote-card.voted-p2 {
+      border-top: 3px solid var(--p2);
+    }
+
     .vote-picks {
       display: flex;
       gap: 4px;
@@ -1739,6 +1908,7 @@
       min-height: 18px;
       margin-top: 4px;
     }
+
     .vote-pick-badge {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.55rem, .9vw, .7rem);
@@ -1746,18 +1916,30 @@
       border-radius: 3px;
       letter-spacing: .06em;
     }
-    .vote-pick-p1 { background: rgba(52,152,219,.35); color: #7cc6f0; border: 1px solid rgba(52,152,219,.5); }
-    .vote-pick-p2 { background: rgba(231,76,60,.35); color: #f5a89a; border: 1px solid rgba(231,76,60,.5); }
+
+    .vote-pick-p1 {
+      background: rgba(52, 152, 219, .35);
+      color: #7cc6f0;
+      border: 1px solid rgba(52, 152, 219, .5);
+    }
+
+    .vote-pick-p2 {
+      background: rgba(231, 76, 60, .35);
+      color: #f5a89a;
+      border: 1px solid rgba(231, 76, 60, .5);
+    }
+
     .vote-vs {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.7rem, 1.2vw, .9rem);
-      color: rgba(255,255,255,.3);
+      color: rgba(255, 255, 255, .3);
       letter-spacing: .2em;
     }
+
     .vote-instructions {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.6rem, 1vw, .8rem);
-      color: rgba(255,255,255,.5);
+      color: rgba(255, 255, 255, .5);
       letter-spacing: .08em;
       text-align: center;
     }
@@ -1921,12 +2103,16 @@
     #hud {
       height: var(--hud);
       width: 100%;
-      display: flex;
+      display: none;
       flex-shrink: 0;
       background: var(--panel);
       border-top: 2px solid var(--border);
       position: relative;
       z-index: 10;
+    }
+
+    #sc-game.active #hud {
+      display: flex;
     }
 
     .player-hud {
@@ -1952,8 +2138,13 @@
       border-right: 2px solid var(--border);
     }
 
-    #p1-hud::before { background: var(--p1); }
-    #p2-hud::before { background: var(--p2); }
+    #p1-hud::before {
+      background: var(--p1);
+    }
+
+    #p2-hud::before {
+      background: var(--p2);
+    }
 
     /* Left info column — fixed width, all the stats */
     .hud-info {
@@ -2210,8 +2401,15 @@
     }
 
     @keyframes despPulse {
-      0%, 100% { opacity: 1 }
-      50% { opacity: .5 }
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .5
+      }
     }
 
     /* HUD MODE TABS */
@@ -3671,7 +3869,7 @@
         <h1 class="menu-title">BEYOND KINGS'<br>CONQUEST</h1>
       </div>
       <div class="menu-btns">
-        <button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
+        <button class="btn" id="btn-play">⚔ MULTIPLAYER</button>
         <button class="btn btn-sudden" id="btn-sudden-death">⚡ SUDDEN DEATH</button>
         <button class="btn btn-conquest" id="btn-conquest">🏴 CONQUEST</button>
         <button class="btn" id="btn-draft">🃏 DRAFT MODE</button>
@@ -4241,7 +4439,6 @@
     <div class="tt-body" id="tt-body"></div>
   </div>
   <script>
-
     // ── AUDIO ──
     const AC = new (window.AudioContext || window.webkitAudioContext)();
     // Master limiter/compressor — prevents audio from peaking when many units hit at once
@@ -5075,7 +5272,6 @@
     };
 
     function trySpawnSpy(pid) {
-      if (!G || !G.running) return;
       const p = G.players[pid - 1];
       if (p.souls < SPY_DEF.souls || p.bodies < SPY_DEF.bodies) return;
       if (G.spies.filter(s => s.owner === pid).length >= 2) { showPopup(p.baseX, G.groundY - 60, 'SPY MAX (2)', '#636e72', pid); return; }
@@ -5187,7 +5383,7 @@
       { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it <b>uncontested for 2 seconds</b> captures it.<br><br><b>Mid income escalates the longer you hold it</b> — don't just capture it and forget. Holding it for 60 seconds maxes your advantage. Recapturing a long-held mid is always an emergency.<br><br>If you lose mid for <b>15+ seconds</b>, you gain 🔥 <b>SURGE stacks</b> — each gives +0.7💀/s bonus income to keep you competitive. Max 3 stacks.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No mid income for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">⚡</div><div class="tstat-name">OWNED — ESCALATING</div><div class="tstat-desc">0s: +0.8💀/s → 30s: +1.5💀/s → 60s: +2.0💀/s (max)</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold 2s to recapture.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀40 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀35 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">BODY BOON</div><div class="tstat-desc">💀60 · Instant · 75s CD<br>converts 60 souls → +14 bodies</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">RANDOM EVENTS</div><div class="tut-sub">CHAOS YOU MUST ADAPT TO</div><div class="tut-body">Throughout a match, <b>random events</b> fire every 30–60 seconds, announced with a banner at the top of the screen. React quickly — some reward action, others punish passivity.<br><br>Events are <b>weighted by the game state</b>: losing players are more likely to see helpful events, and the longer mid is held the more dangerous the escalation events become.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:560px;margin:0 auto;width:100%;">${[['☄️ METEOR STRIKE','Units near mid take heavy damage — clear mid or take losses'],['💰 GOLD RUSH','Both players gain +30💀 and +8🦴 — spend them immediately'],['🩸 BLOOD MOON','All units cost half bodies to spawn for 18s — flood the field'],['☠ ROGUE WANDERER','A neutral unit appears — kill it for a soul bounty'],['💀 ROGUE CHAMPION','Powerful 200-HP neutral — teamwork required, big reward'],['💰 SOUL CACHE','Hold mid for 2 seconds to claim +30💀 — act fast, it expires'],['🌑 DARK ECLIPSE','Mid income halved · SURGE stacks give double for 15s'],['🌋 TREMOR','All ground units slowed 45% for 5s — rethink your timing'],['📦 SUPPLY DROP','One player receives +20💀 and +12🦴 — adapts to who\'s losing']].map(([k,v])=>`<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:160px;font-family:Rajdhani,sans-serif;font-size:calc(var(--fs-xs)*0.9);color:var(--gold);">${k}</div><div style="font-size:calc(var(--fs-xs)*0.9);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">RANDOM EVENTS</div><div class="tut-sub">CHAOS YOU MUST ADAPT TO</div><div class="tut-body">Throughout a match, <b>random events</b> fire every 30–60 seconds, announced with a banner at the top of the screen. React quickly — some reward action, others punish passivity.<br><br>Events are <b>weighted by the game state</b>: losing players are more likely to see helpful events, and the longer mid is held the more dangerous the escalation events become.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:560px;margin:0 auto;width:100%;">${[['☄️ METEOR STRIKE', 'Units near mid take heavy damage — clear mid or take losses'], ['💰 GOLD RUSH', 'Both players gain +30💀 and +8🦴 — spend them immediately'], ['🩸 BLOOD MOON', 'All units cost half bodies to spawn for 18s — flood the field'], ['☠ ROGUE WANDERER', 'A neutral unit appears — kill it for a soul bounty'], ['💀 ROGUE CHAMPION', 'Powerful 200-HP neutral — teamwork required, big reward'], ['💰 SOUL CACHE', 'Hold mid for 2 seconds to claim +30💀 — act fast, it expires'], ['🌑 DARK ECLIPSE', 'Mid income halved · SURGE stacks give double for 15s'], ['🌋 TREMOR', 'All ground units slowed 45% for 5s — rethink your timing'], ['📦 SUPPLY DROP', 'One player receives +20💀 and +12🦴 — adapts to who\'s losing']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:160px;font-family:Rajdhani,sans-serif;font-size:calc(var(--fs-xs)*0.9);color:var(--gold);">${k}</div><div style="font-size:calc(var(--fs-xs)*0.9);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">🕵️ THE SPY</div><div class="tut-sub">UNIVERSAL UNIT — AVAILABLE TO ALL FACTIONS</div><div class="tut-body">The <b>Spy</b> card is always at the far right of your unit grid. Unlike your faction units, it is shared by everyone.<br><br>The Spy infiltrates the enemy base and <b>steals souls and bodies over time</b>. You can have up to 2 active spies at once. The enemy's workers and guarding combat units can detect and remove it — but detection chances are low with just workers nearby.<br><br>The Spy is not a replacement for combat — it is sustained economic pressure. Deploy one whenever you have the resources and a moment's breathing room.</div><div class="tut-visual"><div class="tstat" style="border-color:#636e72"><div class="tstat-icon">🕵️</div><div class="tstat-name">SPY</div><div class="tstat-desc">💀10 · 🦴4 · Max 2 active<br>Steals resources over time<br>Workers: 15% detect · Guards: 15% detect each</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SPAWN PROTECTION</div><div class="tut-sub">1.8 SECOND GOLDEN SHIELD</div><div class="tut-body">Every newly spawned unit has <b>1.8 seconds of spawn protection</b>. During this window:<br><br>• The unit <b>cannot die</b> — HP cannot fall below 1<br>• The unit <b>can attack normally</b><br>• A gold shimmer ring shows around the unit<br><br>This lets you reinforce even when your base is under siege. A Warlord sitting next to your base can't instantly kill your fresh recruits.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">✨</span>Spawn → 1.8s invincible → Normal combat<br><span style="font-size:var(--fs-xs);color:var(--dim);">Does NOT apply to summoned units (Shades, Guards)</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">FOCUS FIRE & BLOCKING</div><div class="tut-sub">ARMY DIVERSITY IS REWARDED</div><div class="tut-body"><b>Focus Fire Penalty:</b> When 3 or more ranged units target the same enemy, each attacker beyond the 2nd deals progressively less damage (80% → 65% → 50%). Spamming 8 archers at one target is less effective than a mix.<br><br><b>Projectile Blocking:</b> Enemy frontline melee units can block or deflect incoming ranged projectiles. 65% chance to reduce the shot by 40%, 35% chance to absorb it entirely. A wall of melee protects units behind it.<br><br>Together these systems mean: <b>mix your army</b>.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🛡️</span>Melee wall = natural shield<br>vs ranged spam</div><div class="hl-box"><span class="hl-icon">🎯</span>3+ on one target<br>= diminishing returns</div></div>`; } },
@@ -6288,7 +6484,7 @@
     function updateAI(dt) {
       if (!G || !G.running || G.paused) return;
       const _playerSetup = window._pendingPlayerSetup || 'vs';
-      const _aiActive = _playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai';
+      const _aiActive = (_playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai');
       if (!_aiActive && !(GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) return;
 
       // Idle browsing for all active AIs
@@ -8119,7 +8315,7 @@
       const secs = Math.ceil(Math.max(0, G_eventVote.timer));
       document.getElementById('vote-timer-display').textContent = secs;
       const ta = `${G_eventVote.votes[0]}`, tb = `${G_eventVote.votes[1]}`;
-      document.getElementById('vote-tally').textContent = `Left: ${ta} vote${ta!=='1'?'s':''}  ·  Right: ${tb} vote${tb!=='1'?'s':''}`;
+      document.getElementById('vote-tally').textContent = `Left: ${ta} vote${ta !== '1' ? 's' : ''}  ·  Right: ${tb} vote${tb !== '1' ? 's' : ''}`;
       if (G_eventVote.timer <= 0) _resolveEventVote();
     }
 
@@ -10793,17 +10989,17 @@
       else if (!_isAiVsAiKb && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
       else if (!_isAiVsAiKb && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
       else {
         for (let s = 0; s < 5; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
-          if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'conquest' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo') && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
+          if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'conquest' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'tournament') && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
         }
       }
     });
@@ -12125,7 +12321,7 @@
       tc.addEventListener('touchend', e => e.preventDefault(), { passive: false });
       // Hook into showScreen (defined earlier in this script) to toggle visibility
       const _origShow = showScreen;
-      showScreen = function(id) {
+      showScreen = function (id) {
         _origShow(id);
         tc.style.display = id === 'sc-game' ? 'flex' : 'none';
       };
