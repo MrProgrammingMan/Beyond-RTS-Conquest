@@ -678,6 +678,30 @@
       margin-bottom: 5px;
     }
 
+    .tut-highlight-step {
+      border: 2px solid var(--gold) !important;
+      box-shadow: 0 0 18px rgba(212, 168, 67, .25), inset 0 0 12px rgba(212, 168, 67, .06);
+      animation: tutPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes tutPulse {
+      0%, 100% { box-shadow: 0 0 14px rgba(212, 168, 67, .2), inset 0 0 10px rgba(212, 168, 67, .04); }
+      50% { box-shadow: 0 0 28px rgba(212, 168, 67, .45), inset 0 0 16px rgba(212, 168, 67, .1); }
+    }
+
+    .tut-step-badge {
+      display: inline-block;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: var(--fs-xs);
+      letter-spacing: .12em;
+      background: rgba(212, 168, 67, .15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 3px;
+      padding: 2px 8px;
+      margin-bottom: 6px;
+    }
+
     .tut-nav {
       display: flex;
       align-items: center;
@@ -1798,6 +1822,8 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .res-row {
@@ -1874,6 +1900,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
+      min-width: 0;
+      flex-shrink: 1;
       transition: opacity .5s ease;
       cursor: help;
     }
@@ -4583,7 +4611,7 @@
         matchup: 'Best against: most factions | Weak to: Summoner shade swarms',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid (own mid only).' },
+          { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
           { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true },
           { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 1, hp: 40, speed: 65, dmg: 17, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.' },
           { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 12, bodies: 3, hp: 140, speed: 50, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage.' },
@@ -4606,7 +4634,7 @@
         matchup: 'Best against: melee-heavy factions (Brutes) | Weak to: AoE and aerial (Spirits)',
         startSouls: 22, startBodies: 8,
         units: [
-          { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 1, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid (own mid only).' },
+          { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 1, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
           { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 5, bodies: 1, hp: 35, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
           { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 1, hp: 35, speed: 60, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
           { id: 'su_necro', name: 'Necromancer', icon: '🔮', souls: 14, bodies: 3, hp: 55, speed: 45, dmg: 18, range: 100, aerial: false, isWorker: false, attackRate: 0.8, radius: 12, color: '#8e44ad', type: 'sum', desc: 'Summons 2 Shades on kill. Passively summons 1 Shade every 12s.', summons: 's_shade', summonCount: 2, passiveSummon: 12 },
@@ -4632,7 +4660,7 @@
         matchup: 'Best against: other melee factions | Weak to: Spirits, Infernal (mobile/ranged)',
         startSouls: 18, startBodies: 12,
         units: [
-          { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Sturdier than average.' },
+          { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Sturdier than average.' },
           { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
           { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
@@ -4656,7 +4684,7 @@
         matchup: 'Best against: aerial-heavy factions | Weak to: Brutes, Glacial',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Slightly faster.' },
+          { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Slightly faster.' },
           { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
           { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
           { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 14, bodies: 3, hp: 60, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
@@ -4679,7 +4707,7 @@
         matchup: 'Best against: slow melee (Brutes) | Weak to: aerial harassers (Spirits, Infernal)',
         startSouls: 18, startBodies: 12,
         units: [
-          { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 1, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Returns 2 bodies per trip, 8 from mid (bonus).', groveMidBonus: true },
+          { id: 've_worker', name: 'Forager', icon: '🌿', souls: 2, bodies: 1, hp: 28, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#27ae60', type: 'wrk', desc: 'Returns 2 bodies per trip, 14 from mid (bonus).', groveMidBonus: true },
           { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 1, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
           { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 16, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
           { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 14, bodies: 3, hp: 50, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies 8 HP. On death: pollinates 3 nearby allies — 3 HP/s regen for 6s.', sylphHeal: 8, sylphHealRange: 110, pollenDeath: true },
@@ -4702,7 +4730,7 @@
         matchup: 'Best against: slow heavy armies (Brutes) | Weak to: ranged-heavy factions (Warriors, Spirits)',
         startSouls: 22, startBodies: 8,
         units: [
-          { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 1, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Very fragile.' },
+          { id: 'if_worker', name: 'Imp Digger', icon: '😈', souls: 2, bodies: 1, hp: 15, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e17055', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Very fragile.' },
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 1, hp: 55, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
           { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 18, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
           { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 16, bodies: 4, hp: 60, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 60 },
@@ -4725,7 +4753,7 @@
         matchup: 'Best against: melee brawlers (Warriors, Brutes) | Weak to: fast aerial (Spirits)',
         startSouls: 18, startBodies: 10,
         units: [
-          { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 1, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 8 from mid (bonus).', frostMidBonus: true },
+          { id: 'gl_worker', name: 'Frost Miner', icon: '❄️', souls: 2, bodies: 1, hp: 25, speed: 46, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 14 from mid (bonus).', frostMidBonus: true },
           { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 1, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.5s chill on every melee hit.', chillOnHit: true, chillDur: 1.5 },
           { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.5, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
           { id: 'gl_snowhawk', name: 'Snowhawk', icon: '🦅', souls: 15, bodies: 3, hp: 55, speed: 85, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#dfe6e9', type: 'air', desc: 'Aerial unit. First hit on each enemy stuns for 0.8s.', firstHitStun: true, stunDur: 0.8 },
@@ -4748,7 +4776,7 @@
         matchup: 'Best against: dense melee stacks (Brutes, Summoners) | Weak to: mobile spread armies (Spirits)',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid (own mid only).' },
+          { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
           { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 1, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
           { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 17, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
           { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 14, bodies: 3, hp: 65, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.5 },
@@ -4794,7 +4822,7 @@
         matchup: 'Best against: burst/aggressive factions (Infernal, Bloodpact) | Weak to: fast kill factions (Spirits)',
         startSouls: 18, startBodies: 8,
         units: [
-          { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 6 from mid. Slightly faster when loaded.' },
+          { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Slightly faster when loaded.' },
           { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 2, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
           { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 115, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
           { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 35% HP, returns healed. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
@@ -4919,7 +4947,7 @@
             spy.detectTimer = 0;
             const enemyWorkers = G.units.filter(u => u.player === spy.enemy && u.def.isWorker && !u.offscreen && Math.abs(u.x - enemyBase) < 120);
             const guardingUnits = G.units.filter(u => u.player === spy.enemy && !u.def.isWorker && !u.offscreen && Math.abs(u.x - enemyBase) < 180);
-            const detectChance = Math.min(0.95, (enemyWorkers.length * 0.35) + (guardingUnits.length * 0.15));
+            const detectChance = Math.min(0.95, (enemyWorkers.length * 0.15) + (guardingUnits.length * 0.15));
             if (detectChance > 0 && Math.random() < detectChance) {
               showPopup(enemyBase, G.groundY - 80, '🚨 SPY CAUGHT!', '#e74c3c', spy.enemy);
               showPopup(enemyBase, G.groundY - 95, '🕵️ DETECTED', '#636e72', spy.owner);
@@ -4946,15 +4974,17 @@
     const TUT = [
       { render(el) { el.innerHTML = `<div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div><div class="tut-sub">A TWO-PLAYER REAL-TIME STRATEGY GAME</div><div class="tut-body">Two players face off across a battlefield, spending <b>💀 Souls</b> and <b>🦴 Bodies</b> to spawn units that automatically fight toward the enemy base. Destroy the enemy base to win.<br><br>Controls are entirely keyboard-based — no mouse required during gameplay. Use the ← PREV / NEXT → buttons or <kbd>Arrow Keys</kbd> to navigate.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Primary currency. Earned passively, from kills, and by holding mid.</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Secondary currency. Earned over time and brought in by workers.</div></div><div class="tstat"><div class="tstat-icon">🏰</div><div class="tstat-name">BASE</div><div class="tstat-desc">Your base has 100 HP. When it hits 0, you lose. Protect it at all costs.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and bring back 3 bodies per trip. Deploy up to 3 workers — more workers means faster body income.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +1.2/s more<br>Each desp stack: +0.4/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Worker trips: +3 per trip<br>1 worker ≈ +4.5/min<br>3 workers ≈ +13.5/min</div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.<br><br><b>⛏→MID ROUTE</b>: Click the <b>⛏→MID</b> button in your HUD (or press <kbd>E</kbd> for P1, <kbd>NP1</kbd> for P2) to send workers to the mid-field instead of patrolling at home. Mid trips take longer but return <b>6 bodies</b> — three times a normal trip. Workers automatically retreat if mid is lost or enemies appear.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Home trip → 2 bodies, ~8s round trip<br>Mid trip → 6 bodies, ~30s round trip<br>Toggle: HUD button or E / NP1 key</div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE ×N', 'Desperation stacks. Appear if enemy holds mid 15+ seconds. Each stack: +0.7💀/s (max 3).'], ['💀/s Rate', 'Your live soul income per second — accounts for mid, surge stacks, and active buffs.'], ['⛏→MID Button', 'Toggle workers to route through mid for 12 bodies/trip instead of 2. Press E or NP1.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:130px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and return <b>2 bodies per home trip</b>, or <b>12 bodies per mid trip</b> (if you own mid). Deploy up to 3 workers — keep them alive, they are your economy.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +0.8→2.0/s (escalates over 60s)<br>Each desp surge stack: +0.7/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Home trip: +2 per trip (~8s)<br>Mid trip: +12 per trip (~30s)<br>Passive body trickle scales with game time</div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body"><span class="tut-step-badge">⭐ KEY MECHANIC</span><br>Workers automatically patrol off-screen to collect bodies. Deploy them early and keep them alive — they are your economy.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers cannot be directly attacked but CAN be hit by area-of-effect damage.<br><br><b>Two routes to choose from:</b> Workers patrol at home by default, but you can send them to the mid-field using the <b>⛏→MID</b> button in your HUD (or press <kbd>E</kbd> / <kbd>NP1</kbd>). Mid trips take longer but pay out far more bodies per run. Workers automatically retreat home if you lose mid or enemies get too close.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:500px;margin:0 auto;width:100%"><div class="hl-box" style="display:flex;align-items:center;gap:12px;text-align:left;"><span style="font-size:clamp(1.4rem,2.3vw,2rem);">🏠</span><div><div style="font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--dim);letter-spacing:.08em;">HOME ROUTE (default)</div><div style="font-size:var(--fs-xs);">~2 bodies per trip · ~8s round trip · Always available</div></div></div><div class="hl-box tut-highlight-step" style="display:flex;align-items:center;gap:12px;text-align:left;"><span style="font-size:clamp(1.4rem,2.3vw,2rem);">⛏→MID</span><div><div style="font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);letter-spacing:.08em;">MID ROUTE — press E / NP1</div><div style="font-size:var(--fs-xs);">12 bodies per trip · ~30s round trip · Requires mid control<br><span style="color:var(--dim);">Workers retreat automatically if mid is lost</span></div></div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body">Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name">MELEE</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body"><span class="tut-step-badge">⭐ KEY MECHANIC</span><br>Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat tut-highlight-step" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name" style="color:#e74c3c">SOLDIER (MELEE)</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div><div class="tstat tut-highlight-step" style="border-color:#27ae60"><div class="tstat-icon">⛏</div><div class="tstat-name" style="color:#27ae60">WORKER</div><div class="tstat-desc">Collects Bodies off-screen. Cannot fight. Your economy — keep them alive.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT INTERACTIONS</div><div class="tut-sub">THE COMBAT TRIANGLE</div><div class="tut-body">Combat has built-in counters. Exploit them to win:<br><br>🦅 <b>AERIAL beats MELEE</b> — ground melee units can't target aerial at all. Aerial units move freely over a melee wall.<br><br>🏹 <b>RANGED beats AERIAL</b> — ranged units deal 2.2× damage to aerial. One archer is worth two swords against a Gryphon.<br><br>🗡️ <b>MELEE beats RANGED</b> — every melee hit slows the target's movement. Ranged units can't permanently kite melee — once slowed, they get caught.</div><div class="tut-visual"><div class="hl-box" style="font-size:var(--fs-md);">🦅 → 🗡️ → 🏹 → 🦅<br><span style="font-size:var(--fs-xs);color:var(--dim);">Counter in this direction</span></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it for <b>2 uncontested seconds</b> captures it. The owner earns <b>+1.5 souls/sec</b> passively, even if they walk away.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No owner. No mid bonus for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">🔴</div><div class="tstat-name">OWNED</div><div class="tstat-desc">Owner earns +1.5💀/s. A capture ring shows progress.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold for 2s to capture.</div></div></div><div class="tut-body" style="margin-top:8px;">If you lose mid for 15+ seconds, you gain Desperation stacks which increase your soul income to compensate.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it <b>uncontested for 2 seconds</b> captures it.<br><br><b>Mid income escalates the longer you hold it</b> — don't just capture it and forget. Holding it for 60 seconds maxes your advantage. Recapturing a long-held mid is always an emergency.<br><br>If you lose mid for <b>15+ seconds</b>, you gain 🔥 <b>SURGE stacks</b> — each gives +0.7💀/s bonus income to keep you competitive. Max 3 stacks.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No mid income for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">⚡</div><div class="tstat-name">OWNED — ESCALATING</div><div class="tstat-desc">0s: +0.8💀/s → 30s: +1.5💀/s → 60s: +2.0💀/s (max)</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold 2s to recapture.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UPGRADES</div><div class="tut-sub">PERMANENT ARMY IMPROVEMENTS</div><div class="tut-body">Each faction has <b>3 unique upgrades</b> that permanently change your army. They can only be purchased <b>once per game</b>.<br><br>Upgrades are expensive — expect to spend <b>50–90 souls and 6–15 bodies</b>. Save up and time your purchase for maximum impact. A well-timed upgrade mid-fight can completely shift the tide.</div><div class="tut-visual"><div class="upcard" style="max-width:200px;border-color:var(--gold);padding:12px;"><div class="upcard-name">⚔ EXAMPLE UPGRADE</div><div class="upcard-desc" style="font-size:var(--fs-xs);margin-top:4px;">All melee units gain +15% attack rate permanently.</div><div class="upcard-cost" style="margin-top:6px;"><span class="ctag cs">💀25</span><span class="ctag cb">🦴4</span></div></div></div><div class="tut-body">Navigate to the UPGRADES tab, select with A/D, and press TAB/ENTER to buy. After purchase, the card is grayed out with ✓ OWNED.</div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀40 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀35 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">SOUL SURGE</div><div class="tstat-desc">💀60 · Instant · 75s CD<br>converts 60 souls → +14 bodies</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">RALLY BUFFS</div><div class="tut-sub">TEMPORARY BATTLEFIELD EFFECTS</div><div class="tut-body">All factions share the same 3 Rally Buffs. Activate them from the BUFFS tab. Each has a cooldown after use.</div><div class="tut-visual"><div class="tstat" style="border-color:#f9ca24"><div class="tstat-icon">⚡</div><div class="tstat-name">WAR CRY</div><div class="tstat-desc">💀40 · 6s duration · 45s CD<br>+25% speed, +15% attack rate</div></div><div class="tstat" style="border-color:#bdc3c7"><div class="tstat-icon">🛡</div><div class="tstat-name">IRON WALL</div><div class="tstat-desc">💀35 · 8s duration · 50s CD<br>40% less damage taken</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">💀</div><div class="tstat-name">BODY BOON</div><div class="tstat-desc">💀60 · Instant · 75s CD<br>converts 60 souls → +14 bodies</div></div></div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">RANDOM EVENTS</div><div class="tut-sub">CHAOS YOU MUST ADAPT TO</div><div class="tut-body">Throughout a match, <b>random events</b> fire every 30–60 seconds, announced with a banner at the top of the screen. React quickly — some reward action, others punish passivity.<br><br>Events are <b>weighted by the game state</b>: losing players are more likely to see helpful events, and the longer mid is held the more dangerous the escalation events become.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:560px;margin:0 auto;width:100%;">${[['☄️ METEOR STRIKE','Units near mid take heavy damage — clear mid or take losses'],['💰 GOLD RUSH','Both players gain +30💀 and +8🦴 — spend them immediately'],['🩸 BLOOD MOON','All units cost half bodies to spawn for 18s — flood the field'],['☠ ROGUE WANDERER','A neutral unit appears — kill it for a soul bounty'],['💀 ROGUE CHAMPION','Powerful 200-HP neutral — teamwork required, big reward'],['💰 SOUL CACHE','Hold mid for 2 seconds to claim +30💀 — act fast, it expires'],['🌑 DARK ECLIPSE','Mid income halved · SURGE stacks give double for 15s'],['🌋 TREMOR','All ground units slowed 45% for 5s — rethink your timing'],['📦 SUPPLY DROP','One player receives +20💀 and +12🦴 — adapts to who\'s losing']].map(([k,v])=>`<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:160px;font-family:Rajdhani,sans-serif;font-size:calc(var(--fs-xs)*0.9);color:var(--gold);">${k}</div><div style="font-size:calc(var(--fs-xs)*0.9);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">🕵️ THE SPY</div><div class="tut-sub">UNIVERSAL UNIT — AVAILABLE TO ALL FACTIONS</div><div class="tut-body">The <b>Spy</b> card is always at the far right of your unit grid. Unlike your faction units, it is shared by everyone.<br><br>The Spy infiltrates the enemy base and <b>steals souls and bodies over time</b>. You can have up to 2 active spies at once. The enemy's workers and guarding combat units can detect and remove it — but detection chances are low with just workers nearby.<br><br>The Spy is not a replacement for combat — it is sustained economic pressure. Deploy one whenever you have the resources and a moment's breathing room.</div><div class="tut-visual"><div class="tstat" style="border-color:#636e72"><div class="tstat-icon">🕵️</div><div class="tstat-name">SPY</div><div class="tstat-desc">💀10 · 🦴4 · Max 2 active<br>Steals resources over time<br>Workers: 15% detect · Guards: 15% detect each</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SPAWN PROTECTION</div><div class="tut-sub">1.8 SECOND GOLDEN SHIELD</div><div class="tut-body">Every newly spawned unit has <b>1.8 seconds of spawn protection</b>. During this window:<br><br>• The unit <b>cannot die</b> — HP cannot fall below 1<br>• The unit <b>can attack normally</b><br>• A gold shimmer ring shows around the unit<br><br>This lets you reinforce even when your base is under siege. A Warlord sitting next to your base can't instantly kill your fresh recruits.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">✨</span>Spawn → 1.8s invincible → Normal combat<br><span style="font-size:var(--fs-xs);color:var(--dim);">Does NOT apply to summoned units (Shades, Guards)</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">FOCUS FIRE & BLOCKING</div><div class="tut-sub">ARMY DIVERSITY IS REWARDED</div><div class="tut-body"><b>Focus Fire Penalty:</b> When 3 or more ranged units target the same enemy, each attacker beyond the 2nd deals progressively less damage (80% → 65% → 50%). Spamming 8 archers at one target is less effective than a mix.<br><br><b>Projectile Blocking:</b> Enemy frontline melee units can block or deflect incoming ranged projectiles. 65% chance to reduce the shot by 40%, 35% chance to absorb it entirely. A wall of melee protects units behind it.<br><br>Together these systems mean: <b>mix your army</b>.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🛡️</span>Melee wall = natural shield<br>vs ranged spam</div><div class="hl-box"><span class="hl-icon">🎯</span>3+ on one target<br>= diminishing returns</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">LAST STAND</div><div class="tut-sub">THE DESPERATE DEFENSE</div><div class="tut-body">When your base falls to <b>30 HP</b>, Last Stand triggers automatically:<br><br>• You receive <b>+40 souls instantly</b><br>• Your faction's <b>Royal Guard</b> units are summoned (3 powerful temporary units)<br>• Royal Guards despawn after 30 seconds<br>• This can only trigger <b>once per game</b><br><br>Last Stand is your moment to turn the tide. Use the souls wisely — spawn your best units. The guard timer shows in your HUD.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">👑</span>Base ≤ 30 HP → Last Stand!<br>+40💀 + Royal Guards spawned<br><span style="font-size:var(--fs-xs);color:var(--dim);">Guard timer shown in HUD bottom panel</span></div></div>`; } },
@@ -4987,7 +5017,7 @@
       // ── Step 2: Souls ──
       {
         title: '💀 SOULS — YOUR MAIN CURRENCY',
-        body: 'Souls arrive passively over time (+0.45/s base rate).\n\nYou also earn Souls from:\n• Killing enemy units\n• Holding the mid point (+1.5/s)\n• Desperation stacks if you\'re losing\n\nThis number updates in real time — watch it grow.',
+        body: 'Souls arrive passively over time (+0.45/s base rate).\n\nYou also earn Souls from:\n• Killing enemy units\n• Holding mid — starts at +0.8/s, escalates to +2.0/s after 60s\n• 🔥 SURGE stacks if the enemy holds mid (+0.7/s each, up to ×3)\n\nWatch the 💀/s rate in your HUD — it updates live.',
         highlight: 'p1-souls-wrap',
         arrowDir: 'down',
         pause: true,
@@ -5015,7 +5045,7 @@
       {
         title: '⚔ SPAWN YOUR FIRST UNIT',
         body: 'Time to act. Press <kbd>Q</kbd> to spawn a Soldier, or click the SOLDIER card in your HUD below.\n\nThe unit will march toward the enemy automatically — you don\'t control units directly.',
-        highlight: 'p1-grid',
+        highlightQuery: '#p1-grid .ucard[data-idx="1"]',
         arrowDir: 'down',
         pause: false,
         btn: null,
@@ -5026,12 +5056,31 @@
       {
         title: '⛏ NOW SPAWN A WORKER',
         body: 'Workers don\'t fight — they collect Bodies from off-screen and bring them back.\n\nThe Worker card should be visible in your unit grid. Spawn one now.\n\nAlways keep Workers active — your economy depends on them.',
-        highlight: 'p1-grid',
+        highlightQuery: '#p1-grid .ucard[data-idx="0"]',
         arrowDir: 'down',
         pause: false,
         btn: null,
         waitFor: 'workerSpawned',
         action: 'Spawn a Worker to continue...',
+      },
+      // ── Step 6b: Worker Mid Route ──
+      {
+        title: '⛏→MID SEND WORKERS TO MID',
+        body: 'See the <b>⛏→MID</b> button in your HUD? Click it (or press <kbd>E</kbd>) to send your workers to the mid-field instead of patrolling at home.\n\n<b>Home route:</b> Workers return ~2 bodies every ~8 seconds — fast but low yield.\n\n<b>Mid route:</b> Workers return <b>12 bodies</b> per trip (~30s round trip) — six times the bodies, but only safe while you own mid.\n\nWorkers automatically retreat home if mid is captured by the enemy or combat units get too close.',
+        highlight: 'p1-mid-btn',
+        arrowDir: 'down',
+        pause: true,
+        btn: 'GOT IT →',
+      },
+      // ── Step 6c: Spy card ──
+      {
+        title: '🕵️ THE SPY CARD',
+        body: 'The last card in your UNITS grid is the <b>Spy</b> — a universal unit available to all factions.\n\nThe Spy infiltrates the enemy base and steals resources over time. It costs 💀10 + 🦴4 and can be deployed up to 2 at once.\n\nThe Spy card is always at the far right of your unit grid. Navigate to it with <kbd>D</kbd> and press <kbd>TAB</kbd> to deploy.',
+        highlight: 'p1-spy-card',
+        arrowDir: 'down',
+        pause: true,
+        btn: 'GOT IT →',
+        showSpyCard: true,
       },
       // ── Step 7: Watch combat ──
       {
@@ -5045,7 +5094,7 @@
       // ── Step 8: Capture mid ──
       {
         title: '🔘 CAPTURE THE MID POINT',
-        body: 'The glowing circle at the CENTER of the map gives the owner +1.5 Souls/sec passively.\n\nSend enough units near it and hold it uncontested for 2 seconds to capture it. The capture arc fills as you hold it.\n\nControlling mid early is a massive income advantage.',
+        body: 'The glowing circle at the CENTER of the map gives the owner escalating soul income:\n\n• At capture: +0.8💀/s\n• After 30s held: +1.5💀/s\n• After 60s held: +2.0💀/s (maximum)\n\nSend units near it and hold it uncontested for 2 seconds. The longer you hold mid, the more urgent it becomes for your enemy to recapture.\n\nOnce you own mid, remember to press ⛏→MID (E) to route workers there for a massive body bonus.',
         highlight: null,
         pause: false,
         btn: null,
@@ -5072,16 +5121,24 @@
       // ── Step 11: Rally Buffs ──
       {
         title: '⚡ RALLY BUFFS — TACTICAL TOOLS',
-        body: 'The BUFFS tab (press <kbd>W</kbd> twice from Units) has 3 temporary power-ups shared across all factions:\n\n⚡ War Cry — +25% speed & attack for 6s\n🛡 Iron Wall — 40% less damage for 8s\n🦴 Body Boon — spend 60💀 to get +14🦴 Bodies\n\nEach has a cooldown. Use them at the right moment.',
+        body: 'The BUFFS tab (press W twice from Units) has 3 temporary power-ups shared across all factions:\n\n⚡ War Cry — +25% speed & attack for 6s (💀40)\n🛡 Iron Wall — 40% less damage for 8s (💀35)\n🦴 Body Boon — spend 60💀 to get +14🦴 instantly\n\nEach has a cooldown. Use them at the right moment — War Cry before a push, Iron Wall when taking heavy pressure, Body Boon when souls are high but bodies are the bottleneck.',
         highlight: 'p1-tabs',
         arrowDir: 'down',
         pause: true,
         btn: 'READY →',
       },
-      // ── Step 12: Final battle ──
+      // ── Step 12: Random Events ──
+      {
+        title: '🎲 RANDOM EVENTS',
+        body: 'Every 30–60 seconds a random event fires, announced by a banner at the top of the screen. These shake up the game and reward quick reactions.\n\nExamples you\'ll see:\n☄️ Meteor Strike — units near mid take damage\n🩸 Blood Moon — all units cost half bodies for 18s\n💰 Soul Cache — hold mid for 2s to claim +30💀\n☠ Rogue Wanderer/Champion — kill for a soul bounty\n🌑 Dark Eclipse — mid income halved, SURGE stacks doubled\n📦 Supply Drop — bonus resources to the losing player\n\nEvents adapt to the game state — adapt to them.',
+        highlight: null,
+        pause: true,
+        btn: 'GOT IT →',
+      },
+      // ── Step 13: Final battle ──
       {
         title: '🏆 FINAL CHALLENGE',
-        body: 'The AI is now fully active and will fight back — spawning units, reacting to your attacks, and defending its base.\n\nBuild a mixed army, control mid, use your buffs wisely, and destroy the enemy base on the right.\n\nGood luck, Commander.',
+        body: 'The AI is now fully active. Here\'s your checklist going into the fight:\n\n⚔ Spawn a mix — melee, ranged, and at least one worker\n🔘 Capture mid early and hold it — income escalates over time\n⛏ Press E to send workers to mid once you own it\n🔮 Buy an upgrade when you have 60+ souls to spare\n⚡ Use buffs at key moments — War Cry on a big push\n🎲 React to random events when they fire\n\nGood luck, Commander.',
         highlight: null,
         pause: false,
         btn: 'BEGIN BATTLE →',
@@ -5091,8 +5148,10 @@
 
     function _repositionTutorial() {
       if (!_tutActive) return;
-      _positionTutHighlight(_tutCurrentHighlight, _tutCurrentArrowDir);
-      _positionTutPopup(_tutCurrentHighlight);
+      const step = INGAME_TUT_STEPS[_tutStep];
+      const _el = _resolveTutEl(step);
+      _positionTutHighlight(_tutCurrentHighlight, _tutCurrentArrowDir, _el);
+      _positionTutPopup(_tutCurrentHighlight, _el);
     }
 
     function startIngameTutorial() {
@@ -5166,14 +5225,39 @@
       document.getElementById('tut-pop-progress').textContent = '';
 
       // Store for resize repositioning
-      _tutCurrentHighlight = step.highlight || null;
+      _tutCurrentHighlight = step.highlight || step.highlightQuery || null;
       _tutCurrentArrowDir = step.arrowDir || null;
 
+      // Show spy card — reveal on spy step, keep visible after, hide in tutorial until then
+      const _spyCardEl = document.querySelector('#p1-grid .spy-card');
+      if (_spyCardEl) {
+        if (step.showSpyCard) {
+          _spyCardEl.style.display = 'flex';
+          _spyCardEl.style.outline = '2px solid #b2bec3';
+          _spyCardEl.style.boxShadow = '0 0 10px rgba(178,190,195,0.5)';
+          _spyCardEl.style.animation = 'spyPulse 1.8s ease-in-out infinite';
+          _spyCardEl._tutRevealed = true;
+        } else {
+          _spyCardEl.style.outline = '';
+          _spyCardEl.style.boxShadow = '';
+          _spyCardEl.style.animation = '';
+          // In tutorial: hide until revealed; after reveal keep visible
+          if (GAME_MODE === 'tutorial' && !_spyCardEl._tutRevealed) {
+            _spyCardEl.style.display = 'none';
+          } else {
+            _spyCardEl.style.display = '';
+          }
+        }
+      }
+
+      // Resolve highlight element (supports both id and querySelector)
+      const _tutTargetEl = _resolveTutEl(step);
+
       // Highlight a HUD element
-      _positionTutHighlight(step.highlight, step.arrowDir);
+      _positionTutHighlight(step.highlight, step.arrowDir, _tutTargetEl);
 
       // Position popup (bottom-center by default, top if highlight is in HUD)
-      _positionTutPopup(step.highlight);
+      _positionTutPopup(step.highlight, _tutTargetEl);
 
       // Show popup
       const popup = document.getElementById('tut-popup');
@@ -5201,11 +5285,15 @@
     function _advanceTutorial() {
       if (!_tutActive) return;
       const nextIdx = _tutStep + 1;
-      // Wake up AI only on the FINAL battle step — use tutorial difficulty (gentlest)
+      // Wake up AI only on the FINAL battle step — delayed 5s so player has time to read
       if (G && INGAME_TUT_STEPS[nextIdx] && INGAME_TUT_STEPS[nextIdx].finalStep) {
-        G.aiDifficulty = 'tutorial'; // Stay at tutorial difficulty — still gentle
-        G.aiPersonality = 'defensive'; // Defensive so it doesn't just rush
-        if (G._aiTimers) G._aiTimers[1] = 0;
+        setTimeout(() => {
+          if (!G) return;
+          G._aiDormant = false;
+          G.aiDifficulty = 'tutorial'; // Stay at tutorial difficulty — still gentle
+          G.aiPersonality = 'defensive'; // Defensive so it doesn't just rush
+          if (G._aiTimers) G._aiTimers[1] = 0;
+        }, 5000);
       }
       _showTutStep(nextIdx);
     }
@@ -5225,15 +5313,21 @@
       }
     }
 
-    function _positionTutHighlight(elementId, arrowDir) {
+    function _resolveTutEl(step) {
+      if (step && step.highlightQuery) return document.querySelector(step.highlightQuery);
+      if (step && step.highlight) return document.getElementById(step.highlight);
+      return null;
+    }
+
+    function _positionTutHighlight(elementId, arrowDir, el) {
       const ring = document.getElementById('tut-highlight-ring');
       const arrow = document.getElementById('tut-arrow');
-      if (!elementId) {
+      if (!el && !elementId) {
         ring.classList.remove('show');
         arrow.classList.remove('show');
         return;
       }
-      const el = document.getElementById(elementId);
+      if (!el) el = document.getElementById(elementId);
       if (!el) { ring.classList.remove('show'); arrow.classList.remove('show'); return; }
       // Compute positions relative to the overlay container (#tut-ingame-overlay = sc-game)
       const gameEl = document.getElementById('sc-game');
@@ -5266,7 +5360,7 @@
       }
     }
 
-    function _positionTutPopup(highlightId) {
+    function _positionTutPopup(highlightId, el) {
       const popup = document.getElementById('tut-popup');
       const gameEl = document.getElementById('sc-game');
       const gRect = gameEl.getBoundingClientRect();
@@ -5274,17 +5368,15 @@
       // Default: center horizontally, 10% from top
       let topRel = gRect.height * 0.10;
       let leftRel = gRect.width * 0.5 - popW / 2;
-      if (highlightId) {
-        const el = document.getElementById(highlightId);
-        if (el) {
-          const r = el.getBoundingClientRect();
-          const relTop = r.top - gRect.top;
-          if (relTop > gRect.height * 0.5) {
-            // HUD element at bottom — put popup in battlefield area, near top
-            topRel = gRect.height * 0.07;
-          } else {
-            topRel = (r.bottom - gRect.top) + 28;
-          }
+      const target = el || (highlightId ? document.getElementById(highlightId) : null);
+      if (target) {
+        const r = target.getBoundingClientRect();
+        const relTop = r.top - gRect.top;
+        if (relTop > gRect.height * 0.5) {
+          // HUD element at bottom — put popup in battlefield area, near top
+          topRel = gRect.height * 0.07;
+        } else {
+          topRel = (r.bottom - gRect.top) + 28;
         }
       }
       // Clamp within overlay bounds
@@ -5310,6 +5402,7 @@
         usesBuffs: false, buysUpgrades: false, defenseReact: false,
         adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
         midPressure: false, resourcePatience: 0, aiWorkerCap: 2, confusionChance: 0, upgradeSmarts: false, counterStr: 0,
+        workerMidSmarts: 0, // 0=never, 0.5=sometimes dumb, 1=smart
       },
       // EASY — plays randomly, ignores mid, only 2 workers, occasionally makes actively wrong decisions.
       // Should feel like a new player stumbling around.
@@ -5318,6 +5411,7 @@
         usesBuffs: false, buysUpgrades: false, defenseReact: false,
         adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
         midPressure: false, resourcePatience: 0, aiWorkerCap: 2, confusionChance: 0.20, upgradeSmarts: false, counterStr: 0,
+        workerMidSmarts: 0.3, // knows about it but forgets to turn it off when unsafe
       },
       // MEDIUM — reactive but not proactive. Responds to threats slowly. Buys upgrades sometimes.
       // Weak counter-picking. Never saves deliberately. Feels like a casual player.
@@ -5326,6 +5420,7 @@
         usesBuffs: true, buysUpgrades: true, defenseReact: true,
         adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
         midPressure: false, resourcePatience: 0, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: false, counterStr: 0.25,
+        workerMidSmarts: 0.6, // enables when owning mid, sometimes forgets to disable
       },
       // HARD — strategic and deliberate. Counter-builds, saves for upgrades, uses buffs well.
       // Actively contests mid, occasionally waits for premium units. Feels like an experienced player.
@@ -5334,6 +5429,7 @@
         usesBuffs: true, buysUpgrades: true, defenseReact: true,
         adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false,
         midPressure: true, resourcePatience: 0.38, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 0.65,
+        workerMidSmarts: 1.0, // always enables when safe, disables instantly when not
       },
       // EXPERT — reads your composition, hard-counters it, optimal timing on everything.
       // Mid pressure is immediate. Spy is a real weapon. Nearly perfect decision-making.
@@ -5342,6 +5438,7 @@
         usesBuffs: true, buysUpgrades: true, defenseReact: true,
         adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true,
         midPressure: true, resourcePatience: 0.62, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 1.0,
+        workerMidSmarts: 1.0, // perfect mid-worker management
       },
     };
 
@@ -6009,6 +6106,7 @@
       }
       const aiPids = _isAiVsAiMode ? [1, 2] : [2];
       aiPids.forEach(pid => {
+        if (G._aiDormant) return; // tutorial: AI sleeping until final step delay
         const p = G.players[pid - 1];
         const diffKey = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
         const cfg = AI_DIFF_SETTINGS[diffKey] || AI_DIFF_SETTINGS.medium;
@@ -6060,6 +6158,35 @@
               if (myNearMid === 0) {
                 G.aiDifficulty = diffKey;
                 runAI(pid, false); // urgent mid-contest spawn
+              }
+            }
+          }
+        }
+        // ── AI worker-mid management ──────────────────────────────────────────────
+        // Smart AIs send workers to mid when safe, dumb AIs do it randomly/badly
+        if (cfg.workerMidSmarts > 0) {
+          if (!G._aiMidWorkerTimers) G._aiMidWorkerTimers = [0, 0];
+          G._aiMidWorkerTimers[pid - 1] = (G._aiMidWorkerTimers[pid - 1] || 0) + dt;
+          const _mwCheckInterval = cfg.workerMidSmarts >= 1.0 ? 1.5 : cfg.workerMidSmarts >= 0.6 ? 3.5 : 7.0;
+          if (G._aiMidWorkerTimers[pid - 1] >= _mwCheckInterval) {
+            G._aiMidWorkerTimers[pid - 1] = 0;
+            const _ownsMid = G.midOwner === pid;
+            const _enemyNearMid = G.units.some(e =>
+              e.player !== pid && !e.def.isWorker && !e.offscreen &&
+              Math.abs(e.x - G.midX) < 110
+            );
+            const _currentlyOn = G.workerMidMode && G.workerMidMode[pid - 1];
+            // Smart: enable when owning mid + safe, disable immediately when not
+            // Dumb: enable sometimes when owning mid (may forget to disable)
+            if (_ownsMid && !_enemyNearMid && !_currentlyOn) {
+              // Enable if smart enough — dumb AIs miss the opportunity sometimes
+              if (Math.random() < cfg.workerMidSmarts) {
+                G.workerMidMode[pid - 1] = true;
+              }
+            } else if (_currentlyOn && (!_ownsMid || _enemyNearMid)) {
+              // Disable when unsafe — smart AIs always do this, dumb ones sometimes forget
+              if (Math.random() < cfg.workerMidSmarts) {
+                G.workerMidMode[pid - 1] = false;
               }
             }
           }
@@ -6142,12 +6269,18 @@
       }
       // Conquest — 3 zones; bases indestructible until you own 2/3
       if (GAME_MODE === 'conquest') {
-        G.zones = [
-          { id: 0, x: null, r: null, owner: null, capTimer: 0, capPlayer: null, _label: 'LEFT' },
-          { id: 1, x: null, r: null, owner: null, capTimer: 0, capPlayer: null, _label: 'MID' },
-          { id: 2, x: null, r: null, owner: null, capTimer: 0, capPlayer: null, _label: 'RIGHT' },
-        ];
-        // Zone positions set after canvas is known — done in updateConquest
+        {
+          // Initialize zones with positions immediately so frontier clamp works from frame 1
+          const _cw = G.w;
+          const _zx = [_cw * 0.25, _cw * 0.5, _cw * 0.75];
+          const _zr = [Math.max(32, _cw * 0.038), Math.max(48, _cw * 0.058), Math.max(32, _cw * 0.038)];
+          G.zones = [
+            { id: 0, x: _zx[0], r: _zr[0], owner: null, capTimer: 0, capPlayer: null, _label: 'LEFT' },
+            { id: 1, x: _zx[1], r: _zr[1], owner: null, capTimer: 0, capPlayer: null, _label: 'MID' },
+            { id: 2, x: _zx[2], r: _zr[2], owner: null, capTimer: 0, capPlayer: null, _label: 'RIGHT' },
+          ];
+        }
+        // Zone positions also updated each frame in updateConquest to stay in sync with canvas size
         // Bases are indestructible until conquest win condition triggers
         G.players.forEach(p => { p._conquestShield = true; });
       }
@@ -6165,6 +6298,7 @@
       G._aiTimers = [0, 0];
       G._aiDefTimers = [0, 0];
       G._aiSaving = false;
+      G._aiDormant = (GAME_MODE === 'tutorial'); // tutorial: AI stays dormant until final step
       // Easy mode: player gets +10 starting souls bonus
       const _ps = window._pendingPlayerSetup || 'vs';
       const _isSoloAiMode = _ps === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
@@ -6284,7 +6418,7 @@
         const grid = document.getElementById(`p${pid}-grid`);
         grid.innerHTML = '';
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
-        const totalCols = defs.length + (GAME_MODE !== 'tutorial' ? 1 : 0);
+        const totalCols = defs.length + 1; // +1 always for spy card (hidden in tutorial until spy step)
         grid.style.gridTemplateColumns = `repeat(${totalCols}, 1fr)`;
         defs.forEach((def, i) => {
           const card = document.createElement('div');
@@ -6303,9 +6437,11 @@
           grid.appendChild(card);
         });
         // ── Spy unit card (universal, appended after faction units) ──
-        if (GAME_MODE !== 'tutorial') {
+        {
           const spyCard = document.createElement('div');
           spyCard.className = 'ucard spy-card'; spyCard.dataset.idx = 99;
+          if (pid === 1) spyCard.id = 'p1-spy-card';
+          spyCard.style.display = GAME_MODE === 'tutorial' ? 'none' : '';
           spyCard.innerHTML = `<span class="utypetag" style="background:rgba(99,110,114,.3);color:#b2bec3;">SPY</span><span class="uicon">🕵️</span><span class="uname">Spy</span><div class="ucost"><span class="ctag cs">💀${SPY_DEF.souls}</span><span class="ctag cb">🦴${SPY_DEF.bodies}</span></div>`;
           spyCard.addEventListener('click', () => {
             const defs2 = G.factions[pid - 1].units.filter(d => !d.isSpawned);
@@ -6475,15 +6611,16 @@
         _wmEl.style.color = '';
         // Mid button visibility + state
         const _midBtnEl = document.getElementById(`p${pid}-mid-btn`);
-        if (_midBtnEl && GAME_MODE !== 'tutorial') {
-          _midBtnEl.style.display = '';
+        if (_midBtnEl) {
+          _midBtnEl.style.display = 'inline-block';
           _midBtnEl.className = 'worker-mid-btn' + (_wmOwned ? ' active' : _wmOn ? ' waiting' : '');
-          _midBtnEl.textContent = _wmOwned ? '⛏ →MID ✓' : _wmOn ? '⛏ →MID?' : '⛏ →MID';
+          const _wKey = pid === 1 ? 'E' : 'NP1';
+          _midBtnEl.textContent = _wmOwned ? `⛏ →MID ✓ [${_wKey}]` : _wmOn ? `⛏ →MID? [${_wKey}]` : `⛏ →MID [${_wKey}]`;
           _midBtnEl.title = _wmOn ? 'Workers routing to mid (click or press E/NP1 to cancel)' : 'Click or press E/NP1 to send workers to mid when you own it';
         }
         // Spy count
         const _spyCountEl = document.getElementById(`p${pid}-spy-count`);
-        if (_spyCountEl && GAME_MODE !== 'tutorial') {
+        if (_spyCountEl) {
           const _activeSpies = G.spies ? G.spies.filter(s => s.owner === pid).length : 0;
           _spyCountEl.textContent = `🕵️ ${_activeSpies}/2`;
           _spyCountEl.style.display = '';
@@ -6545,7 +6682,7 @@
             const _allTips = [
               ...(G._tipIdx[pid - 1] % 3 === 0 && _passiveTip ? [_passiveTip] : []),
               { text: '💡 Hold mid to ramp up soul income — up to +2.0/s after 60s', title: 'Mid control income scales over time' },
-              { text: '💡 Workers pathing to mid return with 6 bodies (vs 2 normally) — own mid to enable this', title: 'Mid workers return extra bodies' },
+              { text: '💡 Workers pathing to mid return with 12 bodies (vs 2 normally) — own mid to enable this', title: 'Mid workers return extra bodies' },
               { text: '💡 3+ ranged units on one target deal less damage — mix your army', title: 'Focus fire penalty' },
               { text: '💡 Melee walls block incoming projectiles — put them up front', title: 'Projectile blocking' },
               { text: '💡 Body Boon converts 60 souls into +14 bodies — great when body-starved', title: 'Body Boon buff tip' },
@@ -8098,9 +8235,8 @@
         u.offTimer -= dt;
         if (u.offTimer <= 0) {
           u.offscreen = false; u.carrying = true;
-          // Read _wasGoingMid BEFORE clearing — old code cleared goToMid first so bonus bodies never applied
-          // Mid trips take ~3× as long as normal trips, so reward 6 bodies (vs 2 at home)
-          let _baseCarry = u._wasGoingMid ? 6 : 2;
+          // Mid trips take ~3× as long as normal trips, so reward 12 bodies (vs 2 at home) — genuinely worth using
+          let _baseCarry = u._wasGoingMid ? 12 : 2;
           if (u._wasGoingMid && (u.def.groveMidBonus || u.def.frostMidBonus)) _baseCarry += 2;
           u.carryCount = _baseCarry;
           // Mid workers reappear at mid and walk home visibly; normal trips reappear behind base edge
@@ -8452,13 +8588,13 @@
           const nearEdge = midDist >= G.midR && midDist < G.midR * 1.35;
           const wouldLeaveCircle = nearEdge && Math.sign(u.x - G.midX) === marchDir;
           if (GAME_MODE !== 'tutorial' && midNotOwned && !enemyNearMid && !u.def.isWorker && (insideCircle || wouldLeaveCircle)) {
-            // Hold inside the circle — drift gently back toward centre
+            // Hold inside the mid circle — drift gently back toward centre
             const driftDx = G.midX - u.x;
             u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 12 * dt);
           } else {
             // March forward toward enemy base
             u.x += marchDir * spd * dt;
-          } // end mid-linger else
+          } // end linger logic
           if (canAttackBase(u)) {
             const ebase = G.players[u.player === 1 ? 1 : 0];
             if (Math.abs(u.x - ebase.baseX) < G.baseW * .7 + u.def.range) {
@@ -8480,6 +8616,18 @@
                 u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM, .1);
               }
             }
+          }
+        }
+        // Conquest frontier clamp — applied after ALL movement so nothing bypasses it
+        if (GAME_MODE === 'conquest' && G.zones && !u.def.isWorker && !u.def.aerial) {
+          const _mDir = u.player === 1 ? 1 : -1;
+          const _ordZ = _mDir === 1 ? G.zones : [...G.zones].reverse();
+          for (const _z of _ordZ) {
+            if (!_z.x || _z.owner === u.player) continue;
+            // Clamp to zone center so units enter and contest the zone rather than freezing at the rim
+            if (_mDir === 1) u.x = Math.min(u.x, _z.x);
+            else u.x = Math.max(u.x, _z.x);
+            break;
           }
         }
         // Clamp X; aerial bobs
@@ -8731,7 +8879,7 @@
       // Zone x positions: left quarter, mid, right quarter
       const zx = [w * 0.25, w * 0.5, w * 0.75];
       // Left/right smaller; mid larger and more impactful
-      const zRadii = [Math.max(26, w * 0.031), Math.max(42, w * 0.052), Math.max(26, w * 0.031)];
+      const zRadii = [Math.max(32, w * 0.038), Math.max(48, w * 0.058), Math.max(32, w * 0.038)];
       G.zones.forEach((z, i) => { z.x = zx[i]; z.r = zRadii[i]; });
 
       G.zones.forEach(z => {
@@ -8801,7 +8949,12 @@
       const _zW = [1, 2, 1];
       const p1dmg = (G.zones.reduce((s, z, i) => s + (z.owner === 1 ? _zW[i] : 0), 0) * 0.2).toFixed(1);
       const p2dmg = (G.zones.reduce((s, z, i) => s + (z.owner === 2 ? _zW[i] : 0), 0) * 0.2).toFixed(1);
-      ind.textContent = `🔵 ${sym[0]} ${sym[1]} ${sym[2]} 🔴  · P1 pressure: ${p1dmg}❤/s · P2 pressure: ${p2dmg}❤/s`;
+      const p1col = parseFloat(p1dmg) > 0 ? '#5dade2' : 'rgba(255,255,255,0.4)';
+      const p2col = parseFloat(p2dmg) > 0 ? '#e74c3c' : 'rgba(255,255,255,0.4)';
+      ind.innerHTML = `🔵 ${sym[0]} ${sym[1]} ${sym[2]} 🔴 &nbsp;·&nbsp; `
+        + `<span style="color:${p1col}">P1 −${p1dmg}❤/s</span>`
+        + ` &nbsp;·&nbsp; `
+        + `<span style="color:${p2col}">P2 −${p2dmg}❤/s</span>`;
     }
 
     function updateGroundFX(dt) {
@@ -9000,81 +9153,83 @@
 
     function drawConquestZones() {
       if (!G.zones) return;
-      const _zWeightsD = [1, 2, 1]; // weight for visual emphasis
+      const _zWeightsD = [1, 2, 1];
       G.zones.forEach((z, i) => {
         if (!z.x) return;
         const isMid = i === 1;
-        // Circle sits ON the ground: center is r pixels above groundY
-        const cy = G.groundY - z.r;
-        const pulse = 0.10 + Math.sin(Date.now() / 700 + i * 2.1) * 0.06;
-        const col = z.owner === 1 ? '#2471a3' : z.owner === 2 ? '#c0392b' : '#555';
-        const glowCol = z.owner === 1 ? 'rgba(36,113,163,' : z.owner === 2 ? 'rgba(192,57,43,' : 'rgba(120,120,120,';
+        const gy = G.groundY;
+        // Circle centred ON ground line — half visible above, half below (like mid-point)
+        const cy = gy;
+        const pulse = 0.08 + Math.sin(Date.now() / 700 + i * 2.1) * 0.05;
+        const col = z.owner === 1 ? '#2471a3' : z.owner === 2 ? '#c0392b' : '#444';
+        const glowCol = z.owner === 1 ? 'rgba(36,113,163,' : z.owner === 2 ? 'rgba(192,57,43,' : 'rgba(100,100,100,';
 
-        // Glow behind circle
+        // Owned glow pool on ground
         if (z.owner) {
           ctx.save();
-          ctx.globalAlpha = (isMid ? 0.18 : 0.12) + pulse * 0.5;
-          const grd = ctx.createRadialGradient(z.x, cy, 0, z.x, cy, z.r * 1.7);
-          grd.addColorStop(0, glowCol + '0.7)');
+          ctx.globalAlpha = 0.13 + pulse * 0.4;
+          const grd = ctx.createRadialGradient(z.x, gy, 0, z.x, gy, z.r * 1.8);
+          grd.addColorStop(0, glowCol + '0.8)');
           grd.addColorStop(1, glowCol + '0)');
           ctx.fillStyle = grd;
-          ctx.beginPath(); ctx.arc(z.x, cy, z.r * 1.7, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(z.x, gy, z.r * 1.8, 0, Math.PI * 2); ctx.fill();
           ctx.restore();
         }
 
-        // Zone fill — full circle above ground
+        // Semi-circle fill above ground
         ctx.save();
-        ctx.globalAlpha = (z.owner ? 0.18 : 0.06) + pulse;
+        ctx.globalAlpha = (z.owner ? 0.20 : 0.08) + pulse;
         ctx.fillStyle = col;
-        ctx.beginPath(); ctx.arc(z.x, cy, z.r, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(z.x, cy, z.r, Math.PI, 0); ctx.closePath(); ctx.fill();
 
-        // Zone border ring
-        ctx.globalAlpha = (z.owner ? 0.7 : 0.3) + pulse * 0.5;
+        // Full ring
+        ctx.globalAlpha = (z.owner ? 0.75 : 0.28) + pulse * 0.4;
         ctx.strokeStyle = col;
         ctx.lineWidth = isMid ? 3 : 2;
-        if (z.owner) { ctx.shadowBlur = isMid ? 14 : 8; ctx.shadowColor = col; }
+        if (z.owner) { ctx.shadowBlur = isMid ? 16 : 9; ctx.shadowColor = col; }
         ctx.beginPath(); ctx.arc(z.x, cy, z.r, 0, Math.PI * 2); ctx.stroke();
         ctx.shadowBlur = 0;
         ctx.restore();
 
-        // Capture progress arc
+        // Capture progress arc (top half only, so it reads clearly)
         if (z.capPlayer !== null && z.capTimer > 0) {
           const prog = z.capTimer / 2.5;
           const capCol = z.capPlayer === 1 ? '#2471a3' : '#c0392b';
           ctx.save(); ctx.globalAlpha = 0.9;
           ctx.strokeStyle = capCol; ctx.lineWidth = isMid ? 5 : 4;
           ctx.shadowBlur = 10; ctx.shadowColor = capCol;
-          ctx.beginPath(); ctx.arc(z.x, cy, z.r + 7, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(z.x, cy, z.r + 6, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2); ctx.stroke();
           ctx.shadowBlur = 0; ctx.restore();
         }
 
-        // Zone label — color matches owner (or dim if neutral)
+        // Labels — stacked above the circle, no overlap
         const labelCol = z.owner === 1 ? '#5dade2' : z.owner === 2 ? '#e74c3c' : '#999';
+        const topY = gy - z.r; // top of the visible arc
         const fs = isMid ? Math.max(11, G.w * 0.011) : Math.max(9, G.w * 0.009);
+        const fsSmall = Math.max(7, G.w * 0.0068);
         ctx.save();
-        ctx.fillStyle = labelCol;
-        ctx.globalAlpha = 0.95;
-        ctx.font = `bold ${fs}px Rajdhani,sans-serif`;
         ctx.textAlign = 'center';
-        if (z.owner) { ctx.shadowBlur = 6; ctx.shadowColor = labelCol; }
-        ctx.fillText(z._label, z.x, cy - z.r - 7);
-        ctx.shadowBlur = 0;
-        // Damage rate sub-label
+        if (z.owner) { ctx.shadowBlur = 5; ctx.shadowColor = labelCol; }
+        // Damage rate — closest to circle
         if (z.owner) {
           const dmgRate = (_zWeightsD[i] * 0.2).toFixed(1);
-          ctx.globalAlpha = 0.65;
-          ctx.font = `${Math.max(7, G.w * 0.007)}px Rajdhani,sans-serif`;
-          ctx.fillText(`-${dmgRate}❤/s`, z.x, cy - z.r - 18);
+          ctx.globalAlpha = 0.7;
+          ctx.fillStyle = labelCol;
+          ctx.font = `${fsSmall}px Rajdhani,sans-serif`;
+          ctx.fillText(`-${dmgRate}❤/s`, z.x, topY - 4);
+          // Zone label above damage rate
+          ctx.globalAlpha = 0.95;
+          ctx.fillStyle = labelCol;
+          ctx.font = `bold ${fs}px Rajdhani,sans-serif`;
+          ctx.fillText(z._label, z.x, topY - 4 - fsSmall - 2);
+        } else {
+          // Neutral — just the label
+          ctx.globalAlpha = 0.7;
+          ctx.fillStyle = labelCol;
+          ctx.font = `bold ${fs}px Rajdhani,sans-serif`;
+          ctx.fillText(z._label, z.x, topY - 5);
         }
-        ctx.restore();
-
-        // Ground anchor line
-        ctx.save();
-        ctx.globalAlpha = 0.25;
-        ctx.strokeStyle = col; ctx.lineWidth = 1;
-        ctx.setLineDash([3, 4]);
-        ctx.beginPath(); ctx.moveTo(z.x, G.groundY); ctx.lineTo(z.x, cy + z.r); ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.shadowBlur = 0;
         ctx.restore();
       });
     }
@@ -9762,6 +9917,7 @@
           }).filter(Boolean).join('');
           return rows ? `<div class="go-stat-section"><div style="font-family:Rajdhani,sans-serif;font-size:.7rem;color:var(--gold);margin-bottom:2px;">UNIT BREAKDOWN</div>${rows}</div>` : '';
         }
+        const _isSoloGo = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
         document.getElementById('go-stats').innerHTML =
           `<div style="display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;">` +
           _G.players.map(p => {
@@ -9770,7 +9926,6 @@
             const opp = _G.players[p.id === 1 ? 1 : 0];
             const kdr = opp.kills > 0 ? (p.kills / Math.max(1, opp.kills)).toFixed(2) : p.kills > 0 ? p.kills + '/0' : '0/0';
             const dpe = p.spawned > 0 ? Math.round((p.dmgDealt || 0) / p.spawned) : 0;
-            const _isSoloGo = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
             const _pLabelGo = _isAiVsAi ? ('🤖 AI ' + p.id)
               : _isSoloGo ? (p.id === 1 ? 'YOU' : ('AI · ' + (_G.aiDifficulty || '').toUpperCase()))
                 : ('PLAYER ' + p.id);
@@ -10338,12 +10493,12 @@
       else if (!_isAiVsAiKb && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
       else if (!_isAiVsAiKb && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
+      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
       else {
         for (let s = 0; s < 5; s++) {
