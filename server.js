@@ -1,7 +1,7 @@
 /**
  * Beyond Kings' Conquest — Online Multiplayer Server
  * Run: node server.js
- * Deploy: Render / Railway / Fly.io (free tier)
+ * Deploy: Render
  */
 
 const express = require('express');
