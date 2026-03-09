@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Beyond Kings' Conquest</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
 
     :root {
       --p1: #2471a3;
@@ -67,7 +67,7 @@
     }
 
     .btn {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       letter-spacing: .12em;
       padding: clamp(8px, 1.2vh, 16px) clamp(20px, 3vw, 48px);
@@ -106,12 +106,12 @@
       border: 1px solid var(--border);
       border-radius: 3px;
       padding: 2px 6px;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
     }
 
     .sc-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xl);
       letter-spacing: .2em;
       color: var(--gold);
@@ -164,7 +164,7 @@
     }
 
     .menu-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xxl);
       font-weight: 900;
       line-height: 1.05;
@@ -200,7 +200,7 @@
       align-items: flex-start;
       justify-content: center;
       width: 100%;
-      max-width: 1400px;
+      max-width: 1700px;
       flex: 1;
       min-height: 0;
       overflow-y: auto;
@@ -212,13 +212,13 @@
       display: flex;
       flex-direction: column;
       gap: clamp(5px, .8vh, 10px);
-      max-width: 600px;
+      max-width: 780px;
       min-width: 0;
       flex-shrink: 0;
     }
 
     .faction-plabel {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       letter-spacing: .15em;
       text-align: center;
@@ -256,7 +256,7 @@
       flex-direction: column;
       gap: clamp(5px, .8vw, 10px);
       overflow-y: auto;
-      max-height: clamp(220px, 40vh, 500px);
+      max-height: clamp(320px, 58vh, 720px);
       padding-right: 4px;
     }
 
@@ -269,7 +269,7 @@
     }
 
     .faction-scroll-count {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       color: var(--dim);
       text-align: right;
@@ -322,7 +322,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.8rem, 1.5vw, 1.1rem);
       font-weight: 900;
       color: #e74c3c;
@@ -336,7 +336,7 @@
 
     /* Draft turn indicator banner */
     #draft-banner {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.85rem, 1.8vw, 1.3rem);
       font-weight: 900;
       letter-spacing: .14em;
@@ -381,7 +381,7 @@
     }
 
     .fcard-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-lg);
       letter-spacing: .08em;
       font-weight: 700;
@@ -415,7 +415,7 @@
       border-radius: 2px;
       background: rgba(255, 255, 255, .06);
       border: 1px solid var(--border);
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
     }
 
     .futag.air {
@@ -431,21 +431,26 @@
     .fcard-pc {
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      max-height: 7em;
+      gap: 4px;
       overflow: hidden;
     }
 
     .pro {
       color: #2ecc71;
-      font-size: clamp(0.48rem, 0.75vw, 0.7rem);
-      line-height: 1.35;
+      font-size: clamp(0.65rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      line-height: 1.4;
+      display: flex;
+      gap: 5px;
     }
 
     .con {
       color: #e74c3c;
-      font-size: clamp(0.48rem, 0.75vw, 0.7rem);
-      line-height: 1.35;
+      font-size: clamp(0.65rem, 0.85vw, 0.82rem);
+      font-weight: 600;
+      line-height: 1.4;
+      display: flex;
+      gap: 5px;
     }
 
     .fcard-matchup {
@@ -456,7 +461,7 @@
     }
 
     .fcard-startres {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       color: var(--gold);
       opacity: .8;
@@ -488,7 +493,7 @@
     }
 
     .faction-vs {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xl);
       color: var(--gold);
       opacity: .4;
@@ -497,7 +502,7 @@
     }
 
     .faction-chosen {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       text-align: center;
       color: var(--dim);
@@ -521,7 +526,7 @@
     }
 
     .mirror-warn {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       color: var(--mid);
       letter-spacing: .1em;
@@ -562,7 +567,7 @@
     }
 
     .tut-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xl);
       color: var(--gold);
       letter-spacing: .15em;
@@ -608,7 +613,7 @@
     }
 
     .tstat-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-sm);
       color: var(--gold);
       letter-spacing: .1em;
@@ -644,7 +649,7 @@
     }
 
     .tut-count {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       color: var(--dim);
       min-width: 65px;
@@ -674,7 +679,7 @@
     }
 
     .ai-label {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xl);
       color: var(--p2);
       letter-spacing: .2em;
@@ -689,7 +694,7 @@
     }
 
     .pers-btn {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.48rem, .7vw, .62rem);
       letter-spacing: .06em;
       padding: 4px 7px;
@@ -723,7 +728,7 @@
     }
 
     .ai-personality-badge {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-sm);
       color: var(--gold);
       letter-spacing: .12em;
@@ -738,7 +743,7 @@
     }
 
     .diff-btn {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       letter-spacing: .1em;
       padding: clamp(6px, .9vh, 12px) clamp(12px, 2vw, 22px);
@@ -762,7 +767,7 @@
     }
 
     .ai-faction-chosen {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       color: var(--dim);
       letter-spacing: .08em;
@@ -771,7 +776,7 @@
     }
 
     .ai-faction-reroll {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       padding: 5px 14px;
       background: rgba(255, 255, 255, .04);
@@ -796,7 +801,7 @@
     }
 
     .mode-btn {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       letter-spacing: .1em;
       padding: 8px 20px;
@@ -966,7 +971,7 @@
       padding: clamp(12px, 2vh, 20px) clamp(14px, 2.5vw, 24px);
       max-width: clamp(260px, 30vw, 380px);
       pointer-events: all;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       box-shadow: 0 8px 40px rgba(0, 0, 0, .8), 0 0 30px rgba(212, 168, 67, .15);
       opacity: 0;
       transform: translateY(8px);
@@ -1012,7 +1017,7 @@
     }
 
     .tut-pop-btn {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       padding: 7px 18px;
       background: rgba(212, 168, 67, .12);
@@ -1075,7 +1080,7 @@
       background: rgba(155, 89, 182, .15);
       border: 1px solid rgba(155, 89, 182, .4);
       color: #c39bd3;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .52rem;
       padding: 1px 5px;
       border-radius: 3px;
@@ -1094,7 +1099,7 @@
       background: rgba(192, 57, 43, .2);
       border: 1px solid rgba(192, 57, 43, .5);
       color: var(--p2);
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .58rem;
       padding: 2px 7px;
       border-radius: 3px;
@@ -1134,7 +1139,7 @@
     }
 
     .ctrl-panel h3 {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-lg);
       letter-spacing: .15em;
     }
@@ -1214,7 +1219,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.3rem, .5vw, .45rem);
       color: rgba(255, 255, 255, .5);
       letter-spacing: .1em;
@@ -1233,7 +1238,7 @@
       top: clamp(10px, 1.5vh, 16px);
       left: 50%;
       transform: translateX(-50%);
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       letter-spacing: .15em;
       text-shadow: 0 0 10px currentColor;
@@ -1275,7 +1280,7 @@
     }
 
     .kf-item {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       text-align: right;
       animation: kfFade 2.8s ease-out forwards;
@@ -1309,7 +1314,7 @@
 
     .rpop {
       position: absolute;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-sm);
       font-weight: 700;
       pointer-events: none;
@@ -1382,7 +1387,7 @@
     }
 
     .pause-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xxl);
       color: var(--gold);
       letter-spacing: .3em;
@@ -1399,7 +1404,7 @@
       bottom: calc(var(--hud) + 4px);
       left: 50%;
       transform: translateX(-50%);
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       color: #e74c3c;
       opacity: 0;
@@ -1446,7 +1451,7 @@
     }
 
     .vote-header {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.7rem, 1.4vw, .95rem);
       letter-spacing: .3em;
       color: rgba(255, 255, 255, .55);
@@ -1478,14 +1483,14 @@
     }
 
     .vote-card-key {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.6rem, 1.1vw, .78rem);
       letter-spacing: .1em;
       color: var(--gold);
     }
 
     .vote-card-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.8rem, 1.6vw, 1.1rem);
       font-weight: 700;
       text-align: center;
@@ -1500,7 +1505,7 @@
     }
 
     .vote-timer {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1rem, 2vw, 1.4rem);
       font-weight: 900;
       color: var(--gold);
@@ -1510,7 +1515,7 @@
     }
 
     .vote-tally {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.62rem, 1.1vw, .8rem);
       color: rgba(255, 255, 255, .55);
       letter-spacing: .06em;
@@ -1537,7 +1542,7 @@
     }
 
     .ev-label {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       letter-spacing: .3em;
       color: rgba(255, 255, 255, .55);
@@ -1546,7 +1551,7 @@
     }
 
     .ev-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1.1rem, 2.8vw, 1.8rem);
       letter-spacing: .18em;
       font-weight: 900;
@@ -1597,7 +1602,7 @@
     }
 
     .ls-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xxl);
       letter-spacing: .3em;
       font-weight: 900;
@@ -1631,7 +1636,7 @@
     }
 
     .ls-sub {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-lg);
       color: var(--gold);
       letter-spacing: .2em;
@@ -1691,7 +1696,7 @@
     }
 
     .pname {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.9rem, 1.5vw, 1.4rem);
       font-weight: 700;
       letter-spacing: .18em;
@@ -1752,7 +1757,7 @@
     }
 
     .rval {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1.2rem, 2.2vw, 2rem);
       font-weight: 700;
       line-height: 1.1;
@@ -1768,20 +1773,20 @@
 
     .income-rate {
       font-size: clamp(.7rem, 1.05vw, .92rem);
-      color: rgba(212, 168, 67, .75);
+      color: rgba(212,168,67,.75);
       letter-spacing: .04em;
       padding-left: 2px;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
     }
 
     /* Rotating in-game tip bar — lives below income rate */
     .ingame-tip {
       font-size: clamp(.72rem, 1.1vw, .9rem);
-      color: rgba(255, 255, 255, .72);
+      color: rgba(255,255,255,.72);
       letter-spacing: .025em;
       padding: 3px 6px 2px;
-      background: rgba(0, 0, 0, .28);
-      border-left: 2px solid rgba(212, 168, 67, .45);
+      background: rgba(0,0,0,.28);
+      border-left: 2px solid rgba(212,168,67,.45);
       border-radius: 0 3px 3px 0;
       margin-top: 2px;
       white-space: nowrap;
@@ -1826,7 +1831,7 @@
     }
 
     .hp-txt {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.85rem, 1.3vw, 1.2rem);
       font-weight: 700;
       min-width: 2.2em;
@@ -1835,7 +1840,7 @@
     }
 
     .guard-timer {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.68rem, 1vw, .9rem);
       color: var(--gold);
       display: none;
@@ -1851,7 +1856,7 @@
 
     .unit-count,
     .worker-count {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.68rem, 1vw, .9rem);
       padding: 3px 7px;
       border-radius: 3px;
@@ -1866,7 +1871,7 @@
     }
 
     .desperation-badge {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       padding: 2px 5px;
       border-radius: 3px;
@@ -1898,7 +1903,7 @@
     }
 
     .hud-tab {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.78rem, 1.1vw, 1rem);
       padding: 4px 10px;
       border-radius: 2px;
@@ -1923,7 +1928,7 @@
     /* UNIT GRID */
     .unit-grid {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: var(--gap);
       flex: 1;
       min-height: 0;
@@ -2049,7 +2054,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.28rem, .45vw, .4rem);
       color: #e74c3c;
       background: rgba(0, 0, 0, .7);
@@ -2063,7 +2068,7 @@
     }
 
     .uname {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.72rem, 1.1vw, 1rem);
       color: #ccc;
       text-align: center;
@@ -2080,8 +2085,8 @@
     }
 
     .ctag {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(.55rem, 0.8vw, .85rem);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.68rem, 1vw, .9rem);
       padding: 1px clamp(2px, .3vw, 4px);
       border-radius: 2px;
     }
@@ -2105,7 +2110,7 @@
       font-size: clamp(.5rem, .7vw, .65rem);
       padding: 2px 5px;
       border-radius: 2px;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       opacity: .85;
     }
 
@@ -2190,7 +2195,7 @@
     }
 
     .upcard-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.85rem, 1.3vw, 1.1rem);
       color: var(--gold);
       letter-spacing: .06em;
@@ -2218,7 +2223,7 @@
       right: 4px;
       font-size: clamp(.55rem, .75vw, .68rem);
       color: #2ecc71;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
     }
 
     .upcard.no-afford-shake {
@@ -2276,7 +2281,7 @@
     }
 
     .bfcard-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1rem, 1.5vw, 1.3rem);
       color: var(--gold);
       letter-spacing: .05em;
@@ -2292,7 +2297,7 @@
     }
 
     .bfcard-cost {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1rem, 1.4vw, 1.2rem);
       color: var(--soul);
     }
@@ -2329,7 +2334,7 @@
     }
 
     .usp-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.75rem, 1.2vw, 1.1rem);
       color: var(--gold);
       letter-spacing: .06em;
@@ -2349,14 +2354,14 @@
     }
 
     .usp-label {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.68rem, 1.1vw, .95rem);
       color: var(--dim);
       letter-spacing: .07em;
     }
 
     .usp-val {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.68rem, 1.1vw, .95rem);
       color: var(--text);
       font-weight: 700;
@@ -2380,7 +2385,7 @@
     }
 
     .usp-cost {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.62rem, .95vw, .85rem);
       color: var(--gold);
       text-align: center;
@@ -2440,7 +2445,7 @@
     }
 
     .dev-btn {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .62rem;
       background: rgba(255, 255, 255, .08);
       border: 1px solid #555;
@@ -2460,7 +2465,7 @@
     }
 
     .dev-inp {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .65rem;
       background: #1a1a1a;
       border: 1px solid #444;
@@ -2499,7 +2504,7 @@
     }
 
     .rebind-head {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       font-weight: 700;
       margin-bottom: 4px;
@@ -2514,7 +2519,7 @@
     }
 
     .rkey {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
       background: rgba(255, 255, 255, .07);
       border: 1.5px solid var(--border);
@@ -2558,7 +2563,7 @@
     }
 
     .rebind-section-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-sm);
       color: var(--gold);
       border-top: 1px solid var(--border);
@@ -2650,7 +2655,7 @@
     }
 
     .go-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xxl);
       letter-spacing: .2em;
       text-shadow: 0 0 40px currentColor;
@@ -2664,7 +2669,7 @@
 
     .go-time-row {
       text-align: center;
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       color: var(--gold);
       text-align: center;
@@ -2715,7 +2720,7 @@
     }
 
     .go-stat-label {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-sm);
       color: var(--dim);
       letter-spacing: .1em;
@@ -2723,7 +2728,7 @@
     }
 
     .go-stat-val {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-lg);
       font-weight: 700;
     }
@@ -2748,7 +2753,7 @@
     }
 
     .tt-name {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-md);
       color: var(--gold);
       margin-bottom: 6px;
@@ -2782,7 +2787,7 @@
     }
 
     .t-screen-title {
-      font-family: 'Cinzel', serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1.3rem, 2.5vw, 2rem);
       color: var(--gold);
       letter-spacing: .14em;
@@ -2816,7 +2821,7 @@
     }
 
     .t-form-label {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .85rem;
       color: var(--gold);
       letter-spacing: .08em;
@@ -2826,7 +2831,7 @@
       background: #0d0d18;
       border: 1px solid var(--border);
       color: #fff;
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: 1rem;
       padding: 10px 14px;
       border-radius: 6px;
@@ -2876,7 +2881,7 @@
     }
 
     .t-faction-name {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.52rem, .9vw, .72rem);
       color: var(--dim);
       margin-top: 6px;
@@ -2891,7 +2896,7 @@
       background: rgba(212, 168, 67, .12);
       border: 1px solid rgba(212, 168, 67, .4);
       color: var(--gold);
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .95rem;
       padding: 12px;
       border-radius: 6px;
@@ -2935,7 +2940,7 @@
     }
 
     .t-player-num {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .8rem;
       color: var(--gold);
       min-width: 24px;
@@ -2950,13 +2955,13 @@
     }
 
     .t-player-name {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .95rem;
       color: var(--text);
     }
 
     .t-player-faction-name {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .72rem;
       color: var(--dim);
     }
@@ -2986,7 +2991,7 @@
       background: linear-gradient(135deg, rgba(212, 168, 67, .2), rgba(212, 168, 67, .08));
       border: 2px solid var(--gold);
       color: var(--gold);
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: 1rem;
       padding: 13px 36px;
       border-radius: 7px;
@@ -3006,7 +3011,7 @@
     }
 
     .t-hint {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .78rem;
       color: rgba(255, 255, 255, .4);
       letter-spacing: .06em;
@@ -3040,7 +3045,7 @@
     }
 
     .t-round-label {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .95rem;
       font-weight: 700;
       color: rgba(212, 168, 67, .85);
@@ -3071,7 +3076,7 @@
 
     .t-slot {
       padding: 8px 12px;
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .85rem;
       display: flex;
       align-items: center;
@@ -3106,7 +3111,7 @@
     }
 
     .t-match-label {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .7rem;
       color: rgba(212, 168, 67, .65);
       padding: 4px 8px;
@@ -3139,7 +3144,7 @@
     }
 
     .t-current-match-info {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .95rem;
       color: var(--text);
       flex: 1;
@@ -3172,7 +3177,7 @@
     }
 
     .t-prematch-round {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .65rem;
       color: rgba(212, 168, 67, .7);
       letter-spacing: .15em;
@@ -3198,28 +3203,28 @@
     }
 
     .t-prematch-name {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.8rem, 1.8vw, 1.2rem);
       color: #fff;
       margin-top: 4px;
     }
 
     .t-prematch-faction {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .6rem;
       color: var(--gold);
       opacity: .8;
     }
 
     .t-prematch-vs-text {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1.2rem, 3vw, 2rem);
       color: var(--gold);
       font-weight: 900;
     }
 
     .t-prematch-tagline {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .65rem;
       color: rgba(255, 255, 255, .5);
       letter-spacing: .06em;
@@ -3227,7 +3232,7 @@
     }
 
     .t-prematch-countdown {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(3rem, 8vw, 6rem);
       color: var(--gold);
       text-shadow: 0 0 30px rgba(212, 168, 67, .6);
@@ -3242,7 +3247,7 @@
       background: linear-gradient(135deg, rgba(212, 168, 67, .25), rgba(212, 168, 67, .1));
       border: 2px solid var(--gold);
       color: var(--gold);
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .85rem;
       padding: 12px 36px;
       border-radius: 6px;
@@ -3289,7 +3294,7 @@
     }
 
     .t-celeb-title {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.7rem, 1.5vw, 1rem);
       color: rgba(212, 168, 67, .7);
       letter-spacing: .18em;
@@ -3297,7 +3302,7 @@
     }
 
     .t-celeb-name {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1.8rem, 5vw, 3.5rem);
       color: var(--gold);
       text-shadow: 0 0 40px rgba(212, 168, 67, .7);
@@ -3306,14 +3311,14 @@
     }
 
     .t-celeb-faction {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(1rem, 2vw, 1.4rem);
       color: var(--text);
       margin-bottom: 20px;
     }
 
     .t-celeb-sub {
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .65rem;
       color: rgba(255, 255, 255, .4);
       letter-spacing: .08em;
@@ -3334,7 +3339,7 @@
       border: 1px solid rgba(212, 168, 67, .5);
       border-radius: 6px;
       padding: 8px 18px;
-      font-family: Cinzel, serif;
+      font-family: 'Rajdhani', sans-serif;
       font-size: .72rem;
       color: var(--gold);
       letter-spacing: .06em;
@@ -3369,7 +3374,7 @@
         </div>
       </div>
       <div
-        style="margin-top:14px;font-family:Cinzel,serif;font-size:.65rem;color:rgba(212,168,67,.55);letter-spacing:.08em;text-align:center;line-height:1.8;">
+        style="margin-top:14px;font-family:Rajdhani,sans-serif;font-size:.65rem;color:rgba(212,168,67,.55);letter-spacing:.08em;text-align:center;line-height:1.8;">
         P1: WASD + Q TO SPAWN &nbsp;·&nbsp; P2: ↑↓←→ + ENTER &nbsp;·&nbsp; KEYBOARD ONLY</div>
     </div>
   </div>
@@ -3447,13 +3452,13 @@
       </div>
       <div
         style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:30px;min-width:clamp(60px,8vw,100px);">
-        <div style="font-family:'Cinzel',serif;font-size:clamp(1rem,2.5vw,1.8rem);color:var(--gold);opacity:.35;">VS
+        <div style="font-family:'Rajdhani', sans-serif;font-size:clamp(1rem,2.5vw,1.8rem);color:var(--gold);opacity:.35;">VS
         </div>
         <div id="draft-p1-status"
-          style="font-family:'Cinzel',serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p1);letter-spacing:.07em;text-align:center;min-height:2.5em;">
+          style="font-family:'Rajdhani', sans-serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p1);letter-spacing:.07em;text-align:center;min-height:2.5em;">
         </div>
         <div id="draft-p2-status"
-          style="font-family:'Cinzel',serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p2);letter-spacing:.07em;text-align:center;min-height:2.5em;">
+          style="font-family:'Rajdhani', sans-serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p2);letter-spacing:.07em;text-align:center;min-height:2.5em;">
         </div>
       </div>
       <div class="faction-side">
@@ -3464,7 +3469,7 @@
     <div class="faction-footer">
       <button class="btn" id="btn-draft-back">← BACK</button>
       <span id="draft-footer-hint"
-        style="font-family:'Cinzel',serif;font-size:clamp(.55rem,.9vw,.72rem);color:var(--dim);letter-spacing:.07em;text-align:center;"></span>
+        style="font-family:'Rajdhani', sans-serif;font-size:clamp(.55rem,.9vw,.72rem);color:var(--dim);letter-spacing:.07em;text-align:center;"></span>
       <button class="btn primary" id="btn-draft-start" disabled>START BATTLE →</button>
     </div>
   </div>
@@ -3474,10 +3479,10 @@
 
   <!-- Dev tip box -->
   <div id="dev-tip-box"
-    style="display:none;position:fixed;z-index:10001;background:#1a1a2e;border:1px solid #f39c12;color:#fff;font-family:Cinzel,serif;font-size:.72rem;padding:5px 9px;border-radius:4px;max-width:220px;pointer-events:none;">
+    style="display:none;position:fixed;z-index:10001;background:#1a1a2e;border:1px solid #f39c12;color:#fff;font-family:Rajdhani,sans-serif;font-size:.72rem;padding:5px 9px;border-radius:4px;max-width:220px;pointer-events:none;">
   </div>
   <div id="dev-panel"
-    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:320px;min-height:200px;max-width:min(90vw,780px);background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Cinzel,serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:visible;flex-direction:column;box-sizing:border-box;">
+    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:320px;min-height:200px;max-width:min(90vw,780px);background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Rajdhani,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:visible;flex-direction:column;box-sizing:border-box;">
     <!-- Drag handle -->
     <div id="dev-drag-bar"
       style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#12120a;border-bottom:1px solid #333;cursor:grab;user-select:none;">
@@ -3486,10 +3491,10 @@
       <div style="display:flex;gap:6px;">
         <button
           onclick="if(G){G.paused=!G.paused;document.getElementById('pause-overlay').classList.toggle('show',G.paused);document.getElementById('dev-paused-badge').style.display=G.paused?'inline':'none';}"
-          style="background:#222;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Cinzel,serif;font-size:.7rem;"
+          style="background:#222;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Rajdhani,sans-serif;font-size:.7rem;"
           title="Toggle game pause">⏸ PAUSE</button>
         <button onclick="document.getElementById('dev-panel').style.display='none'"
-          style="background:#333;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Cinzel,serif;font-size:.7rem;">✕</button>
+          style="background:#333;color:#fff;border:1px solid #555;padding:4px 10px;border-radius:3px;cursor:pointer;font-family:Rajdhani,sans-serif;font-size:.7rem;">✕</button>
       </div>
     </div>
     <div
@@ -3665,7 +3670,7 @@
       <div class="pause-title">PAUSED</div>
       <div class="pause-sub">Press ESC to resume</div>
       <button onclick="triggerRagequit()"
-        style="font-family:Cinzel,serif;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border:2px solid #8B0000;padding:10px 28px;border-radius:5px;cursor:pointer;font-size:.85rem;letter-spacing:.12em;margin-top:8px;transition:all .15s;"
+        style="font-family:Rajdhani,sans-serif;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border:2px solid #8B0000;padding:10px 28px;border-radius:5px;cursor:pointer;font-size:.85rem;letter-spacing:.12em;margin-top:8px;transition:all .15s;"
         onmouseover="this.style.borderColor='#ff0000';this.style.color='#ff0000';"
         onmouseout="this.style.borderColor='#8B0000';this.style.color='#ff4444';">☠ RAGEQUIT</button>
     </div>
@@ -3789,7 +3794,7 @@
         <div class="t-form-label">PLAYERS <span id="t-player-count" style="color:var(--text)">(0/10)</span></div>
         <div id="t-players-list-body" style="display:flex;flex-direction:column;gap:6px;min-height:60px;"></div>
         <div id="t-players-empty"
-          style="font-family:Cinzel,serif;font-size:.6rem;color:rgba(255,255,255,.25);text-align:center;padding:20px 0;">
+          style="font-family:Rajdhani,sans-serif;font-size:.6rem;color:rgba(255,255,255,.25);text-align:center;padding:20px 0;">
           No players added yet</div>
       </div>
     </div>
@@ -3855,7 +3860,7 @@
       <p class="go-sub" id="go-sub-text">Get rekt.</p>
       <p class="go-sub" id="go-grudge-taunt" style="font-size:.8em;opacity:.7;min-height:1.2em;margin-top:2px;"></p>
       <div class="go-time-row" id="go-match-time"
-        style="text-align:center;font-family:Cinzel,serif;font-size:clamp(1rem,1.5vw,1.3rem);color:var(--gold);margin:8px 0 14px;letter-spacing:.08em;">
+        style="text-align:center;font-family:Rajdhani,sans-serif;font-size:clamp(1rem,1.5vw,1.3rem);color:var(--gold);margin:8px 0 14px;letter-spacing:.08em;">
       </div>
       <div class="go-stats" id="go-stats"></div>
       <div class="go-btns">
@@ -4806,7 +4811,7 @@
     const TUT = [
       { render(el) { el.innerHTML = `<div class="tut-title">WELCOME TO BEYOND KINGS' CONQUEST</div><div class="tut-sub">A TWO-PLAYER REAL-TIME STRATEGY GAME</div><div class="tut-body">Two players face off across a battlefield, spending <b>💀 Souls</b> and <b>🦴 Bodies</b> to spawn units that automatically fight toward the enemy base. Destroy the enemy base to win.<br><br>Controls are entirely keyboard-based — no mouse required during gameplay. Use the ← PREV / NEXT → buttons or <kbd>Arrow Keys</kbd> to navigate.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">💀</div><div class="tstat-name">SOULS</div><div class="tstat-desc">Primary currency. Earned passively, from kills, and by holding mid.</div></div><div class="tstat"><div class="tstat-icon">🦴</div><div class="tstat-name">BODIES</div><div class="tstat-desc">Secondary currency. Earned over time and brought in by workers.</div></div><div class="tstat"><div class="tstat-icon">🏰</div><div class="tstat-name">BASE</div><div class="tstat-desc">Your base has 100 HP. When it hits 0, you lose. Protect it at all costs.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE', 'Desperation stacks. Appear if enemy holds mid for 15+ seconds. Gives bonus souls.'], ['💀/s Rate', 'Shows your current soul income per second in real time.'], ['Stat Panel', 'Shows stats for your currently selected unit card on the right side.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:120px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and bring back 3 bodies per trip. Deploy up to 3 workers — more workers means faster body income.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +1.2/s more<br>Each desp stack: +0.4/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Worker trips: +3 per trip<br>1 worker ≈ +4.5/min<br>3 workers ≈ +13.5/min</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body">Workers automatically walk off-screen to collect bodies and return with 3 per trip. They can also head to the mid-field if you control the mid point, bringing back 4+ bodies per trip depending on your faction.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers are cheap — deploy them early and keep them alive.<br><br>Workers cannot be directly attacked by enemy units. However, they CAN be caught in area-of-effect damage (explosions, aura). Keep them away from combat. Some factions' workers have very low HP — losing them means losing body income.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⛏</span>Worker → off-screen → returns with 2 bodies<br>Mid-owned worker → returns with 3 bodies</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>TAB</kbd> (or <kbd>ENTER</kbd>) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
@@ -4819,7 +4824,7 @@
       { render(el) { el.innerHTML = `<div class="tut-title">FOCUS FIRE & BLOCKING</div><div class="tut-sub">ARMY DIVERSITY IS REWARDED</div><div class="tut-body"><b>Focus Fire Penalty:</b> When 3 or more ranged units target the same enemy, each attacker beyond the 2nd deals progressively less damage (80% → 65% → 50%). Spamming 8 archers at one target is less effective than a mix.<br><br><b>Projectile Blocking:</b> Enemy frontline melee units can block or deflect incoming ranged projectiles. 65% chance to reduce the shot by 40%, 35% chance to absorb it entirely. A wall of melee protects units behind it.<br><br>Together these systems mean: <b>mix your army</b>.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🛡️</span>Melee wall = natural shield<br>vs ranged spam</div><div class="hl-box"><span class="hl-icon">🎯</span>3+ on one target<br>= diminishing returns</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">LAST STAND</div><div class="tut-sub">THE DESPERATE DEFENSE</div><div class="tut-body">When your base falls to <b>30 HP</b>, Last Stand triggers automatically:<br><br>• You receive <b>+40 souls instantly</b><br>• Your faction's <b>Royal Guard</b> units are summoned (3 powerful temporary units)<br>• Royal Guards despawn after 30 seconds<br>• This can only trigger <b>once per game</b><br><br>Last Stand is your moment to turn the tide. Use the souls wisely — spawn your best units. The guard timer shows in your HUD.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">👑</span>Base ≤ 30 HP → Last Stand!<br>+40💀 + Royal Guards spawned<br><span style="font-size:var(--fs-xs);color:var(--dim);">Guard timer shown in HUD bottom panel</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SIEGE DECAY</div><div class="tut-sub">THE CLOCK IS TICKING</div><div class="tut-body">After <b>3 minutes</b> of gameplay, Siege Decay begins: both bases slowly lose HP over time. After <b>6 minutes</b>, the rate doubles.<br><br>This forces decisive action — you cannot turtle forever. The longer the game goes, the more your base crumbles even without enemy attacks.<br><br>The indicator at the top of the screen shows when Siege Decay is active.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⏳</span>3min: Decay starts (-0.02 HP/s)<br>6min: Decay doubles (-0.04 HP/s)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Both bases decay equally — no advantage to stalling</span></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">FACTIONS</div><div class="tut-sub">10 FACTIONS — EACH PLAYS DIFFERENTLY</div><div class="tut-body">Choose your faction before each battle. Each faction has:</div><div class="tut-visual" style="flex-direction:column;gap:8px;text-align:left;max-width:600px;margin:0 auto;">${[['Unique Passive', 'A powerful ability that triggers automatically based on how you play.'], ['5 Units', 'Workers, melee, ranged, aerial, and special units unique to your faction.'], ['3 Upgrades', 'Permanent army improvements bought mid-game. High cost, major reward.'], ['Royal Guard', '3 powerful temporary units summoned during Last Stand.'], ['Matchup Notes', 'Each faction has natural advantages and disadvantages against others.']].map(([k, v]) => `<div style="display:flex;gap:10px;"><div style="min-width:140px;font-family:Cinzel,serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">FACTIONS</div><div class="tut-sub">10 FACTIONS — EACH PLAYS DIFFERENTLY</div><div class="tut-body">Choose your faction before each battle. Each faction has:</div><div class="tut-visual" style="flex-direction:column;gap:8px;text-align:left;max-width:600px;margin:0 auto;">${[['Unique Passive', 'A powerful ability that triggers automatically based on how you play.'], ['5 Units', 'Workers, melee, ranged, aerial, and special units unique to your faction.'], ['3 Upgrades', 'Permanent army improvements bought mid-game. High cost, major reward.'], ['Royal Guard', '3 powerful temporary units summoned during Last Stand.'], ['Matchup Notes', 'Each faction has natural advantages and disadvantages against others.']].map(([k, v]) => `<div style="display:flex;gap:10px;"><div style="min-width:140px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SUMMONER FACTION</div><div class="tut-sub">UNIQUE: PASSIVE SHADE SUMMONING</div><div class="tut-body">The Necromancer unit has two ways to summon Shades:<br><br>• <b>On kill:</b> Summons 2 Shades when it lands the killing blow<br>• <b>Passive:</b> Every 12 seconds, automatically summons 1 Shade (shown as a purple bar under the unit's HP bar on screen)<br><br>Shades have a cap (12 by default, raised to 16 with Dark Covenant upgrade). The Death Frenzy passive gives all nearby allies a +15% attack speed boost whenever any friendly unit dies.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🔮</span>Necromancer: passive summon every 12s<br><span style="font-size:var(--fs-xs);color:var(--dim);">Purple bar below HP = summon countdown</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">MENDERS FACTION</div><div class="tut-sub">UNIQUE: RETREAT AND RETURN</div><div class="tut-body">The Menders have a unique mechanic — their units retreat when damaged instead of dying:<br><br>• Units below <b>35% HP</b> automatically turn and run back to base<br>• At base, they heal gradually over 6 seconds (vulnerable during this time!)<br>• After fully healed, they rejoin the fight and a <b>18s retreat cooldown</b> begins<br>• Veteran units gain a permanent <b>+10% DMG</b> each time they successfully retreat and return (max 3 times)<br><br>The Cleric fires healing projectiles at the lowest-HP friendly unit. The Seraph heals nearby allies on every attack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💚</span>Unit below 35% HP → retreats<br>Heals fully → returns stronger</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">KEY BINDINGS &amp; HOTKEYS</div><div class="tut-sub">CUSTOMISE YOUR CONTROLS</div><div class="tut-body">All controls can be rebound from the main menu's <b>⌨️ KEY Bindings</b> screen.<br><br>You can also assign <b>Direct Spawn Hotkeys</b> — optional keys that instantly spawn a specific unit slot without navigating the menu. For example, bind <kbd>Q</kbd> to Unit Slot 1 and tap it to immediately spawn your first unit.<br><br>Slot labels show the actual unit names if you've already picked a faction. Hotkeys are unassigned by default and reset on page refresh.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⌨️</span>Navigate = WASD / Arrow Keys<br>Direct spawn = any key (optional)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Controls screen updates live with your bindings</span></div></div>`; } },
@@ -5518,14 +5523,14 @@
       const can0 = p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost; // War Cry
       const can1 = p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost; // Iron Wall
       const can2 = p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost; // Body Boon
-      const winning = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
-      const winningBig = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
-      const losing = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
-      const losingBadly = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
-      const midOwned = G.midOwner === pid;
-      const lowBodies = p.bodies < 8;
-      const critBodies = p.bodies < 4; // critically low
-      const richSouls = p.souls > bf[2].cost + 20;
+      const winning      = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
+      const winningBig   = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
+      const losing       = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
+      const losingBadly  = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
+      const midOwned     = G.midOwner === pid;
+      const lowBodies    = p.bodies < 8;
+      const critBodies   = p.bodies < 4; // critically low
+      const richSouls    = p.souls > bf[2].cost + 20;
       const pushingSouls = p.souls > bf[2].cost + 40; // very rich
 
       if (diff === 'expert') {
@@ -5851,7 +5856,7 @@
         if (!specBadge) {
           const b = document.createElement('div');
           b.id = 'aivsai-spectate-badge';
-          b.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(0,0,0,.7);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Cinzel,serif;font-size:.65rem;padding:3px 12px;border-radius:10px;letter-spacing:.1em;pointer-events:none;';
+          b.style.cssText = 'position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(0,0,0,.7);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Rajdhani,sans-serif;font-size:.65rem;padding:3px 12px;border-radius:10px;letter-spacing:.1em;pointer-events:none;';
           b.textContent = '👁 SPECTATING — AI vs AI';
           document.getElementById('sc-game').appendChild(b);
         }
@@ -6113,6 +6118,8 @@
         const grid = document.getElementById(`p${pid}-grid`);
         grid.innerHTML = '';
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+        const totalCols = defs.length + (GAME_MODE !== 'tutorial' ? 1 : 0);
+        grid.style.gridTemplateColumns = `repeat(${totalCols}, 1fr)`;
         defs.forEach((def, i) => {
           const card = document.createElement('div');
           card.className = 'ucard'; card.dataset.idx = i;
@@ -6425,7 +6432,7 @@
                 const filled = pct * C;
                 ringEl.innerHTML = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,220,0,.9)" stroke-width="3" stroke-dasharray="${filled} ${C}" stroke-linecap="round" transform="rotate(-90 20 20)"/></svg>`;
                 const cdTxt = card.querySelector('.bfcard-cd-txt') || document.createElement('span');
-                cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:3px;right:4px;font-size:.55rem;color:#ffe040;font-family:Cinzel,serif;font-weight:bold;';
+                cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:3px;right:4px;font-size:.55rem;color:#ffe040;font-family:Rajdhani,sans-serif;font-weight:bold;';
                 cdTxt.textContent = Math.ceil(dur) + 's';
                 if (!card.contains(cdTxt)) card.appendChild(cdTxt);
               } else if (cd > 0) {
@@ -6434,7 +6441,7 @@
                 const filled = pct * C;
                 ringEl.innerHTML = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3" stroke-dasharray="${C} 0"/><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(212,168,67,.75)" stroke-width="3" stroke-dasharray="${filled} ${C}" stroke-linecap="round" transform="rotate(-90 20 20)"/></svg>`;
                 const cdTxt = card.querySelector('.bfcard-cd-txt') || document.createElement('span');
-                cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:3px;right:4px;font-size:.55rem;color:var(--gold);font-family:Cinzel,serif;';
+                cdTxt.className = 'bfcard-cd-txt'; cdTxt.style.cssText = 'position:absolute;bottom:3px;right:4px;font-size:.55rem;color:var(--gold);font-family:Rajdhani,sans-serif;';
                 cdTxt.textContent = Math.ceil(cd) + 's';
                 if (!card.contains(cdTxt)) card.appendChild(cdTxt);
               } else {
@@ -8561,7 +8568,7 @@
       const barAbove = wy - 32;
       const barw = bw + 18, barx = x - barw / 2;
       // Player label
-      ctx.fillStyle = col; ctx.font = `bold ${Math.max(10, G.w * .0095)}px Cinzel,serif`;
+      ctx.fillStyle = col; ctx.font = `bold ${Math.max(10, G.w * .0095)}px Rajdhani,sans-serif`;
       ctx.textAlign = 'center'; ctx.fillText('P' + p.id, x, barAbove - 6);
       // HP bar
       const bary = barAbove;
@@ -8817,7 +8824,7 @@
         }
         // Focused marker
         if (u._focused) {
-          ctx.fillStyle = 'rgba(212,168,67,0.9)'; ctx.font = `bold ${Math.max(7, r * .7)}px Cinzel,serif`;
+          ctx.fillStyle = 'rgba(212,168,67,0.9)'; ctx.font = `bold ${Math.max(7, r * .7)}px Rajdhani,sans-serif`;
           ctx.textAlign = 'center'; ctx.fillText('FOCUSED', x, y - r * 2);
         }
       }
@@ -8873,7 +8880,7 @@
             const labelY = u.def.aerial ? y - r * 1.9 : y - r - 10;
             ctx.save();
             ctx.globalAlpha = 0.55;
-            ctx.font = `bold 6px Cinzel,serif`;
+            ctx.font = `bold 6px Rajdhani,sans-serif`;
             ctx.textAlign = 'center';
             ctx.fillStyle = u.player === 1 ? '#88b8d8' : '#d89888';
             ctx.fillText(typeLabel, x, labelY);
@@ -8898,7 +8905,7 @@
         ctx.fillRect(x - r - 2, y - r - 12, (r + 2) * 2 * (u.hp / u.maxHp), 4);
         // "BOUNTY" label
         ctx.save();
-        ctx.font = `bold ${Math.max(7, r * .65)}px Cinzel,serif`;
+        ctx.font = `bold ${Math.max(7, r * .65)}px Rajdhani,sans-serif`;
         ctx.textAlign = 'center'; ctx.fillStyle = '#f39c12';
         ctx.shadowColor = '#d4a843'; ctx.shadowBlur = 8;
         ctx.fillText('BOUNTY +25💀', x, y - r - 16);
@@ -9028,7 +9035,7 @@
           const gameMin = Math.floor((_G.elapsed || 0) / 60), gameSec2 = Math.floor((_G.elapsed || 0) % 60);
           document.getElementById('go-match-time').textContent = `⚔ Draw after ${gameMin}m ${String(gameSec2).padStart(2, '0')}s`;
           document.getElementById('go-match-time').style.color = '#f39c12';
-          document.getElementById('go-stats').innerHTML = '<div style="text-align:center;color:var(--gold);font-family:Cinzel,serif;font-size:1rem;padding:30px;">Both players destroyed each other at the same moment.<br>A rare outcome. Respect.</div>';
+          document.getElementById('go-stats').innerHTML = '<div style="text-align:center;color:var(--gold);font-family:Rajdhani,sans-serif;font-size:1rem;padding:30px;">Both players destroyed each other at the same moment.<br>A rare outcome. Respect.</div>';
         }, 1650);
         return;
       }
@@ -9122,7 +9129,7 @@
         if (!sesEl) {
           sesEl = document.createElement('div');
           sesEl.id = 'go-session-record';
-          sesEl.style.cssText = 'text-align:center;font-family:Cinzel,serif;font-size:.65rem;color:rgba(212,168,67,.7);letter-spacing:.07em;margin-bottom:6px;';
+          sesEl.style.cssText = 'text-align:center;font-family:Rajdhani,sans-serif;font-size:.65rem;color:rgba(212,168,67,.7);letter-spacing:.07em;margin-bottom:6px;';
           document.getElementById('go-match-time').insertAdjacentElement('afterend', sesEl);
         }
         if (SESSION.games > 1) {
@@ -9155,7 +9162,7 @@
               </span>
             </div>`;
           }).filter(Boolean).join('');
-          return rows ? `<div class="go-stat-section"><div style="font-family:Cinzel,serif;font-size:.7rem;color:var(--gold);margin-bottom:2px;">UNIT BREAKDOWN</div>${rows}</div>` : '';
+          return rows ? `<div class="go-stat-section"><div style="font-family:Rajdhani,sans-serif;font-size:.7rem;color:var(--gold);margin-bottom:2px;">UNIT BREAKDOWN</div>${rows}</div>` : '';
         }
         document.getElementById('go-stats').innerHTML =
           `<div style="display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;">` +
@@ -9258,7 +9265,7 @@
               </div>`;
             }).join('');
             return `<div style="margin-top:16px;padding:14px 18px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.22);border-radius:6px;max-width:580px;margin-left:auto;margin-right:auto;">
-              <div style="font-family:Cinzel,serif;font-size:.78rem;color:rgba(212,168,67,.9);letter-spacing:.12em;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(212,168,67,.18);">${GAME_MODE === 'tournament' ? '⚔ UP NEXT IN BRACKET' : '💡 TIPS FROM THIS GAME'}</div>
+              <div style="font-family:Rajdhani,sans-serif;font-size:.78rem;color:rgba(212,168,67,.9);letter-spacing:.12em;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(212,168,67,.18);">${GAME_MODE === 'tournament' ? '⚔ UP NEXT IN BRACKET' : '💡 TIPS FROM THIS GAME'}</div>
               ${tipHtml}
             </div>`;
           })();
@@ -9322,7 +9329,7 @@
       ];
 
       document.getElementById('go-stats').innerHTML =
-        `<div style="text-align:center;color:#f39c12;font-family:Cinzel,serif;font-size:clamp(.75rem,1.1vw,.9rem);margin-bottom:16px;letter-spacing:.1em;">THE OFFICIAL POST-TANTRUM REPORT</div>` +
+        `<div style="text-align:center;color:#f39c12;font-family:Rajdhani,sans-serif;font-size:clamp(.75rem,1.1vw,.9rem);margin-bottom:16px;letter-spacing:.1em;">THE OFFICIAL POST-TANTRUM REPORT</div>` +
         `<div style="display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;">` +
         rqG.players.map(p => {
           const pc = p.id === 1 ? '#2471a3' : '#c0392b';
@@ -9675,11 +9682,11 @@
             <div style="font-size:1.4rem;color:#f39c12;letter-spacing:.1em;">🔒 DEV ACCESS</div>
             <div style="font-size:.75rem;color:#888;">Enter password to unlock</div>
             <input id="dev-pw-input" type="password" placeholder="password"
-              style="font-family:Cinzel,serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:200px;">
+              style="font-family:Rajdhani,sans-serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:200px;">
             <div id="dev-pw-err" style="color:#e74c3c;font-size:.75rem;min-height:1em;"></div>
             <div style="display:flex;gap:8px;">
-              <button id="dev-pw-enter-btn" style="font-family:Cinzel,serif;background:#f39c12;color:#000;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-weight:700;">ENTER</button>
-              <button id="dev-pw-cancel-btn" style="font-family:Cinzel,serif;background:#333;color:#fff;border:1px solid #555;padding:7px 20px;border-radius:4px;cursor:pointer;">CANCEL</button>
+              <button id="dev-pw-enter-btn" style="font-family:Rajdhani,sans-serif;background:#f39c12;color:#000;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-weight:700;">ENTER</button>
+              <button id="dev-pw-cancel-btn" style="font-family:Rajdhani,sans-serif;background:#333;color:#fff;border:1px solid #555;padding:7px 20px;border-radius:4px;cursor:pointer;">CANCEL</button>
             </div>
           </div>`;
         setTimeout(() => {
@@ -9822,7 +9829,7 @@
           const k = `p${pid}Slot${s}`;
           if (KEYS[k]) rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> Spawn Unit ${s + 1}</div>`;
         }
-        return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Cinzel,serif;'>DIRECT SPAWN</div>${rows}` : '';
+        return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Rajdhani,sans-serif;'>DIRECT SPAWN</div>${rows}` : '';
       }
       document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>` +
         kbdRow('Navigate Left', 'p1Left') + kbdRow('Navigate Right', 'p1Right') +
@@ -9933,7 +9940,7 @@
             const cls = u.type === 'air' ? 'air' : u.type === 'rng' ? 'rng' : '';
             return `<span class="futag ${cls}">${u.icon} ${u.name}</span>`;
           }).join('');
-          const beginnerBadge = f.id === 'warriors' ? '<div style="display:inline-block;background:rgba(212,168,67,.18);border:1px solid rgba(212,168,67,.5);color:#d4a843;font-family:Cinzel,serif;font-size:.58rem;padding:2px 7px;border-radius:3px;margin-bottom:4px;letter-spacing:.06em;">⭐ BEGINNER FRIENDLY</div>' : '';
+          const beginnerBadge = f.id === 'warriors' ? '<div style="display:inline-block;background:rgba(212,168,67,.18);border:1px solid rgba(212,168,67,.5);color:#d4a843;font-family:Rajdhani,sans-serif;font-size:.58rem;padding:2px 7px;border-radius:3px;margin-bottom:4px;letter-spacing:.06em;">⭐ BEGINNER FRIENDLY</div>' : '';
           const wins = SESSION.factionWins[f.id] || 0;
           const winBadge = wins > 0 ? `<span class="fcard-win-badge" title="${wins} win${wins !== 1 ? 's' : ''} this session">${wins >= 5 ? '🏆' : '🔥'.repeat(Math.min(wins, 4))} ${wins}W</span>` : '';
           card.innerHTML = `
@@ -9942,8 +9949,8 @@
         <div class="fcard-passive">✦ ${f.passive}</div>
         <div class="fcard-units">${unitTags}</div>
         <div class="fcard-pc">
-          ${f.pros.map(p => `<div class="pro">+ ${p}</div>`).join('')}
-          ${f.cons.map(c => `<div class="con">− ${c}</div>`).join('')}
+          ${f.pros.map(p => `<div class="pro"><span style="opacity:0.7;flex-shrink:0">+</span><span>${p}</span></div>`).join('')}
+          ${f.cons.map(c => `<div class="con"><span style="opacity:0.7;flex-shrink:0">−</span><span>${c}</span></div>`).join('')}
 
         </div>
         <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
@@ -10501,7 +10508,7 @@
           const k = `p${pid}Slot${s}`;
           if (KEYS[k]) rows += `<div class='ctrl-row'><kbd>${formatKey(KEYS[k])}</kbd> Spawn Unit ${s + 1}</div>`;
         }
-        return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Cinzel,serif;'>DIRECT SPAWN</div>${rows}` : '';
+        return rows ? `<div style='margin-top:6px;font-size:var(--fs-xs);color:var(--gold);font-family:Rajdhani,sans-serif;'>DIRECT SPAWN</div>${rows}` : '';
       }
       document.getElementById('ctrl-p1-panel').innerHTML = `<h3>PLAYER 1</h3>
         ${kbdRow('Navigate Left', 'p1Left')}${kbdRow('Navigate Right', 'p1Right')}
@@ -10730,7 +10737,7 @@
           ${devRow('⚔ Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `G.players[${pid - 1}].unitCap=+this.value;updateHUD()`), 'Override unit cap for this player')}
           ${devRow('⛏ Worker Cap', devInp(`d-p${pid}-wcap`, p.workerCap || 3, `G.players[${pid - 1}].workerCap=+this.value;updateHUD()`), 'Override worker cap (default 3→5 over time)')}
           ${devRow('', devBtn('👑 SPAWN GUARD', `G.players[${pid - 1}].lastStandUsed=false;G.players[${pid - 1}].baseHp=31;`, `Trigger last stand + royal guard for P${pid}`) + devBtn('☠ KILL ENEMIES', `G.units.filter(u=>u.player!==${pid}).forEach(u=>{u.hp=0;handleDeath(u,null)})`, `Kill all of Player ${pid === 1 ? 2 : 1}'s units`))}
-          ${devRow('', devBtn(`💣 DESTROY P${pid === 1 ? 2 : 1} BASE`, `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`, `Destroy Player ${pid === 1 ? 2 : 1}'s base — Player ${pid} wins`) + `<input id="dev-p${pid}-dmg" type="number" value="25" min="1" max="100" style="width:52px;background:#111;border:1px solid #555;color:#fff;padding:3px 5px;font-family:Cinzel,serif;font-size:.7rem;border-radius:3px;text-align:center;">` + devBtn(`🩸 HIT OWN BASE`, `const v=+(document.getElementById('dev-p${pid}-dmg').value||25);G.players[${pid - 1}].baseHp=Math.max(0,G.players[${pid - 1}].baseHp-v);updateHUD();`, `Deal custom damage to Player ${pid}'s own base`))}
+          ${devRow('', devBtn(`💣 DESTROY P${pid === 1 ? 2 : 1} BASE`, `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`, `Destroy Player ${pid === 1 ? 2 : 1}'s base — Player ${pid} wins`) + `<input id="dev-p${pid}-dmg" type="number" value="25" min="1" max="100" style="width:52px;background:#111;border:1px solid #555;color:#fff;padding:3px 5px;font-family:Rajdhani,sans-serif;font-size:.7rem;border-radius:3px;text-align:center;">` + devBtn(`🩸 HIT OWN BASE`, `const v=+(document.getElementById('dev-p${pid}-dmg').value||25);G.players[${pid - 1}].baseHp=Math.max(0,G.players[${pid - 1}].baseHp-v);updateHUD();`, `Deal custom damage to Player ${pid}'s own base`))}
           ${devRow('', devBtn(`📋 UNIT LIST`, `openUnitList(${pid})`, `Browse and edit all active units for Player ${pid}`))}`;
       });
       const gs = document.getElementById('dev-game-section');
@@ -10760,7 +10767,7 @@
               'Cause total mayhem on the battlefield')}
         ${devRow('☠ Kill All', devBtn('KILL EVERYONE', "[...G.units].forEach(u=>{spawnParticles(u.x,u.y,'#cc0000',8);handleDeath(u,null)});", 'Instantly kill every unit on both sides'), 'Wipe the entire battlefield')}
 
-        <button id="dev-apply-btn" onclick="_devApplyAll();this.textContent='✅ APPLIED!';setTimeout(()=>this.textContent='✅ APPLY CHANGES',800);" style="width:100%;padding:10px;margin-top:8px;font-family:Cinzel,serif;font-size:.85rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,#f39c12,#e67e22);color:#000;border:none;border-radius:5px;cursor:pointer;transition:background .15s,transform .1s;" onmouseover="this.style.background='#000';this.style.color='#f39c12';this.style.border='1px solid #f39c12';" onmouseout="this.style.background='linear-gradient(135deg,#f39c12,#e67e22)';this.style.color='#000';this.style.border='none';">✅ APPLY CHANGES</button>`;
+        <button id="dev-apply-btn" onclick="_devApplyAll();this.textContent='✅ APPLIED!';setTimeout(()=>this.textContent='✅ APPLY CHANGES',800);" style="width:100%;padding:10px;margin-top:8px;font-family:Rajdhani,sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,#f39c12,#e67e22);color:#000;border:none;border-radius:5px;cursor:pointer;transition:background .15s,transform .1s;" onmouseover="this.style.background='#000';this.style.color='#f39c12';this.style.border='1px solid #f39c12';" onmouseout="this.style.background='linear-gradient(135deg,#f39c12,#e67e22)';this.style.color='#000';this.style.border='none';">✅ APPLY CHANGES</button>`;
     }
 
     function _devApplyAll() {
@@ -10783,7 +10790,7 @@
       const units = G ? G.units.filter(u => u.player === pid && !u.offscreen) : [];
       if (!units.length) { list.innerHTML = `<div style="color:#888;font-size:.75rem;padding:6px;">No active units for Player ${pid}</div>`; return; }
       const pc = pid === 1 ? '#2471a3' : '#c0392b';
-      list.innerHTML = `<div style="font-size:.72rem;color:${pc};font-family:Cinzel,serif;margin-bottom:6px;">PLAYER ${pid} UNITS (${units.length})</div>` +
+      list.innerHTML = `<div style="font-size:.72rem;color:${pc};font-family:Rajdhani,sans-serif;margin-bottom:6px;">PLAYER ${pid} UNITS (${units.length})</div>` +
         units.map((u, i) => {
           const hpPct = Math.round(u.hp / u.maxHp * 100);
           return `<div style="border:1px solid #333;border-radius:4px;padding:6px;margin-bottom:4px;background:rgba(0,0,0,.4)">
@@ -10802,7 +10809,7 @@
             <div style="font-size:.58rem;color:#666;margin-top:2px;">Alive: ${(u.aliveSecs || 0).toFixed(1)}s · Pos: (${Math.round(u.x)}, ${Math.round(u.y)})</div>
           </div>`;
         }).join('') +
-        `<button onclick="openUnitList(${pid})" style="background:#222;color:#888;border:1px solid #333;border-radius:3px;padding:3px 8px;cursor:pointer;font-family:Cinzel,serif;font-size:.65rem;margin-top:4px;">🔄 REFRESH</button>`;
+        `<button onclick="openUnitList(${pid})" style="background:#222;color:#888;border:1px solid #333;border-radius:3px;padding:3px 8px;cursor:pointer;font-family:Rajdhani,sans-serif;font-size:.65rem;margin-top:4px;">🔄 REFRESH</button>`;
     }
 
     buildFactionCards();
