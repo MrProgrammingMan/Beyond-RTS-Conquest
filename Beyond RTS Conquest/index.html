@@ -1923,7 +1923,7 @@
     /* UNIT GRID */
     .unit-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(var(--unit-cols, 5), 1fr);
       gap: var(--gap);
       flex: 1;
       min-height: 0;
