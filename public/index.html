@@ -7783,8 +7783,11 @@
         zones: null,
       };
       // Sudden Death — both bases start at 30 HP (Last Stand triggers immediately)
-      if (GAME_MODE === 'sudden_death') {
-        G.players.forEach(p => { p.baseHp = 30; p.baseMaxHp = 30; });
+      if (GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai') {
+        G.players.forEach(p => {
+          p.baseHp = 30; p.baseMaxHp = 30;
+          p.bodies = 30; // big starting body pool — no workers to earn more
+        });
       }
       // Conquest — 3 zones; bases indestructible until you own 2/3
       if (GAME_MODE === 'conquest') {
@@ -10344,9 +10347,30 @@
 
     function updateEconomy(dt) {
       const gameSec = (Date.now() - G.gameStart) / 1000;
+      const _isSudden = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+
+      // ── SUDDEN DEATH: doom clock + passive body trickle (no workers) ──
+      if (_isSudden) {
+        G.players.forEach(p => {
+          // Passive bodies: 1 every 8s so spending doesn't dead-end
+          p._bodyAccum = (p._bodyAccum || 0) + dt;
+          if (p._bodyAccum >= 8) { p._bodyAccum -= 8; p.bodies = Math.min(99, p.bodies + 1); }
+        });
+        if (gameSec > 90) {
+          const doomSec = gameSec - 90;
+          const doomRate = Math.min(2.0, 0.5 + (doomSec / 60) * 1.5);
+          if (!G._doomAnnounced) {
+            G._doomAnnounced = true;
+            showPopup(G.w / 2, G.groundY - 100, '☠ DOOM CLOCK — BASES CRUMBLING', '#e74c3c', null);
+          }
+          G.players.forEach(p => { if (p.baseHp > 0) p.baseHp = Math.max(1, p.baseHp - doomRate * dt); });
+        }
+      }
+
       G.players.forEach(p => {
         const soulsBefore = p.souls;
-        const earlyBonus = gameSec < 90 ? 0.3 * (1 - gameSec / 90) : 0; // tapers from +0.3 to 0 over 90s
+        const sdMult = _isSudden ? 2.0 : 1.0;
+        const earlyBonus = gameSec < 90 && !_isSudden ? 0.3 * (1 - gameSec / 90) : 0;
         // Mid Escalation: income RAMPS UP the longer you hold — makes recapture increasingly urgent
         if (G.midOwner === p.id) {
           const _prevMHT = G.midOwnerTimer || 0;
@@ -10366,7 +10390,7 @@
             : _mhs < 60 ? 1.5 + ((_mhs - 30) / 30) * 0.5
               : 2.0) : 0;
         const midTaper = _midRaw * (_eclipseActive ? 0.5 : 1.0);
-        const baseTick = (0.45 + earlyBonus + midTaper) * dt;
+        const baseTick = (0.45 + earlyBonus + midTaper) * sdMult * dt;
         const _eclipseDesp = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
         const despTick = (p.despStacks * (_eclipseDesp ? 1.4 : 0.7)) * dt;
         const soulTick = baseTick + despTick;
