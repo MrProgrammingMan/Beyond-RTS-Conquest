@@ -469,16 +469,16 @@
     .menu-btns {
       display: flex;
       flex-direction: column;
-      gap: clamp(4px, .7vh, 9px);
+      gap: clamp(5px, .9vh, 11px);
       align-items: center;
-      width: clamp(240px, 28vw, 360px);
+      width: clamp(260px, 30vw, 400px);
     }
 
     .menu-btns .btn {
       width: 100%;
       text-align: center;
-      font-size: clamp(.8rem, 1.2vw, .96rem);
-      padding: clamp(8px, 1.1vh, 13px) clamp(18px, 2.2vw, 36px);
+      font-size: clamp(.88rem, 1.35vw, 1.08rem);
+      padding: clamp(10px, 1.4vh, 16px) clamp(22px, 2.8vw, 44px);
       letter-spacing: .13em;
     }
 
@@ -3355,7 +3355,7 @@
 
     .menu-btn-sub {
       font-family: Rajdhani, sans-serif;
-      font-size: .62rem;
+      font-size: .72rem;
       color: var(--dim);
       text-align: center;
       letter-spacing: .06em;
@@ -4320,7 +4320,7 @@
           <button class="menu-mode-tab active" id="tab-local" onclick="_menuTab('local')">🎮 LOCAL</button>
           <button class="menu-mode-tab" id="tab-online" onclick="_menuTab('online')">🌐 ONLINE</button>
         </div>
-        <div id="menu-local-btns">
+        <div id="menu-local-btns" style="display:flex;flex-direction:column;gap:inherit;width:100%;">
           <div class="menu-btn-entry"><button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
             <div class="menu-btn-sub">Two players, same keyboard</div>
           </div>
