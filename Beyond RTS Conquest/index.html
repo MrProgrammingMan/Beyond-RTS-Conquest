@@ -3083,6 +3083,36 @@
       margin: 4px 0;
     }
 
+    /* ── ONLINE MULTIPLAYER ─────────────────────────────────── */
+    #sc-online {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: flex-start;
+      padding: clamp(20px, 4vh, 50px) clamp(16px, 4vw, 60px);
+      gap: clamp(14px, 2.5vh, 28px); overflow-y: auto;
+    }
+    #online-status-bar { font-family: 'Rajdhani', sans-serif; font-size: clamp(.7rem, 1.1vw, .9rem); color: rgba(212,168,67,.7); letter-spacing: .08em; min-height: 1.4em; text-align: center; }
+    #online-panels { display: flex; gap: clamp(16px, 3vw, 48px); align-items: stretch; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 780px; }
+    .online-panel { flex: 1; min-width: 220px; max-width: 320px; background: rgba(0,0,0,.4); border: 1px solid var(--border); border-radius: 8px; padding: clamp(16px, 2.5vh, 28px) clamp(14px, 2vw, 24px); display: flex; flex-direction: column; gap: 10px; align-items: center; }
+    .online-panel-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(1rem, 1.6vw, 1.3rem); font-weight: 700; color: var(--gold); letter-spacing: .1em; }
+    .online-panel-sub { font-size: clamp(.65rem, 1vw, .82rem); color: var(--dim); text-align: center; letter-spacing: .04em; }
+    .online-btn { width: 100%; padding: 10px 0; font-size: clamp(.8rem, 1.2vw, 1rem) !important; }
+    .online-hint { font-family: 'Rajdhani', sans-serif; font-size: clamp(.65rem, 1vw, .8rem); color: var(--dim); text-align: center; letter-spacing: .05em; }
+    .online-error { font-family: 'Rajdhani', sans-serif; font-size: clamp(.65rem, 1vw, .8rem); color: #e74c3c; text-align: center; min-height: 1.2em; }
+    #room-code-display { font-family: 'Rajdhani', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: var(--p1); letter-spacing: .25em; text-align: center; text-shadow: 0 0 20px var(--p1g); cursor: pointer; user-select: all; }
+    .online-join-row { display: flex; gap: 8px; width: 100%; }
+    .online-input { flex: 1; background: rgba(0,0,0,.5); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: clamp(.9rem, 1.4vw, 1.1rem); letter-spacing: .2em; padding: 6px 10px; text-align: center; text-transform: uppercase; outline: none; }
+    .online-input:focus { border-color: var(--gold); }
+    .online-divider { display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-size: .9rem; color: var(--dim); letter-spacing: .1em; padding: 0 4px; }
+    #online-connecting { position: fixed; inset: 0; background: rgba(0,0,0,.82); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 500; }
+    .online-spinner { width: 40px; height: 40px; border: 3px solid rgba(212,168,67,.2); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #online-connecting-msg { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; color: var(--gold); letter-spacing: .1em; }
+    .online-back-btn { margin-top: auto; font-size: clamp(.7rem, 1vw, .85rem) !important; padding: 6px 18px !important; background: transparent !important; border-color: var(--border) !important; color: var(--dim) !important; }
+    #online-badge { position: fixed; top: 6px; left: 50%; transform: translateX(-50%); font-family: 'Rajdhani', sans-serif; font-size: clamp(.55rem, .85vw, .72rem); color: rgba(46,204,113,.8); letter-spacing: .08em; background: rgba(0,0,0,.5); border: 1px solid rgba(46,204,113,.3); border-radius: 3px; padding: 2px 8px; z-index: 50; display: none; pointer-events: none; }
+    #online-dc-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 600; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+    #online-dc-overlay.show { display: flex; }
+    #online-dc-overlay .dc-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(1.4rem, 3vw, 2.2rem); color: #e74c3c; letter-spacing: .1em; }
+
     /* GAMEOVER */
     #sc-gameover {
       background: rgba(0, 0, 0, .93);
@@ -3875,6 +3905,7 @@
         <button class="btn" id="btn-draft">🃏 DRAFT MODE</button>
         <button class="btn" id="btn-solo">🤖 SINGLEPLAYER</button>
         <button class="btn" id="btn-tournament">🏆 TOURNAMENT</button>
+        <button class="btn primary" id="btn-online" onclick="showScreen('sc-online')">🌐 PLAY ONLINE</button>
         <button class="btn" id="btn-aivsai">👁 AI VS AI</button>
         <button class="btn" id="btn-tutorial">📖 TUTORIAL</button>
         <button class="btn" id="btn-controls">🎮 CONTROLS &amp; KEY BINDS</button>
@@ -3890,6 +3921,40 @@
     </div>
   </div>
   <!-- AI VS AI mode label inlined into faction screen JS -->
+  <!-- ONLINE MULTIPLAYER -->
+  <div id="sc-online" class="screen">
+    <div class="sc-title">⚔ ONLINE MULTIPLAYER</div>
+    <div id="online-status-bar"></div>
+    <div id="online-panels">
+      <div class="online-panel" id="online-panel-quick">
+        <div class="online-panel-title">🌐 QUICK MATCH</div>
+        <div class="online-panel-sub">Join a random opponent instantly</div>
+        <button class="btn online-btn" id="btn-quickmatch">FIND MATCH</button>
+        <div id="quickmatch-status" class="online-hint"></div>
+      </div>
+      <div class="online-divider">OR</div>
+      <div class="online-panel" id="online-panel-private">
+        <div class="online-panel-title">🔒 PRIVATE ROOM</div>
+        <div class="online-panel-sub">Play with a friend using a room code</div>
+        <button class="btn online-btn" id="btn-createroom">CREATE ROOM</button>
+        <div id="created-room-info" style="display:none">
+          <div class="online-hint">Share this code with your friend:</div>
+          <div id="room-code-display"></div>
+          <div class="online-hint" id="waiting-for-friend">Waiting for opponent…</div>
+        </div>
+        <div class="online-join-row">
+          <input id="room-code-input" class="online-input" type="text" maxlength="4" placeholder="ROOM CODE" autocomplete="off" spellcheck="false">
+          <button class="btn online-btn" id="btn-joinroom">JOIN</button>
+        </div>
+        <div id="join-error" class="online-error"></div>
+      </div>
+    </div>
+    <div id="online-connecting" style="display:none">
+      <div class="online-spinner"></div>
+      <div id="online-connecting-msg">Connecting…</div>
+    </div>
+    <button class="btn online-back-btn" onclick="showScreen('sc-menu')">← BACK</button>
+  </div>
   <!-- FACTION -->
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
@@ -4137,6 +4202,12 @@
   </div>
   <!-- GAME -->
   <div id="sc-game" class="screen">
+    <div id="online-badge">🟢 ONLINE</div>
+    <div id="online-dc-overlay">
+      <div class="dc-title">⚠ OPPONENT DISCONNECTED</div>
+      <div style="font-family:Rajdhani,sans-serif;color:var(--dim);letter-spacing:.06em;font-size:.9rem;">The connection was lost.</div>
+      <button class="btn" onclick="NET.cleanup(); showScreen('sc-menu')">RETURN TO MENU</button>
+    </div>
     <div id="momentum-bar-wrap"
       title="MOMENTUM — shows who controls the battlefield. Wider bar = more map presence from kills and mid control.">
       <div id="momentum-p1" style="width:50%"></div>
@@ -4439,6 +4510,309 @@
     <div class="tt-body" id="tt-body"></div>
   </div>
   <script>
+    window._BKC_SERVER_URL = null;
+
+    // NET — Online Multiplayer Module
+    // Loaded only when player clicks "Play Online". Otherwise fully inert.
+    // ═══════════════════════════════════════════════════════════════════════════
+    const NET = (() => {
+      let socket = null;
+      let myPid = null;       // 1 or 2 — which player am I online?
+      let roomCode = null;
+      let connected = false;
+      let _onlineMode = false;
+
+      // Server URL — change this to your deployed server URL
+      // e.g. 'https://bkc-server.onrender.com'
+      const SERVER_URL = window._BKC_SERVER_URL || 'http://localhost:3000';
+
+      function isOnline() { return _onlineMode; }
+      function getPid() { return myPid; }
+
+      // Load Socket.io dynamically (only when needed)
+      function loadSocketIo(cb) {
+        if (window.io) { cb(); return; }
+        const s = document.createElement('script');
+        s.src = SERVER_URL + '/socket.io/socket.io.js';
+        s.onload = cb;
+        s.onerror = () => {
+          setStatus('❌ Could not reach server. Check your connection.', true);
+        };
+        document.head.appendChild(s);
+      }
+
+      function connect(cb) {
+        loadSocketIo(() => {
+          socket = window.io(SERVER_URL, { transports: ['websocket'] });
+          socket.on('connect', () => {
+            connected = true;
+            setStatus('✓ Connected');
+            if (cb) cb();
+          });
+          socket.on('connect_error', () => {
+            setStatus('❌ Connection failed', true);
+            hideConnecting();
+          });
+          socket.on('disconnect', () => {
+            connected = false;
+            if (_onlineMode && G && G.running) {
+              document.getElementById('online-dc-overlay').classList.add('show');
+            }
+          });
+          _attachHandlers();
+        });
+      }
+
+      function _attachHandlers() {
+        // Matchmaking
+        socket.on('waiting', () => {
+          document.getElementById('quickmatch-status').textContent = '⏳ Searching for opponent…';
+        });
+
+        socket.on('matchFound', ({ code, pid, gameMode }) => {
+          roomCode = code; myPid = pid;
+          hideConnecting();
+          _enterFactionSelect(gameMode);
+        });
+
+        socket.on('roomCreated', ({ code, pid, gameMode }) => {
+          roomCode = code; myPid = pid;
+          hideConnecting();
+          document.getElementById('created-room-info').style.display = 'flex';
+          document.getElementById('created-room-info').style.flexDirection = 'column';
+          document.getElementById('created-room-info').style.alignItems = 'center';
+          document.getElementById('created-room-info').style.gap = '6px';
+          document.getElementById('room-code-display').textContent = code;
+          document.getElementById('btn-createroom').disabled = true;
+        });
+
+        socket.on('opponentJoined', () => {
+          document.getElementById('waiting-for-friend').textContent = '✓ Opponent connected! Entering faction select…';
+          setTimeout(() => _enterFactionSelect('vs'), 800);
+        });
+
+        socket.on('roomJoined', ({ code, pid, gameMode }) => {
+          roomCode = code; myPid = pid;
+          hideConnecting();
+          _enterFactionSelect(gameMode);
+        });
+
+        socket.on('error', ({ msg }) => {
+          document.getElementById('join-error').textContent = '❌ ' + msg;
+          hideConnecting();
+        });
+
+        // Opponent faction preview
+        socket.on('opponentFaction', ({ pid, factionId }) => {
+          const f = FACTIONS.find(f => f.id === factionId);
+          if (!f) return;
+          const otherPid = pid; // the opponent's pid on server = their actual pid
+          const dispEl = document.getElementById(`fchosen-p${otherPid}`);
+          if (dispEl) dispEl.textContent = `${f.icon} ${f.name} — ${f.tagline}`;
+        });
+
+        // Both factions chosen → start game
+        socket.on('startGame', ({ p1Faction, p2Faction, seed, gameMode }) => {
+          const f1 = FACTIONS.find(f => f.id === p1Faction);
+          const f2 = FACTIONS.find(f => f.id === p2Faction);
+          if (!f1 || !f2) return;
+          P1_FACTION = f1; P2_FACTION = f2;
+          GAME_MODE = gameMode || 'vs';
+          _onlineMode = true;
+          window._onlineSeed = seed; // for reproducible unit spawn jitter
+          document.getElementById('online-badge').style.display = 'block';
+          initGame();
+          showScreen('sc-game');
+        });
+
+        // Relay incoming opponent action → execute locally
+        socket.on('remoteAction', (action) => {
+          _executeRemoteAction(action);
+        });
+
+        // Server picked an event
+        socket.on('fireEvent', ({ eventId, nextDelay }) => {
+          if (!G || !G.running) return;
+          G.activeEvent = { type: eventId, timer: 0 };
+          _dispatchEvent(eventId);
+          G.nextRogueTime = (G.elapsed || 0) + nextDelay;
+        });
+
+        socket.on('voteResolved', ({ winner }) => {
+          if (!G_eventVote) return;
+          G_eventVote = null;
+          document.getElementById('vote-overlay').classList.remove('show');
+          G.activeEvent = { type: winner, timer: 0 };
+          _dispatchEvent(winner);
+        });
+
+        socket.on('rogueSpawnPos', ({ spawnX }) => {
+          if (!G) return;
+          G._pendingRogueSpawnX = G.canvasW * spawnX;
+        });
+
+        socket.on('opponentDisconnected', () => {
+          if (_onlineMode) {
+            document.getElementById('online-dc-overlay').classList.add('show');
+          }
+        });
+      }
+
+      function _enterFactionSelect(gameMode) {
+        GAME_MODE = gameMode || 'vs';
+        window._pendingPlayerSetup = 'vs';
+        // Lock the faction panel that's NOT mine — opponent picks their own
+        showScreen('sc-faction');
+        _setupOnlineFactionScreen();
+      }
+
+      function _setupOnlineFactionScreen() {
+        // Hide P2's column if I'm P1, hide P1's column if I'm P2
+        // Actually we show both but only allow input on my side
+        const myPanel = document.getElementById(`fcards-p${myPid}`);
+        const theirPid = myPid === 1 ? 2 : 1;
+        const theirPanel = document.getElementById(`fcards-p${theirPid}`);
+        if (theirPanel) {
+          theirPanel.style.opacity = '0.4';
+          theirPanel.style.pointerEvents = 'none';
+        }
+        const theirLabel = document.getElementById(`fchosen-p${theirPid}`);
+        if (theirLabel) theirLabel.textContent = '⏳ Waiting for opponent…';
+        setStatus(`You are PLAYER ${myPid}  ·  Room: ${roomCode}`);
+      }
+
+      // Send my action to server (which relays to opponent)
+      function sendAction(action) {
+        if (!_onlineMode || !socket || !connected) return;
+        socket.emit('gameAction', action);
+      }
+
+      // Execute an action that came from the opponent
+      function _executeRemoteAction(action) {
+        if (!G || !G.running) return;
+        const { type, pid } = action;
+        // Get the card element for visual feedback
+        let cardEl = null;
+        if (action.cardIdx !== undefined) {
+          const grid = document.getElementById(`p${pid}-grid`);
+          if (grid) cardEl = grid.children[action.cardIdx];
+        }
+        switch (type) {
+          case 'spawn':
+            trySpawn(pid, action.unitId, cardEl);
+            break;
+          case 'buyUpgrade':
+            tryBuyUpgrade(pid, action.idx, cardEl);
+            break;
+          case 'activateBuff':
+            tryActivateBuff(pid, action.idx, cardEl);
+            break;
+          case 'toggleWorkerMid':
+            toggleWorkerMid(pid);
+            break;
+          case 'spawnSpy':
+            trySpawnSpy(pid);
+            break;
+          case 'voteMoveCursor':
+            voteMoveCursor(pid, action.dir);
+            break;
+          case 'voteForEvent':
+            voteForEvent(pid);
+            break;
+        }
+      }
+
+      // Called by client when it's time for a random event
+      function requestEvent(elapsed, p1hp, p2hp, midOwner) {
+        if (!_onlineMode || !socket) return;
+        if (myPid !== 1) return; // only P1 requests — avoids race
+        socket.emit('requestEvent', { elapsed, p1hp, p2hp, midOwner });
+      }
+
+      // Vote result — P1 reports to server for tie-break
+      function reportVoteResult(candidates, votes) {
+        if (!_onlineMode || !socket || myPid !== 1) return;
+        socket.emit('voteResult', { candidates, votes });
+      }
+
+      function requestRogueSpawn() {
+        if (!_onlineMode || !socket || myPid !== 1) return;
+        socket.emit('requestRogueSpawn');
+      }
+
+      // Matchmaking entry points
+      function quickMatch() {
+        showConnecting('Finding a match…');
+        connect(() => socket.emit('joinPublic', { gameMode: 'vs' }));
+      }
+
+      function createRoom() {
+        showConnecting('Creating room…');
+        connect(() => socket.emit('createRoom', { gameMode: 'vs' }));
+      }
+
+      function joinRoom(code) {
+        if (!code || code.length < 4) {
+          document.getElementById('join-error').textContent = '❌ Enter a 4-letter room code';
+          return;
+        }
+        showConnecting('Joining room…');
+        connect(() => socket.emit('joinRoom', { code: code.toUpperCase() }));
+      }
+
+      // After I confirm faction, send to server
+      function sendFaction(factionId) {
+        if (!_onlineMode || !socket) return;
+        socket.emit('factionSelected', { factionId });
+      }
+
+      function cleanup() {
+        _onlineMode = false;
+        myPid = null;
+        roomCode = null;
+        document.getElementById('online-badge').style.display = 'none';
+        document.getElementById('online-dc-overlay').classList.remove('show');
+        if (socket) { socket.disconnect(); socket = null; }
+        // Restore faction screen panels
+        [1,2].forEach(pid => {
+          const panel = document.getElementById(`fcards-p${pid}`);
+          if (panel) { panel.style.opacity = ''; panel.style.pointerEvents = ''; }
+        });
+      }
+
+      function setStatus(msg, isError) {
+        const el = document.getElementById('online-status-bar');
+        if (el) { el.textContent = msg; el.style.color = isError ? '#e74c3c' : 'rgba(212,168,67,.7)'; }
+      }
+
+      function showConnecting(msg) {
+        const el = document.getElementById('online-connecting');
+        if (el) { el.style.display = 'flex'; document.getElementById('online-connecting-msg').textContent = msg || 'Connecting…'; }
+      }
+
+      function hideConnecting() {
+        const el = document.getElementById('online-connecting');
+        if (el) el.style.display = 'none';
+      }
+
+      return { isOnline, getPid, sendAction, sendFaction, requestEvent,
+               reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
+               joinRoom, cleanup, setStatus };
+    })();
+
+    // Wire up online lobby buttons (after DOM ready)
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btn-quickmatch').addEventListener('click', () => NET.quickMatch());
+      document.getElementById('btn-createroom').addEventListener('click', () => NET.createRoom());
+      document.getElementById('btn-joinroom').addEventListener('click', () => {
+        NET.joinRoom(document.getElementById('room-code-input').value);
+      });
+      document.getElementById('room-code-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') NET.joinRoom(document.getElementById('room-code-input').value);
+      });
+    });
+
+
     // ── AUDIO ──
     const AC = new (window.AudioContext || window.webkitAudioContext)();
     // Master limiter/compressor — prevents audio from peaking when many units hit at once
@@ -5264,6 +5638,8 @@
     };
 
     function trySpawnSpy(pid) {
+      if (NET.isOnline() && pid !== NET.getPid()) return;
+      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'spawnSpy', pid });
       const p = G.players[pid - 1];
       if (p.souls < SPY_DEF.souls || p.bodies < SPY_DEF.bodies) return;
       if (G.spies.filter(s => s.owner === pid).length >= 2) { showPopup(p.baseX, G.groundY - 60, 'SPY MAX (2)', '#636e72', pid); return; }
@@ -6476,7 +6852,7 @@
     function updateAI(dt) {
       if (!G || !G.running || G.paused) return;
       const _playerSetup = window._pendingPlayerSetup || 'vs';
-      const _aiActive = (_playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai');
+      const _aiActive = !NET.isOnline() && (_playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai');
       if (!_aiActive && !(GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) return;
 
       // Idle browsing for all active AIs
@@ -7215,7 +7591,13 @@
     }
     // ─── SPAWN & UPGRADES & BUFFS ─────────────────────────────────────────────────
     function trySpawn(pid, unitId, cardEl) {
+      if (NET.isOnline() && pid !== NET.getPid()) return;
       if (!G || !G.running || G.paused) return;
+      if (NET.isOnline() && pid === NET.getPid()) {
+        const grid = document.getElementById(`p${pid}-grid`);
+        const cardIdx = grid ? Array.from(grid.children).indexOf(cardEl) : -1;
+        NET.sendAction({ type: 'spawn', pid, unitId, cardIdx });
+      }
       const p = G.players[pid - 1];
       const def = G.factions[pid - 1].units.find(d => d.id === unitId);
       if (!def || def.isSpawned) return;
@@ -7251,7 +7633,9 @@
     }
 
     function tryBuyUpgrade(pid, idx, cardEl) {
+      if (NET.isOnline() && pid !== NET.getPid()) return;
       if (!G || !G.running || G.paused) return;
+      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'buyUpgrade', pid, idx });
       const p = G.players[pid - 1];
       const upgrades = G.factions[pid - 1].upgrades || [];
       const up = upgrades[idx]; if (!up) return;
@@ -7372,7 +7756,9 @@
     }
 
     function tryActivateBuff(pid, idx, cardEl) {
+      if (NET.isOnline() && pid !== NET.getPid()) return;
       if (!G || !G.running || G.paused) return;
+      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'activateBuff', pid, idx });
       const p = G.players[pid - 1];
       const bf = RALLY_BUFFS[idx];
       if (p.buffCooldowns[idx] > 0) { shakeCard(cardEl); return; }
@@ -8295,6 +8681,7 @@
     function _resolveEventVote() {
       if (!G_eventVote) return;
       const { candidates, votes } = G_eventVote;
+      if (NET.isOnline()) { NET.reportVoteResult(candidates, votes); return; }
       let winner;
       if (votes[0] > votes[1]) winner = candidates[0];
       else if (votes[1] > votes[0]) winner = candidates[1];
@@ -8326,6 +8713,8 @@
 
     function voteForEvent(pid) {
       if (!G_eventVote || !G || !G.running) return;
+      if (NET.isOnline() && pid !== NET.getPid()) return;
+      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'voteForEvent', pid });
       const pidx = pid - 1;
       if (G_eventVote.voted[pidx]) return;
       const choice = G_eventVote.cursors[pidx]; // 0=A, 1=B
@@ -8338,7 +8727,21 @@
       }
     }
 
+    function voteMoveCursor(pid, dir) {
+      if (!G_eventVote || !G || !G.running) return;
+      if (NET.isOnline() && pid !== NET.getPid()) return;
+      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'voteMoveCursor', pid, dir });
+      const pidx = pid - 1;
+      if (G_eventVote.voted[pidx]) return;
+      G_eventVote.cursors[pidx] = dir > 0 ? 1 : 0;
+      _updateVoteDisplay();
+    }
+
     function fireRandomEvent() {
+      if (NET.isOnline()) {
+        NET.requestEvent(G.elapsed || 0, G.players[0].baseHp, G.players[1].baseHp, G.midOwner);
+        return;
+      }
       const elapsed = G.elapsed || 0;
       // Build weighted pool based on game state
       const p1hp = G.players[0].baseHp, p2hp = G.players[1].baseHp;
@@ -11002,6 +11405,8 @@
     });
 
     function toggleWorkerMid(pid) {
+      if (NET.isOnline() && pid !== NET.getPid()) return;
+      if (NET.isOnline() && pid === NET.getPid()) NET.sendAction({ type: 'toggleWorkerMid', pid });
       if (!G || !G.running || G.paused) return;
       G.workerMidMode[pid - 1] = !G.workerMidMode[pid - 1];
       const on = G.workerMidMode[pid - 1];
@@ -11144,6 +11549,7 @@
     });
     document.getElementById('btn-to-menu').addEventListener('click', () => {
       G = null; stopIngameTutorial();
+      NET.cleanup();
       // Clean up tournament state if quitting mid-tournament
       if (GAME_MODE === 'tournament' && TOURNAMENT) {
         TOURNAMENT = null;
@@ -11536,9 +11942,10 @@
 
     function factionConfirm(pid) {
       if (!document.getElementById('sc-faction').classList.contains('active')) return;
+      if (NET.isOnline() && pid !== NET.getPid()) return;
       const fi = fCursor[pid - 1];
       const card = document.querySelectorAll(`#fcards-p${pid} .fcard`)[fi];
-      if (card) selectFaction(pid, fi, card);
+      if (card) { selectFaction(pid, fi, card); if (NET.isOnline()) { const f = FACTIONS[fi]; NET.sendFaction(f.id); } }
     }
 
     function highlightFactionCursor(pid) {
