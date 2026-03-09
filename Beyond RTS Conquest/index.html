@@ -528,6 +528,39 @@
       width: 100%;
     }
 
+    #faction-mode-row {
+      display: none;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      padding: 6px 0 2px;
+    }
+
+    #faction-mode-row .fmode-btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: var(--fs-xs);
+      letter-spacing: .1em;
+      padding: 5px 14px;
+      background: rgba(255, 255, 255, .04);
+      border: 1.5px solid var(--border);
+      color: var(--dim);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all .15s;
+    }
+
+    #faction-mode-row .fmode-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    #faction-mode-row .fmode-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(212, 168, 67, .12);
+    }
+
     .mirror-warn {
       font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
@@ -1288,35 +1321,55 @@
       text-align: right;
       animation: kfSlide 3.0s ease-out forwards;
       background: rgba(0, 0, 0, .55);
-      border-left: 2px solid rgba(255,255,255,.12);
+      border-left: 2px solid rgba(255, 255, 255, .12);
       padding: 2px 8px;
       border-radius: 3px;
     }
 
     .btn-sudden {
-      background: linear-gradient(135deg, rgba(180,30,10,.18), rgba(220,80,10,.10));
-      border-color: rgba(231,76,60,.5);
+      background: linear-gradient(135deg, rgba(180, 30, 10, .18), rgba(220, 80, 10, .10));
+      border-color: rgba(231, 76, 60, .5);
       color: #e87060;
     }
+
     .btn-sudden:hover {
-      background: linear-gradient(135deg, rgba(231,76,60,.3), rgba(243,156,18,.15));
-      border-color: rgba(231,76,60,.9);
+      background: linear-gradient(135deg, rgba(231, 76, 60, .3), rgba(243, 156, 18, .15));
+      border-color: rgba(231, 76, 60, .9);
     }
+
     .btn-conquest {
-      background: linear-gradient(135deg, rgba(39,174,96,.12), rgba(52,152,219,.08));
-      border-color: rgba(39,174,96,.4);
+      background: linear-gradient(135deg, rgba(39, 174, 96, .12), rgba(52, 152, 219, .08));
+      border-color: rgba(39, 174, 96, .4);
       color: #a8e063;
     }
+
     .btn-conquest:hover {
-      background: linear-gradient(135deg, rgba(39,174,96,.25), rgba(52,152,219,.15));
-      border-color: rgba(39,174,96,.85);
+      background: linear-gradient(135deg, rgba(39, 174, 96, .25), rgba(52, 152, 219, .15));
+      border-color: rgba(39, 174, 96, .85);
     }
+
     @keyframes kfSlide {
-      0%   { opacity: 0; transform: translateX(24px); }
-      12%  { opacity: 1; transform: translateX(0); }
-      80%  { opacity: 1; transform: translateX(0); }
-      100% { opacity: 0; transform: translateX(8px); }
+      0% {
+        opacity: 0;
+        transform: translateX(24px);
+      }
+
+      12% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      80% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(8px);
+      }
     }
+
     @keyframes kfFade {
       0% {
         opacity: 1
@@ -1801,7 +1854,7 @@
 
     .income-rate {
       font-size: clamp(.7rem, 1.05vw, .92rem);
-      color: rgba(212,168,67,.75);
+      color: rgba(212, 168, 67, .75);
       letter-spacing: .04em;
       padding-left: 2px;
       font-family: 'Rajdhani', sans-serif;
@@ -1810,11 +1863,11 @@
     /* Rotating in-game tip bar — lives below income rate */
     .ingame-tip {
       font-size: clamp(.72rem, 1.1vw, .9rem);
-      color: rgba(255,255,255,.72);
+      color: rgba(255, 255, 255, .72);
       letter-spacing: .025em;
       padding: 3px 6px 2px;
-      background: rgba(0,0,0,.28);
-      border-left: 2px solid rgba(212,168,67,.45);
+      background: rgba(0, 0, 0, .28);
+      border-left: 2px solid rgba(212, 168, 67, .45);
       border-radius: 0 3px 3px 0;
       margin-top: 2px;
       white-space: nowrap;
@@ -1891,24 +1944,40 @@
       border: 1px solid var(--border2);
       background: rgba(0, 0, 0, .35);
     }
+
     .worker-mid-btn {
       display: none;
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.5rem, .7vw, .62rem);
       letter-spacing: .07em;
       padding: 2px 6px;
-      background: rgba(243,156,18,.08);
-      border: 1px solid rgba(243,156,18,.3);
+      background: rgba(243, 156, 18, .08);
+      border: 1px solid rgba(243, 156, 18, .3);
       border-radius: 3px;
-      color: rgba(243,156,18,.6);
+      color: rgba(243, 156, 18, .6);
       cursor: pointer;
       transition: all .15s;
       line-height: 1.4;
       white-space: nowrap;
     }
-    .worker-mid-btn:hover { background: rgba(243,156,18,.2); border-color: rgba(243,156,18,.7); color: #f39c12; }
-    .worker-mid-btn.active { background: rgba(243,156,18,.2); border-color: #f39c12; color: #f39c12; }
-    .worker-mid-btn.waiting { border-color: rgba(149,165,166,.35); color: rgba(149,165,166,.45); background: none; }
+
+    .worker-mid-btn:hover {
+      background: rgba(243, 156, 18, .2);
+      border-color: rgba(243, 156, 18, .7);
+      color: #f39c12;
+    }
+
+    .worker-mid-btn.active {
+      background: rgba(243, 156, 18, .2);
+      border-color: #f39c12;
+      color: #f39c12;
+    }
+
+    .worker-mid-btn.waiting {
+      border-color: rgba(149, 165, 166, .35);
+      color: rgba(149, 165, 166, .45);
+      background: none;
+    }
 
     .worker-count {
       background: rgba(39, 174, 96, .12);
@@ -3429,6 +3498,13 @@
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
     <div class="sc-sub">10 factions — scroll each panel to see all</div>
+    <div id="faction-mode-row">
+      <span
+        style="font-family:Rajdhani,sans-serif;font-size:.65rem;color:var(--dim);letter-spacing:.08em;">PLAYERS:</span>
+      <button class="fmode-btn active" data-fmode="pvp">⚔ PVP</button>
+      <button class="fmode-btn" data-fmode="solo">VS AI</button>
+      <button class="fmode-btn" data-fmode="aivsai">AI VS AI</button>
+    </div>
     <div class="faction-layout">
       <div class="faction-side">
         <div class="faction-plabel p1l" id="faction-hint-p1">PLAYER 1<span></span></div>
@@ -3465,7 +3541,7 @@
         </div>
         <!-- AI opponent section (shown in solo + aivsai) -->
         <div id="ai-p2-panel" style="display:none">
-          <div class="ai-label">🤖 AI 2</div>
+          <div class="ai-label" id="ai-p2-label">🤖 AI</div>
           <div class="ai-diff-row" id="ai-diff-row">
             <button class="diff-btn" data-diff="easy">EASY</button>
             <button class="diff-btn active" data-diff="medium">MEDIUM</button>
@@ -3498,7 +3574,9 @@
       </div>
       <div
         style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:30px;min-width:clamp(60px,8vw,100px);">
-        <div style="font-family:'Rajdhani', sans-serif;font-size:clamp(1rem,2.5vw,1.8rem);color:var(--gold);opacity:.35;">VS
+        <div
+          style="font-family:'Rajdhani', sans-serif;font-size:clamp(1rem,2.5vw,1.8rem);color:var(--gold);opacity:.35;">
+          VS
         </div>
         <div id="draft-p1-status"
           style="font-family:'Rajdhani', sans-serif;font-size:clamp(.55rem,.9vw,.75rem);color:var(--p1);letter-spacing:.07em;text-align:center;min-height:2.5em;">
@@ -3578,7 +3656,8 @@
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p1Down"></button></div>
           <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p1Act"></button></div>
           <div class="rebind-row"><span>😤 Taunt</span><button class="rkey" id="rk-p1Taunt"></button></div>
-          <div class="rebind-row"><span>⛏ Worker Mid Toggle</span><button class="rkey" id="rk-p1WorkerMid"></button></div>
+          <div class="rebind-row"><span>⛏ Worker Mid Toggle</span><button class="rkey" id="rk-p1WorkerMid"></button>
+          </div>
         </div>
         <div class="rebind-col">
           <div class="rebind-head p2l">PLAYER 2 — NAVIGATION</div>
@@ -3588,7 +3667,8 @@
           <div class="rebind-row"><span>Mode Down</span><button class="rkey" id="rk-p2Down"></button></div>
           <div class="rebind-row"><span>Activate / Spawn</span><button class="rkey" id="rk-p2Act"></button></div>
           <div class="rebind-row"><span>😤 Taunt</span><button class="rkey" id="rk-p2Taunt"></button></div>
-          <div class="rebind-row"><span>⛏ Worker Mid Toggle</span><button class="rkey" id="rk-p2WorkerMid"></button></div>
+          <div class="rebind-row"><span>⛏ Worker Mid Toggle</span><button class="rkey" id="rk-p2WorkerMid"></button>
+          </div>
         </div>
       </div>
       <div class="rebind-section-title">⚡ DIRECT SPAWN HOTKEYS <span
@@ -3750,8 +3830,12 @@
               <div class="hp-fill hp1" id="p1-hp-bar" style="width:100%"></div>
             </div><span class="hp-txt" id="p1-hp-txt">100</span>
           </div>
-          <div class="hud-meta"><span class="unit-count" id="p1-unit-count">⚔ 0/12</span><span class="worker-count" id="p1-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p1-mid-btn" onclick="toggleWorkerMid(1)" title="Toggle workers between home and mid route (key: E)">⛏→MID</button><span class="worker-count" id="p1-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p1-desp">🔥 SURGE ×1</span><span
-              class="guard-timer" id="p1-guard-timer">👑 GUARD: 30s</span></div>
+          <div class="hud-meta"><span class="unit-count" id="p1-unit-count">⚔ 0/12</span><span class="worker-count"
+              id="p1-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p1-mid-btn"
+              onclick="toggleWorkerMid(1)"
+              title="Toggle workers between home and mid route (key: E)">⛏→MID</button><span class="worker-count"
+              id="p1-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p1-desp">🔥
+              SURGE ×1</span><span class="guard-timer" id="p1-guard-timer">👑 GUARD: 30s</span></div>
         </div>
         <div class="hud-mode-tabs" id="p1-tabs">
           <span class="hud-tab active1" data-mode="0">UNITS</span>
@@ -3799,8 +3883,12 @@
               <div class="hp-fill hp2" id="p2-hp-bar" style="width:100%"></div>
             </div><span class="hp-txt" id="p2-hp-txt">100</span>
           </div>
-          <div class="hud-meta"><span class="unit-count" id="p2-unit-count">⚔ 0/12</span><span class="worker-count" id="p2-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p2-mid-btn" onclick="toggleWorkerMid(2)" title="Toggle workers between home and mid route (key: Numpad 1)">⛏→MID</button><span class="worker-count" id="p2-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p2-desp">🔥 SURGE ×1</span><span
-              class="guard-timer" id="p2-guard-timer">👑 GUARD: 30s</span></div>
+          <div class="hud-meta"><span class="unit-count" id="p2-unit-count">⚔ 0/12</span><span class="worker-count"
+              id="p2-worker-count">⛏ 0/3</span><button class="worker-mid-btn" id="p2-mid-btn"
+              onclick="toggleWorkerMid(2)"
+              title="Toggle workers between home and mid route (key: Numpad 1)">⛏→MID</button><span class="worker-count"
+              id="p2-spy-count" style="display:none;">🕵️ 0/2</span><span class="desperation-badge" id="p2-desp">🔥
+              SURGE ×1</span><span class="guard-timer" id="p2-guard-timer">👑 GUARD: 30s</span></div>
         </div>
         <div class="hud-mode-tabs" id="p2-tabs">
           <span class="hud-tab active2" data-mode="0">UNITS</span>
@@ -5570,14 +5658,14 @@
       const can0 = p.buffCooldowns[0] <= 0 && p.souls >= bf[0].cost; // War Cry
       const can1 = p.buffCooldowns[1] <= 0 && p.souls >= bf[1].cost; // Iron Wall
       const can2 = p.buffCooldowns[2] <= 0 && p.souls >= bf[2].cost; // Body Boon
-      const winning      = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
-      const winningBig   = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
-      const losing       = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
-      const losingBadly  = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
-      const midOwned     = G.midOwner === pid;
-      const lowBodies    = p.bodies < 8;
-      const critBodies   = p.bodies < 4; // critically low
-      const richSouls    = p.souls > bf[2].cost + 20;
+      const winning = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
+      const winningBig = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
+      const losing = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
+      const losingBadly = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
+      const midOwned = G.midOwner === pid;
+      const lowBodies = p.bodies < 8;
+      const critBodies = p.bodies < 4; // critically low
+      const richSouls = p.souls > bf[2].cost + 20;
       const pushingSouls = p.souls > bf[2].cost + 40; // very rich
 
       if (diff === 'expert') {
@@ -5890,15 +5978,18 @@
 
     function updateAI(dt) {
       if (!G || !G.running || G.paused) return;
-      if (GAME_MODE !== 'solo' && GAME_MODE !== 'tutorial' && GAME_MODE !== 'aivsai' && !(GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) return;
+      const _playerSetup = window._pendingPlayerSetup || 'vs';
+      const _aiActive = _playerSetup === 'solo' || _playerSetup === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || GAME_MODE === 'aivsai';
+      if (!_aiActive && !(GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) return;
 
       // Idle browsing for all active AIs
-      const _browsePids = GAME_MODE === 'aivsai' ? [1, 2] : [2];
+      const _isAiVsAiMode = _playerSetup === 'aivsai' || GAME_MODE === 'aivsai';
+      const _browsePids = _isAiVsAiMode ? [1, 2] : [2];
       _browsePids.forEach(p => _aiIdleBrowse(p, dt));
 
       // In aivsai mode run BOTH sides
       // Spectator mode indicator
-      if (GAME_MODE === 'aivsai') {
+      if (_isAiVsAiMode) {
         const specBadge = document.getElementById('aivsai-spectate-badge');
         if (!specBadge) {
           const b = document.createElement('div');
@@ -5908,7 +5999,7 @@
           document.getElementById('sc-game').appendChild(b);
         }
       }
-      const aiPids = GAME_MODE === 'aivsai' ? [1, 2] : [2];
+      const aiPids = _isAiVsAiMode ? [1, 2] : [2];
       aiPids.forEach(pid => {
         const p = G.players[pid - 1];
         const diffKey = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
@@ -6067,7 +6158,10 @@
       G._aiDefTimers = [0, 0];
       G._aiSaving = false;
       // Easy mode: player gets +10 starting souls bonus
-      if ((GAME_MODE === 'solo' || GAME_MODE === 'tutorial' || (GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) && AI_DIFFICULTY === 'easy') {
+      const _ps = window._pendingPlayerSetup || 'vs';
+      const _isSoloAiMode = _ps === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
+      const _isAiVsAiGameMode = _ps === 'aivsai' || GAME_MODE === 'aivsai';
+      if ((_isSoloAiMode || (GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._aiMatch)) && AI_DIFFICULTY === 'easy') {
         G.players[0].souls += 10;
       }
       // Singleplayer: show AI badge on P2 HUD
@@ -6076,12 +6170,12 @@
       if (p2name) {
         const _persBadge = p => p ? `<span class="pers-badge" data-pers="${p}">${p.toUpperCase()}</span>` : '';
         const _diffBadge = d => d ? `<span class="ai-badge" data-diff="${d}">${d.toUpperCase()}</span>` : '';
-        if (GAME_MODE === 'solo') {
+        if (_isSoloAiMode && !_isAiVsAiGameMode) {
           const _p2pers = G.aiPersonality || AI_PERSONALITY || '';
           p2name.innerHTML = 'AI ' + _diffBadge(AI_DIFFICULTY) + _persBadge(_p2pers);
         } else if (GAME_MODE === 'tutorial') {
           p2name.innerHTML = 'AI <span class="ai-badge" style="background:rgba(27,174,96,.2);border-color:rgba(27,174,96,.5);color:#2ecc71;">TUTORIAL</span>';
-        } else if (GAME_MODE === 'aivsai') {
+        } else if (_isAiVsAiGameMode) {
           const _p2pers2 = G.aiPersonality || AI_PERSONALITY || '';
           const _p1pers = G.ai1Personality || AI1_PERSONALITY || '';
           p2name.innerHTML = 'AI 2 ' + _diffBadge(AI_DIFFICULTY) + _persBadge(_p2pers2);
@@ -6106,7 +6200,7 @@
       // In aivsai, disable player interaction on both HUDs
       const _p1hud = document.getElementById('p1-hud');
       const _p2hud2 = document.getElementById('p2-hud');
-      if (GAME_MODE === 'aivsai') {
+      if (_isAiVsAiGameMode) {
         if (_p1hud) _p1hud.style.pointerEvents = 'none';
         if (_p2hud2) _p2hud2.style.pointerEvents = 'none';
       } else {
@@ -6572,9 +6666,9 @@
       // Position to the right of the button so it doesn't obscure the list
       const r = e.currentTarget.getBoundingClientRect();
       const left = Math.min(r.right + 14, window.innerWidth - 320);
-      const top  = Math.max(8, r.top + r.height / 2 - tt.offsetHeight / 2);
+      const top = Math.max(8, r.top + r.height / 2 - tt.offsetHeight / 2);
       tt.style.left = left + 'px';
-      tt.style.top  = top  + 'px';
+      tt.style.top = top + 'px';
     }
     // ─── SPAWN & UPGRADES & BUFFS ─────────────────────────────────────────────────
     function trySpawn(pid, unitId, cardEl) {
@@ -6882,29 +6976,35 @@
           // Fire burst — hot orange/red particles rising fast, plus a ground fire patch
           for (let i = 0; i < 22; i++) {
             const a = Math.random() * Math.PI * 2, spd = 40 + Math.random() * 120;
-            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: -50 - Math.random()*100,
-              life: 0.4 + Math.random()*0.5, maxLife: 0.9, r: 2 + Math.random()*4,
-              col: Math.random() < 0.6 ? '#ff6b35' : Math.random() < 0.5 ? '#e74c3c' : '#f9ca24' });
+            G.particles.push({
+              x, y, vx: Math.cos(a) * spd, vy: -50 - Math.random() * 100,
+              life: 0.4 + Math.random() * 0.5, maxLife: 0.9, r: 2 + Math.random() * 4,
+              col: Math.random() < 0.6 ? '#ff6b35' : Math.random() < 0.5 ? '#e74c3c' : '#f9ca24'
+            });
           }
-          G.groundFX.push({ x, y: G.groundY, type: 'fire', life: 2.2, maxLife: 2.2, r: 16 + Math.random()*12 });
+          G.groundFX.push({ x, y: G.groundY, type: 'fire', life: 2.2, maxLife: 2.2, r: 16 + Math.random() * 12 });
           break;
         case 'glacial':
           // Ring of ice shards bursting outward
           for (let i = 0; i < 14; i++) {
             const a = (i / 14) * Math.PI * 2 + Math.random() * 0.3;
             const spd = 70 + Math.random() * 60;
-            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd * 0.4 - 40,
-              life: 0.5 + Math.random()*0.45, maxLife: 0.95, r: 2 + Math.random()*3,
-              col: Math.random() < 0.5 ? '#74b9ff' : Math.random() < 0.5 ? '#dfe6e9' : '#a8dadc' });
+            G.particles.push({
+              x, y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd * 0.4 - 40,
+              life: 0.5 + Math.random() * 0.45, maxLife: 0.95, r: 2 + Math.random() * 3,
+              col: Math.random() < 0.5 ? '#74b9ff' : Math.random() < 0.5 ? '#dfe6e9' : '#a8dadc'
+            });
           }
-          G.groundFX.push({ x, y: G.groundY, type: 'ice', life: 1.8, maxLife: 1.8, r: 18 + Math.random()*10 });
+          G.groundFX.push({ x, y: G.groundY, type: 'ice', life: 1.8, maxLife: 1.8, r: 18 + Math.random() * 10 });
           break;
         case 'summoners':
           // Slow-rising purple wisps — float upward, minimal gravity
           for (let i = 0; i < 12; i++) {
-            G.particles.push({ x: x + (Math.random()-0.5)*24, y, vx: (Math.random()-0.5)*28, vy: -25 - Math.random()*55,
-              life: 1.0 + Math.random()*0.7, maxLife: 1.7, r: 3 + Math.random()*4,
-              col: Math.random() < 0.5 ? '#9b59b6' : '#6c3483', noFall: true });
+            G.particles.push({
+              x: x + (Math.random() - 0.5) * 24, y, vx: (Math.random() - 0.5) * 28, vy: -25 - Math.random() * 55,
+              life: 1.0 + Math.random() * 0.7, maxLife: 1.7, r: 3 + Math.random() * 4,
+              col: Math.random() < 0.5 ? '#9b59b6' : '#6c3483', noFall: true
+            });
           }
           spawnParticles(x, y, '#9b59b6', 8);
           break;
@@ -6912,18 +7012,22 @@
           // Electric spark burst — bright yellow/white crackle
           for (let i = 0; i < 18; i++) {
             const a = Math.random() * Math.PI * 2, spd = 60 + Math.random() * 130;
-            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd*0.5 - 60,
-              life: 0.25 + Math.random()*0.3, maxLife: 0.55, r: 1.5 + Math.random()*2.5,
-              col: Math.random() < 0.5 ? '#fdcb6e' : '#ffffff' });
+            G.particles.push({
+              x, y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd * 0.5 - 60,
+              life: 0.25 + Math.random() * 0.3, maxLife: 0.55, r: 1.5 + Math.random() * 2.5,
+              col: Math.random() < 0.5 ? '#fdcb6e' : '#ffffff'
+            });
           }
           spawnParticles(x, y, '#f9ca24', 6);
           break;
         case 'spirits':
           // Ethereal dissipation — soft blue wisps float upward
           for (let i = 0; i < 10; i++) {
-            G.particles.push({ x: x + (Math.random()-0.5)*16, y, vx: (Math.random()-0.5)*20, vy: -18 - Math.random()*40,
-              life: 0.9 + Math.random()*0.6, maxLife: 1.5, r: 3 + Math.random()*4,
-              col: Math.random() < 0.5 ? '#74b9ff' : '#a29bfe', noFall: true });
+            G.particles.push({
+              x: x + (Math.random() - 0.5) * 16, y, vx: (Math.random() - 0.5) * 20, vy: -18 - Math.random() * 40,
+              life: 0.9 + Math.random() * 0.6, maxLife: 1.5, r: 3 + Math.random() * 4,
+              col: Math.random() < 0.5 ? '#74b9ff' : '#a29bfe', noFall: true
+            });
           }
           spawnParticles(x, y, '#6c5ce7', 6);
           break;
@@ -6931,9 +7035,11 @@
           // Leaf burst — green flecks spiral outward
           for (let i = 0; i < 16; i++) {
             const a = Math.random() * Math.PI * 2, spd = 30 + Math.random() * 80;
-            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd*0.3 - 50,
-              life: 0.5 + Math.random()*0.5, maxLife: 1.0, r: 2 + Math.random()*3,
-              col: Math.random() < 0.6 ? '#2ecc71' : Math.random() < 0.5 ? '#a8ff78' : '#27ae60' });
+            G.particles.push({
+              x, y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd * 0.3 - 50,
+              life: 0.5 + Math.random() * 0.5, maxLife: 1.0, r: 2 + Math.random() * 3,
+              col: Math.random() < 0.6 ? '#2ecc71' : Math.random() < 0.5 ? '#a8ff78' : '#27ae60'
+            });
           }
           spawnParticles(x, y, '#27ae60', 4);
           break;
@@ -6941,27 +7047,33 @@
           // Healing light scatter — soft green sparkles
           for (let i = 0; i < 14; i++) {
             const a = Math.random() * Math.PI * 2, spd = 20 + Math.random() * 70;
-            G.particles.push({ x, y, vx: Math.cos(a)*spd, vy: -30 - Math.random()*70,
-              life: 0.6 + Math.random()*0.5, maxLife: 1.1, r: 2 + Math.random()*3,
-              col: Math.random() < 0.5 ? '#2ecc71' : '#a8e063' });
+            G.particles.push({
+              x, y, vx: Math.cos(a) * spd, vy: -30 - Math.random() * 70,
+              life: 0.6 + Math.random() * 0.5, maxLife: 1.1, r: 2 + Math.random() * 3,
+              col: Math.random() < 0.5 ? '#2ecc71' : '#a8e063'
+            });
           }
           spawnParticles(x, y, '#81ecec', 4);
           break;
         case 'bloodpact':
           // Heavy blood splatter — dark red, low trajectory
           for (let i = 0; i < 14; i++) {
-            G.particles.push({ x, y, vx: (Math.random()-0.5)*110, vy: -10 - Math.random()*50,
-              life: 0.35 + Math.random()*0.35, maxLife: 0.7, r: 3 + Math.random()*4,
-              col: Math.random() < 0.5 ? '#b71c1c' : '#7f0000' });
+            G.particles.push({
+              x, y, vx: (Math.random() - 0.5) * 110, vy: -10 - Math.random() * 50,
+              life: 0.35 + Math.random() * 0.35, maxLife: 0.7, r: 3 + Math.random() * 4,
+              col: Math.random() < 0.5 ? '#b71c1c' : '#7f0000'
+            });
           }
           spawnParticles(x, y, '#c0392b', 6);
           break;
         case 'brutes':
           // Rock chunk burst — brown/orange heavy particles
           for (let i = 0; i < 14; i++) {
-            G.particles.push({ x, y, vx: (Math.random()-0.5)*100, vy: -30 - Math.random()*80,
-              life: 0.4 + Math.random()*0.4, maxLife: 0.8, r: 3 + Math.random()*4,
-              col: Math.random() < 0.5 ? '#d35400' : Math.random() < 0.5 ? '#a04000' : '#795548' });
+            G.particles.push({
+              x, y, vx: (Math.random() - 0.5) * 100, vy: -30 - Math.random() * 80,
+              life: 0.4 + Math.random() * 0.4, maxLife: 0.8, r: 3 + Math.random() * 4,
+              col: Math.random() < 0.5 ? '#d35400' : Math.random() < 0.5 ? '#a04000' : '#795548'
+            });
           }
           spawnParticles(x, y, '#e67e22', 4);
           break;
@@ -8607,10 +8719,12 @@
 
     function updateConquest(dt) {
       if (!G.zones) return;
-      const w = G.w, zr = Math.max(38, w * 0.045);
+      const w = G.w;
       // Zone x positions: left quarter, mid, right quarter
       const zx = [w * 0.25, w * 0.5, w * 0.75];
-      G.zones.forEach((z, i) => { z.x = zx[i]; z.r = zr; });
+      // Left/right smaller; mid larger and more impactful
+      const zRadii = [Math.max(26, w * 0.031), Math.max(42, w * 0.052), Math.max(26, w * 0.031)];
+      G.zones.forEach((z, i) => { z.x = zx[i]; z.r = zRadii[i]; });
 
       G.zones.forEach(z => {
         // Count non-worker, non-offscreen units near zone
@@ -8633,7 +8747,6 @@
               showPopup(z.x, G.groundY - 80, `${holder === 1 ? '🔵 P1' : '🔴 P2'} CAPTURES ${z._label}`, col, holder);
               spawnParticles(z.x, G.groundY - 20, col, 25);
               addKillFeed(`${holder === 1 ? '🔵 P1' : '🔴 P2'} captured ${z._label} zone`, col);
-              _checkConquestWin();
             }
           } else { z.capPlayer = holder; z.capTimer = 0; }
         } else if (contested || holder === null) {
@@ -8641,32 +8754,32 @@
         }
       });
 
-      // Soul income per owned zone (0.6/s each)
+      // Zone weights: left=1, mid=2, right=1 (mid gives double damage pressure)
+      const _zWeights = [1, 2, 1];
       G.players.forEach(p => {
-        const owned = G.zones.filter(z => z.owner === p.id).length;
-        const tick = owned * 0.6 * dt;
-        if (tick > 0) { p.souls = Math.min(999, p.souls + tick); p.totalSoulsEarned = (p.totalSoulsEarned||0) + tick; }
+        const enemy = G.players[p.id === 1 ? 1 : 0];
+        // Soul income per owned zone (0.6/s each)
+        const ownedCount = G.zones.filter(z => z.owner === p.id).length;
+        const soulTick = ownedCount * 0.6 * dt;
+        if (soulTick > 0) { p.souls = Math.min(999, p.souls + soulTick); p.totalSoulsEarned = (p.totalSoulsEarned || 0) + soulTick; }
+        // Sustained base damage based on zone weight (1 side zone = 0.2 dmg/s, mid = 0.4 dmg/s)
+        const dmgWeight = G.zones.reduce((sum, z, i) => sum + (z.owner === p.id ? _zWeights[i] : 0), 0);
+        if (dmgWeight > 0 && G.running) {
+          const dmgTick = dmgWeight * 0.2 * dt;
+          enemy.baseHp = Math.max(0, enemy.baseHp - dmgTick);
+          // Flash popup roughly every 1 HP of damage dealt
+          if (!G._zDmgAccum) G._zDmgAccum = [0, 0];
+          G._zDmgAccum[p.id - 1] = (G._zDmgAccum[p.id - 1] || 0) + dmgTick;
+          if (G._zDmgAccum[p.id - 1] >= 1.0) {
+            G._zDmgAccum[p.id - 1] -= 1.0;
+            showPopup(enemy.baseX, G.groundY - 68, '⚔ ZONE PRESSURE', p.id === 1 ? '#2471a3' : '#c0392b', p.id);
+          }
+          if (enemy.baseHp <= 0 && G.running) { checkWin(); return; }
+        }
       });
 
       // Update conquest zone indicator in mid display
       _updateConquestHUD();
-    }
-
-    function _checkConquestWin() {
-      if (!G.zones) return;
-      G.players.forEach(p => {
-        const owned = G.zones.filter(z => z.owner === p.id).length;
-        if (owned >= 2) {
-          // Drop base shield — enemy base can now take damage and die instantly (already at current HP)
-          const enemy = G.players[p.id === 1 ? 1 : 0];
-          enemy._conquestShield = false;
-          p._conquestShield = false; // also remove own shield
-          enemy.baseHp = 0; // trigger immediate win
-          showPopup(p.baseX, G.groundY - 100, '🏴 CONQUEST VICTORY', p.id === 1 ? '#2471a3' : '#c0392b', p.id);
-          showPopup(enemy.baseX, G.groundY - 80, '💀 TERRITORY LOST', '#e74c3c', p.id === 1 ? 2 : 1);
-          checkWin();
-        }
-      });
     }
 
     function _updateConquestHUD() {
@@ -8677,9 +8790,10 @@
         if (z.owner === 2) return '🔴';
         return '⬜';
       });
-      const p1owned = G.zones.filter(z=>z.owner===1).length;
-      const p2owned = G.zones.filter(z=>z.owner===2).length;
-      ind.textContent = `${sym[0]} ${sym[1]} ${sym[2]}  (P1:${p1owned} P2:${p2owned} · first to 2 wins)`;
+      const _zW = [1, 2, 1];
+      const p1dmg = (G.zones.reduce((s, z, i) => s + (z.owner === 1 ? _zW[i] : 0), 0) * 0.2).toFixed(1);
+      const p2dmg = (G.zones.reduce((s, z, i) => s + (z.owner === 2 ? _zW[i] : 0), 0) * 0.2).toFixed(1);
+      ind.textContent = `🔵 ${sym[0]} ${sym[1]} ${sym[2]} 🔴  · P1 pressure: ${p1dmg}❤/s · P2 pressure: ${p2dmg}❤/s`;
     }
 
     function updateGroundFX(dt) {
@@ -8724,8 +8838,8 @@
       drawFactionBackground(ctx, G);
       // Bases
       G.players.forEach(p => drawBase(p));
-      // Mid circle with capture arc
-      drawMid();
+      // Mid circle (skipped in conquest — zones replace it)
+      if (GAME_MODE !== 'conquest') drawMid();
       // Conquest zones
       if (GAME_MODE === 'conquest' && G.zones) drawConquestZones();
       // Blood pools (Bloodpact) — draw before particles and units
@@ -8878,37 +8992,81 @@
 
     function drawConquestZones() {
       if (!G.zones) return;
-      G.zones.forEach(z => {
+      const _zWeightsD = [1, 2, 1]; // weight for visual emphasis
+      G.zones.forEach((z, i) => {
         if (!z.x) return;
-        const pulse = 0.12 + Math.sin(Date.now() / 700 + z.id * 2.1) * 0.06;
-        const col = z.owner === 1 ? '#2471a3' : z.owner === 2 ? '#c0392b' : '#666';
-        const alpha = z.owner ? 0.22 : 0.1;
-        // Zone fill
+        const isMid = i === 1;
+        // Circle sits ON the ground: center is r pixels above groundY
+        const cy = G.groundY - z.r;
+        const pulse = 0.10 + Math.sin(Date.now() / 700 + i * 2.1) * 0.06;
+        const col = z.owner === 1 ? '#2471a3' : z.owner === 2 ? '#c0392b' : '#555';
+        const glowCol = z.owner === 1 ? 'rgba(36,113,163,' : z.owner === 2 ? 'rgba(192,57,43,' : 'rgba(120,120,120,';
+
+        // Glow behind circle
+        if (z.owner) {
+          ctx.save();
+          ctx.globalAlpha = (isMid ? 0.18 : 0.12) + pulse * 0.5;
+          const grd = ctx.createRadialGradient(z.x, cy, 0, z.x, cy, z.r * 1.7);
+          grd.addColorStop(0, glowCol + '0.7)');
+          grd.addColorStop(1, glowCol + '0)');
+          ctx.fillStyle = grd;
+          ctx.beginPath(); ctx.arc(z.x, cy, z.r * 1.7, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }
+
+        // Zone fill — full circle above ground
         ctx.save();
-        ctx.globalAlpha = alpha + pulse;
+        ctx.globalAlpha = (z.owner ? 0.18 : 0.06) + pulse;
         ctx.fillStyle = col;
-        ctx.beginPath(); ctx.arc(z.x, G.groundY, z.r, Math.PI, 0); ctx.fill();
-        ctx.globalAlpha = (z.owner ? 0.55 : 0.25) + pulse;
-        ctx.strokeStyle = col; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(z.x, G.groundY, z.r, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(z.x, cy, z.r, 0, Math.PI * 2); ctx.fill();
+
+        // Zone border ring
+        ctx.globalAlpha = (z.owner ? 0.7 : 0.3) + pulse * 0.5;
+        ctx.strokeStyle = col;
+        ctx.lineWidth = isMid ? 3 : 2;
+        if (z.owner) { ctx.shadowBlur = isMid ? 14 : 8; ctx.shadowColor = col; }
+        ctx.beginPath(); ctx.arc(z.x, cy, z.r, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
         ctx.restore();
+
         // Capture progress arc
         if (z.capPlayer !== null && z.capTimer > 0) {
           const prog = z.capTimer / 2.5;
           const capCol = z.capPlayer === 1 ? '#2471a3' : '#c0392b';
-          ctx.save(); ctx.globalAlpha = 0.85;
-          ctx.strokeStyle = capCol; ctx.lineWidth = 4;
-          ctx.shadowBlur = 8; ctx.shadowColor = capCol;
-          ctx.beginPath(); ctx.arc(z.x, G.groundY, z.r + 6, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2); ctx.stroke();
+          ctx.save(); ctx.globalAlpha = 0.9;
+          ctx.strokeStyle = capCol; ctx.lineWidth = isMid ? 5 : 4;
+          ctx.shadowBlur = 10; ctx.shadowColor = capCol;
+          ctx.beginPath(); ctx.arc(z.x, cy, z.r + 7, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2); ctx.stroke();
           ctx.shadowBlur = 0; ctx.restore();
         }
-        // Zone label
+
+        // Zone label — color matches owner (or dim if neutral)
+        const labelCol = z.owner === 1 ? '#5dade2' : z.owner === 2 ? '#e74c3c' : '#999';
+        const fs = isMid ? Math.max(11, G.w * 0.011) : Math.max(9, G.w * 0.009);
         ctx.save();
-        ctx.fillStyle = z.owner ? col : '#888';
-        ctx.globalAlpha = 0.7;
-        ctx.font = `bold ${Math.max(9, G.w * 0.009)}px Rajdhani,sans-serif`;
+        ctx.fillStyle = labelCol;
+        ctx.globalAlpha = 0.95;
+        ctx.font = `bold ${fs}px Rajdhani,sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText(z._label, z.x, G.groundY - z.r - 8);
+        if (z.owner) { ctx.shadowBlur = 6; ctx.shadowColor = labelCol; }
+        ctx.fillText(z._label, z.x, cy - z.r - 7);
+        ctx.shadowBlur = 0;
+        // Damage rate sub-label
+        if (z.owner) {
+          const dmgRate = (_zWeightsD[i] * 0.2).toFixed(1);
+          ctx.globalAlpha = 0.65;
+          ctx.font = `${Math.max(7, G.w * 0.007)}px Rajdhani,sans-serif`;
+          ctx.fillText(`-${dmgRate}❤/s`, z.x, cy - z.r - 18);
+        }
+        ctx.restore();
+
+        // Ground anchor line
+        ctx.save();
+        ctx.globalAlpha = 0.25;
+        ctx.strokeStyle = col; ctx.lineWidth = 1;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(z.x, G.groundY); ctx.lineTo(z.x, cy + z.r); ctx.stroke();
+        ctx.setLineDash([]);
         ctx.restore();
       });
     }
@@ -8936,9 +9094,9 @@
         const pulse = 0.35 + Math.sin(Date.now() / (280 - dangerFrac * 180)) * 0.22;
         ctx.save();
         const dgrd = ctx.createRadialGradient(x, gy, 0, x, gy, bw * 3.5);
-        dgrd.addColorStop(0,   `rgba(231,76,60,${dangerFrac * pulse * 0.75})`);
-        dgrd.addColorStop(0.35,`rgba(231,76,60,${dangerFrac * pulse * 0.35})`);
-        dgrd.addColorStop(1,   'rgba(231,76,60,0)');
+        dgrd.addColorStop(0, `rgba(231,76,60,${dangerFrac * pulse * 0.75})`);
+        dgrd.addColorStop(0.35, `rgba(231,76,60,${dangerFrac * pulse * 0.35})`);
+        dgrd.addColorStop(1, 'rgba(231,76,60,0)');
         ctx.fillStyle = dgrd;
         ctx.fillRect(x - bw * 3.5, 0, bw * 7, G.h);
         ctx.restore();
@@ -9486,18 +9644,21 @@
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('sc-gameover').classList.add('active');
         const gt = document.getElementById('go-title');
-        const _soloMode = GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
+        const _vPs = window._pendingPlayerSetup || 'vs';
+        const _soloMode = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
         const _isTournament = GAME_MODE === 'tournament' && TOURNAMENT;
         const _isDraft = GAME_MODE === 'draft';
         // Update change-faction button label contextually
         const cfBtn = document.getElementById('btn-change-faction');
         if (cfBtn) cfBtn.textContent = _isDraft ? '🃏 REDRAFT' : '🔄 CHANGE FACTION';
         const _tournamentWinner = _isTournament ? (_winner.id === 1 ? TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p1 : TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p2) : null;
+        const _isAiVsAi = _vPs === 'aivsai' || GAME_MODE === 'aivsai';
         const _winnerName = _isTournament && _tournamentWinner
           ? `${_tournamentWinner.faction.icon} ${_tournamentWinner.name} WINS!`
-          : (_winner.id === 2 && _soloMode) ? 'AI WINS'
-            : (_winner.id === 1 && _soloMode) ? 'YOU WIN!'
-              : `PLAYER ${_winner.id} WINS`;
+          : _isAiVsAi ? `🤖 AI ${_winner.id} WINS`
+            : (_winner.id === 2 && _soloMode) ? 'AI WINS'
+              : (_winner.id === 1 && _soloMode) ? 'YOU WIN!'
+                : `PLAYER ${_winner.id} WINS`;
         gt.textContent = _winnerName;
         gt.style.color = _winner.id === 1 ? '#2471a3' : '#c0392b';
         gt.style.textShadow = '';
@@ -9520,7 +9681,12 @@
         ];
         const goSub = document.getElementById('go-sub-text');
         if (goSub) {
-          if (_soloMode && _winner.id === 2) goSub.textContent = aiWinSubs[Math.floor(Math.random() * aiWinSubs.length)];
+          if (_isAiVsAi) {
+            const aiVsAiSubs = ['The machines fought. One survived.', 'Cold logic. Ruthless efficiency.',
+              'Neither felt a thing.', 'An emotionless slaughter.', 'Calculated. Decisive. Merciless.'];
+            goSub.textContent = aiVsAiSubs[Math.floor(Math.random() * aiVsAiSubs.length)];
+          }
+          else if (_soloMode && _winner.id === 2) goSub.textContent = aiWinSubs[Math.floor(Math.random() * aiWinSubs.length)];
           else if (_soloMode && _winner.id === 1) goSub.textContent = playerWinSubs[Math.floor(Math.random() * playerWinSubs.length)];
           else if (GAME_MODE === 'tournament' && TOURNAMENT) {
             const tSubs = ['The bracket doesn\'t lie.', 'Onward to glory.', 'One step closer to the crown.', 'The crowd goes wild.', 'Another challenger falls.'];
@@ -9555,10 +9721,12 @@
           document.getElementById('go-match-time').insertAdjacentElement('afterend', sesEl);
         }
         if (SESSION.games > 1) {
-          const _soloSess = GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
-          sesEl.textContent = _soloSess
-            ? `SESSION: YOU ${SESSION.wins[0]}W · AI ${SESSION.wins[1]}W · ${SESSION.games} GAMES`
-            : `SESSION: P1 ${SESSION.wins[0]}W · P2 ${SESSION.wins[1]}W · ${SESSION.games} GAMES`;
+          const _soloSess = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
+          sesEl.textContent = _isAiVsAi
+            ? `SESSION: AI 1 🤖 ${SESSION.wins[0]}W · AI 2 🤖 ${SESSION.wins[1]}W · ${SESSION.games} GAMES`
+            : _soloSess
+              ? `SESSION: YOU ${SESSION.wins[0]}W · AI ${SESSION.wins[1]}W · ${SESSION.games} GAMES`
+              : `SESSION: P1 ${SESSION.wins[0]}W · P2 ${SESSION.wins[1]}W · ${SESSION.games} GAMES`;
         } else {
           sesEl.textContent = '';
         }
@@ -9594,8 +9762,10 @@
             const opp = _G.players[p.id === 1 ? 1 : 0];
             const kdr = opp.kills > 0 ? (p.kills / Math.max(1, opp.kills)).toFixed(2) : p.kills > 0 ? p.kills + '/0' : '0/0';
             const dpe = p.spawned > 0 ? Math.round((p.dmgDealt || 0) / p.spawned) : 0;
-            const _isSoloGo = GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
-            const _pLabelGo = _isSoloGo ? (p.id === 1 ? 'YOU' : ('AI · ' + (_G.aiDifficulty || '').toUpperCase())) : ('PLAYER ' + p.id);
+            const _isSoloGo = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
+            const _pLabelGo = _isAiVsAi ? ('🤖 AI ' + p.id)
+              : _isSoloGo ? (p.id === 1 ? 'YOU' : ('AI · ' + (_G.aiDifficulty || '').toUpperCase()))
+                : ('PLAYER ' + p.id);
             return `<div class="go-stat-col" style="border-color:${pc};min-width:clamp(200px,28vw,320px)">
               <div class="go-stat-label" style="color:${pc};font-size:clamp(.85rem,1.3vw,1.1rem)">${isW ? '🏆 ' : '💀 '}${_pLabelGo}</div>
               <div class="go-stat-val" style="color:${pc}">${_G.factions[p.id - 1].icon} ${_G.factions[p.id - 1].name}</div>
@@ -9651,29 +9821,34 @@
             }
             const sug = suggestions[0];
             // ── AI Game Analysis ──────────────────────────────────────────────
+            // In aivsai no tips at all; in solo, only give tips for the human player
             const tips = [];
-            _G.players.forEach(pp => {
-              const soulsEarned = pp.totalSoulsEarned || 0;
-              const soulsSpent = pp.soulsSpent || 0;
-              const bodiesSpent = pp.bodiesSpent || 0;
-              const _tM2 = (GAME_MODE === 'tournament' && TOURNAMENT) ? (TOURNAMENT.rounds[TOURNAMENT.currentRound] || [])[TOURNAMENT.currentMatchInRound] : null;
-              const _tP2 = _tM2 ? (pp.id === 1 ? _tM2.p1 : _tM2.p2) : null;
-              const ppName = _tP2 ? (_tP2.isAI ? '🤖 ' + _tP2.name : _tP2.name) : (GAME_MODE === 'solo' || GAME_MODE === 'tutorial') ? (pp.id === 1 ? 'YOU' : 'AI') : ('P' + pp.id);
-              if (soulsEarned > 0 && soulsSpent / soulsEarned < 0.5 && soulsEarned > 80)
-                tips.push(`${ppName} hoarded souls — spend more aggresively to pressure the enemy.`);
-              if (pp.buffUsed === 0 && soulsEarned > 100)
-                tips.push(`${ppName} never used a Rally Buff — War Cry and Body Boon can change the tide instantly.`);
-              if (pp.midCaptures === 0)
-                tips.push(`${ppName} never captured mid — the +1.5💀/s bonus compounds massively over time.`);
-              if ((pp.ownedUpgrades || new Set()).size === 0 && soulsEarned > 120)
-                tips.push(`${ppName} bought no upgrades — faction upgrades give permanent army-wide buffs.`);
-              const workers = (pp.unitTypeSpawned || {});
-              const workerIds = Object.keys(workers).filter(id => id.endsWith('_worker') || id.includes('worker') || id.includes('bone') || id.includes('chirurgeon'));
-              if (workerIds.every(id => (workers[id] || 0) < 2) && soulsEarned > 60)
-                tips.push(`${ppName} deployed few workers — more workers = more bodies = stronger army.`);
-            });
-            // Build faction suggestion as one of the tips when not in tournament
-            const _factionTip = GAME_MODE !== 'tournament'
+            if (!_isAiVsAi) {
+              _G.players.forEach(pp => {
+                // Solo: skip AI player tips; aivsai: skipped entirely (outer if)
+                if (_isSoloGo && pp.id === 2) return;
+                const soulsEarned = pp.totalSoulsEarned || 0;
+                const soulsSpent = pp.soulsSpent || 0;
+                const bodiesSpent = pp.bodiesSpent || 0;
+                const _tM2 = (GAME_MODE === 'tournament' && TOURNAMENT) ? (TOURNAMENT.rounds[TOURNAMENT.currentRound] || [])[TOURNAMENT.currentMatchInRound] : null;
+                const _tP2 = _tM2 ? (pp.id === 1 ? _tM2.p1 : _tM2.p2) : null;
+                const ppName = _tP2 ? (_tP2.isAI ? '🤖 ' + _tP2.name : _tP2.name) : _isSoloGo ? 'YOU' : ('P' + pp.id);
+                if (soulsEarned > 0 && soulsSpent / soulsEarned < 0.5 && soulsEarned > 80)
+                  tips.push(`${ppName} hoarded souls — spend more aggresively to pressure the enemy.`);
+                if (pp.buffUsed === 0 && soulsEarned > 100)
+                  tips.push(`${ppName} never used a Rally Buff — War Cry and Body Boon can change the tide instantly.`);
+                if (pp.midCaptures === 0)
+                  tips.push(`${ppName} never captured mid — the +1.5💀/s bonus compounds massively over time.`);
+                if ((pp.ownedUpgrades || new Set()).size === 0 && soulsEarned > 120)
+                  tips.push(`${ppName} bought no upgrades — faction upgrades give permanent army-wide buffs.`);
+                const workers = (pp.unitTypeSpawned || {});
+                const workerIds = Object.keys(workers).filter(id => id.endsWith('_worker') || id.includes('worker') || id.includes('bone') || id.includes('chirurgeon'));
+                if (workerIds.every(id => (workers[id] || 0) < 2) && soulsEarned > 60)
+                  tips.push(`${ppName} deployed few workers — more workers = more bodies = stronger army.`);
+              });
+            }
+            // Build faction suggestion as one of the tips when not in tournament and not aivsai
+            const _factionTip = (GAME_MODE !== 'tournament' && !_isAiVsAi)
               ? `Try ${sug.f} next — ${sug.tip}`
               : null;
             const allTips = [...tips.slice(0, 4), ...(_factionTip ? [_factionTip] : [])];
@@ -10047,7 +10222,9 @@
         e.preventDefault(); return;
       }
       // Faction selection keyboard nav — disabled in AI vs AI (no human input needed)
-      if (document.getElementById('sc-faction').classList.contains('active') && GAME_MODE !== 'aivsai') {
+      const _fKbSetup = window._pendingPlayerSetup || 'vs';
+      if (document.getElementById('sc-faction').classList.contains('active') &&
+        GAME_MODE !== 'aivsai' && GAME_MODE !== 'conquest_aivsai' && GAME_MODE !== 'sudden_death_aivsai' && _fKbSetup !== 'aivsai') {
         if (e.code === KEYS.p1Up) { factionCursorMove(1, -1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
         if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
@@ -10144,13 +10321,14 @@
       }
 
       // P1 controls — disabled in aivsai
-      if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
-      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
-      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
-      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
-      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
-      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
-      else if (GAME_MODE !== 'aivsai' && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
+      const _isAiVsAiKb = GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai';
+      if (!_isAiVsAiKb && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
       else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
@@ -10162,7 +10340,7 @@
       else {
         for (let s = 0; s < 5; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
-          if ((GAME_MODE === 'vs' || GAME_MODE === 'draft') && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
+          if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'conquest' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo') && KEYS['p2Slot' + s] && e.code === KEYS['p2Slot' + s]) { e.preventDefault(); directSpawnSlot(2, s); break; }
         }
       }
     });
@@ -10458,15 +10636,33 @@
     }
 
     let AI1_FACTION_IDX = null; // P1 AI faction in aivsai mode
+    let _rulesetMode = null; // 'conquest' | 'sudden_death' | null — the ruleset independent of player setup
+
+    // Called when user clicks a PVP/VS AI/AI VS AI button on faction screen
+    function _setFactionPlayerMode(fmode) {
+      if (!_rulesetMode) return;
+      const map = { pvp: _rulesetMode, solo: _rulesetMode + '_solo', aivsai: _rulesetMode + '_aivsai' };
+      // We encode the combined mode as e.g. 'conquest_solo', 'sudden_death_aivsai'
+      // But GAME_MODE only has specific values — map them:
+      if (fmode === 'pvp') GAME_MODE = _rulesetMode;
+      else if (fmode === 'solo') GAME_MODE = _rulesetMode + '_solo';
+      else if (fmode === 'aivsai') GAME_MODE = _rulesetMode + '_aivsai';
+      document.querySelectorAll('#faction-mode-row .fmode-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.fmode === fmode);
+      });
+      _applyFactionScreenMode();
+    }
+
 
     function _applyFactionScreenMode() {
-      const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
+      const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial' ||
+        GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo');
       const isVsLike = (GAME_MODE === 'vs' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest');
-      const aivsai = GAME_MODE === 'aivsai';
+      const aivsai = (GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai');
       // In solo: show the P2 card grid (relabelled) so player can pick the AI faction
       document.getElementById('p2-human-section').style.display = (solo || aivsai) ? '' : '';
       document.getElementById('ai-p2-panel').style.display = (solo || aivsai) ? 'flex' : 'none';
-      document.querySelector('.faction-vs').textContent = (solo || aivsai) ? '🤖' : 'VS';
+      document.querySelector('.faction-vs').textContent = 'VS';
 
       // Show P1 AI settings panel only in aivsai mode
       document.getElementById('ai-p1-panel').style.display = aivsai ? '' : 'none';
@@ -10475,6 +10671,8 @@
       // Update P2 faction panel label
       const p2lbl = document.getElementById('faction-hint-p2');
       if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : solo ? '🤖 AI FACTION' : 'PLAYER 2';
+      const _aiP2Label = document.getElementById('ai-p2-label');
+      if (_aiP2Label) _aiP2Label.textContent = aivsai ? '🤖 AI 2' : '🤖 AI';
       // Update P1 label
       const p1lbl2 = document.getElementById('faction-hint-p1');
       if (p1lbl2) p1lbl2.firstChild.textContent = aivsai ? '🤖 AI 1' : 'PLAYER 1';
@@ -10650,7 +10848,10 @@
         const afd1 = document.getElementById('ai1-faction-display');
         if (afd1) afd1.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
       }
-      if ((GAME_MODE === 'aivsai' || GAME_MODE === 'solo' || GAME_MODE === 'sudden_death') && pid === 2) {
+      const _sfSetup = window._pendingPlayerSetup || 'vs';
+      if ((_sfSetup === 'aivsai' || _sfSetup === 'solo' || GAME_MODE === 'aivsai' ||
+        GAME_MODE === 'solo' || GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo' ||
+        GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai') && pid === 2) {
         AI_FACTION_IDX = fi;
         const afd = document.getElementById('ai-faction-display');
         if (afd) afd.textContent = FACTIONS[fi].icon + ' ' + FACTIONS[fi].name + ' — ' + FACTIONS[fi].tagline;
@@ -10682,7 +10883,8 @@
     }
 
     function highlightFactionCursor(pid) {
-      if (GAME_MODE === 'aivsai') return;
+      const _hfcSetup = window._pendingPlayerSetup || 'vs';
+      if (GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai' || _hfcSetup === 'aivsai') return;
       const cards = document.querySelectorAll(`#fcards-p${pid} .fcard`);
       cards.forEach((c, i) => c.classList.toggle('fkey-cursor', i === fCursor[pid - 1]));
       // Scroll card into view
@@ -10718,11 +10920,33 @@
     }
 
     // ─── BUTTON WIRING ───────────────────────────────────────────────────────────
-    document.getElementById('btn-play').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-faction'); });
-    document.getElementById('btn-sudden-death').addEventListener('click', () => { setGameMode('sudden_death'); showScreen('sc-faction'); });
-    document.getElementById('btn-conquest').addEventListener('click', () => { setGameMode('conquest'); showScreen('sc-faction'); });
-    document.getElementById('btn-solo').addEventListener('click', () => { setGameMode('solo'); showScreen('sc-faction'); });
-    document.getElementById('btn-aivsai').addEventListener('click', () => { setGameMode('aivsai'); showScreen('sc-faction'); });
+    document.getElementById('btn-play').addEventListener('click', () => {
+      _rulesetMode = null; setGameMode('vs');
+      const row = document.getElementById('faction-mode-row'); if (row) row.style.display = 'none';
+      showScreen('sc-faction');
+    });
+    document.getElementById('btn-sudden-death').addEventListener('click', () => {
+      _rulesetMode = 'sudden_death'; setGameMode('sudden_death');
+      const row = document.getElementById('faction-mode-row');
+      if (row) { row.style.display = 'flex'; row.querySelectorAll('.fmode-btn').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'pvp')); }
+      showScreen('sc-faction');
+    });
+    document.getElementById('btn-conquest').addEventListener('click', () => {
+      _rulesetMode = 'conquest'; setGameMode('conquest');
+      const row = document.getElementById('faction-mode-row');
+      if (row) { row.style.display = 'flex'; row.querySelectorAll('.fmode-btn').forEach(b => b.classList.toggle('active', b.dataset.fmode === 'pvp')); }
+      showScreen('sc-faction');
+    });
+    document.getElementById('btn-solo').addEventListener('click', () => {
+      _rulesetMode = null; setGameMode('solo');
+      const row = document.getElementById('faction-mode-row'); if (row) row.style.display = 'none';
+      showScreen('sc-faction');
+    });
+    document.getElementById('btn-aivsai').addEventListener('click', () => {
+      _rulesetMode = null; setGameMode('aivsai');
+      const row = document.getElementById('faction-mode-row'); if (row) row.style.display = 'none';
+      showScreen('sc-faction');
+    });
     document.getElementById('btn-draft').addEventListener('click', () => { startDraftMode(); });
 
     // ── Menu button tooltips ─────────────────────────────────────────────────────
@@ -10740,16 +10964,16 @@
         'At <span class="st">30 HP</span> your base triggers Last Stand — +40 souls and 3 Royal Guards spawn.',
       ]],
       ['btn-conquest', '🏴 CONQUEST', [
-        '<span class="st">Capture zones to win — bases are indestructible until you do.</span>',
+        '<span class="st">Hold zones to bleed the enemy base — no instant wins, just sustained pressure.</span>',
         ' ',
-        'Three zones on the map: <span class="st">LEFT</span>, <span class="st">MID</span>, and <span class="st">RIGHT</span>.',
-        'Stand in a zone uncontested for <span class="st">2.5 seconds</span> to capture it.',
-        'Each zone you own gives <span class="st">+0.6💀/s</span> income.',
+        'Three zones: <span class="st">LEFT</span>, <span class="st">MID</span>, and <span class="st">RIGHT</span>. Stand uncontested for <span class="st">2.5 seconds</span> to capture.',
+        'Each zone deals continuous damage to the enemy base: side zones <span class="st">-0.2❤/s</span>, mid <span class="st">-0.4❤/s</span>.',
+        '<span class="st">Mid is worth double</span> — it\'s the most important objective on the map.',
         ' ',
-        'Own <span class="st">2 of 3 zones</span> and the enemy base immediately falls.',
-        'Bases cannot be damaged by direct attacks until the conquest win condition triggers.',
+        'Zone owners also earn <span class="st">+0.6💀/s</span> per zone held.',
+        'Bases are immune to direct unit attacks — only zone pressure chips away at HP.',
         ' ',
-        'Forces map-wide aggression — you can not just turtle at home.',
+        'Hold all three zones for <span class="st">0.8❤/s</span> drain. A base falls in ~2 minutes of full control.',
       ]],
       ['btn-sudden-death', '⚡ SUDDEN DEATH', [
         '<span class="st">Both bases start at 30 HP.</span>',
@@ -11072,18 +11296,33 @@
     document.getElementById('btn-tut-skip').addEventListener('click', () => { setGameMode('vs'); showScreen('sc-menu'); });
     document.getElementById('btn-start').addEventListener('click', () => {
       if (fSelected[0] === null) return;
-      const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial');
-      const aivsai = GAME_MODE === 'aivsai';
+      const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial' ||
+        GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo');
+      const aivsai = GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai';
       if (!solo && !aivsai && fSelected[1] === null) return;
+      // Normalize compound modes back to base ruleset — AI is handled separately
+      if (GAME_MODE === 'conquest_solo') { GAME_MODE = 'conquest'; }
+      else if (GAME_MODE === 'conquest_aivsai') { GAME_MODE = 'conquest'; }
+      else if (GAME_MODE === 'sudden_death_solo') { GAME_MODE = 'sudden_death'; }
+      else if (GAME_MODE === 'sudden_death_aivsai') { GAME_MODE = 'sudden_death'; }
+      // Store player setup into a temporary flag read by startGame
+      if (solo && !aivsai) window._pendingPlayerSetup = 'solo';
+      else if (aivsai) window._pendingPlayerSetup = 'aivsai';
+      else window._pendingPlayerSetup = 'vs';
       if (AC.state === 'suspended') AC.resume();
       P1_FACTION = FACTIONS[fSelected[0]];
-      // In solo/tutorial: AI faction auto-selected
-      if (solo) {
+      // Use _pendingPlayerSetup since GAME_MODE was already normalized above
+      if (window._pendingPlayerSetup === 'solo') {
         if (AI_FACTION_IDX === null) AI_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
         P2_FACTION = FACTIONS[AI_FACTION_IDX];
         if (!AI_PERSONALITY) AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
         if (GAME_MODE === 'tutorial') AI_DIFFICULTY = 'tutorial';
-      } else if (GAME_MODE === 'aivsai') {
+        // For compound solo modes: update GAME_MODE to signal AI is active
+        if (GAME_MODE === 'conquest') GAME_MODE = 'conquest';
+        else if (GAME_MODE === 'sudden_death') GAME_MODE = 'sudden_death';
+        // Store solo flag so updateAI runs
+        if (GAME_MODE !== 'tutorial') window._soloAiActive = true; else window._soloAiActive = true;
+      } else if (window._pendingPlayerSetup === 'aivsai') {
         // Both P1 and P2 are AI
         if (AI1_FACTION_IDX === null) AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
         if (AI_FACTION_IDX === null) AI_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
@@ -11091,8 +11330,10 @@
         P2_FACTION = FACTIONS[AI_FACTION_IDX];
         if (!AI1_PERSONALITY) AI1_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
         if (!AI_PERSONALITY) AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+        window._soloAiActive = false;
       } else {
         P2_FACTION = FACTIONS[fSelected[1]];
+        window._soloAiActive = false;
       }
       initGame();
       // Launch tutorial steps after game starts
@@ -11358,6 +11599,11 @@
     buildFactionCards();
     renderTut();
     animMenuCanvas();
+
+    // ── FACTION MODE ROW WIRING ───────────────────────────────────────
+    document.querySelectorAll('#faction-mode-row .fmode-btn').forEach(btn => {
+      btn.addEventListener('click', () => _setFactionPlayerMode(btn.dataset.fmode));
+    });
 
     // ── TOURNAMENT WIRING ──────────────────────────────────────────
     document.getElementById('btn-tournament').addEventListener('click', () => {
