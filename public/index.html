@@ -1619,6 +1619,8 @@
     #sc-game {
       display: none;
       flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
       padding: 0;
     }
 
@@ -1626,47 +1628,90 @@
       display: flex;
     }
 
-    #battlefield {
+    #battlefield-wrap {
       flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+    }
+
+    #battlefield {
+      flex: 0 0 auto;
       display: block;
-      width: 100%;
-      height: 100%;
+      transform-origin: center center;
     }
 
     #momentum-bar-wrap {
-      height: clamp(6px, .9vh, 10px);
-      background: #111120;
+      height: clamp(20px, 2.5vh, 28px);
+      background: #0a0a18;
       flex-shrink: 0;
       position: relative;
       border-bottom: 1px solid var(--border);
+      overflow: hidden;
     }
 
+    /* P1 fill — grows from left when P1 is pushing forward */
     #momentum-p1 {
       position: absolute;
       left: 0;
       top: 0;
       bottom: 0;
-      background: var(--p1);
-      transition: width .5s;
+      background: linear-gradient(90deg, var(--p1d), var(--p1g));
+      transition: width .4s ease;
+      width: 50%;
     }
 
+    /* P2 fill — grows from right when P2 is pushing forward */
     #momentum-p2 {
       position: absolute;
       right: 0;
       top: 0;
       bottom: 0;
-      background: var(--p2);
-      transition: width .5s;
+      background: linear-gradient(270deg, var(--p2d), var(--p2g));
+      transition: width .4s ease;
+      width: 50%;
+    }
+
+    /* Sliding front line marker */
+    #momentum-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, .7);
+      transform: translateX(-50%);
+      left: 50%;
+      transition: left .4s ease;
+      z-index: 4;
     }
 
     #momentum-center {
       position: absolute;
       left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: rgba(255, 255, 255, .2);
+      top: 20%;
+      bottom: 20%;
+      width: 1px;
+      background: rgba(255, 255, 255, .15);
       transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    #momentum-title {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.48rem, .7vw, .65rem);
+      color: rgba(255, 255, 255, .35);
+      letter-spacing: .16em;
+      white-space: nowrap;
+      z-index: 3;
+      pointer-events: none;
     }
 
     .momentum-label {
@@ -1674,17 +1719,23 @@
       top: 50%;
       transform: translateY(-50%);
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.3rem, .5vw, .45rem);
-      color: rgba(255, 255, 255, .5);
-      letter-spacing: .1em;
+      font-size: clamp(.5rem, .75vw, .68rem);
+      font-weight: 600;
+      color: rgba(255, 255, 255, .7);
+      letter-spacing: .06em;
+      z-index: 3;
+      pointer-events: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .9);
     }
 
     #momentum-p1-label {
-      left: 4px;
+      left: clamp(6px, 1vw, 14px);
+      color: rgba(100, 180, 255, .8);
     }
 
     #momentum-p2-label {
-      right: 4px;
+      right: clamp(6px, 1vw, 14px);
+      color: rgba(255, 100, 100, .8);
     }
 
     #mid-indicator {
@@ -4875,14 +4926,18 @@
   <!-- GAME -->
   <div id="sc-game" class="screen">
     <div id="momentum-bar-wrap"
-      title="MOMENTUM — shows who controls the battlefield. Wider bar = more map presence from kills and mid control.">
-      <div id="momentum-p1" style="width:50%"></div>
-      <div id="momentum-p2" style="width:50%"></div>
+      title="FRONT LINE — shows where the battle is happening. Marker shifts toward whichever base is under pressure.">
+      <div id="momentum-p1"></div>
+      <div id="momentum-p2"></div>
       <div id="momentum-center"></div>
-      <span class="momentum-label" id="momentum-p1-label">P1</span>
-      <span class="momentum-label" id="momentum-p2-label">P2</span>
+      <span class="momentum-label" id="momentum-p1-label">P1 ◀</span>
+      <div id="momentum-title">FRONT LINE</div>
+      <span class="momentum-label" id="momentum-p2-label">▶ P2</span>
+      <div id="momentum-marker"></div>
     </div>
-    <canvas id="battlefield"></canvas>
+    <div id="battlefield-wrap">
+      <canvas id="battlefield"></canvas>
+    </div>
     <div id="mid-indicator">⚔ MIDDLE — UNCLAIMED</div>
     <div id="mid-cap-progress">
       <div id="mid-cap-fill"></div>
@@ -5580,32 +5635,40 @@
     const canvas = document.getElementById('battlefield');
     const ctx = canvas.getContext('2d');
 
+    // ── FIXED VIRTUAL RESOLUTION ─────────────────────────────────────────────────
+    // The game world is always VIRTUAL_W × VIRTUAL_H pixels of logic.
+    // The canvas is CSS-scaled to fill the full available width (side-scroller
+    // — horizontal space is what matters). Height scales proportionally.
+    // Both players see an identical map regardless of their screen resolution.
+    const VIRTUAL_W = 1920;
+    const VIRTUAL_H = 600;
+    let _canvasScale = 1; // current CSS scale factor — used to map game→screen coords
+
     function resizeGameCanvas() {
+      // Set fixed logical resolution — game world never changes size
+      if (canvas.width !== VIRTUAL_W) canvas.width = VIRTUAL_W;
+      if (canvas.height !== VIRTUAL_H) canvas.height = VIRTUAL_H;
+      // Scale to fill full available width; height follows proportionally
+      const hudEl = document.getElementById('hud');
+      const mbEl = document.getElementById('momentum-bar-wrap');
+      const hudH = hudEl ? hudEl.offsetHeight : 0;
+      const mbH = mbEl ? mbEl.offsetHeight : 0;
+      const availW = window.innerWidth;
+      const availH = Math.max(100, window.innerHeight - hudH - mbH);
+      // Fill width first; if that would overflow height, clamp to height instead
+      const scaleByW = availW / VIRTUAL_W;
+      const scaleByH = availH / VIRTUAL_H;
+      _canvasScale = Math.min(scaleByW, scaleByH);
+      canvas.style.transform = `scale(${_canvasScale})`;
       const wrap = canvas.parentElement;
-      if (!wrap || wrap.offsetWidth < 10) return; // guard against minimize/hidden
-      const hudH = document.getElementById('hud').offsetHeight;
-      const mbH = document.getElementById('momentum-bar-wrap').offsetHeight;
-      canvas.width = wrap.offsetWidth;
-      canvas.height = Math.max(100, wrap.offsetHeight - hudH - mbH);
+      if (wrap) wrap.style.height = availH + 'px';
     }
 
-    // Live resize: scale positions proportionally
+    // Live resize: just re-scale the canvas visually — game coords never change
     document.addEventListener('visibilitychange', () => { if (!document.hidden && G) G.lastTime = null; });
 
     window.addEventListener('resize', () => {
-      if (!G || !G.running) return;
-      const oldW = G.w, oldH = G.h;
       resizeGameCanvas();
-      const newW = canvas.width, newH = canvas.height;
-      if (newW === oldW && newH === oldH) return;
-      const scaleX = newW / oldW, scaleY = newH / oldH;
-      const BW = Math.max(68, Math.min(115, newW * 0.09));
-      const GY = newH * 0.65;
-      G.w = newW; G.h = newH; G.groundY = GY; G.baseW = BW;
-      G.midX = newW / 2; G.midR = Math.max(35, newW * 0.04);
-      G.players[0].baseX *= scaleX; G.players[1].baseX *= scaleX;
-      G.units.forEach(u => { u.x = Math.max(BW, Math.min(newW - BW, u.x * scaleX)); u.y = Math.min(GY - (u.def.radius || 10), u.y * scaleY); });
-      G.projectiles.forEach(p => { p.x = Math.max(0, Math.min(newW, p.x * scaleX)); p.y = p.y * scaleY; });
     });
 
     // ══════════════════════════════════════════════════════════════════
@@ -7719,15 +7782,15 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('sc-game').classList.add('active');
       resizeGameCanvas();
-      const BW = Math.max(68, Math.min(115, canvas.width * 0.09));
-      const GY = canvas.height * 0.65;
+      const BW = Math.max(90, Math.min(160, VIRTUAL_W * 0.09));
+      const GY = VIRTUAL_H * 0.72;
       G = {
-        w: canvas.width, h: canvas.height, groundY: GY, baseW: BW,
+        w: VIRTUAL_W, h: VIRTUAL_H, groundY: GY, baseW: BW,
         running: true, paused: false, lastTime: null, dt: 0, elapsed: 0,
         shake: 0, shakeX: 0, shakeY: 0,
         units: [], projectiles: [], particles: [], nextId: 1,
         midHolder: null, midOwner: null, midCapTimer: 0, midCapPlayer: null, midOwnerTimer: 0, _prevMidOwner: null,
-        midX: canvas.width / 2, midR: Math.max(35, canvas.width * 0.04),
+        midX: VIRTUAL_W / 2, midR: Math.max(35, VIRTUAL_W * 0.04),
         factions: [P1_FACTION, P2_FACTION],
         unitDefs: [[...P1_FACTION.units, ...(P1_FACTION.extraUnits || [])], [...P2_FACTION.units, ...(P2_FACTION.extraUnits || [])]],
         players: [
@@ -7754,7 +7817,7 @@
           },
           {
             id: 2, souls: P2_FACTION.startSouls, bodies: P2_FACTION.startBodies,
-            baseX: canvas.width - BW / 2 - 8, baseHp: 100, baseMaxHp: 100, dir: -1,
+            baseX: VIRTUAL_W - BW / 2 - 8, baseHp: 100, baseMaxHp: 100, dir: -1,
             workers: 0, bodyAccum: 0, kills: 0, spawned: 0,
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
@@ -8214,7 +8277,7 @@
           ? (_mhsHUD < 30 ? 0.8 + (_mhsHUD / 30) * 0.7
             : _mhsHUD < 60 ? 1.5 + ((_mhsHUD - 30) / 30) * 0.5
               : 2.0) : 0;
-        const soulRate = (0.45 + _midTaperHUD + (p.despStacks * 0.7) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(2);
+        const soulRate = (0.45 + _midTaperHUD + (p.despStacks * 0.7) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(1);
         const bodyRate = ((4.5 + Math.floor(gameSec / 60) * 0.5) * p.workers).toFixed(1);
         const incEl = document.getElementById(`p${pid}-income-rate`);
         const _bm = G.activeEvent && G.activeEvent.type === 'blood_moon' && p._bloodMoon;
@@ -8239,7 +8302,7 @@
             const _passiveTip = _faction.passive ? { text: '⚡ ' + _faction.passive, title: 'Your faction passive ability' } : null;
             const _allTips = [
               ...(G._tipIdx[pid - 1] % 3 === 0 && _passiveTip ? [_passiveTip] : []),
-              { text: '💡 Hold mid to ramp up soul income — up to +2.0/s after 60s', title: 'Mid control income scales over time' },
+              { text: '💡 Hold mid to ramp up soul income — up to +2/s after 60s', title: 'Mid control income scales over time' },
               ...((GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai') ? [] : [{ text: '💡 Workers pathing to mid return with 12 bodies (vs 2 normally) — own mid to enable this', title: 'Mid workers return extra bodies' }]),
               { text: '💡 3+ ranged units on one target deal less damage — mix your army', title: 'Focus fire penalty' },
               { text: '💡 Melee walls block incoming projectiles — put them up front', title: 'Projectile blocking' },
@@ -8249,7 +8312,7 @@
               { text: '💡 At 30 HP your base triggers Last Stand: +40💀 and Royal Guards spawn', title: 'Last Stand trigger' },
               { text: '💡 Aerial units fly over melee — only ranged or other aerial can hit them', title: 'Aerial combat tip' },
               { text: '💡 Siege Decay starts at 3 minutes — don\'t let the game drag on', title: 'Siege Decay timer' },
-              { text: '💡 Enemy holding mid? Desperation Surge gives you +0.7💀/s per stack (max 3)', title: 'Desperation Surge tip' },
+              { text: '💡 Enemy holding mid? Desperation Surge gives +0.7💀/s per stack (max 3)', title: 'Desperation Surge tip' },
               { text: '💡 Ranged archers kite backward from melee — back them with a melee wall', title: 'Kiting behaviour tip' },
               ...(G._tipIdx[pid - 1] % 2 === 1 && _passiveTip ? [_passiveTip] : []),
             ];
@@ -8340,11 +8403,25 @@
             }
           });
         }
-        // Momentum bar
-        const r1 = G.players[0].recentSoulRate, r2 = G.players[1].recentSoulRate, tot = r1 + r2 || 1;
-        const pct = r1 / tot;
-        document.getElementById('momentum-p1').style.width = (pct * 50) + '%';
-        document.getElementById('momentum-p2').style.width = ((1 - pct) * 50) + '%';
+        // Front line bar — marker position based on furthest-forward combat units
+        {
+          const combatUnits = G.units.filter(u => !u.offscreen && !u.def.isWorker && !u.retreating);
+          const p1Units = combatUnits.filter(u => u.player === 1);
+          const p2Units = combatUnits.filter(u => u.player === 2);
+          // Front line = furthest-forward unit from each side; fall back to base positions
+          const p1Front = p1Units.length ? Math.max(...p1Units.map(u => u.x)) : G.players[0].baseX;
+          const p2Front = p2Units.length ? Math.min(...p2Units.map(u => u.x)) : G.players[1].baseX;
+          // Average the two fronts for the marker, normalised 0–1 across the map
+          const rawFront = (p1Front + p2Front) / 2;
+          const markerPct = Math.max(0.05, Math.min(0.95, rawFront / G.w));
+          // Fill widths: P1 bar grows from left, P2 from right, meeting at marker
+          const markerEl = document.getElementById('momentum-marker');
+          const p1El = document.getElementById('momentum-p1');
+          const p2El = document.getElementById('momentum-p2');
+          if (markerEl) markerEl.style.left = (markerPct * 100) + '%';
+          if (p1El) p1El.style.width = (markerPct * 100) + '%';
+          if (p2El) p2El.style.width = ((1 - markerPct) * 100) + '%';
+        }
       });
     }
 
@@ -8648,8 +8725,8 @@
       const el = document.createElement('div');
       el.className = 'rpop'; el.textContent = txt; el.style.color = col || '#fff';
       const cx = canvas.getBoundingClientRect();
-      el.style.left = (cx.left + x - 30) + 'px';
-      el.style.top = (cx.top + Math.max(y - 40, 10)) + 'px';
+      el.style.left = (cx.left + x * _canvasScale - 30) + 'px';
+      el.style.top = (cx.top + Math.max(y * _canvasScale - 40, 10)) + 'px';
       document.getElementById('popups').appendChild(el);
       setTimeout(() => el.remove(), 1600);
     }
@@ -8676,8 +8753,8 @@
       const el = document.createElement('div');
       el.className = 'rpop-emote';
       el.textContent = emoji;
-      el.style.left = (cx.left + baseX - 24) + 'px';
-      el.style.top = (cx.top + G.groundY - 80) + 'px';
+      el.style.left = (cx.left + baseX * _canvasScale - 24) + 'px';
+      el.style.top = (cx.top + G.groundY * _canvasScale - 80) + 'px';
       document.getElementById('popups').appendChild(el);
       setTimeout(() => el.remove(), 1900);
       // Tiny screen nudge for personality
@@ -8855,10 +8932,14 @@
     }
 
     function canAttackBase(u) {
-      // Can attack base if no enemies are within 3x attack range
+      // Can attack base if no enemies are within close proximity
+      // Melee: only blocked by enemies within actual engagement range (~80px)
+      // Ranged: blocked by enemies within 120px (they can shoot from further back)
+      const isRangedUnit = u.def.range > 60;
+      const blockRange = isRangedUnit ? 120 : Math.max(u.def.range * 1.8, 80);
       const enemies = G.units.filter(e => e.player !== u.player && !e.offscreen && !e.def.isWorker);
       if (enemies.length === 0) return true;
-      return !enemies.some(e => rangeDist(u, e) < Math.max(u.def.range * 2, 120));
+      return !enemies.some(e => rangeDist(u, e) < blockRange);
     }
 
     function doAttack(attacker, target, frenzyMult) {
@@ -10236,6 +10317,21 @@
         u.target = enemy;
         if (enemy) {
           const d = rangeDist(u, enemy);
+          // Check if we're right at the enemy base — attack it even while an enemy exists elsewhere
+          const ebaseCheck = G.players[u.player === 1 ? 1 : 0];
+          const atBase = Math.abs(u.x - ebaseCheck.baseX) < G.baseW * .7 + u.def.range;
+          if (atBase && canAttackBase(u)) {
+            if (u.attackCooldown <= 0) {
+              const baseMult = G.players[u.player - 1]._baseDmgMult || 1;
+              if (!ebaseCheck._conquestShield) ebaseCheck.baseHp -= u.def.dmg * (u.dmgMult || 1) * baseMult;
+              if (ebaseCheck.lastStandGrace > 0 && ebaseCheck.baseHp <= 0) ebaseCheck.baseHp = 1;
+              if (!ebaseCheck.lastStandUsed && ebaseCheck.baseHp <= 0) ebaseCheck.baseHp = 1;
+              SFX.baseHit(); G.shake = Math.max(G.shake || 0, 0.35);
+              spawnParticles(ebaseCheck.baseX, G.groundY - 40, u.player === 1 ? '#e74c3c' : '#3498db', 5);
+              const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
+              u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM, .1);
+            }
+          }
           // BUG2: slowed units near target still engage; aerial units have wider engagement
           const effectiveRange = u.slowTimer > 0 ? u.def.range * 1.8 : u.def.aerial ? u.def.range * 1.3 : u.def.range;
           if (d <= effectiveRange) {
@@ -12065,7 +12161,7 @@
             const pc = p.id === 1 ? '#2471a3' : '#c0392b';
             const isW = p.baseHp > 0;
             const opp = _G.players[p.id === 1 ? 1 : 0];
-            const kdr = opp.kills > 0 ? (p.kills / Math.max(1, opp.kills)).toFixed(2) : p.kills > 0 ? p.kills + '/0' : '0/0';
+            const kdr = opp.kills > 0 ? (p.kills / Math.max(1, opp.kills)).toFixed(1) : p.kills > 0 ? p.kills + '/0' : '0/0';
             const dpe = p.spawned > 0 ? Math.round((p.dmgDealt || 0) / p.spawned) : 0;
             const _pLabelGo = _isAiVsAi ? ('🤖 AI ' + p.id)
               : _isSoloGo ? (p.id === 1 ? 'YOU' : ('AI · ' + (_G.aiDifficulty || '').toUpperCase()))
@@ -12141,11 +12237,11 @@
                 if (soulsEarned > 80 && efficiency < 0.45)
                   tips.push(`${ppName} spent only ${Math.round(efficiency * 100)}% of earned souls — you had ${soulsEarned} total. Try queuing units as soon as you can afford them.`);
                 if (soulsEarned > 80 && efficiency > 0.45 && efficiency < 0.65 && pp.midCaptures === 0)
-                  tips.push(`${ppName} never held mid — owning it gives +0.8→2.0💀/s depending on how long you hold it. That's 120+ free souls per minute.`);
+                  tips.push(`${ppName} never held mid — owning it gives up to +2💀/s depending on how long you hold it. That's 120+ free souls per minute.`);
                 if (pp.buffUsed === 0 && soulsEarned > 120)
                   tips.push(`${ppName} never used a Rally Buff — Blitz Rush and War Cry can instantly break a stalemate. Try binding them to a hotkey.`);
                 if (pp.midCaptures === 0 && soulsEarned > 100)
-                  tips.push(`${ppName} never captured mid. At max income that's +2.0💀/s vs your baseline 0.45/s — a 4× income difference when someone holds it long-term.`);
+                  tips.push(`${ppName} never captured mid. Max income is +2💀/s vs your baseline 0.5/s — a 4× income difference when someone holds it long-term.`);
                 if ((pp.ownedUpgrades || new Set()).size === 0 && soulsEarned > 120)
                   tips.push(`${ppName} bought zero upgrades despite earning ${soulsEarned}💀. Upgrades persist the whole game and compound across every unit spawned.`);
                 const workers2 = (pp.unitTypeSpawned || {});
@@ -12156,24 +12252,29 @@
                   tips.push(`${ppName}'s spies stole very little — spies work best when the enemy has workers near base and no guarding units. Time them during pushes.`);
               });
             }
-            // Build faction suggestion as one of the tips when not in tournament and not aivsai
-            const _factionTip = (GAME_MODE !== 'tournament' && !_isAiVsAi)
-              ? `Try ${sug.f} next — ${sug.tip}`
-              : null;
-            const allTips = [...tips.slice(0, 4), ...(_factionTip ? [_factionTip] : [])];
-            if (allTips.length === 0) return '';
+            // Build faction suggestion as a separate block (not a "tip")
+            const _factionSugHtml = (GAME_MODE !== 'tournament' && !_isAiVsAi)
+              ? `<div style="margin-top:10px;padding:12px 18px;background:rgba(212,168,67,.07);border:1px solid rgba(212,168,67,.3);border-radius:6px;max-width:580px;margin-left:auto;margin-right:auto;display:flex;align-items:flex-start;gap:12px;">
+                  <span style="font-size:1.1rem;flex-shrink:0;">🎯</span>
+                  <div>
+                    <div style="font-family:Rajdhani,sans-serif;font-size:.72rem;color:rgba(212,168,67,.75);letter-spacing:.1em;margin-bottom:4px;">SUGGESTED NEXT FACTION</div>
+                    <span style="font-size:.88rem;color:rgba(255,255,255,.82);line-height:1.45;">${sug.f} — ${sug.tip}</span>
+                  </div>
+                </div>`
+              : '';
+            const allTips = tips.slice(0, 4);
+            if (allTips.length === 0 && !_factionSugHtml) return '';
             const tipHtml = allTips.map((t, i) => {
-              const isFirst = i === 0;
-              const icon = t.startsWith('Try ') ? '🎯' : '💡';
               return `<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;${i > 0 ? 'border-top:1px solid rgba(255,255,255,.07);' : ''}">
-                <span style="font-size:1.05rem;line-height:1.3;flex-shrink:0;">${icon}</span>
+                <span style="font-size:1.05rem;line-height:1.3;flex-shrink:0;">💡</span>
                 <span style="font-size:.88rem;color:rgba(255,255,255,.82);line-height:1.45;">${t}</span>
               </div>`;
             }).join('');
-            return `<div style="margin-top:16px;padding:14px 18px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.22);border-radius:6px;max-width:580px;margin-left:auto;margin-right:auto;">
+            const tipsBlock = allTips.length > 0 ? `<div style="margin-top:16px;padding:14px 18px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.22);border-radius:6px;max-width:580px;margin-left:auto;margin-right:auto;">
               <div style="font-family:Rajdhani,sans-serif;font-size:.78rem;color:rgba(212,168,67,.9);letter-spacing:.12em;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(212,168,67,.18);">${GAME_MODE === 'tournament' ? '⚔ UP NEXT IN BRACKET' : '💡 TIPS FROM THIS GAME'}</div>
               ${tipHtml}
-            </div>`;
+            </div>` : '';
+            return tipsBlock + _factionSugHtml;
           })();
         // Tournament: trigger bracket advancement after gameover renders
         if (GAME_MODE === 'tournament' && TOURNAMENT && TOURNAMENT._pendingWinnerPid) {
