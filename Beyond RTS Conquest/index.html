@@ -1202,12 +1202,12 @@
 
     /* ── SPY UNIT ── */
     .spy-card {
-      border-color: #636e72 !important;
+      border-color: #636e72;
       background: rgba(99, 110, 114, .08);
     }
 
     .spy-card:hover {
-      border-color: #b2bec3 !important;
+      border-color: #b2bec3;
     }
 
     .spy-indicator {
@@ -3252,11 +3252,11 @@
       position: fixed;
       background: #08080f;
       border: 1.5px solid var(--border);
-      padding: clamp(7px, 1.1vh, 13px) clamp(9px, 1.4vw, 15px);
+      padding: 10px 13px;
       border-radius: 5px;
       pointer-events: none;
       z-index: 500;
-      max-width: clamp(150px, 21vw, 250px);
+      width: 240px;
       display: none;
       box-shadow: 0 4px 20px rgba(0, 0, 0, .7);
     }
@@ -4469,29 +4469,21 @@
       canvas.height = Math.max(100, wrap.offsetHeight - hudH - mbH);
     }
 
-    // Live resize: update canvas + G geometry whenever the window changes size
+    // Live resize: scale positions proportionally
     window.addEventListener('resize', () => {
       if (!G || !G.running) return;
+      const oldW = G.w, oldH = G.h;
       resizeGameCanvas();
-      const BW = Math.max(50, Math.min(85, canvas.width * 0.065));
-      const GY = canvas.height * 0.65;
-      G.w = canvas.width;
-      G.h = canvas.height;
-      G.groundY = GY;
-      G.baseW = BW;
-      G.midX = canvas.width / 2;
-      G.midR = Math.max(35, canvas.width * 0.04);
-      // Repin bases to new edges
-      G.players[0].baseX = BW / 2 + 8;
-      G.players[1].baseX = canvas.width - BW / 2 - 8;
-      // Clamp all unit/projectile positions to new bounds
-      G.units.forEach(u => {
-        u.x = Math.max(BW, Math.min(canvas.width - BW, u.x));
-        u.y = Math.min(GY - (u.def.radius || 10), u.y);
-      });
-      G.projectiles.forEach(p => {
-        p.x = Math.max(0, Math.min(canvas.width, p.x));
-      });
+      const newW = canvas.width, newH = canvas.height;
+      if (newW === oldW && newH === oldH) return;
+      const scaleX = newW / oldW, scaleY = newH / oldH;
+      const BW = Math.max(50, Math.min(85, newW * 0.065));
+      const GY = newH * 0.65;
+      G.w = newW; G.h = newH; G.groundY = GY; G.baseW = BW;
+      G.midX = newW / 2; G.midR = Math.max(35, newW * 0.04);
+      G.players[0].baseX *= scaleX; G.players[1].baseX *= scaleX;
+      G.units.forEach(u => { u.x = Math.max(BW, Math.min(newW - BW, u.x * scaleX)); u.y = Math.min(GY - (u.def.radius || 10), u.y * scaleY); });
+      G.projectiles.forEach(p => { p.x = Math.max(0, Math.min(newW, p.x * scaleX)); p.y = p.y * scaleY; });
     });
 
     // ══════════════════════════════════════════════════════════════════
@@ -5266,7 +5258,7 @@
     // ── GLOBAL SPY UNIT ──────────────────────────────────────────────────────────
     const SPY_DEF = {
       id: 'spy', name: 'Spy', icon: '🕵️', souls: 10, bodies: 4,
-      desc: '🕵️ INFILTRATES enemy base · Steals the resource the enemy has MORE of (souls or bodies) every 7s · Detected by workers (35%) or combat units (15%) near base every 2s · Max 2 active · Countered by keeping workers near your base',
+      desc: 'Steals 💀 or 🦴 from the enemy base (3 steals, every 7s). Detected by workers near their base. Max 2 active. Counter: keep workers at your base.',
       type: 'spc', isWorker: false, isSpawned: false, aerial: false,
       hp: 18, speed: 0, dmg: 0, range: 0, attackRate: 0, radius: 10, color: '#636e72',
     };
@@ -6822,7 +6814,7 @@
         grid.style.gridTemplateColumns = `repeat(${totalCols}, 1fr)`;
         defs.forEach((def, i) => {
           const card = document.createElement('div');
-          card.className = 'ucard'; card.dataset.idx = i;
+          card.className = 'ucard'; card.dataset.idx = i; card.id = `p${pid}-ucard-${i}`;
           const TL = { mel: 'MEL', rng: 'RNG', air: 'AIR', wrk: 'WRK', sum: 'SUM' };
           const TC = { mel: 't-mel', rng: 't-rng', air: 't-air', wrk: 't-wrk', sum: 't-sum' };
           card.innerHTML = `<span class="utypetag ${TC[def.type]}">${TL[def.type]}</span><span class="uicon">${def.icon}</span><span class="uname">${def.name}</span><div class="ucost"><span class="ctag cs">💀${def.souls}</span><span class="ctag cb">🦴${def.bodies}</span></div>`;
@@ -6832,8 +6824,8 @@
             refreshSel(pid);
             trySpawn(pid, def.id, card);
           });
-          card.addEventListener('mouseenter', e => showTT(e, def));
-          card.addEventListener('mouseleave', hideTT);
+          card.addEventListener('mouseenter', e => { showTT(e, def); if (pid === 1) P1_SEL = i; else P2_SEL = i; if (pid === 1) P1_MODE = 0; else P2_MODE = 0; updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); });
+          card.addEventListener('mouseleave', () => { hideTT(); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           grid.appendChild(card);
         });
         // ── Spy unit card (universal, appended after faction units) ──
@@ -6850,10 +6842,11 @@
             refreshSel(pid);
             trySpawnSpy(pid);
           });
-          spyCard.addEventListener('mouseenter', e => showTT(e, SPY_DEF));
-          spyCard.addEventListener('mouseleave', hideTT);
+          spyCard.addEventListener('mouseenter', e => { showTT(e, SPY_DEF); const _sd = G.factions[pid - 1].units.filter(d => !d.isSpawned); if (pid === 1) { P1_SEL = _sd.length; P1_MODE = 0; } else { P2_SEL = _sd.length; P2_MODE = 0; } updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); });
+          spyCard.addEventListener('mouseleave', () => { hideTT(); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           grid.appendChild(spyCard);
         }
+        grid.style.gridTemplateColumns = `repeat(${defs.length + 1}, 1fr)`;
         // Upgrade cards
         const upgEl = document.getElementById(`p${pid}-upgrades`);
         upgEl.innerHTML = '';
@@ -6930,7 +6923,7 @@
         c.classList.remove(`sel${pid === 1 ? 2 : 1}`);
         if (isSelected) c.classList.add('sel');
       });
-      if (mode === 0) updateStatPanel(pid);
+      if (mode === 0) { updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); }
       else {
         // Show upgrade/buff info in stat panel
         const panel = document.querySelector(`#p${pid}-hud .unit-stat-panel`);
@@ -7200,8 +7193,10 @@
       document.getElementById('tt-body').innerHTML = lines.join('<br>');
       tt.style.display = 'block';
       const r = e.currentTarget.getBoundingClientRect();
-      tt.style.left = Math.min(r.left, window.innerWidth - 260) + 'px';
-      tt.style.top = (r.top - tt.offsetHeight - 8) + 'px';
+      const tw = 240, th = tt.offsetHeight;
+      const left = Math.max(8, Math.min(r.left + r.width / 2 - tw / 2, window.innerWidth - tw - 8));
+      tt.style.left = left + 'px';
+      tt.style.top = (r.top - th - 8 < 8 ? r.bottom + 8 : r.top - th - 8) + 'px';
     }
     function hideTT() { document.getElementById('tooltip').style.display = 'none'; }
 
@@ -8269,6 +8264,7 @@
         `P1: ${p1L}/${p1R} to choose · ${p1A} to vote   |   P2: ${p2L}/${p2R} to choose · ${p2A} to vote`;
       _updateVoteDisplay();
       document.getElementById('vote-overlay').classList.add('show');
+      if (G) G.paused = true;
     }
 
     function _updateVoteDisplay() {
@@ -8305,6 +8301,7 @@
       else winner = candidates[Math.floor(Math.random() * 2)]; // tie → random
       G_eventVote = null;
       document.getElementById('vote-overlay').classList.remove('show');
+      if (G) G.paused = false;
       G.activeEvent = { type: winner, timer: 0 };
       _dispatchEvent(winner);
     }
@@ -8320,7 +8317,7 @@
     }
 
     function voteMoveCursor(pid, dir) {
-      if (!G_eventVote || !G || !G.running || G.paused) return;
+      if (!G_eventVote || !G || !G.running) return;
       const pidx = pid - 1;
       if (G_eventVote.voted[pidx]) return; // already confirmed
       G_eventVote.cursors[pidx] = dir > 0 ? 1 : 0; // left=0=A, right=1=B
@@ -8328,7 +8325,7 @@
     }
 
     function voteForEvent(pid) {
-      if (!G_eventVote || !G || !G.running || G.paused) return;
+      if (!G_eventVote || !G || !G.running) return;
       const pidx = pid - 1;
       if (G_eventVote.voted[pidx]) return;
       const choice = G_eventVote.cursors[pidx]; // 0=A, 1=B
@@ -9164,7 +9161,7 @@
       G.units.forEach(u => {
         if (u.offscreen || u.def.isWorker || u.retreating) return;
         if (!u || u.dead || u.offscreen || u.def.isWorker) return;
-        if (Math.abs(u.x - midX) < midR) { if (u.player === 1) p1Near = true; else p2Near = true; }
+        if (Math.abs(u.x - midX) < midR) { if (u.player === 1) p1Near = true; else if (u.player === 2) p2Near = true; }
       });
       const prevHolder = G.midHolder;
       if (p1Near && !p2Near) G.midHolder = 1;
@@ -10218,7 +10215,7 @@
       if (!G.lastTime) G.lastTime = ts;
       G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
       G.lastTime = ts;
-      if (G.paused) { requestAnimationFrame(gameLoop); return; }
+      if (G.paused) { if (G_eventVote) _tickEventVote(G.dt); requestAnimationFrame(gameLoop); return; }
       G.elapsed = (G.elapsed || 0) + G.dt;
       updateEconomy(G.dt);
       updateMid(G.dt);
