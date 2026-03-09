@@ -5323,7 +5323,7 @@
       // Weak counter-picking. Never saves deliberately. Feels like a casual player.
       medium: {
         interval: 2.1, spawnChance: 0.80, saveThreshold: 32,
-        usesBuffs: false, buysUpgrades: true, defenseReact: true,
+        usesBuffs: true, buysUpgrades: true, defenseReact: true,
         adapts: false, savesUp: false, resourceSave: false, counterPlays: false, usesSpy: false,
         midPressure: false, resourcePatience: 0, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: false, counterStr: 0.25,
       },
@@ -5663,10 +5663,13 @@
       const losing = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
       const losingBadly = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
       const midOwned = G.midOwner === pid;
-      const lowBodies = p.bodies < 8;
-      const critBodies = p.bodies < 4; // critically low
-      const richSouls = p.souls > bf[2].cost + 20;
-      const pushingSouls = p.souls > bf[2].cost + 40; // very rich
+      const lowBodies = p.bodies < 10;
+      const critBodies = p.bodies < 5;  // critically low
+      const richSouls = p.souls > bf[2].cost + 20;  // 80+
+      const flushSouls = p.souls > bf[2].cost + 60;  // 120+ — soul overflow, nowhere to spend
+      const pushingSouls = p.souls > bf[2].cost + 40;  // 100+
+      // Soul overflow: souls are piling up and bodies are the bottleneck — convert them
+      const soulOverflow = can2 && flushSouls && p.bodies < p.workerCap * 6;
 
       if (diff === 'expert') {
         // EXPERT: Proactive — doesn't wait until dire straits. Uses buffs as weapons AND shields.
@@ -5679,7 +5682,8 @@
         if (can1 && losingBadly) return 1;                            // emergency wall
         if (can1 && losing) return 1;                                 // standard defense
         if (can1 && p.baseHp < 65 && Math.random() < 0.6) return 1;  // preemptive — don't let base decay
-        // Body Boon: economy management — use before it becomes a crisis
+        // Body Boon: economy management — convert overflow souls, don't let them sit idle
+        if (soulOverflow) return 2;                                   // souls overflowing — convert now
         if (can2 && critBodies && p.souls > 70) return 2;             // emergency restock
         if (can2 && lowBodies && pushingSouls) return 2;              // optimal conversion
         if (can2 && lowBodies && richSouls && Math.random() < 0.55) return 2; // opportunistic
@@ -5692,11 +5696,15 @@
         // Iron Wall: uses when threatened, reasonable threshold
         if (can1 && losingBadly) return 1;                            // clear emergency
         if (can1 && p.baseHp < 50 && Math.random() < 0.85) return 1; // base threat
-        // Body Boon: uses when economically lopsided
+        // Body Boon: soul overflow + body shortage
+        if (soulOverflow) return 2;                                   // souls piling up — convert
         if (can2 && critBodies && richSouls) return 2;                // clear body shortage
-        if (can2 && lowBodies && richSouls && Math.random() < 0.55) return 2; // good time
+        if (can2 && lowBodies && richSouls && Math.random() < 0.65) return 2; // good time
+      } else if (diff === 'medium') {
+        // MEDIUM: doesn't use War Cry or Iron Wall, but DOES notice when souls are rotting
+        if (soulOverflow && Math.random() < 0.70) return 2;           // souls overflowing — convert
+        if (can2 && critBodies && richSouls && Math.random() < 0.50) return 2; // body emergency
       }
-      // Medium and below: usesBuffs: false so this function never runs for them
       return -1;
     }
 
@@ -8531,7 +8539,7 @@
         const newCap = Math.min(30, 12 + Math.floor(gameSec / 55) * 2);
         if (newCap > p.unitCap) {
           p.unitCap = newCap;
-          const newWCap = Math.min(5, 3 + Math.floor(gameSec / 240));
+          const newWCap = Math.min(5, 3 + Math.floor(gameSec / 90));
           if (newWCap > (p.workerCap || 3)) { p.workerCap = newWCap; }
           if (Date.now() - G.lastCapAnnounce > 2000) {
             G.lastCapAnnounce = Date.now();
