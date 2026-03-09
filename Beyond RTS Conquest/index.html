@@ -1923,7 +1923,7 @@
     /* UNIT GRID */
     .unit-grid {
       display: grid;
-      grid-template-columns: repeat(var(--unit-cols, 5), 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: var(--gap);
       flex: 1;
       min-height: 0;
@@ -2073,13 +2073,15 @@
     .ucost {
       display: flex;
       gap: 2px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       justify-content: center;
+      width: 100%;
+      overflow: hidden;
     }
 
     .ctag {
       font-family: 'Cinzel', serif;
-      font-size: clamp(.68rem, 1vw, .9rem);
+      font-size: clamp(.55rem, 0.8vw, .85rem);
       padding: 1px clamp(2px, .3vw, 4px);
       border-radius: 2px;
     }
@@ -6111,8 +6113,6 @@
         const grid = document.getElementById(`p${pid}-grid`);
         grid.innerHTML = '';
         const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
-        const totalCards = defs.length + (GAME_MODE !== 'tutorial' ? 1 : 0);
-        grid.style.setProperty('--unit-cols', totalCards);
         defs.forEach((def, i) => {
           const card = document.createElement('div');
           card.className = 'ucard'; card.dataset.idx = i;
@@ -6360,7 +6360,7 @@
               { text: '💡 Upgrades are permanent — buy them early for the biggest time advantage', title: 'Upgrade timing tip' },
               { text: '💡 At 30 HP your base triggers Last Stand: +40💀 and Royal Guards spawn', title: 'Last Stand trigger' },
               { text: '💡 Aerial units fly over melee — only ranged or other aerial can hit them', title: 'Aerial combat tip' },
-              { text: "💡 Siege Decay starts at 3 minutes — don't let the game drag on", title: 'Siege Decay timer' },
+              { text: '💡 Siege Decay starts at 3 minutes — don\'t let the game drag on', title: 'Siege Decay timer' },
               { text: '💡 Enemy holding mid? Desperation Surge gives you +0.7💀/s per stack (max 3)', title: 'Desperation Surge tip' },
               { text: '💡 Ranged archers kite backward from melee — back them with a melee wall', title: 'Kiting behaviour tip' },
               ...(G._tipIdx[pid - 1] % 2 === 1 && _passiveTip ? [_passiveTip] : []),
