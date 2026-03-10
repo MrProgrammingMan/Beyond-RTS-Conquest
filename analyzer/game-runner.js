@@ -36,55 +36,79 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
     });
   });
 
-  let screenshotOnError = null; // will be set after page loads
+  let screenshotOnError = null;
 
   try {
     await page.goto(fileUrl, { waitUntil: 'domcontentloaded', timeout: 15_000 });
 
-    // Wait for FACTIONS to be defined
-    await page.waitForFunction(
-      () => typeof window.FACTIONS !== 'undefined' && window.FACTIONS.length > 0,
-      { timeout: 15_000 }
-    );
+    // ── Probe window for FACTIONS (or common alternative names) ──────────────
+    // Does NOT use waitForFunction — probes immediately, waits 5s max, fails fast.
+    // If the variable was renamed in index.html, the error message will say what
+    // uppercase globals ARE visible so you know what to look for.
+    let FACTIONS_VAR = null;
+    const CANDIDATES = ['FACTIONS', 'factions', 'FACTION_LIST', 'ALL_FACTIONS', 'GameFactions'];
 
-    // Hook screenshot-on-error: take a screenshot whenever __qa.errors grows
-    if (opts.screenshotOnError) {
-      screenshotOnError = { lastCount: 0 };
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 3000));
+      const probe = await page.evaluate((candidates) => {
+        for (const name of candidates) {
+          const v = window[name];
+          if (Array.isArray(v) && v.length > 0) return { found: name };
+        }
+        // Sample uppercase globals to help diagnose renames
+        const sample = Object.keys(window)
+          .filter(k => k === k.toUpperCase() && k.length > 2 && !['NaN', 'CSS'].includes(k))
+          .slice(0, 30);
+        return { found: null, sample };
+      }, CANDIDATES).catch(() => ({ found: null, sample: [] }));
+
+      if (probe.found) { FACTIONS_VAR = probe.found; break; }
+
+      if (attempt === 1) {
+        const hint = probe.sample?.length
+          ? `  Uppercase globals on window: ${probe.sample.join(', ')}`
+          : '  No uppercase globals found — page may not be executing JS at all.';
+        throw new Error(`FACTIONS not found on window after waiting.\n${hint}\n  Check: (1) gamePath in config.js points to index.html, (2) the variable is exposed as window.FACTIONS`);
+      }
     }
 
-    // Speed hack + game start
-    const injected = await page.evaluate(({ p1Id, p2Id, diff }) => {
-      const f1 = window.FACTIONS.find(f => f.id === p1Id);
-      const f2 = window.FACTIONS.find(f => f.id === p2Id);
-      if (!f1) return { error: `P1 faction not found: ${p1Id}` };
-      if (!f2) return { error: `P2 faction not found: ${p2Id}` };
+    if (opts.screenshotOnError) screenshotOnError = { lastCount: 0 };
 
-      // ── Speed hack (10× simulation) ──────────────────────────────────────
-      // Fake RAF timestamp, performance.now(), AND Date.now() so all game
-      // timing runs at 10× speed regardless of how the game measures time.
-      const SPEED = 10;
+    // Speed hack + game start
+    const injected = await page.evaluate(({ p1Id, p2Id, diff, factionsVar }) => {
+      const factionList = window[factionsVar];
+      const p1Idx = factionList.findIndex(f => f.id === p1Id);
+      const p2Idx = factionList.findIndex(f => f.id === p2Id);
+      if (p1Idx === -1) return { error: `P1 faction not found: ${p1Id}` };
+      if (p2Idx === -1) return { error: `P2 faction not found: ${p2Id}` };
+
+      // ── Speed hack: advance fake timestamp 20x per real frame ─────────────
+      // setTimeout(..., 0) floods the event loop — cap at real 16ms intervals
+      // so CPU stays low while game time still runs at 20x wall-clock speed.
+      const SPEED = 20;
       let _fakeTs = performance.now();
-      const _t0Real = performance.now();
-      const _origPerfNow = performance.now.bind(performance);
-      const _origDateNow = Date.now.bind(Date);
-      const _d0Real = _origDateNow();
-      performance.now = () => _t0Real + (_origPerfNow() - _t0Real) * SPEED;
-      Date.now = () => _d0Real + Math.round((_origPerfNow() - _t0Real) * SPEED);
       window.requestAnimationFrame = (cb) => {
         _fakeTs += 16.667 * SPEED;
         return setTimeout(() => cb(_fakeTs), 0);
       };
 
-      window.P1_FACTION = f1;
-      window.P2_FACTION = f2;
-      window.GAME_MODE = 'aivsai';
-      window.AI_DIFFICULTY = diff;
-      window.AI1_DIFFICULTY = diff;
-      window._pendingPlayerSetup = 'aivsai';
+      // ── Start the game ────────────────────────────────────────────────────
+      // window.__qaStartAiVsAi is a helper injected into index.html that sets
+      // the closed-over let vars (AI1_FACTION_IDX, AI_FACTION_IDX, GAME_MODE,
+      // AI_DIFFICULTY) and calls initGame(). This is necessary because those
+      // vars are declared as `let` inside the script block and are not on window.
+      if (typeof window.__qaStartAiVsAi === 'function') {
+        window.__qaStartAiVsAi(p1Idx, p2Idx, diff);
+        if (window.__qaInitError) return { error: 'initGame threw: ' + window.__qaInitError };
+        if (!window.G) {
+          return { error: `G is null after initGame. trace=${window.__qaInitTrace} initError=${window.__qaInitError || 'none'}` };
+        }
+        return { ok: true };
+      }
 
-      window.initGame();
-      return { ok: true };
-    }, { p1Id: p1FactionId, p2Id: p2FactionId, diff: difficulty });
+      // Fallback if helper not yet added to index.html
+      return { error: 'window.__qaStartAiVsAi not found — add the QA helper to index.html (see game-runner.js comments)' };
+    }, { p1Id: p1FactionId, p2Id: p2FactionId, diff: difficulty, factionsVar: FACTIONS_VAR });
 
     if (injected.error) throw new Error(injected.error);
 
@@ -93,9 +117,38 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
     let result = null;
     let errorScreenshot = null;
 
+    // ── Diagnostic: after 3s real time, dump game state to stderr ─────────────
+    setTimeout(async () => {
+      try {
+        const diag = await page.evaluate(() => {
+          const G = window.G;
+          if (!G) return 'G is null — initGame may have failed silently';
+          return {
+            running: G.running,
+            elapsed: G.elapsed,
+            p1Hp: G.players?.[0]?.baseHp,
+            p2Hp: G.players?.[1]?.baseHp,
+            units: G.units?.length,
+            p1Faction: G.factions?.[0]?.id,
+            p2Faction: G.factions?.[1]?.id,
+            errors: window.__qa?.errors?.length,
+            firstError: window.__qa?.errors?.[0]?.message?.slice(0, 200),
+          };
+        }).catch(e => 'evaluate failed: ' + e.message);
+        process.stderr.write(`\n  [DIAG ${p1FactionId} vs ${p2FactionId}] ${JSON.stringify(diag)}\n`);
+      } catch (_) { }
+    }, 3000);
+
+    // ── Print first error to stderr immediately (full message, not truncated) ──
+    const _firstErrCheck = await page.evaluate(() => window.__qa?.errors?.[0] || null).catch(() => null);
+    if (_firstErrCheck) {
+      process.stderr.write(`\n  !! GAME ERROR (${p1FactionId} vs ${p2FactionId}): ${(_firstErrCheck.message || '').replace(/\n/g, ' ')}\n`);
+      if (_firstErrCheck.stack) process.stderr.write(`     ${_firstErrCheck.stack.split('\n').slice(0, 3).join(' | ')}\n`);
+    }
+
     while (Date.now() - pollStart < timeoutMs) {
       // Check if we need to screenshot a new error
-      if (opts.screenshotDir && screenshotOnError) {
+      if (opts.screenshotsDir && screenshotOnError) {
         const errCount = await page.evaluate(() => window.__qa?.errors?.length || 0).catch(() => 0);
         if (errCount > screenshotOnError.lastCount) {
           screenshotOnError.lastCount = errCount;
@@ -147,7 +200,7 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
       }).catch(() => null);
 
       if (result) break;
-      await sleep(150);
+      await sleep(50);
     }
 
     // Timeout fallback

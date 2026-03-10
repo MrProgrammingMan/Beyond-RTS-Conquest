@@ -7109,7 +7109,29 @@
         ]
       },
     ];
+    window.FACTIONS = FACTIONS;
 
+    // QA automation helper — lets the test runner start aivsai games
+    // without needing access to the closed-over let variables
+    window.__qaStartAiVsAi = function (p1Idx, p2Idx, diff) {
+      AI1_FACTION_IDX = p1Idx;
+      AI_FACTION_IDX = p2Idx;
+      AI_DIFFICULTY = diff;
+      AI1_DIFFICULTY = diff;
+      GAME_MODE = 'aivsai';
+      window._pendingPlayerSetup = 'aivsai';
+      P1_FACTION = FACTIONS[AI1_FACTION_IDX];
+      P2_FACTION = FACTIONS[AI_FACTION_IDX];
+      window._soloAiActive = false;
+      try {
+        initGame();
+        window.G = G;  // ← expose the closed-over G so the runner can see it
+        window.__qaInitError = null;
+      } catch (e) {
+        window.__qaInitError = e.message + '\n' + (e.stack || '');
+      }
+    };
+    
     // ── RALLY BUFFS ──
     // ─── KEY BINDINGS ────────────────────────────────────────────────────────────
     let KEYS = {
