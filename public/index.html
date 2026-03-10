@@ -5531,6 +5531,7 @@
       function _enterFactionSelect(gameMode) {
         GAME_MODE = gameMode || 'vs';
         window._pendingPlayerSetup = 'vs';
+        _onlineMode = true;   // must be true NOW so isOnline() works during faction select
         showScreen('sc-faction');
         _setupOnlineFactionScreen();
       }
