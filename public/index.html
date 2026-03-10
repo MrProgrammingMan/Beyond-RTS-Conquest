@@ -13477,14 +13477,14 @@
       const _isAiVsAiKb = GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai';
       const _onKbPid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
       const _kb1 = !_onKbPid || _onKbPid === 1;
-      const _kb2 = !_onKbPid || _onKbPid === 2;
+      const _kb2Ok = !_onKbPid || _onKbPid === 2;
       if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
       else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
       else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
