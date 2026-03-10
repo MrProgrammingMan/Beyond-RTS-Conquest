@@ -6456,6 +6456,7 @@
 
       return {
         isOnline, getPid, isMyTurn, sendAction, sendFaction, sendFactionCursor, sendHover, requestEvent,
+        interpolateUnits: _interpolateUnits,
         reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
         joinRoom, cancelSearch, cleanup, setStatus,
         sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone
@@ -13075,7 +13076,7 @@
       // P1 is the authority. P2 skips ALL physics, interpolates unit positions
       // between the two most recently received snapshots, then just renders.
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
-        _interpolateUnits();     // smooth 60fps positions between 30fps snapshots
+        NET.interpolateUnits();  // smooth 60fps positions between 30fps snapshots
         updateParticles(G.dt);   // local cosmetic effects
         drawGame();
         updateHUD();
