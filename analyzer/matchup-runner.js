@@ -4,19 +4,19 @@
  */
 
 const { chromium } = require('playwright');
-const { runGame }  = require('./game-runner');
+const { runGame } = require('./game-runner');
 const path = require('path');
-const fs   = require('fs');
+const fs = require('fs');
 
 const ALL_FACTIONS = [
   'warriors', 'summoners', 'brutes', 'spirits', 'verdant',
   'infernal', 'glacial', 'voltborn', 'bloodpact', 'menders',
 ];
 
-async function runAllMatchups(cfg, onProgress = () => {}) {
-  const factions  = cfg.balance.factionFilter || ALL_FACTIONS;
-  const mirror    = cfg.balance.mirrorMatchups !== false;
-  const bcfg      = cfg.balance;
+async function runAllMatchups(cfg, onProgress = () => { }) {
+  const factions = cfg.balance.factionFilter || ALL_FACTIONS;
+  const mirror = cfg.balance.mirrorMatchups !== false;
+  const bcfg = cfg.balance;
 
   // Build matchup queue
   const queue = [];
@@ -49,23 +49,23 @@ async function runAllMatchups(cfg, onProgress = () => {}) {
 
   // QA aggregates across all games
   const qa = {
-    allErrors:   [],    // every JS error seen across all games
-    allNaNs:     [],    // every NaN event
+    allErrors: [],    // every JS error seen across all games
+    allNaNs: [],    // every NaN event
     allTimedOut: [],    // games that timed out (softlocks)
     mechanicUsage: {    // totals across all games
-      spy_deployed:         0,
-      mid_captured:         0,
-      upgrade_purchased:    0,
-      buff_activated:       0,
+      spy_deployed: 0,
+      mid_captured: 0,
+      upgrade_purchased: 0,
+      buff_activated: 0,
       last_stand_triggered: 0,
-      aerial_unit_spawned:  0,
-      worker_sent_to_mid:   0,
+      aerial_unit_spawned: 0,
+      worker_sent_to_mid: 0,
     },
     mechanicByMatchup: {},  // mechanic usage per p1-vs-p2 matchup
     performance: {
-      avgFrameMsAll:  [],
-      maxFrameMsAll:  [],
-      longTasksAll:   [],
+      avgFrameMsAll: [],
+      maxFrameMsAll: [],
+      longTasksAll: [],
     },
     totalGamesRun: 0,
   };
@@ -74,7 +74,7 @@ async function runAllMatchups(cfg, onProgress = () => {}) {
   if (cfg.output.saveScreenshots) fs.mkdirSync(ssDir, { recursive: true });
 
   const parallel = Math.max(1, Math.min(bcfg.parallelGames || 3, 6));
-  const browser  = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true });
 
   try {
     let idx = 0;
@@ -90,11 +90,11 @@ async function runAllMatchups(cfg, onProgress = () => {}) {
             path.resolve(cfg.gamePath),
             job.p1, job.p2,
             {
-              difficulty:       bcfg.aiDifficulty || 'hard',
-              timeoutMs:        (bcfg.gameTimeoutSecs || 60) * 1000,
+              difficulty: bcfg.aiDifficulty || 'hard',
+              timeoutMs: (bcfg.gameTimeoutSecs || 60) * 1000,
               browser,
               screenshotOnError: cfg.bugs.screenshotOnError,
-              screenshotsDir:   ssDir,
+              screenshotsDir: ssDir,
             }
           );
         } catch (err) {
@@ -111,15 +111,15 @@ async function runAllMatchups(cfg, onProgress = () => {}) {
         // ── Balance ──────────────────────────────────────────────────────────
         const r = results[job.p1]?.[job.p2];
         if (r) {
-          if      (game.winnerPid === 1)  r.p1Wins++;
-          else if (game.winnerPid === 2)  r.p2Wins++;
-          else if (game.timedOut)         r.timeouts++;
-          else                            r.draws++;
-          if (game.elapsed)      r.durations.push(game.elapsed);
+          if (game.winnerPid === 1) r.p1Wins++;
+          else if (game.winnerPid === 2) r.p2Wins++;
+          else if (game.timedOut) r.timeouts++;
+          else r.draws++;
+          if (game.elapsed) r.durations.push(game.elapsed);
           if (game.p1BaseHp !== undefined) r.p1FinalHps.push(game.p1BaseHp);
           if (game.p2BaseHp !== undefined) r.p2FinalHps.push(game.p2BaseHp);
-          if (game.lastStandFired?.[0])   r.lastStands.p1++;
-          if (game.lastStandFired?.[1])   r.lastStands.p2++;
+          if (game.lastStandFired?.[0]) r.lastStands.p1++;
+          if (game.lastStandFired?.[1]) r.lastStands.p2++;
         }
 
         // ── QA: errors ────────────────────────────────────────────────────────
@@ -184,6 +184,7 @@ async function runAllMatchups(cfg, onProgress = () => {}) {
             timedOut: !!game.timedOut,
             hasErrors: (game.errors?.length || 0) > 0,
             hasNaN: (game.nanEvents?.length || 0) > 0,
+            firstError: game.errors?.[0]?.message?.replace(/\n/g, ' ')?.slice(0, 70) || null,
           },
         });
       }
@@ -211,7 +212,7 @@ function aggregateStats(data) {
   const stats = {};
   for (const f of factions) {
     let totalWins = 0, totalLosses = 0, totalGames = 0, totalDur = 0, durCount = 0;
-    const best  = { faction: null, rate: 0 };
+    const best = { faction: null, rate: 0 };
     const worst = { faction: null, rate: 1 };
     for (const opp of factions) {
       if (opp === f) continue;
@@ -219,13 +220,13 @@ function aggregateStats(data) {
       if (!r) continue;
       const games = r.p1Wins + r.p2Wins + r.draws + r.timeouts;
       if (!games) continue;
-      totalGames  += games;
-      totalWins   += r.p1Wins;
+      totalGames += games;
+      totalWins += r.p1Wins;
       totalLosses += r.p2Wins;
       r.durations.forEach(d => { totalDur += d; durCount++; });
       const wr = r.p1Wins / games;
-      if (wr > best.rate)  { best.rate  = wr;  best.faction  = opp; }
-      if (wr < worst.rate) { worst.rate = wr;  worst.faction = opp; }
+      if (wr > best.rate) { best.rate = wr; best.faction = opp; }
+      if (wr < worst.rate) { worst.rate = wr; worst.faction = opp; }
     }
     stats[f] = {
       totalWins, totalLosses, totalGames,

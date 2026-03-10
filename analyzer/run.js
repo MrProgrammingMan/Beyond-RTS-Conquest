@@ -11,38 +11,38 @@
  *   node run.js --games=3                override gamesPerMatchup
  */
 
-const cfg         = require('./config');
+const cfg = require('./config');
 const { runAllMatchups, aggregateStats } = require('./matchup-runner');
-const { runUiAudit }    = require('./ui-auditor');
-const { analyzeBugs }   = require('./bug-analyzer');
-const { analyzeBalance }= require('./balance-analyzer');
-const { buildReport }   = require('./reporter');
+const { runUiAudit } = require('./ui-auditor');
+const { analyzeBugs } = require('./bug-analyzer');
+const { analyzeBalance } = require('./balance-analyzer');
+const { buildReport } = require('./reporter');
 const { pingCriticalBug, sendFullReport } = require('./discord');
 
 const { chromium } = require('playwright');
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
-const analyzeOnly  = args.includes('--analyze-only');
-const skipBalance  = args.includes('--skip-balance');
-const skipUi       = args.includes('--skip-ui');
-const factionsArg  = args.find(a => a.startsWith('--factions='));
-const gamesArg     = args.find(a => a.startsWith('--games='));
+const analyzeOnly = args.includes('--analyze-only');
+const skipBalance = args.includes('--skip-balance');
+const skipUi = args.includes('--skip-ui');
+const factionsArg = args.find(a => a.startsWith('--factions='));
+const gamesArg = args.find(a => a.startsWith('--games='));
 
-if (factionsArg) cfg.balance.factionFilter = factionsArg.replace('--factions=','').split(',').map(s=>s.trim());
-if (gamesArg)    cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=','')) || cfg.balance.gamesPerMatchup;
+if (factionsArg) cfg.balance.factionFilter = factionsArg.replace('--factions=', '').split(',').map(s => s.trim());
+if (gamesArg) cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=', '')) || cfg.balance.gamesPerMatchup;
 
 const hasApiKey = cfg.anthropicApiKey && cfg.anthropicApiKey !== 'YOUR_API_KEY_HERE';
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
 const log = (...a) => console.log(...a);
-function bar(done, total, w=28) {
-  const p = done/total, f = Math.round(p*w);
-  return `[${'█'.repeat(f)}${'░'.repeat(w-f)}] ${done}/${total} (${Math.round(p*100)}%)`;
+function bar(done, total, w = 28) {
+  const p = done / total, f = Math.round(p * w);
+  return `[${'█'.repeat(f)}${'░'.repeat(w - f)}] ${done}/${total} (${Math.round(p * 100)}%)`;
 }
-function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function main() {
   console.clear();
@@ -59,7 +59,7 @@ async function main() {
   }
 
   log(`  Game:    ${gamePath}`);
-  log(`  Modules: ${Object.entries(cfg.run).filter(([,v])=>v).map(([k])=>k).join(' · ')}`);
+  log(`  Modules: ${Object.entries(cfg.run).filter(([, v]) => v).map(([k]) => k).join(' · ')}`);
   log(`  Discord: ${cfg.discord.webhookUrl ? '✅ configured' : '❌ not configured'}`);
   log(`  Claude:  ${hasApiKey ? '✅ API key set' : '❌ no API key (analysis skipped)'}`);
   log('');
@@ -67,9 +67,9 @@ async function main() {
   const ssDir = path.resolve(cfg.output.screenshotsDir || './screenshots');
   if (cfg.output.saveScreenshots) fs.mkdirSync(ssDir, { recursive: true });
 
-  let rawData      = null;
-  let uiAuditResult= { issues: [], screenshots: [] };
-  const startTime  = Date.now();
+  let rawData = null;
+  let uiAuditResult = { issues: [], screenshots: [] };
+  const startTime = Date.now();
 
   // ════════════════════════════════════════════════════════════════════════════
   // PHASE 1: INSTALL BROWSER
@@ -78,7 +78,7 @@ async function main() {
     try {
       const { execSync } = require('child_process');
       execSync('npx playwright install chromium --with-deps 2>/dev/null', { stdio: 'ignore' });
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -92,13 +92,16 @@ async function main() {
     const t0 = Date.now();
 
     rawData = await runAllMatchups(cfg, ({ done, total, latest }) => {
-      const elapsed = ((Date.now()-t0)/1000).toFixed(0);
-      const eta = done>0 ? Math.round((Date.now()-t0)/done*(total-done)/1000) : '?';
-      const etaStr = isNaN(eta)||eta>3600?'?s':eta>60?`${Math.floor(eta/60)}m${eta%60}s`:`${eta}s`;
-      const icon = latest.timedOut?'⏱':latest.hasErrors?'🐛':latest.hasNaN?'⚡':latest.result.includes('wins')?'✅':'🤝';
-      live.unshift(`  ${icon} ${latest.p1} vs ${latest.p2} → ${latest.result}${latest.hasErrors?' [ERRORS]':''}`);
-      if (live.length>4) live.pop();
-      process.stdout.write(`\r\x1b[K  ${bar(done,total)}  ETA:${etaStr}  ${elapsed}s elapsed\n${live.join('\n')}\x1b[${live.length+1}A`);
+      const elapsed = ((Date.now() - t0) / 1000).toFixed(0);
+      const eta = done > 0 ? Math.round((Date.now() - t0) / done * (total - done) / 1000) : '?';
+      const etaStr = isNaN(eta) || eta > 3600 ? '?s' : eta > 60 ? `${Math.floor(eta / 60)}m${eta % 60}s` : `${eta}s`;
+      const icon = latest.timedOut ? '⏱' : latest.hasErrors ? '🐛' : latest.hasNaN ? '⚡' : latest.result.includes('wins') ? '✅' : '🤝';
+      const errStr = latest.hasErrors && latest.firstError
+        ? ` ↳ ${latest.firstError}`
+        : latest.hasErrors ? ' [ERRORS]' : '';
+      live.unshift(`  ${icon} ${latest.p1} vs ${latest.p2} → ${latest.result}${errStr}`);
+      if (live.length > 4) live.pop();
+      process.stdout.write(`\r\x1b[K  ${bar(done, total)}  ETA:${etaStr}  ${elapsed}s elapsed\n${live.join('\n')}\x1b[${live.length + 1}A`);
 
       // Immediate Discord ping for critical bugs
       if (cfg.run.bugs && cfg.discord.webhookUrl) {
@@ -111,6 +114,33 @@ async function main() {
     log('');
     log(`  ✅ Games complete (${rawData.qa.totalGamesRun} total, ${rawData.qa.allErrors.length} errors found, ${rawData.qa.allTimedOut.length} softlocks)`);
 
+    // ── Print top unique errors immediately so you don't have to wait for the report ──
+    if (rawData.qa.allErrors.length > 0) {
+      // Deduplicate by first 100 chars of message
+      const seen = new Set();
+      const topErrors = [];
+      for (const e of rawData.qa.allErrors) {
+        const key = (e.message || '').slice(0, 100);
+        if (!seen.has(key)) {
+          seen.add(key);
+          topErrors.push(e);
+          if (topErrors.length >= 8) break;
+        }
+      }
+      log('');
+      log(`  🔍 TOP UNIQUE ERRORS (${seen.size} of ${rawData.qa.allErrors.length} total):`);
+      for (const e of topErrors) {
+        const matchup = e.matchup || '?';
+        const msg = (e.message || 'no message').replace(/\n/g, ' ').slice(0, 100);
+        log(`     [${matchup}]  ${msg}`);
+        if (e.stack) {
+          const firstLine = e.stack.split('\n').find(l => l.includes('.html') || l.includes('at ')) || '';
+          if (firstLine) log(`       at ${firstLine.trim().slice(0, 90)}`);
+        }
+      }
+      log('');
+    }
+
     if (cfg.output.saveRawData) {
       fs.writeFileSync(path.resolve(cfg.output.rawDataPath || './qa-data.json'), JSON.stringify(rawData, null, 2));
       log(`  💾 Raw data saved`);
@@ -122,7 +152,7 @@ async function main() {
     log(`  📂 Loaded saved data (${rawData.qa?.totalGamesRun} games)`);
   } else {
     // Minimal stub for UI-only run
-    rawData = { results:{}, factions:[], qa:{ allErrors:[], allNaNs:[], allTimedOut:[], mechanicUsage:{}, performance:{}, totalGamesRun:0 } };
+    rawData = { results: {}, factions: [], qa: { allErrors: [], allNaNs: [], allTimedOut: [], mechanicUsage: {}, performance: {}, totalGamesRun: 0 } };
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -148,9 +178,9 @@ async function main() {
   let diagnosedBugs = [];
 
   if (cfg.run.bugs) {
-    const allErrors   = rawData.qa?.allErrors    || [];
-    const allNaNs     = rawData.qa?.allNaNs      || [];
-    const allTimedOut = rawData.qa?.allTimedOut  || [];
+    const allErrors = rawData.qa?.allErrors || [];
+    const allNaNs = rawData.qa?.allNaNs || [];
+    const allTimedOut = rawData.qa?.allTimedOut || [];
     const totalBugsRaw = allErrors.length + allNaNs.length + allTimedOut.length;
 
     if (totalBugsRaw === 0) {
@@ -186,10 +216,10 @@ async function main() {
 
     // Print quick terminal table
     log('\n  FACTION WIN RATES:');
-    const sorted = [...rawData.factions].sort((a,b) => (aggStats[b]?.overallWinRate||50)-(aggStats[a]?.overallWinRate||50));
+    const sorted = [...rawData.factions].sort((a, b) => (aggStats[b]?.overallWinRate || 50) - (aggStats[a]?.overallWinRate || 50));
     for (const f of sorted) {
       const s = aggStats[f]; if (!s) continue;
-      const flag = s.overallWinRate>=55?'🔴':s.overallWinRate<=45?'🔵':'⚪';
+      const flag = s.overallWinRate >= 55 ? '🔴' : s.overallWinRate <= 45 ? '🔵' : '⚪';
       log(`  ${flag} ${f.padEnd(12)} ${String(s.overallWinRate).padStart(5)}%`);
     }
     log('');
@@ -213,7 +243,7 @@ async function main() {
   log('  ── Phase 5: Building report ───────────────────────────────────────');
 
   const html = buildReport({
-    balanceData:     rawData,
+    balanceData: rawData,
     aggStats,
     balanceAnalysis,
     diagnosedBugs,
@@ -233,18 +263,18 @@ async function main() {
   if (cfg.discord.webhookUrl) {
     log('  ── Phase 6: Sending to Discord ────────────────────────────────────');
     const totalSecs = Math.round((Date.now() - startTime) / 1000);
-    const sortedFacs = Object.entries(aggStats).sort((a,b)=>b[1].overallWinRate-a[1].overallWinRate);
-    const top = sortedFacs.slice(0,3).map(([f,s])=>`${f} (${s.overallWinRate}%)`).join(', ');
-    const bot = sortedFacs.slice(-3).map(([f,s])=>`${f} (${s.overallWinRate}%)`).join(', ');
+    const sortedFacs = Object.entries(aggStats).sort((a, b) => b[1].overallWinRate - a[1].overallWinRate);
+    const top = sortedFacs.slice(0, 3).map(([f, s]) => `${f} (${s.overallWinRate}%)`).join(', ');
+    const bot = sortedFacs.slice(-3).map(([f, s]) => `${f} (${s.overallWinRate}%)`).join(', ');
 
     const summary = [
-      `**Run complete** in ${Math.floor(totalSecs/60)}m${totalSecs%60}s`,
-      `📊 ${rawData.qa?.totalGamesRun||0} games · ${diagnosedBugs.length} bugs · ${uiAuditResult.issues.length} UI issues`,
+      `**Run complete** in ${Math.floor(totalSecs / 60)}m${totalSecs % 60}s`,
+      `📊 ${rawData.qa?.totalGamesRun || 0} games · ${diagnosedBugs.length} bugs · ${uiAuditResult.issues.length} UI issues`,
       '',
-      top    ? `**Top factions:** ${top}`     : '',
-      bot    ? `**Weakest:** ${bot}`           : '',
+      top ? `**Top factions:** ${top}` : '',
+      bot ? `**Weakest:** ${bot}` : '',
       '',
-      diagnosedBugs.filter(b=>b.diagnosis?.severity==='CRITICAL').length > 0
+      diagnosedBugs.filter(b => b.diagnosis?.severity === 'CRITICAL').length > 0
         ? `🔴 **CRITICAL BUGS FOUND** — see report`
         : diagnosedBugs.length > 0 ? `⚠️ ${diagnosedBugs.length} non-critical bugs found` : '✅ No bugs',
     ].filter(Boolean).join('\n');
@@ -259,7 +289,7 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   const totalSecs = Math.round((Date.now() - startTime) / 1000);
   log('');
-  log(`  ✨ Done in ${Math.floor(totalSecs/60)}m${totalSecs%60}s`);
+  log(`  ✨ Done in ${Math.floor(totalSecs / 60)}m${totalSecs % 60}s`);
   log('');
 
   // Print any critical paste-to-Claude prompts

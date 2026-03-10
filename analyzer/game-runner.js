@@ -9,8 +9,8 @@ const { INSTRUMENTATION_SCRIPT } = require('./instrumentation');
 
 async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
   const {
-    difficulty    = 'hard',
-    timeoutMs     = 60_000,
+    difficulty = 'hard',
+    timeoutMs = 60_000,
     browser,
     captureErrors = true,
   } = opts;
@@ -59,10 +59,19 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
       if (!f1) return { error: `P1 faction not found: ${p1Id}` };
       if (!f2) return { error: `P2 faction not found: ${p2Id}` };
 
-      // ── Speed hack ───────────────────────────────────────────────────────
+      // ── Speed hack (10× simulation) ──────────────────────────────────────
+      // Fake RAF timestamp, performance.now(), AND Date.now() so all game
+      // timing runs at 10× speed regardless of how the game measures time.
+      const SPEED = 10;
       let _fakeTs = performance.now();
+      const _t0Real = performance.now();
+      const _origPerfNow = performance.now.bind(performance);
+      const _origDateNow = Date.now.bind(Date);
+      const _d0Real = _origDateNow();
+      performance.now = () => _t0Real + (_origPerfNow() - _t0Real) * SPEED;
+      Date.now = () => _d0Real + Math.round((_origPerfNow() - _t0Real) * SPEED);
       window.requestAnimationFrame = (cb) => {
-        _fakeTs += 16.667;
+        _fakeTs += 16.667 * SPEED;
         return setTimeout(() => cb(_fakeTs), 0);
       };
 
@@ -95,7 +104,7 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
             const ssPath = path.join(opts.screenshotsDir, `error-${ts}-${p1FactionId}-vs-${p2FactionId}.png`);
             await page.screenshot({ path: ssPath, fullPage: false });
             errorScreenshot = ssPath;
-          } catch (_) {}
+          } catch (_) { }
         }
       }
 
@@ -108,25 +117,25 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
 
         // Final performance stats
         const ft = window.__qa.performance.frameTimes;
-        const avgFt = ft.length > 0 ? ft.reduce((a,b)=>a+b,0)/ft.length : 0;
+        const avgFt = ft.length > 0 ? ft.reduce((a, b) => a + b, 0) / ft.length : 0;
         const maxFt = ft.length > 0 ? Math.max(...ft) : 0;
 
         return {
           winnerPid,
-          elapsed:   Math.round(G.elapsed || 0),
-          p1BaseHp:  Math.max(0, Math.round(G.players[0].baseHp)),
-          p2BaseHp:  Math.max(0, Math.round(G.players[1].baseHp)),
+          elapsed: Math.round(G.elapsed || 0),
+          p1BaseHp: Math.max(0, Math.round(G.players[0].baseHp)),
+          p2BaseHp: Math.max(0, Math.round(G.players[1].baseHp)),
           p1Faction: G.factions[0].id,
           p2Faction: G.factions[1].id,
           // QA data
-          errors:    window.__qa.errors,
-          warnings:  window.__qa.warnings,
+          errors: window.__qa.errors,
+          warnings: window.__qa.warnings,
           nanEvents: window.__qa.nanEvents,
           mechanics: { ...window.__qa.mechanics },
           performance: {
-            avgFrameMs:  Math.round(avgFt * 10) / 10,
-            maxFrameMs:  Math.round(maxFt),
-            longTasks:   window.__qa.performance.longTasks,
+            avgFrameMs: Math.round(avgFt * 10) / 10,
+            maxFrameMs: Math.round(maxFt),
+            longTasks: window.__qa.performance.longTasks,
             frameSamples: ft.length,
           },
           screenHistory: window.__qa.screenHistory,
@@ -146,17 +155,17 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
       const partial = await page.evaluate(() => {
         const G = window.G;
         return {
-          winnerPid:  -1,
-          timedOut:   true,
-          elapsed:    Math.round(G?.elapsed || 0),
-          p1BaseHp:   G?.players?.[0]?.baseHp || 0,
-          p2BaseHp:   G?.players?.[1]?.baseHp || 0,
-          p1Faction:  G?.factions?.[0]?.id || '',
-          p2Faction:  G?.factions?.[1]?.id || '',
-          errors:     window.__qa?.errors || [],
-          nanEvents:  window.__qa?.nanEvents || [],
-          mechanics:  window.__qa?.mechanics || {},
-          performance:{ avgFrameMs: 0, maxFrameMs: 0, longTasks: [], frameSamples: 0 },
+          winnerPid: -1,
+          timedOut: true,
+          elapsed: Math.round(G?.elapsed || 0),
+          p1BaseHp: G?.players?.[0]?.baseHp || 0,
+          p2BaseHp: G?.players?.[1]?.baseHp || 0,
+          p1Faction: G?.factions?.[0]?.id || '',
+          p2Faction: G?.factions?.[1]?.id || '',
+          errors: window.__qa?.errors || [],
+          nanEvents: window.__qa?.nanEvents || [],
+          mechanics: window.__qa?.mechanics || {},
+          performance: { avgFrameMs: 0, maxFrameMs: 0, longTasks: [], frameSamples: 0 },
           screenHistory: window.__qa?.screenHistory || [],
         };
       }).catch(() => ({
@@ -176,8 +185,8 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
     return result;
 
   } finally {
-    await page.close().catch(() => {});
-    await ctx.close().catch(() => {});
+    await page.close().catch(() => { });
+    await ctx.close().catch(() => { });
   }
 }
 

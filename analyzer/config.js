@@ -17,7 +17,7 @@ module.exports = {
 
   // ── BALANCE SETTINGS ──────────────────────────────────────────────────────
   balance: {
-    gamesPerMatchup: 20,       // 5=quick, 10=reliable, 20=high confidence
+    gamesPerMatchup: 5,       // 5=quick, 10=reliable, 20=high confidence
     aiDifficulty:   'hard',   // 'easy'|'medium'|'hard'|'expert'
     parallelGames:   3,       // concurrent browser tabs (RAM: ~300MB each)
     mirrorMatchups:  true,    // run A-vs-B AND B-vs-A
