@@ -177,14 +177,15 @@ io.on('connection', (socket) => {
     if (room.factions[0] && room.factions[1]) {
       const seed = Math.floor(Math.random() * 1e9);
       room.seed = seed;
+      room.factionsLocked = true; // factions chosen — ready for ready-state
       io.to(room.code).emit('startGame', {
         p1Faction: room.factions[0],
         p2Faction: room.factions[1],
         seed,
         gameMode: room.gameMode,
       });
-      room.started = true;
-      console.log(`[>] Room ${room.code} game started (seed ${seed})`);
+      // room.started stays false until BOTH players click Ready
+      console.log(`[>] Room ${room.code} factions locked (seed ${seed})`);
     }
   });
 
@@ -210,16 +211,27 @@ io.on('connection', (socket) => {
   // Ready-state relay: both players must send 'playerReady' before game starts
   socket.on('playerReady', () => {
     const room = rooms.get(socket._bkcRoom);
-    if (!room || room.started) return;
+    // Guard: factions must be locked, game must not have already started
+    if (!room || !room.factionsLocked || room.started) return;
     if (!room.ready) room.ready = new Set();
     room.ready.add(socket._bkcPid);
     // Tell the other player their opponent is ready
     const other = room.players.find(p => p !== socket);
     if (other) other.emit('opponentReady', { pid: socket._bkcPid });
-    // Both ready → broadcast countdownStart (server is the authority)
+    // Both ready → flip started and launch
     if (room.ready.size === 2) {
+      room.started = true;
       io.to(room.code).emit('bothReady');
+      console.log(`[>] Room ${room.code} both ready — game starting`);
     }
+  });
+
+  // Faction cursor sync — relay W/S cursor position to opponent during faction select
+  socket.on('factionCursor', ({ cursorIdx }) => {
+    const room = rooms.get(socket._bkcRoom);
+    if (!room) return;
+    const other = room.players.find(p => p !== socket);
+    if (other) other.emit('opponentFactionCursor', { pid: socket._bkcPid, cursorIdx });
   });
 
   // ── EVENT SYNC ────────────────────────────────────────────────────────────

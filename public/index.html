@@ -5721,17 +5721,31 @@
         socket.on('remoteAction', (action) => { _executeRemoteAction(action); });
 
         // ── Ready state ─────────────────────────────────────────────────────
+        // Opponent moved their faction cursor (W/S keys) — show it on their column
+        socket.on('opponentFactionCursor', ({ pid, cursorIdx }) => {
+          const theirPid = pid;
+          const cards = document.querySelectorAll(`#fcards-p${theirPid} .fcard`);
+          // Apply fkey-cursor highlight on their column
+          cards.forEach((c, i) => c.classList.toggle('fkey-cursor', i === cursorIdx));
+          // Scroll their card into view (smooth — both players see the scroll)
+          const card = cards[cursorIdx];
+          if (card) card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
+
         socket.on('opponentReady', ({ pid }) => {
           const span = document.getElementById(`online-ready-p${pid}-status`);
-          if (span) { span.textContent = '✓ READY'; span.style.color = '#2ecc71'; }
+          if (span) {
+            span.textContent = `${pid === 1 ? '🔵' : '🔴'} P${pid}: ✓ READY`;
+            span.style.color = '#2ecc71';
+          }
         });
         socket.on('bothReady', () => {
           // Both players ready — start the 3-second countdown as normal
           const overlay = document.getElementById('online-faction-countdown');
           const numEl = document.getElementById('online-faction-countdown-num');
-          // Hide the ready overlay
-          const readyOverlay = document.getElementById('online-ready-overlay');
-          if (readyOverlay) readyOverlay.style.display = 'none';
+          // Remove the ready banner
+          const banner = document.getElementById('online-ready-banner');
+          if (banner) banner.remove();
           if (overlay && numEl) {
             overlay.style.display = 'flex';
             let n = 3;
@@ -5822,48 +5836,46 @@
         }
       }
 
-      // ── Ready overlay — shown when both factions are locked in ───────────────
+      // ── Ready banner — shown at bottom of faction screen when both factions locked ──
+      // Non-blocking: player can still scroll and change faction. Clicking READY
+      // sends playerReady to server; game only launches when BOTH have clicked.
       function _showReadyOverlay() {
-        let readyOverlay = document.getElementById('online-ready-overlay');
-        if (!readyOverlay) {
-          readyOverlay = document.createElement('div');
-          readyOverlay.id = 'online-ready-overlay';
-          readyOverlay.style.cssText = [
-            'position:fixed', 'inset:0', 'background:rgba(0,0,0,.88)',
-            'z-index:700', 'display:flex', 'flex-direction:column',
-            'align-items:center', 'justify-content:center', 'gap:24px',
-          ].join(';');
-          readyOverlay.innerHTML = `
-            <div style="font-family:Rajdhani,sans-serif;font-size:clamp(1.4rem,3vw,2.2rem);color:var(--gold);letter-spacing:.12em;">⚔ BOTH FACTIONS LOCKED</div>
-            <div style="display:flex;gap:32px;flex-wrap:wrap;justify-content:center;">
-              <div id="online-ready-p1" style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.08em;">
-                🔵 P1: <span id="online-ready-p1-status">waiting…</span>
-              </div>
-              <div id="online-ready-p2" style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.08em;">
-                🔴 P2: <span id="online-ready-p2-status">waiting…</span>
-              </div>
-            </div>
-            <div style="font-size:.8rem;color:var(--dim);max-width:320px;text-align:center;">
-              ${P1_FACTION && P2_FACTION ? P1_FACTION.icon + ' ' + P1_FACTION.name + ' <span style="color:var(--gold)">vs</span> ' + P2_FACTION.icon + ' ' + P2_FACTION.name : ''}
-            </div>
-            <button id="online-ready-btn" class="btn primary" style="min-width:180px;font-size:1.1rem;">
-              ✅ READY
-            </button>
-            <div style="font-size:.7rem;color:var(--dim);">Waiting for opponent to ready up…</div>
-          `;
-          document.body.appendChild(readyOverlay);
-        }
-        readyOverlay.style.display = 'flex';
-        // Wire the ready button
+        // Remove any stale banner from a previous match
+        const existing = document.getElementById('online-ready-banner');
+        if (existing) existing.remove();
+
+        const banner = document.createElement('div');
+        banner.id = 'online-ready-banner';
+        banner.style.cssText = [
+          'position:fixed', 'bottom:0', 'left:0', 'right:0',
+          'background:rgba(5,5,18,.97)', 'border-top:1px solid rgba(212,168,67,.4)',
+          'z-index:600', 'display:flex', 'align-items:center',
+          'justify-content:center', 'gap:clamp(12px,2vw,32px)',
+          'padding:10px clamp(10px,2vw,28px)', 'flex-wrap:wrap',
+        ].join(';');
+        banner.innerHTML = `
+          <div style="font-family:Rajdhani,sans-serif;font-size:clamp(.8rem,1.5vw,1.1rem);color:var(--gold);letter-spacing:.1em;white-space:nowrap;">
+            ⚔ FACTIONS LOCKED
+          </div>
+          <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;">
+            <span id="online-ready-p1-status" style="font-family:Rajdhani,sans-serif;font-size:.8rem;color:var(--dim);letter-spacing:.06em;">🔵 P1: waiting…</span>
+            <span id="online-ready-p2-status" style="font-family:Rajdhani,sans-serif;font-size:.8rem;color:var(--dim);letter-spacing:.06em;">🔴 P2: waiting…</span>
+          </div>
+          <button id="online-ready-btn" class="btn primary" style="min-width:140px;padding:8px 18px;font-size:.9rem;">
+            ✅ READY
+          </button>
+          <div style="font-size:.65rem;color:var(--dim);text-align:center;">You can still change faction before clicking ready</div>
+        `;
+        document.body.appendChild(banner);
+
+        // Mark own status immediately and wire button
+        const myStatus = document.getElementById(`online-ready-p${myPid}-status`);
         const readyBtn = document.getElementById('online-ready-btn');
         if (readyBtn) {
           readyBtn.onclick = () => {
             readyBtn.disabled = true;
-            readyBtn.textContent = '✅ READY — waiting for opponent…';
-            const pid = myPid;
-            // Update own status indicator immediately
-            const myStatus = document.getElementById(`online-ready-p${pid}-status`);
-            if (myStatus) { myStatus.textContent = '✓ READY'; myStatus.style.color = '#2ecc71'; }
+            readyBtn.textContent = '⏳ Waiting for opponent…';
+            if (myStatus) { myStatus.textContent = `${myPid === 1 ? '🔵' : '🔴'} P${myPid}: ✓ READY`; myStatus.style.color = '#2ecc71'; }
             if (socket && connected) socket.emit('playerReady');
           };
         }
@@ -6342,6 +6354,7 @@
         // Reset search-state UI
         const qs = document.getElementById('quickmatch-status'); if (qs) { qs.textContent = ''; qs.style.display = 'none'; }
         const cancel = document.getElementById('btn-cancel-qm'); if (cancel) cancel.style.display = 'none';
+        const readyBanner = document.getElementById('online-ready-banner'); if (readyBanner) readyBanner.remove();
         // Reset room-create UI
         const createBtn = document.getElementById('btn-createroom'); if (createBtn) createBtn.style.display = '';
         const info = document.getElementById('created-room-info'); if (info) info.style.display = 'none';
@@ -6352,6 +6365,11 @@
       function sendFaction(factionId) {
         if (!_onlineMode || !socket) return;
         socket.emit('factionSelected', { factionId });
+      }
+
+      function sendFactionCursor(cursorIdx) {
+        if (!_onlineMode || !socket || !connected) return;
+        socket.emit('factionCursor', { cursorIdx });
       }
 
       function cleanup() {
@@ -6366,6 +6384,7 @@
         const info = document.getElementById('created-room-info'); if (info) info.style.display = 'none';
         const qs = document.getElementById('quickmatch-status'); if (qs) { qs.textContent = ''; qs.style.display = 'none'; }
         const cancel = document.getElementById('btn-cancel-qm'); if (cancel) cancel.style.display = 'none';
+        const readyBanner = document.getElementById('online-ready-banner'); if (readyBanner) readyBanner.remove();
         _clearErrors();
         const inp = document.getElementById('room-code-input'); if (inp) inp.value = '';
         [1, 2].forEach(pid => {
@@ -6436,7 +6455,7 @@
       }
 
       return {
-        isOnline, getPid, isMyTurn, sendAction, sendFaction, sendHover, requestEvent,
+        isOnline, getPid, isMyTurn, sendAction, sendFaction, sendFactionCursor, sendHover, requestEvent,
         reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
         joinRoom, cancelSearch, cleanup, setStatus,
         sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone
@@ -14165,8 +14184,11 @@
         </div>
         <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
           card.addEventListener('mouseenter', () => {
-            if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid) && NET.getPid() === pid) {
+            if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === pid) {
               NET.sendHover(FACTIONS[fi].id);
+              // Also sync cursor position so opponent sees your highlight box
+              fCursor[pid - 1] = fi;
+              NET.sendFactionCursor(fi);
             }
           });
           card.addEventListener('click', () => {
@@ -14475,8 +14497,14 @@
     function factionCursorMove(pid, dir) {
       // Only active when faction screen is visible
       if (!document.getElementById('sc-faction').classList.contains('active')) return;
+      // Online: only move your own cursor
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() !== pid) return;
       fCursor[pid - 1] = (fCursor[pid - 1] + dir + FACTIONS.length) % FACTIONS.length;
       highlightFactionCursor(pid);
+      // Send cursor position to opponent so they see your scroll/highlight
+      if (typeof NET !== 'undefined' && NET.isOnline()) {
+        NET.sendFactionCursor(fCursor[pid - 1]);
+      }
     }
 
     function factionConfirm(pid) {
