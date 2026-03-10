@@ -5318,38 +5318,42 @@
         loadSocketIo(() => {
           setStatus('⏳ Connecting to server…');
           socket = window.io(SERVER_URL, { transports: ['polling', 'websocket'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
-          socket.on('connect', () => {
-            connected = true;
-            setStatus('✓ Connected — sending request…');
-            cb();
-          });
-          let _connectAttempts = 0;
-          socket.on('connect_error', (err) => {
-            _connectAttempts++;
-            if (_connectAttempts <= 2) {
-              // Still retrying — update message but don't give up yet
-              document.getElementById('online-connecting-msg').textContent = `Connecting… (attempt ${_connectAttempts + 1})`;
-              setStatus(`⏳ Server waking up — retrying… (${_connectAttempts}/3)`, false);
-            } else {
-              setStatus('❌ Could not connect. Server may still be waking up — wait 30s and try again.', true);
-              hideConnecting();
-            }
-          });
-          socket.on('disconnect', () => {
-            connected = false;
-            if (_onlineMode && typeof G !== 'undefined' && G && G.running) {
-              document.getElementById('online-dc-overlay').classList.add('show');
-            } else {
-              setStatus('⚠ Disconnected from server — click any option to reconnect', true);
-            }
-          });
-          _attachHandlers();
+          // IMPORTANT: call _attachHandlers first (it does socket.off() then re-adds all handlers).
+          // connect/connect_error/disconnect are added INSIDE _attachHandlers so they never get wiped.
+          _attachHandlers(cb);
         });
       }
 
       // ── Event handlers ────────────────────────────────────────────────
-      function _attachHandlers() {
-        socket.off(); // clear before adding — prevents duplicates on reconnect
+      function _attachHandlers(onConnectCb) {
+        socket.off(); // clear all handlers first — safe now since we re-add everything below
+
+        // ── Connection lifecycle (must be inside here, NOT in connect(), to avoid being wiped) ──
+        let _connectAttempts = 0;
+        socket.on('connect', () => {
+          connected = true;
+          _connectAttempts = 0;
+          setStatus('✓ Connected — sending request…');
+          if (onConnectCb) { onConnectCb(); onConnectCb = null; }
+        });
+        socket.on('connect_error', () => {
+          _connectAttempts++;
+          if (_connectAttempts <= 2) {
+            document.getElementById('online-connecting-msg').textContent = `Connecting… (attempt ${_connectAttempts + 1})`;
+            setStatus(`⏳ Server waking up — retrying… (${_connectAttempts}/3)`);
+          } else {
+            setStatus('❌ Could not connect — server may be starting up, wait 30s and try again.', true);
+            hideConnecting();
+          }
+        });
+        socket.on('disconnect', () => {
+          connected = false;
+          if (_onlineMode && typeof G !== 'undefined' && G && G.running) {
+            document.getElementById('online-dc-overlay').classList.add('show');
+          } else {
+            setStatus('⚠ Disconnected — click any option to reconnect', true);
+          }
+        });
 
         socket.on('waiting', () => {
           // In queue — dismiss the overlay so user can see they're actively searching
@@ -5604,7 +5608,7 @@
         const createBtn = document.getElementById('btn-createroom'); if (createBtn) createBtn.style.display = '';
         const info = document.getElementById('created-room-info'); if (info) info.style.display = 'none';
         if (socket && connected) { try { socket.emit('cancelSearch'); } catch (e) { } }
-        setStatus('✓ Connected — choose an option above');
+        setStatus(connected ? '✓ Connected — choose an option above' : 'Not connected');
       }
 
       function sendFaction(factionId) {
@@ -12754,6 +12758,8 @@
 
     // ─── INPUT ───────────────────────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
+      // Don't intercept keys when user is typing in an input field
+      if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
       // M = mute toggle (global)
       if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_isRebinding) { toggleMute(); return; }
       // Rebinding intercept
