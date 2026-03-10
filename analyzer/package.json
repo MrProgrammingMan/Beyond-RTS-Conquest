@@ -1,0 +1,19 @@
+{
+  "name": "beyond-rts-qa",
+  "version": "2.0.0",
+  "description": "Full QA system: balance testing, bug detection, UI audit, performance monitoring for Beyond RTS Conquest",
+  "main": "run.js",
+  "scripts": {
+    "start": "node run.js",
+    "balance-only": "node run.js --skip-ui",
+    "ui-only": "node run.js --skip-balance",
+    "quick": "node run.js --games=3 --factions=warriors,summoners,brutes,spirits,infernal",
+    "analyze": "node run.js --analyze-only",
+    "install-browsers": "npx playwright install chromium --with-deps"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "playwright": "^1.44.0"
+  },
+  "engines": { "node": ">=18.0.0" }
+}
