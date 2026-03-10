@@ -5714,9 +5714,24 @@
           _onlineMode = true;
           window._onlineSeed = seed;
           document.getElementById('online-badge').style.display = 'block';
-          // Show 3-second countdown before launching
+          // Show the READY overlay — game only starts when BOTH players click ready
+          _showReadyOverlay();
+        });
+
+        socket.on('remoteAction', (action) => { _executeRemoteAction(action); });
+
+        // ── Ready state ─────────────────────────────────────────────────────
+        socket.on('opponentReady', ({ pid }) => {
+          const span = document.getElementById(`online-ready-p${pid}-status`);
+          if (span) { span.textContent = '✓ READY'; span.style.color = '#2ecc71'; }
+        });
+        socket.on('bothReady', () => {
+          // Both players ready — start the 3-second countdown as normal
           const overlay = document.getElementById('online-faction-countdown');
           const numEl = document.getElementById('online-faction-countdown-num');
+          // Hide the ready overlay
+          const readyOverlay = document.getElementById('online-ready-overlay');
+          if (readyOverlay) readyOverlay.style.display = 'none';
           if (overlay && numEl) {
             overlay.style.display = 'flex';
             let n = 3;
@@ -5742,10 +5757,8 @@
           }
         });
 
-        socket.on('remoteAction', (action) => { _executeRemoteAction(action); });
-
-        // Full game state from P1 — P2 applies it every ~80ms ──────────────
-        socket.on('stateUpdate', (state) => { _applyFullState(state); });
+        // Full game state from P1 (arrives ~30fps); P2 buffers it for interpolation
+        socket.on('stateUpdate', (snap) => { _receiveStateSnapshot(snap); });
 
         socket.on('fireEvent', ({ eventId, nextDelay }) => {
           if (typeof G === 'undefined' || !G || !G.running) return;
@@ -5773,11 +5786,12 @@
             const onGame = document.getElementById('sc-game')?.classList.contains('active');
             const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
             if (onGame && youWin && typeof G !== 'undefined' && G && G.running) {
-              // Opponent quit mid-game — kill their base and trigger the win screen
-              const opponentIdx = myPid === 1 ? 1 : 0;
-              if (G.players[opponentIdx]) G.players[opponentIdx].baseHp = 0;
+              // Opponent quit — kill their base and show win screen with a popup
+              const oppIdx = myPid === 1 ? 1 : 0;
+              if (G.players[oppIdx]) G.players[oppIdx].baseHp = 0;
+              showPopup(G.w / 2, G.groundY - 120, '⚠ OPPONENT LEFT — YOU WIN', '#f39c12', null);
               G.running = false;
-              checkWin();
+              setTimeout(() => checkWin(), 1200); // small delay so popup is visible
             } else if (onGame || onFaction) {
               document.getElementById('online-dc-overlay').classList.add('show');
               if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
@@ -5805,6 +5819,53 @@
             c.classList.toggle(`sel${pid}`, i === fi);
             c.classList.remove('opponent-hover');
           });
+        }
+      }
+
+      // ── Ready overlay — shown when both factions are locked in ───────────────
+      function _showReadyOverlay() {
+        let readyOverlay = document.getElementById('online-ready-overlay');
+        if (!readyOverlay) {
+          readyOverlay = document.createElement('div');
+          readyOverlay.id = 'online-ready-overlay';
+          readyOverlay.style.cssText = [
+            'position:fixed', 'inset:0', 'background:rgba(0,0,0,.88)',
+            'z-index:700', 'display:flex', 'flex-direction:column',
+            'align-items:center', 'justify-content:center', 'gap:24px',
+          ].join(';');
+          readyOverlay.innerHTML = `
+            <div style="font-family:Rajdhani,sans-serif;font-size:clamp(1.4rem,3vw,2.2rem);color:var(--gold);letter-spacing:.12em;">⚔ BOTH FACTIONS LOCKED</div>
+            <div style="display:flex;gap:32px;flex-wrap:wrap;justify-content:center;">
+              <div id="online-ready-p1" style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.08em;">
+                🔵 P1: <span id="online-ready-p1-status">waiting…</span>
+              </div>
+              <div id="online-ready-p2" style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.08em;">
+                🔴 P2: <span id="online-ready-p2-status">waiting…</span>
+              </div>
+            </div>
+            <div style="font-size:.8rem;color:var(--dim);max-width:320px;text-align:center;">
+              ${P1_FACTION && P2_FACTION ? P1_FACTION.icon + ' ' + P1_FACTION.name + ' <span style="color:var(--gold)">vs</span> ' + P2_FACTION.icon + ' ' + P2_FACTION.name : ''}
+            </div>
+            <button id="online-ready-btn" class="btn primary" style="min-width:180px;font-size:1.1rem;">
+              ✅ READY
+            </button>
+            <div style="font-size:.7rem;color:var(--dim);">Waiting for opponent to ready up…</div>
+          `;
+          document.body.appendChild(readyOverlay);
+        }
+        readyOverlay.style.display = 'flex';
+        // Wire the ready button
+        const readyBtn = document.getElementById('online-ready-btn');
+        if (readyBtn) {
+          readyBtn.onclick = () => {
+            readyBtn.disabled = true;
+            readyBtn.textContent = '✅ READY — waiting for opponent…';
+            const pid = myPid;
+            // Update own status indicator immediately
+            const myStatus = document.getElementById(`online-ready-p${pid}-status`);
+            if (myStatus) { myStatus.textContent = '✓ READY'; myStatus.style.color = '#2ecc71'; }
+            if (socket && connected) socket.emit('playerReady');
+          };
         }
       }
 
@@ -5923,163 +5984,230 @@
         socket.emit('gameAction', action);
       }
 
-      // ── P1-authoritative state broadcast (80ms interval) ───────────────
-      // P1 runs the full simulation. P2 only renders — it does NOT run physics.
-      // Every 80ms P1 serialises everything and sends it via stateUpdate.
-      // P2 inputs (spawn, buff, upgrade, etc.) still go through gameAction so
-      // P1 can apply them locally; the next broadcast reflects the change.
+      // ══════════════════════════════════════════════════════════════════════
+      // P1-AUTHORITATIVE SYNC WITH P2 INTERPOLATION
+      // ──────────────────────────────────────────────────────────────────────
+      // P1 runs the full simulation and sends state snapshots every 33ms (~30fps).
+      // P2 stores the last TWO snapshots and interpolates unit positions between
+      // them each animation frame — giving smooth 60fps visuals even over latency.
+      // Non-unit state (resources, buffs etc.) is applied immediately on receipt.
+      // ══════════════════════════════════════════════════════════════════════
+
       let _syncInterval = null;
+      // P2 interpolation buffers
+      let _p2SnapPrev = null;  // snapshot received 2 ticks ago
+      let _p2SnapNext = null;  // snapshot received last tick (latest)
+      let _p2SnapPrevTime = 0; // performance.now() when _p2SnapPrev was received
+      let _p2SnapNextTime = 0; // performance.now() when _p2SnapNext was received
+
       function _startStateSync() {
         if (_syncInterval) clearInterval(_syncInterval);
-        if (myPid === 1) _syncInterval = setInterval(_broadcastFullState, 80);
-        // P2 does nothing here — it just receives stateUpdate from the server
+        if (myPid === 1) {
+          _syncInterval = setInterval(_broadcastFullState, 33); // ~30fps snapshots
+        }
       }
       function _stopStateSync() {
         if (_syncInterval) { clearInterval(_syncInterval); _syncInterval = null; }
+        _p2SnapPrev = _p2SnapNext = null;
       }
 
+      // ── P1 broadcasts: serialise only what's needed ────────────────────────
       function _broadcastFullState() {
         if (!_onlineMode || !socket || !connected) return;
         if (typeof G === 'undefined' || !G) return;
         try {
+          // Only send units that are alive (dead ones just disappear on P2)
+          const unitSnaps = G.units.filter(u => !u.dead).map(u => [
+            u.id,
+            Math.round(u.x),
+            Math.round(u.y),
+            Math.round(u.hp),
+            u.player,
+            u.defId || (u.def && u.def.id) || '',
+            u.aerial ? 1 : 0,
+            u.isWorker ? 1 : 0,
+            Math.round((u._warcryed || 0) * 10),   // ×10 to preserve 1dp in integer
+            Math.round((u._ironwalled || 0) * 10),
+            u.goToMid ? 1 : 0,
+          ]);
+          const projSnaps = G.projectiles.filter(p => !p.dead).map(p => [
+            p.id, Math.round(p.x), Math.round(p.y),
+            p.player, p.defId || (p.def && p.def.id) || '',
+            p.isHeal ? 1 : 0,
+          ]);
           const payload = {
-            running: G.running,
-            elapsed: G.elapsed || 0,
-            midOwner: G.midOwner,
-            midOwnerTimer: G.midOwnerTimer || 0,
-            midCapturing: G.midCapturing || null,
-            midCapFrac: G.midCapFrac || 0,
-            siegeDecay: G.siegeDecay || false,
-            workerMidMode: [...(G.workerMidMode || [false, false])],
-            shake: G.shake || 0,
-            shakeX: G.shakeX || 0,
-            shakeY: G.shakeY || 0,
-            players: G.players.map(p => ({
-              souls: p.souls,
-              bodies: p.bodies,
-              baseHp: p.baseHp,
-              unitCap: p.unitCap,
-              workerCap: p.workerCap || 3,
-              despStacks: p.despStacks || 0,
-              buffCooldowns: [...(p.buffCooldowns || [0, 0, 0])],
-              activeBuffs: { ...p.activeBuffs },
-              ownedUpgrades: [...(p.ownedUpgrades || new Set())],
-              workers: p.workers || 0,
-              lastStand: p.lastStand || false,
-              _lastStandGrace: p._lastStandGrace || 0,
-              soulsSpent: p.soulsSpent || 0,
+            t: performance.now(),  // timestamp so P2 can interpolate correctly
+            r: G.running ? 1 : 0,
+            e: Math.round(G.elapsed || 0),
+            mo: G.midOwner,
+            mt: Math.round((G.midOwnerTimer || 0) * 10),
+            mc: G.midCapturing || null,
+            mf: Math.round((G.midCapFrac || 0) * 100),
+            sd: G.siegeDecay ? 1 : 0,
+            wm: (G.workerMidMode || [false, false]).map(b => b ? 1 : 0),
+            sh: Math.round((G.shake || 0) * 100),
+            // Player states (compact arrays)
+            p: G.players.map(p => [
+              Math.round(p.souls), Math.round(p.bodies),
+              Math.round(p.baseHp * 10),           // ×10 for 1dp precision
+              p.unitCap, p.workerCap || 3,
+              p.despStacks || 0, p.workers || 0,
+              p.lastStand ? 1 : 0,
+              Math.round((p._lastStandGrace || 0) * 10),
+              // activeBuffs as durations (×10)
+              Math.round((p.activeBuffs && p.activeBuffs.warcry || 0) * 10),
+              Math.round((p.activeBuffs && p.activeBuffs.ironwall || 0) * 10),
+              // buffCooldowns (×10)
+              ...(p.buffCooldowns || [0, 0, 0]).map(c => Math.round(c * 10)),
+              // ownedUpgrades count (P2 can't buy anyway, just for display)
+              (p.ownedUpgrades || new Set()).size,
+            ]),
+            u: unitSnaps,
+            pr: projSnaps,
+            sp: (G.spies || []).map(s => ({
+              id: s.id, x: Math.round(s.x), y: Math.round(s.y),
+              owner: s.owner, hp: Math.round(s.hp || 0), dead: s.dead,
             })),
-            units: G.units.map(u => ({
-              id: u.id, x: u.x, y: u.y, hp: u.hp, maxHp: u.maxHp,
-              player: u.player, dead: u.dead || false,
-              defId: u.defId || (u.def && u.def.id),
-              _warcryed: u._warcryed || 0,
-              _ironwalled: u._ironwalled || 0,
-              slowTimer: u.slowTimer || 0,
-              _speedMult: u._speedMult || 1,
-              dmgMult: u.dmgMult || 1,
-              _menderRetreating: u._menderRetreating || false,
-              _growStacks: u._growStacks || 0,
-              _returnDmgBonus: u._returnDmgBonus || 0,
-              _rallySpeed: u._rallySpeed || false,
-              aerial: u.aerial || false,
-              isWorker: u.isWorker || false,
-              goToMid: u.goToMid || false,
-            })),
-            projectiles: G.projectiles.map(p => ({
-              id: p.id, x: p.x, y: p.y, tx: p.tx, ty: p.ty,
-              player: p.player, dmg: p.dmg, dead: p.dead || false,
-              defId: p.defId || (p.def && p.def.id),
-              speed: p.speed || 400,
-              isHeal: p.isHeal || false,
-            })),
-            spies: (G.spies || []).map(s => ({ ...s })),
-            bloodPools: (G.bloodPools || []).map(b => ({ x: b.x, y: b.y, r: b.r, t: b.t })),
           };
           socket.emit('stateUpdate', payload);
         } catch (e) { /* serialisation error — skip frame */ }
       }
 
-      // ── Apply full authoritative state (P2 only, arrives from server) ────
-      function _applyFullState(state) {
+      // ── P2 receives snapshot: buffer it for interpolation ──────────────────
+      function _receiveStateSnapshot(snap) {
+        _p2SnapPrev = _p2SnapNext;
+        _p2SnapPrevTime = _p2SnapNextTime;
+        _p2SnapNext = snap;
+        _p2SnapNextTime = performance.now();
+
+        // Apply non-positional state immediately (resources, buffs, mid, etc.)
+        _applyInstantState(snap);
+      }
+
+      // State that should be applied IMMEDIATELY (no interpolation needed)
+      function _applyInstantState(snap) {
         if (typeof G === 'undefined' || !G) return;
         try {
-          // ── Players ──
-          state.players.forEach((ps, i) => {
-            const p = G.players[i];
-            if (!p) return;
-            p.souls = ps.souls; p.bodies = ps.bodies; p.baseHp = ps.baseHp;
-            p.unitCap = ps.unitCap; p.workerCap = ps.workerCap;
-            p.despStacks = ps.despStacks;
-            p.buffCooldowns = ps.buffCooldowns;
-            p.activeBuffs = ps.activeBuffs;
-            p.ownedUpgrades = new Set(ps.ownedUpgrades);
-            p.workers = ps.workers;
-            p.lastStand = ps.lastStand;
-            p._lastStandGrace = ps._lastStandGrace;
-            p.soulsSpent = ps.soulsSpent;
+          snap.p.forEach((ps, i) => {
+            const p = G.players[i]; if (!p) return;
+            p.souls = ps[0]; p.bodies = ps[1];
+            p.baseHp = ps[2] / 10;
+            p.unitCap = ps[3]; p.workerCap = ps[4];
+            p.despStacks = ps[5]; p.workers = ps[6];
+            p.lastStand = ps[7] === 1;
+            p._lastStandGrace = ps[8] / 10;
+            if (!p.activeBuffs) p.activeBuffs = {};
+            p.activeBuffs.warcry = ps[9] / 10;
+            p.activeBuffs.ironwall = ps[10] / 10;
+            p.buffCooldowns = [ps[11] / 10, ps[12] / 10, ps[13] / 10];
+          });
+          G.midOwner = snap.mo;
+          G.midOwnerTimer = (snap.mt || 0) / 10;
+          G.midCapturing = snap.mc;
+          G.midCapFrac = (snap.mf || 0) / 100;
+          G.elapsed = snap.e;
+          G.siegeDecay = snap.sd === 1;
+          G.workerMidMode = (snap.wm || [0, 0]).map(v => v === 1);
+          G.shake = (snap.sh || 0) / 100;
+          G.spies = snap.sp || [];
+          if (snap.r === 0 && G.running !== false) { G.running = false; checkWin(); }
+        } catch (e) { /* ignore */ }
+      }
+
+      // ── P2 interpolates unit positions in its render loop ──────────────────
+      // Called every animation frame by P2's game loop.
+      function _interpolateUnits() {
+        if (!_p2SnapPrev || !_p2SnapNext || typeof G === 'undefined' || !G) {
+          // No previous snap yet — just apply latest positions directly
+          if (_p2SnapNext) _applyUnitPositions(_p2SnapNext, 1.0);
+          return;
+        }
+        const now = performance.now();
+        const snapDt = _p2SnapNextTime - _p2SnapPrevTime;  // time between the two snaps
+        if (snapDt < 1) { _applyUnitPositions(_p2SnapNext, 1.0); return; }
+        // How far we are between prev and next snap (0=at prev, 1=at next, can overshoot slightly)
+        const t = Math.min(1.4, (now - _p2SnapNextTime) / snapDt + 1.0);
+        _applyUnitPositions(_p2SnapPrev, 0, _p2SnapNext, t);
+      }
+
+      // Map from unit id → last known position (for when a unit first appears)
+      const _p2UnitMap = new Map();
+
+      function _applyUnitPositions(snapA, tA, snapB, tB) {
+        if (typeof G === 'undefined' || !G) return;
+        try {
+          // Build maps for quick lookup
+          const aMap = new Map(); const bMap = snapB ? new Map() : null;
+          if (snapA) snapA.u.forEach(u => aMap.set(u[0], u));
+          if (snapB) snapB.u.forEach(u => bMap.set(u[0], u));
+          const useSnap = snapB || snapA;
+          const currentIds = new Set(useSnap.u.map(u => u[0]));
+
+          // Remove units that are gone from the authoritative snapshot
+          G.units = G.units.filter(u => currentIds.has(u.id));
+
+          useSnap.u.forEach(snap => {
+            const [id, nx, ny, nhp, player, defId, isAerial, isWorker,
+              warcryT10, ironwallT10, goToMid] = snap;
+            let u = G.units.find(uu => uu.id === id);
+            if (!u) {
+              // New unit — reconstruct
+              const faction = G.factions[player - 1];
+              if (!faction) return;
+              const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
+              const def = allDefs.find(d => d.id === defId);
+              if (!def) return;
+              u = {
+                id, x: nx, y: ny, hp: nhp, maxHp: nhp,
+                player, def, defId, dead: false,
+                target: null, attackTimer: 0, radius: def.radius || 12,
+                color: def.color, slowTimer: 0, _speedMult: 1,
+                _warcryed: 0, _ironwalled: 0, dmgMult: 1,
+                _menderRetreating: false, _growStacks: 0,
+                passiveSummonTimer: 0, aerial: isAerial === 1,
+                isWorker: isWorker === 1, goToMid: goToMid === 1,
+                isGuard: def.isSpawned || false, aliveSecs: 0,
+              };
+              G.units.push(u);
+            }
+
+            // Interpolate position
+            if (tB !== undefined && snapB) {
+              const aSnap = aMap.get(id);
+              const bSnap = bMap.get(id);
+              if (aSnap && bSnap) {
+                const ax = aSnap[1], ay = aSnap[2];
+                u.x = ax + (bSnap[1] - ax) * tB;
+                u.y = ay + (bSnap[2] - ay) * tB;
+              } else {
+                u.x = nx; u.y = ny;
+              }
+            } else {
+              u.x = nx; u.y = ny;
+            }
+            u.hp = nhp;
+            u._warcryed = warcryT10 / 10;
+            u._ironwalled = ironwallT10 / 10;
+            u.goToMid = goToMid === 1;
           });
 
-          // ── Units: update existing, create missing, remove dead ──
-          const byId = new Map(G.units.map(u => [u.id, u]));
-          G.units = state.units.filter(s => !s.dead).map(snap => {
-            const ex = byId.get(snap.id);
-            if (ex) {
-              ex.x = snap.x; ex.y = snap.y; ex.hp = snap.hp;
-              ex._warcryed = snap._warcryed; ex._ironwalled = snap._ironwalled;
-              ex.slowTimer = snap.slowTimer; ex._speedMult = snap._speedMult;
-              ex.dmgMult = snap.dmgMult; ex._menderRetreating = snap._menderRetreating;
-              ex._growStacks = snap._growStacks; ex._returnDmgBonus = snap._returnDmgBonus;
-              ex._rallySpeed = snap._rallySpeed; ex.goToMid = snap.goToMid;
-              return ex;
-            }
-            // New unit — reconstruct minimal object for rendering
-            const faction = G.factions[snap.player - 1];
-            if (!faction) return null;
-            const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
-            const def = allDefs.find(d => d.id === snap.defId);
-            if (!def) return null;
-            return {
-              id: snap.id, x: snap.x, y: snap.y, hp: snap.hp, maxHp: snap.maxHp,
-              player: snap.player, def, defId: snap.defId, dead: false,
-              target: null, attackTimer: 0, radius: def.radius || 12,
-              color: def.color, slowTimer: 0, _speedMult: 1,
-              _warcryed: 0, _ironwalled: 0, dmgMult: 1,
-              _menderRetreating: false, _growStacks: 0,
-              passiveSummonTimer: 0, aerial: snap.aerial,
-              isWorker: snap.isWorker, goToMid: snap.goToMid,
-              isGuard: def.isSpawned || false,
-            };
-          }).filter(Boolean);
-
-          // ── Projectiles: update existing, create missing ──
-          const byProjId = new Map(G.projectiles.map(p => [p.id, p]));
-          G.projectiles = state.projectiles.filter(s => !s.dead).map(snap => {
-            const ex = byProjId.get(snap.id);
-            if (ex) { ex.x = snap.x; ex.y = snap.y; return ex; }
-            return { ...snap };
-          }).filter(Boolean);
-
-          // ── Shared world ──
-          G.midOwner = state.midOwner; G.midOwnerTimer = state.midOwnerTimer;
-          G.midCapturing = state.midCapturing; G.midCapFrac = state.midCapFrac;
-          G.elapsed = state.elapsed; G.siegeDecay = state.siegeDecay;
-          G.workerMidMode = state.workerMidMode;
-          G.spies = state.spies || [];
-          G.shake = state.shake; G.shakeX = state.shakeX; G.shakeY = state.shakeY;
-          G.bloodPools = state.bloodPools || [];
-
-          // ── Game end ──
-          if (state.running === false && G.running !== false) {
-            G.running = false;
-            checkWin();
-          }
-        } catch (e) { /* apply error — skip frame */ }
+          // Projectiles: just position, no interpolation needed (they move fast)
+          const projIds = new Set(useSnap.pr.map(p => p[0]));
+          G.projectiles = G.projectiles.filter(p => projIds.has(p.id));
+          useSnap.pr.forEach(snap => {
+            const [id, x, y, player, defId, isHeal] = snap;
+            let p = G.projectiles.find(pp => pp.id === id);
+            if (!p) {
+              p = { id, x, y, tx: x, ty: y, player, defId, isHeal: isHeal === 1, dead: false };
+              G.projectiles.push(p);
+            } else { p.x = x; p.y = y; }
+          });
+        } catch (e) { /* ignore */ }
       }
 
       function _executeRemoteAction(action) {
         // stateSync handled even when game is momentarily paused
-        if (action.type === 'stateSync') return; // replaced by stateUpdate event
+        if (action.type === 'stateSync') return; // legacy — replaced by stateUpdate
 
         if (!G || !G.running) return;
         const { type, pid } = action;
@@ -6119,7 +6247,7 @@
               if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
             }
             updateStatPanel(pid);
-            updateHUD(); // force card highlight refresh on remote client
+            updateHUD(); // force card highlight refresh so remote selection is visible
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
@@ -7827,24 +7955,40 @@
         midPressure: false, resourcePatience: 0, aiWorkerCap: 2, confusionChance: 0.10, upgradeSmarts: false, counterStr: 0.15,
         workerMidSmarts: 0.4,
       },
-      // HARD — strategic, counter-picks, contests mid, saves for upgrades. Beats Easy+Medium.
+      // HARD — strategic, patient, tactical. Waits for real openings. Feels like a human.
+      // Observes the enemy's souls and army size before committing. Won't mindlessly spawn.
       hard: {
-        interval: 1.1, spawnChance: 0.90, saveThreshold: 14,
+        interval: 1.3, spawnChance: 0.85, saveThreshold: 14,
         usesBuffs: true, buysUpgrades: true, defenseReact: true,
         adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true,
-        midPressure: true, resourcePatience: 0.35, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 0.60,
+        midPressure: true, resourcePatience: 0.45, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 0.70,
         workerMidSmarts: 0.9,
+        // Hard tactical flags
+        tacticalPatience: true,    // waits for enemy to be weak before striking
+        strikeThreshold: 0.65,     // strikes when enemy souls < 65% of own souls
+        holdUntilAdvantage: true,  // won't commit unless it has ≥1 more unit OR enemy base < 70hp
+        strikeCooldown: 12,        // minimum seconds between coordinated pushes
+        scoutBeforeStrike: true,   // checks enemy unit count before spawning
       },
-      // EXPERT — near-perfect. Gets passive income bonus. Uses spies aggressively.
-      // Reacts near-instantly. Should beat all other difficulties consistently.
+      // EXPERT — near-perfect tactician. Builds up quietly, reads your economy, then hits
+      // HARD exactly when you're depleted. Should feel like playing a human who knows what
+      // they're doing. Gets a small passive bonus to represent expertise.
       expert: {
-        interval: 0.25, spawnChance: 0.99, saveThreshold: 2,
+        interval: 0.8, spawnChance: 0.92, saveThreshold: 8,
         usesBuffs: true, buysUpgrades: true, defenseReact: true,
         adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true,
-        midPressure: true, resourcePatience: 0.65, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 1.0,
+        midPressure: true, resourcePatience: 0.55, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 0.90,
         workerMidSmarts: 1.0,
-        // Expert cheats: passive income/body bonus
-        soulBonus: 0.25, bodyBonus: 0.10, // +souls/s, +bodies fraction per second
+        // Expert tactical flags — full tactical suite
+        tacticalPatience: true,
+        strikeThreshold: 0.55,      // only strikes when enemy souls < 55% of own (hard opening)
+        holdUntilAdvantage: true,   // needs clear unit OR base-HP advantage to commit
+        strikeCooldown: 8,          // can coordinate strikes more frequently than hard
+        scoutBeforeStrike: true,
+        punishAfterSpend: true,     // watches for enemy big spend, then surges immediately after
+        adaptiveTiming: true,       // delays next spawn if enemy JUST spent big (they're rebuilding)
+        // Expert cheats: slight passive income advantage
+        soulBonus: 0.18, bodyBonus: 0.08,
       },
     };
 
@@ -8110,6 +8254,64 @@
           });
           return;
         }
+      }
+
+      // ── 3.5 TACTICAL PATIENCE — hard/expert waits for real openings ──────────
+      // Instead of mindlessly spawning whenever affordable, the AI watches the
+      // enemy's soul count and army strength to decide the RIGHT moment to push.
+      if (cfg.tacticalPatience && !forceDefend) {
+        const _stKey = pid === 1 ? '_aiStrikeTimer1' : '_aiStrikeTimer';
+        G[_stKey] = (G[_stKey] || 0);
+
+        const enemySoulsLow = enemy.souls < p.souls * (cfg.strikeThreshold || 0.6);
+        const enemyBaseWeak = enemy.baseHp < 65;
+        const iHaveAdvantage = myCount >= enCount + 1 || (myCount >= enCount && enemyBaseWeak);
+        const strikeReady = G[_stKey] <= 0;                // cooldown expired
+        const midIsMine = G.midOwner === pid;              // holding mid = additional pressure
+
+        // PUNCH condition: enemy is poor AND I have an edge (unit advantage OR weak base) AND cooldown done
+        const shouldStrike = strikeReady && (
+          (enemySoulsLow && iHaveAdvantage) ||             // classic opener: deplete them then hit
+          (enemySoulsLow && midIsMine && myCount >= enCount) || // mid bonus compensates for even army
+          (enemyBaseWeak && myCount >= enCount && strikeReady)   // base HP window
+        );
+
+        if (!shouldStrike && myCount >= 2) {
+          // Don't just sit idle — if army is big enough, keep building QUIETLY
+          // (we still let the AI spawn, just skip the "strike" mentality)
+          if (myCount >= p.unitCap - 2) return; // already near cap — hold and wait
+          // Otherwise fall through and spawn normally (keep building up)
+        }
+
+        if (shouldStrike && G[_stKey] <= 0) {
+          // Begin a coordinated strike — reset cooldown
+          G[_stKey] = cfg.strikeCooldown || 10;
+        }
+
+        // Expert: punish after big enemy spend (they just bought upgrade/big unit)
+        if (cfg.punishAfterSpend && !G._aiPunishWindow) {
+          const _epKey = pid === 1 ? '_aiWatchEnemySouls1' : '_aiWatchEnemySouls';
+          const prevSouls = G[_epKey] || enemy.souls;
+          const bigSpend = (prevSouls - enemy.souls) >= 18; // they just spent 18+ souls
+          if (bigSpend) {
+            G._aiPunishWindow = (pid === 1 ? 1 : 2);
+            G._aiPunishTimer = 6; // 6 seconds to capitalise
+          }
+          G[_epKey] = enemy.souls;
+        }
+        if (cfg.punishAfterSpend && G._aiPunishWindow === pid && G._aiPunishTimer > 0) {
+          // In punish window — spawn as fast as possible
+          G._aiPunishTimer -= (gameSecs - (G._aiLastPunishSecs || gameSecs));
+          G._aiLastPunishSecs = gameSecs;
+          if (G._aiPunishTimer <= 0) { G._aiPunishWindow = null; G._aiLastPunishSecs = null; }
+          // Fall through — spawn now
+        }
+      }
+
+      // Tick the per-pid strike cooldown timer
+      if (cfg.tacticalPatience) {
+        const _stKey = pid === 1 ? '_aiStrikeTimer1' : '_aiStrikeTimer';
+        if (G[_stKey] > 0) G[_stKey] -= (G.dt || 0.016);
       }
 
       // ── 4. Hold back if saving and have enough army ──
@@ -11255,8 +11457,34 @@
           const marchDir = u.player === 1 ? 1 : -1;
           const nearEdge = midDist >= G.midR && midDist < G.midR * 1.35;
           const wouldLeaveCircle = nearEdge && Math.sign(u.x - G.midX) === marchDir;
-          if (GAME_MODE !== 'tutorial' && midNotOwned && !enemyInsideCircle && !u.def.isWorker && (insideCircle || wouldLeaveCircle)) {
-            // Hold inside the mid circle — drift gently back toward centre
+          // Units stop and contest uncapped mid. Three cases:
+          // 1. Mid unowned, unit not there yet — march to just inside the circle edge
+          // 2. Mid unowned, unit inside — hold position and drift to centre
+          // 3. Mid owned by enemy or unit owns it already — march freely
+          const marchTarget = G.midX; // mid point
+          const distToMid = Math.abs(u.x - marchTarget);
+          const unitIsApproachingMid = marchDir === 1 ? u.x < marchTarget : u.x > marchTarget;
+          const midIsUncapped = G.midOwner === null; // nobody owns it
+          const midOwnedByEnemy = G.midOwner !== null && G.midOwner !== u.player;
+
+          if (GAME_MODE !== 'tutorial' && !u.def.isWorker && midIsUncapped && !enemyInsideCircle) {
+            if (insideCircle) {
+              // Already inside — drift gently toward centre to hold it
+              const driftDx = G.midX - u.x;
+              u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 22 * dt);
+            } else if (unitIsApproachingMid && distToMid < G.midR * 2.5) {
+              // Approaching uncapped mid — march to edge then stop
+              const stopX = marchDir === 1 ? G.midX - G.midR * 0.4 : G.midX + G.midR * 0.4;
+              const dxToStop = stopX - u.x;
+              if (Math.abs(dxToStop) > 4) {
+                u.x += Math.sign(dxToStop) * spd * dt;
+              }
+              // Once inside the ring, handled by insideCircle above next frame
+            } else {
+              u.x += marchDir * spd * dt; // not near mid yet — keep marching
+            }
+          } else if (GAME_MODE !== 'tutorial' && midNotOwned && !enemyInsideCircle && !u.def.isWorker && (insideCircle || wouldLeaveCircle)) {
+            // Legacy linger: mid owned by someone else but we're inside — still hold
             const driftDx = G.midX - u.x;
             u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 18 * dt);
           } else {
@@ -12825,11 +13053,11 @@
       if (G.paused) { if (G_eventVote) _tickEventVote(G.dt); requestAnimationFrame(gameLoop); return; }
 
       // ── P2 render-only mode ───────────────────────────────────────────────
-      // When online as P2, P1 is the authority. Skip ALL physics — just render
-      // the state that arrives via stateUpdate every ~80ms. Local particles
-      // still tick so visual effects look smooth.
+      // P1 is the authority. P2 skips ALL physics, interpolates unit positions
+      // between the two most recently received snapshots, then just renders.
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
-        updateParticles(G.dt);
+        _interpolateUnits();     // smooth 60fps positions between 30fps snapshots
+        updateParticles(G.dt);   // local cosmetic effects
         drawGame();
         updateHUD();
         requestAnimationFrame(gameLoop);
@@ -13809,6 +14037,12 @@
 
 
     document.getElementById('btn-rematch').addEventListener('click', () => {
+      // Online mode — rematch requires going back through matchmaking
+      if (typeof NET !== 'undefined' && NET.isOnline()) {
+        NET.cleanup();
+        setGameMode('vs'); showScreen('sc-menu'); animMenuCanvas();
+        return;
+      }
       if (P1_FACTION && P2_FACTION) {
         if (GAME_MODE === 'solo' || GAME_MODE === 'tutorial') {
           // Reroll AI personality on rematch for variety
@@ -14820,7 +15054,7 @@
       if (!overlay || !yes || !no) return;
       const seen = localStorage.getItem('brc_seen_welcome');
       if (!seen) {
-        setTimeout(() => overlay.classList.add('show'), 1200); // delay so menu fully renders
+        setTimeout(() => overlay.classList.add('show'), 800); // slight delay so menu renders first
       }
       yes.addEventListener('click', () => {
         localStorage.setItem('brc_seen_welcome', '1');

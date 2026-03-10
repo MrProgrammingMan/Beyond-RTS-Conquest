@@ -199,15 +199,27 @@ io.on('connection', (socket) => {
     if (other) other.emit('remoteAction', action);
   });
 
-  // ── AUTHORITATIVE STATE BROADCAST (P1 → P2 only) ─────────────────────────
-  // P1 runs the full simulation. Every ~80ms it serialises the full game state
-  // and sends it here. Server forwards ONLY to P2 — never echoed back to P1.
+  // P1 authoritative state → P2 only (server just relays, never touches it)
   socket.on('stateUpdate', (data) => {
     const room = rooms.get(socket._bkcRoom);
-    if (!room || !room.started) return;
-    if (socket._bkcPid !== 1) return;            // only P1 is allowed to send this
+    if (!room || !room.started || socket._bkcPid !== 1) return;
     const p2 = room.players.find(p => p !== socket);
     if (p2 && p2.connected) p2.emit('stateUpdate', data);
+  });
+
+  // Ready-state relay: both players must send 'playerReady' before game starts
+  socket.on('playerReady', () => {
+    const room = rooms.get(socket._bkcRoom);
+    if (!room || room.started) return;
+    if (!room.ready) room.ready = new Set();
+    room.ready.add(socket._bkcPid);
+    // Tell the other player their opponent is ready
+    const other = room.players.find(p => p !== socket);
+    if (other) other.emit('opponentReady', { pid: socket._bkcPid });
+    // Both ready → broadcast countdownStart (server is the authority)
+    if (room.ready.size === 2) {
+      io.to(room.code).emit('bothReady');
+    }
   });
 
   // ── EVENT SYNC ────────────────────────────────────────────────────────────
@@ -257,10 +269,7 @@ io.on('connection', (socket) => {
     const room = rooms.get(socket._bkcRoom);
     if (!room) return;
     const other = room.players.find(p => p !== socket);
-    if (other) {
-      // If the game was live, the remaining player wins; otherwise just show DC overlay
-      other.emit('opponentDisconnected', { youWin: !!room.started });
-    }
+    if (other) other.emit('opponentDisconnected', { youWin: !!room.started });
     cleanupRoom(room.code);
   });
 });
