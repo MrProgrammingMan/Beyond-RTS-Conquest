@@ -683,6 +683,11 @@
       background: rgba(212, 168, 67, .05);
     }
 
+    .fcard.opponent-hover {
+      border-color: rgba(200, 150, 255, .5) !important;
+      background: rgba(140, 80, 200, .08) !important;
+    }
+
     .fcard.sel1 {
       border-color: var(--p1) !important;
       background: rgba(36, 113, 163, .1) !important;
@@ -4550,13 +4555,14 @@
         <h1 class="menu-title">BEYOND RTS<br>CONQUEST</h1>
       </div>
       <div class="menu-btns">
-        <div class="menu-mode-tabs">
-          <button class="menu-mode-tab active" id="tab-local" onclick="_menuTab('local')">🎮 LOCAL</button>
-          <button class="menu-mode-tab" id="tab-online" onclick="_menuTab('online')">🌐 ONLINE</button>
-        </div>
         <div id="menu-local-btns" style="display:flex;flex-direction:column;gap:inherit;width:100%;">
           <div class="menu-btn-entry"><button class="btn primary" id="btn-play">⚔ MULTIPLAYER</button>
             <div class="menu-btn-sub">Two players, same keyboard</div>
+          </div>
+          <div class="menu-btn-entry"><button class="btn" id="btn-online-play"
+              style="border-color:rgba(116,185,255,.5);color:#74b9ff;" onclick="showScreen('sc-online')">🌐 ONLINE
+              PLAY</button>
+            <div class="menu-btn-sub">Play vs a friend or stranger over the internet</div>
           </div>
           <div class="menu-btn-entry"><button class="btn btn-sudden" id="btn-sudden-death">⚡ SUDDEN DEATH</button>
             <div class="menu-btn-sub">Both start at 30 HP — instant chaos</div>
@@ -4583,20 +4589,7 @@
             <div class="menu-btn-sub">Rebind keys and set direct-spawn hotkeys</div>
           </div>
         </div>
-        <div id="menu-online-btns" style="display:none;flex-direction:column;gap:8px;width:100%;">
-          <div class="menu-online-entry">
-            <button class="btn primary" id="btn-quickmatch-menu">🌐 QUICK MATCH</button>
-            <div class="menu-online-desc">Find a random opponent online</div>
-          </div>
-          <div class="menu-online-entry">
-            <button class="btn" id="btn-createroom-menu">🔒 PRIVATE ROOM</button>
-            <div class="menu-online-desc">Create a room and invite a friend</div>
-          </div>
-          <div class="menu-online-entry">
-            <button class="btn" id="btn-joinroom-menu">🔑 JOIN WITH CODE</button>
-            <div class="menu-online-desc">Enter a room code to join a friend</div>
-          </div>
-        </div>
+
         <div style="display:none">
           <button id="mode-vs"></button><button id="mode-solo"></button>
           <button id="btn-rebind"></button>
@@ -4611,8 +4604,8 @@
       <button class="btn mute-btn" onclick="toggleMute()"
         style="font-size:clamp(.52rem,.78vw,.68rem);padding:3px 10px;letter-spacing:.1em;background:transparent;">🔊
         MUTE</button>
-      <button class="btn" onclick="_goFullscreen()"
-        style="font-size:clamp(.52rem,.78vw,.68rem);padding:3px 10px;letter-spacing:.1em;background:transparent;">⛶
+      <button class="btn" onclick="_goFullscreen()" id="btn-fullscreen-menu"
+        style="font-size:clamp(.6rem,.9vw,.8rem);padding:5px 14px;letter-spacing:.1em;border-color:rgba(212,168,67,.4);color:rgba(212,168,67,.85);">⛶
         FULLSCREEN</button>
       <span
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.44rem,.68vw,.58rem);color:var(--dim);letter-spacing:.07em;opacity:.55;">BEYOND
@@ -4622,46 +4615,93 @@
   <!-- AI VS AI mode label inlined into faction screen JS -->
   <!-- ONLINE MULTIPLAYER -->
   <div id="sc-online" class="screen" style="background:#07070f;">
-    <div class="sc-title" style="font-size:clamp(1.1rem,2vw,1.6rem);">🌐 ONLINE PLAY</div>
-    <div id="online-status-bar">Connecting to server…</div>
+    <div class="sc-title" style="font-size:clamp(1.1rem,2vw,1.5rem);margin-bottom:0;">🌐 ONLINE PLAY</div>
+    <div id="online-status-bar">Not connected</div>
+
     <div id="online-panels">
+
+      <!-- ── QUICK MATCH ────────────────────────────────── -->
       <div class="online-panel" id="panel-quickmatch">
-        <div class="online-panel-title">🌐 QUICK MATCH</div>
-        <div class="online-panel-sub">Get matched against a random opponent. Both players choose factions normally.
-        </div>
-        <button class="btn primary online-btn" id="btn-quickmatch" onclick="NET.quickMatch()">FIND MATCH</button>
+        <div class="online-panel-title">⚡ QUICK MATCH</div>
+        <div class="online-panel-sub">Get paired with a random opponent automatically. No code needed — just click and
+          wait.</div>
+        <button class="btn primary online-btn" id="btn-quickmatch">FIND MATCH</button>
         <div class="online-error" id="qm-error"></div>
-        <div class="online-hint" id="qm-hint">Waiting for players…</div>
+        <!-- Status shown while searching -->
+        <div class="online-hint" id="quickmatch-status" style="display:none;"></div>
+        <button class="btn" id="btn-cancel-qm"
+          style="display:none;width:100%;font-size:.78rem;padding:6px 0;margin-top:2px;opacity:.7;"
+          onclick="NET.cancelSearch()">✕ CANCEL SEARCH</button>
       </div>
+
       <div class="online-divider">— OR —</div>
+
+      <!-- ── PRIVATE ROOM ───────────────────────────────── -->
       <div class="online-panel" id="panel-private">
         <div class="online-panel-title">🔒 PRIVATE ROOM</div>
-        <div class="online-panel-sub">Create a room, share the code with your friend. They enter it below to join.</div>
-        <button class="btn online-btn" id="btn-createroom" onclick="NET.createRoom()">CREATE ROOM</button>
-        <div id="room-code-display" style="display:none" title="Click to copy"
-          onclick="navigator.clipboard&&navigator.clipboard.writeText(this.textContent)">——</div>
-        <div class="online-join-row">
-          <input class="online-input" id="room-code-input" maxlength="6" placeholder="ENTER CODE" autocomplete="off" />
-          <button class="btn online-btn" id="btn-joinroom"
-            onclick="NET.joinRoom(document.getElementById('room-code-input').value)"
-            style="flex:0;white-space:nowrap;padding:6px 14px;">JOIN</button>
+        <div class="online-panel-sub">Play with a specific friend. Create a room, share the code, they enter it to join.
         </div>
-        <div class="online-error" id="room-error"></div>
+
+        <!-- CREATE section -->
+        <div style="width:100%;display:flex;flex-direction:column;gap:8px;align-items:center;">
+          <div
+            style="font-family:Rajdhani,sans-serif;font-size:.68rem;color:var(--dim);letter-spacing:.08em;text-align:center;">
+            STEP 1 — CREATE YOUR ROOM</div>
+          <button class="btn online-btn" id="btn-createroom">🏠 CREATE ROOM</button>
+          <!-- Shown after room is created -->
+          <div id="created-room-info"
+            style="display:none;flex-direction:column;align-items:center;gap:6px;width:100%;padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.25);border-radius:6px;">
+            <div style="font-family:Rajdhani,sans-serif;font-size:.65rem;color:var(--dim);letter-spacing:.08em;">YOUR
+              ROOM CODE — share with your friend:</div>
+            <div id="room-code-display" title="Click to copy"
+              onclick="(function(el){const c=el.dataset.code||el.textContent;navigator.clipboard&&navigator.clipboard.writeText(c);const o=el.textContent;el.textContent='✓ COPIED!';setTimeout(()=>el.textContent=o,1400);})(this)">
+            </div>
+            <div style="font-size:.62rem;color:var(--dim);opacity:.7;">Click the code to copy it</div>
+            <div id="waiting-for-friend"
+              style="font-family:Rajdhani,sans-serif;font-size:.8rem;color:rgba(212,168,67,.85);letter-spacing:.05em;text-align:center;">
+              ⏳ Waiting for your friend to join…</div>
+            <button class="btn" style="font-size:.72rem;padding:4px 14px;opacity:.6;margin-top:2px;"
+              onclick="NET.cancelSearch()">✕ CANCEL</button>
+          </div>
+        </div>
+
+        <div class="online-divider" style="width:100%;margin:4px 0;font-size:.7rem;">— or join a friend's room —</div>
+
+        <!-- JOIN section -->
+        <div style="width:100%;display:flex;flex-direction:column;gap:8px;align-items:center;">
+          <div
+            style="font-family:Rajdhani,sans-serif;font-size:.68rem;color:var(--dim);letter-spacing:.08em;text-align:center;">
+            STEP 2 — ENTER YOUR FRIEND'S CODE</div>
+          <div class="online-join-row">
+            <input class="online-input" id="room-code-input" maxlength="6" placeholder="A B C D" autocomplete="off"
+              spellcheck="false" style="letter-spacing:.3em;text-align:center;text-transform:uppercase;" />
+            <button class="btn online-btn" id="btn-joinroom" style="flex:0;white-space:nowrap;padding:6px 18px;">JOIN
+              →</button>
+          </div>
+          <div class="online-error" id="join-error"></div>
+          <div class="online-error" id="room-error"></div>
+        </div>
       </div>
     </div>
-    <button class="btn online-back-btn" onclick="NET.cleanup();showScreen('sc-menu');animMenuCanvas();">← BACK TO
-      MENU</button>
+
+    <button class="btn online-back-btn" id="btn-online-back">← BACK TO MENU</button>
+
+    <!-- Connecting overlay (full-screen spinner) -->
     <div id="online-connecting" style="display:none;">
       <div class="online-spinner"></div>
       <div id="online-connecting-msg">Connecting…</div>
-      <button class="btn" style="margin-top:12px;font-size:.8rem;" onclick="NET.cleanup();">CANCEL</button>
+      <div
+        style="font-family:Rajdhani,sans-serif;font-size:.7rem;color:var(--dim);text-align:center;max-width:260px;line-height:1.5;">
+        First connection may take 30–60 seconds if the server is waking up from sleep.
+      </div>
+      <button class="btn" style="font-size:.82rem;padding:6px 20px;" onclick="NET.cancelSearch()">✕ CANCEL</button>
     </div>
+
     <div id="online-badge" style="display:none;">🟢 ONLINE</div>
     <div id="online-dc-overlay">
       <div class="dc-title">⚠ DISCONNECTED</div>
       <div style="font-family:Rajdhani,sans-serif;font-size:.9rem;color:var(--dim);">Connection to opponent lost.</div>
-      <button class="btn" onclick="NET.cleanup();showScreen('sc-menu');animMenuCanvas();" style="margin-top:8px;">←
-        RETURN TO MENU</button>
+      <button class="btn" onclick="NET.cleanup()" style="margin-top:8px;">← RETURN TO MENU</button>
     </div>
   </div>
 
@@ -5245,46 +5285,50 @@
     // NET — Online Multiplayer Module
     // Loaded only when player clicks "Play Online". Otherwise fully inert.
     // ═══════════════════════════════════════════════════════════════════════════
+    let _netRoomCode = ''; // for copy UX in room-code-display click handler
+
     const NET = (() => {
       let socket = null;
-      let myPid = null;       // 1 or 2 — which player am I online?
+      let myPid = null;
       let roomCode = null;
       let connected = false;
       let _onlineMode = false;
+      let _qmTimeout = null;
 
-      // Server URL
       const SERVER_URL = window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com';
 
       function isOnline() { return _onlineMode; }
       function getPid() { return myPid; }
+      function isMyTurn(pid) { return !_onlineMode || myPid === pid; }
 
-      // Load Socket.io dynamically (only when needed)
+      // ── Socket.io loader ──────────────────────────────────────────────
       function loadSocketIo(cb) {
         if (window.io) { cb(); return; }
         const s = document.createElement('script');
         s.src = SERVER_URL + '/socket.io/socket.io.js';
         s.onload = cb;
-        s.onerror = () => {
-          setStatus('❌ Could not reach server. Check your connection.', true);
-        };
+        s.onerror = () => { setStatus('❌ Could not reach server — check connection or try again.', true); hideConnecting(); };
         document.head.appendChild(s);
       }
 
+      // ── Connect — reuse existing socket; never double-create ──────────
       function connect(cb) {
+        if (socket && connected) { cb(); return; }
+        if (socket) { socket.off(); socket.disconnect(); socket = null; connected = false; }
         loadSocketIo(() => {
-          socket = window.io(SERVER_URL, { transports: ['websocket'] });
+          socket = window.io(SERVER_URL, { transports: ['websocket'], timeout: 15000 });
           socket.on('connect', () => {
             connected = true;
-            setStatus('✓ Connected');
-            if (cb) cb();
+            setStatus('✓ Connected to server');
+            cb();
           });
           socket.on('connect_error', () => {
-            setStatus('❌ Connection failed', true);
+            setStatus('❌ Connection failed — server may be waking up, try again in 30s.', true);
             hideConnecting();
           });
           socket.on('disconnect', () => {
             connected = false;
-            if (_onlineMode && G && G.running) {
+            if (_onlineMode && typeof G !== 'undefined' && G && G.running) {
               document.getElementById('online-dc-overlay').classList.add('show');
             }
           });
@@ -5292,55 +5336,88 @@
         });
       }
 
+      // ── Event handlers ────────────────────────────────────────────────
       function _attachHandlers() {
-        // Matchmaking
+        socket.off(); // clear before adding — prevents duplicates on reconnect
+
         socket.on('waiting', () => {
-          document.getElementById('quickmatch-status').textContent = '⏳ Searching for opponent…';
+          const el = document.getElementById('quickmatch-status');
+          if (el) { el.textContent = '⏳ Searching for an opponent…'; el.style.display = ''; }
+          const cancel = document.getElementById('btn-cancel-qm');
+          if (cancel) cancel.style.display = '';
+          document.getElementById('online-connecting-msg').textContent = 'Searching for an opponent…';
+          // Auto-timeout: if no match after 90s, give up gracefully
+          clearTimeout(_qmTimeout);
+          _qmTimeout = setTimeout(() => {
+            hideConnecting();
+            const qs = document.getElementById('quickmatch-status');
+            if (qs) { qs.textContent = '⌛ No opponent found after 90s — try again or use a Private Room.'; qs.style.display = ''; }
+            const c = document.getElementById('btn-cancel-qm');
+            if (c) c.style.display = '';
+          }, 90000);
         });
 
         socket.on('matchFound', ({ code, pid, gameMode }) => {
           roomCode = code; myPid = pid;
+          clearTimeout(_qmTimeout);
           hideConnecting();
-          _enterFactionSelect(gameMode);
+          const qs = document.getElementById('quickmatch-status');
+          if (qs) { qs.textContent = '✓ Opponent found! Loading faction select…'; qs.style.display = ''; }
+          setTimeout(() => _enterFactionSelect(gameMode), 600);
         });
 
         socket.on('roomCreated', ({ code, pid, gameMode }) => {
           roomCode = code; myPid = pid;
+          _netRoomCode = code;
           hideConnecting();
-          document.getElementById('created-room-info').style.display = 'flex';
-          document.getElementById('created-room-info').style.flexDirection = 'column';
-          document.getElementById('created-room-info').style.alignItems = 'center';
-          document.getElementById('created-room-info').style.gap = '6px';
-          document.getElementById('room-code-display').textContent = code;
-          document.getElementById('btn-createroom').disabled = true;
+          // Show room code, hide create button
+          const createBtn = document.getElementById('btn-createroom');
+          if (createBtn) createBtn.style.display = 'none';
+          const info = document.getElementById('created-room-info');
+          if (info) info.style.display = 'flex';
+          const display = document.getElementById('room-code-display');
+          if (display) { display.textContent = code; display.dataset.code = code; }
+          setStatus(`Room ${code} created — waiting for friend to join`);
         });
 
         socket.on('opponentJoined', () => {
-          document.getElementById('waiting-for-friend').textContent = '✓ Opponent connected! Entering faction select…';
+          const wff = document.getElementById('waiting-for-friend');
+          if (wff) wff.textContent = '✓ Friend joined! Entering faction select…';
           setTimeout(() => _enterFactionSelect('vs'), 800);
         });
 
         socket.on('roomJoined', ({ code, pid, gameMode }) => {
           roomCode = code; myPid = pid;
           hideConnecting();
-          _enterFactionSelect(gameMode);
+          // Clear any error text
+          ['join-error', 'room-error'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
+          setStatus(`Joined room ${code} — entering faction select`);
+          setTimeout(() => _enterFactionSelect(gameMode), 300);
         });
 
         socket.on('error', ({ msg }) => {
-          document.getElementById('join-error').textContent = '❌ ' + msg;
           hideConnecting();
+          ['join-error', 'room-error'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '❌ ' + msg; });
         });
 
-        // Opponent faction preview
         socket.on('opponentFaction', ({ pid, factionId }) => {
           const f = FACTIONS.find(f => f.id === factionId);
           if (!f) return;
-          const otherPid = pid; // the opponent's pid on server = their actual pid
-          const dispEl = document.getElementById(`fchosen-p${otherPid}`);
+          const dispEl = document.getElementById(`fchosen-p${pid}`);
           if (dispEl) dispEl.textContent = `${f.icon} ${f.name} — ${f.tagline}`;
         });
 
-        // Both factions chosen → start game
+        // Opponent hover preview — show what faction they're currently looking at
+        socket.on('opponentHover', ({ pid, factionId }) => {
+          const theirPid = pid;
+          const f = FACTIONS.find(f => f.id === factionId);
+          if (!f) return;
+          // Dim-highlight the card they're hovering
+          document.querySelectorAll(`#fcards-p${theirPid} .fcard`).forEach(c => c.classList.remove('opponent-hover'));
+          const cards = document.querySelectorAll(`#fcards-p${theirPid} .fcard`);
+          cards.forEach(c => { if (c.dataset.factionId === factionId) c.classList.add('opponent-hover'); });
+        });
+
         socket.on('startGame', ({ p1Faction, p2Faction, seed, gameMode }) => {
           const f1 = FACTIONS.find(f => f.id === p1Faction);
           const f2 = FACTIONS.find(f => f.id === p2Faction);
@@ -5348,20 +5425,16 @@
           P1_FACTION = f1; P2_FACTION = f2;
           GAME_MODE = gameMode || 'vs';
           _onlineMode = true;
-          window._onlineSeed = seed; // for reproducible unit spawn jitter
+          window._onlineSeed = seed;
           document.getElementById('online-badge').style.display = 'block';
           initGame();
           showScreen('sc-game');
         });
 
-        // Relay incoming opponent action → execute locally
-        socket.on('remoteAction', (action) => {
-          _executeRemoteAction(action);
-        });
+        socket.on('remoteAction', (action) => { _executeRemoteAction(action); });
 
-        // Server picked an event
         socket.on('fireEvent', ({ eventId, nextDelay }) => {
-          if (!G || !G.running) return;
+          if (typeof G === 'undefined' || !G || !G.running) return;
           G.activeEvent = { type: eventId, timer: 0 };
           _dispatchEvent(eventId);
           G.nextRogueTime = (G.elapsed || 0) + nextDelay;
@@ -5371,94 +5444,68 @@
           if (!G_eventVote) return;
           G_eventVote = null;
           document.getElementById('vote-overlay').classList.remove('show');
+          if (typeof G !== 'undefined' && G) G.paused = false;
           G.activeEvent = { type: winner, timer: 0 };
           _dispatchEvent(winner);
         });
 
         socket.on('rogueSpawnPos', ({ spawnX }) => {
-          if (!G) return;
+          if (typeof G === 'undefined' || !G) return;
           G._pendingRogueSpawnX = G.canvasW * spawnX;
         });
 
         socket.on('opponentDisconnected', () => {
-          if (_onlineMode) {
-            document.getElementById('online-dc-overlay').classList.add('show');
-          }
+          if (_onlineMode) document.getElementById('online-dc-overlay').classList.add('show');
         });
       }
 
+      // ── Faction select setup ──────────────────────────────────────────
       function _enterFactionSelect(gameMode) {
         GAME_MODE = gameMode || 'vs';
         window._pendingPlayerSetup = 'vs';
-        // Lock the faction panel that's NOT mine — opponent picks their own
         showScreen('sc-faction');
         _setupOnlineFactionScreen();
       }
 
       function _setupOnlineFactionScreen() {
-        // Hide P2's column if I'm P1, hide P1's column if I'm P2
-        // Actually we show both but only allow input on my side
-        const myPanel = document.getElementById(`fcards-p${myPid}`);
         const theirPid = myPid === 1 ? 2 : 1;
         const theirPanel = document.getElementById(`fcards-p${theirPid}`);
-        if (theirPanel) {
-          theirPanel.style.opacity = '0.4';
-          theirPanel.style.pointerEvents = 'none';
-        }
+        if (theirPanel) { theirPanel.style.opacity = '0.35'; theirPanel.style.pointerEvents = 'none'; }
         const theirLabel = document.getElementById(`fchosen-p${theirPid}`);
-        if (theirLabel) theirLabel.textContent = '⏳ Waiting for opponent…';
-        setStatus(`You are PLAYER ${myPid}  ·  Room: ${roomCode}`);
+        if (theirLabel) theirLabel.textContent = '⏳ Waiting for opponent to pick…';
+        setStatus(`You are PLAYER ${myPid}  ·  Room: ${roomCode}  ·  Click or press your Confirm key to lock in`);
       }
 
-      // Send my action to server (which relays to opponent)
+      // ── Action relay ──────────────────────────────────────────────────
       function sendAction(action) {
         if (!_onlineMode || !socket || !connected) return;
         socket.emit('gameAction', action);
       }
 
-      // Execute an action that came from the opponent
       function _executeRemoteAction(action) {
-        if (!G || !G.running) return;
+        if (typeof G === 'undefined' || !G || !G.running) return;
         const { type, pid } = action;
-        // Get the card element for visual feedback
         let cardEl = null;
         if (action.cardIdx !== undefined) {
           const grid = document.getElementById(`p${pid}-grid`);
           if (grid) cardEl = grid.children[action.cardIdx];
         }
         switch (type) {
-          case 'spawn':
-            trySpawn(pid, action.unitId, cardEl);
-            break;
-          case 'buyUpgrade':
-            tryBuyUpgrade(pid, action.idx, cardEl);
-            break;
-          case 'activateBuff':
-            tryActivateBuff(pid, action.idx, cardEl);
-            break;
-          case 'toggleWorkerMid':
-            toggleWorkerMid(pid);
-            break;
-          case 'spawnSpy':
-            trySpawnSpy(pid);
-            break;
-          case 'voteMoveCursor':
-            voteMoveCursor(pid, action.dir);
-            break;
-          case 'voteForEvent':
-            voteForEvent(pid);
-            break;
+          case 'spawn': trySpawn(pid, action.unitId, cardEl); break;
+          case 'buyUpgrade': tryBuyUpgrade(pid, action.idx, cardEl); break;
+          case 'activateBuff': tryActivateBuff(pid, action.idx, cardEl); break;
+          case 'toggleWorkerMid': toggleWorkerMid(pid); break;
+          case 'spawnSpy': trySpawnSpy(pid); break;
+          case 'voteMoveCursor': voteMoveCursor(pid, action.dir); break;
+          case 'voteForEvent': voteForEvent(pid); break;
         }
       }
 
-      // Called by client when it's time for a random event
       function requestEvent(elapsed, p1hp, p2hp, midOwner) {
-        if (!_onlineMode || !socket) return;
-        if (myPid !== 1) return; // only P1 requests — avoids race
+        if (!_onlineMode || !socket || myPid !== 1) return;
         socket.emit('requestEvent', { elapsed, p1hp, p2hp, midOwner });
       }
 
-      // Vote result — P1 reports to server for tie-break
       function reportVoteResult(candidates, votes) {
         if (!_onlineMode || !socket || myPid !== 1) return;
         socket.emit('voteResult', { candidates, votes });
@@ -5469,44 +5516,76 @@
         socket.emit('requestRogueSpawn');
       }
 
-      // Matchmaking entry points
+      // ── Matchmaking entry points ──────────────────────────────────────
       function quickMatch() {
-        showConnecting('Finding a match…');
-        connect(() => socket.emit('joinPublic', { gameMode: 'vs' }));
+        _clearErrors();
+        showConnecting('Connecting to server…');
+        connect(() => {
+          document.getElementById('online-connecting-msg').textContent = 'Looking for an opponent…';
+          socket.emit('joinPublic', { gameMode: 'vs' });
+        });
       }
 
       function createRoom() {
+        _clearErrors();
         showConnecting('Creating room…');
         connect(() => socket.emit('createRoom', { gameMode: 'vs' }));
       }
 
       function joinRoom(code) {
-        if (!code || code.length < 4) {
-          document.getElementById('join-error').textContent = '❌ Enter a 4-letter room code';
+        _clearErrors();
+        if (!code || code.trim().length < 4) {
+          const je = document.getElementById('join-error');
+          if (je) je.textContent = '❌ Enter the 4-letter code your friend shared with you';
           return;
         }
-        showConnecting('Joining room…');
-        connect(() => socket.emit('joinRoom', { code: code.toUpperCase() }));
+        showConnecting('Joining room ' + code.trim().toUpperCase() + '…');
+        connect(() => socket.emit('joinRoom', { code: code.trim().toUpperCase() }));
       }
 
-      // After I confirm faction, send to server
+      function cancelSearch() {
+        clearTimeout(_qmTimeout);
+        hideConnecting();
+        // Reset search-state UI
+        const qs = document.getElementById('quickmatch-status'); if (qs) { qs.textContent = ''; qs.style.display = 'none'; }
+        const cancel = document.getElementById('btn-cancel-qm'); if (cancel) cancel.style.display = 'none';
+        // Reset room-create UI
+        const createBtn = document.getElementById('btn-createroom'); if (createBtn) createBtn.style.display = '';
+        const info = document.getElementById('created-room-info'); if (info) info.style.display = 'none';
+        if (socket && connected) { try { socket.emit('cancelSearch'); } catch (e) { } }
+        setStatus('✓ Connected — choose an option above');
+      }
+
       function sendFaction(factionId) {
         if (!_onlineMode || !socket) return;
         socket.emit('factionSelected', { factionId });
       }
 
       function cleanup() {
-        _onlineMode = false;
-        myPid = null;
-        roomCode = null;
-        document.getElementById('online-badge').style.display = 'none';
-        document.getElementById('online-dc-overlay').classList.remove('show');
-        if (socket) { socket.disconnect(); socket = null; }
-        // Restore faction screen panels
+        clearTimeout(_qmTimeout);
+        _onlineMode = false; myPid = null; roomCode = null; _netRoomCode = '';
+        connected = false;
+        // UI reset
+        const badge = document.getElementById('online-badge'); if (badge) badge.style.display = 'none';
+        const dc = document.getElementById('online-dc-overlay'); if (dc) dc.classList.remove('show');
+        const createBtn = document.getElementById('btn-createroom'); if (createBtn) createBtn.style.display = '';
+        const info = document.getElementById('created-room-info'); if (info) info.style.display = 'none';
+        const qs = document.getElementById('quickmatch-status'); if (qs) { qs.textContent = ''; qs.style.display = 'none'; }
+        const cancel = document.getElementById('btn-cancel-qm'); if (cancel) cancel.style.display = 'none';
+        _clearErrors();
+        const inp = document.getElementById('room-code-input'); if (inp) inp.value = '';
         [1, 2].forEach(pid => {
           const panel = document.getElementById(`fcards-p${pid}`);
           if (panel) { panel.style.opacity = ''; panel.style.pointerEvents = ''; }
         });
+        if (socket) { socket.off(); socket.disconnect(); socket = null; }
+        setStatus('Not connected');
+        showScreen('sc-menu');
+        animMenuCanvas();
+      }
+
+      function _clearErrors() {
+        ['join-error', 'room-error', 'qm-error'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = ''; });
       }
 
       function setStatus(msg, isError) {
@@ -5516,7 +5595,9 @@
 
       function showConnecting(msg) {
         const el = document.getElementById('online-connecting');
-        if (el) { el.style.display = 'flex'; document.getElementById('online-connecting-msg').textContent = msg || 'Connecting…'; }
+        if (el) { el.style.display = 'flex'; }
+        const msgEl = document.getElementById('online-connecting-msg');
+        if (msgEl) msgEl.textContent = msg || 'Connecting…';
       }
 
       function hideConnecting() {
@@ -5524,23 +5605,27 @@
         if (el) el.style.display = 'none';
       }
 
+      function sendHover(factionId) {
+        if (!_onlineMode || !socket) return;
+        socket.emit('factionHover', { factionId });
+      }
+
       return {
-        isOnline, getPid, sendAction, sendFaction, requestEvent,
+        isOnline, getPid, isMyTurn, sendAction, sendFaction, sendHover, requestEvent,
         reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
-        joinRoom, cleanup, setStatus
+        joinRoom, cancelSearch, cleanup, setStatus
       };
     })();
 
-    // Wire up online lobby buttons (after DOM ready)
+    // Wire online lobby buttons
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('btn-quickmatch').addEventListener('click', () => NET.quickMatch());
       document.getElementById('btn-createroom').addEventListener('click', () => NET.createRoom());
-      document.getElementById('btn-joinroom').addEventListener('click', () => {
-        NET.joinRoom(document.getElementById('room-code-input').value);
-      });
-      document.getElementById('room-code-input').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') NET.joinRoom(document.getElementById('room-code-input').value);
-      });
+      document.getElementById('btn-joinroom').addEventListener('click', () => NET.joinRoom(document.getElementById('room-code-input').value));
+      document.getElementById('btn-online-back').addEventListener('click', () => NET.cleanup());
+      document.getElementById('room-code-input').addEventListener('keydown', e => { if (e.key === 'Enter') NET.joinRoom(e.target.value); });
+      // Uppercase input as you type
+      document.getElementById('room-code-input').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase(); });
     });
 
 
@@ -5556,11 +5641,8 @@
 
     // ── MENU TAB SWITCHER ──
     function _menuTab(tab) {
-      document.getElementById('menu-local-btns').style.display = tab === 'local' ? 'flex' : 'none';
-      document.getElementById('menu-online-btns').style.display = tab === 'online' ? 'flex' : 'none';
-      document.getElementById('tab-local').classList.toggle('active', tab === 'local');
-      document.getElementById('tab-online').classList.toggle('active', tab === 'online');
-      if (tab === 'online') { showScreen('sc-online'); }
+      // Tab system removed — online has its own screen
+      if (tab === 'online') showScreen('sc-online');
     }
 
 
@@ -7781,6 +7863,7 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('sc-game').classList.add('active');
       resizeGameCanvas();
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // clear any previous-game artifacts
       const BW = Math.max(90, Math.min(160, VIRTUAL_W * 0.09));
       const GY = VIRTUAL_H * 0.72;
       G = {
@@ -13019,7 +13102,17 @@
 
         </div>
         <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
-          card.addEventListener('click', () => selectFaction(pid, fi, card));
+          card.addEventListener('mouseenter', () => {
+            if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid) && NET.getPid() === pid) {
+              NET.sendHover(FACTIONS[fi].id);
+            }
+          });
+          card.addEventListener('click', () => {
+            // In online mode, only let each player click their own side
+            if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
+            selectFaction(pid, fi, card);
+            if (typeof NET !== 'undefined' && NET.isOnline()) NET.sendFaction(FACTIONS[fi].id);
+          });
           container.appendChild(card);
         });
         document.getElementById(`fscroll-p${pid}`).textContent = `${FACTIONS.length} factions`;
@@ -13329,7 +13422,7 @@
       if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
       const fi = fCursor[pid - 1];
       const card = document.querySelectorAll(`#fcards-p${pid} .fcard`)[fi];
-      if (card) { selectFaction(pid, fi, card); if (typeof NET !== 'undefined' && NET.isOnline()) NET.sendFaction(fi); }
+      if (card) { selectFaction(pid, fi, card); if (typeof NET !== 'undefined' && NET.isOnline()) NET.sendFaction(FACTIONS[fi].id); }
     }
 
     function highlightFactionCursor(pid) {
@@ -13847,27 +13940,32 @@
       });
     }
 
-    // ── ONLINE MENU BUTTONS ──
-    document.getElementById('btn-quickmatch-menu').addEventListener('click', () => {
-      showScreen('sc-online');
-      document.getElementById('panel-quickmatch').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    document.getElementById('btn-createroom-menu').addEventListener('click', () => {
-      showScreen('sc-online');
-      document.getElementById('panel-private').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
-    document.getElementById('btn-joinroom-menu').addEventListener('click', () => {
-      showScreen('sc-online');
-      const inp = document.getElementById('room-code-input');
-      if (inp) { document.getElementById('panel-private').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => inp.focus(), 300); }
-    });
+    // ── ONLINE PLAY button ──
+    // (btn-online-play is wired inline via onclick="showScreen('sc-online')")
     // Initialise NET module if server URL is set
-    if (window._BKC_SERVER_URL && typeof NET !== 'undefined') {
-      NET.init().catch(e => {
-        const bar = document.getElementById('online-status-bar');
-        if (bar) bar.textContent = '⚠ Could not reach server — online play unavailable';
+    // ── NEW PLAYER PROMPT ──
+    (function () {
+      const overlay = document.getElementById('newplayer-overlay');
+      const yes = document.getElementById('btn-newplayer-yes');
+      const no = document.getElementById('btn-newplayer-no');
+      if (!overlay || !yes || !no) return;
+      const seen = localStorage.getItem('brc_seen_welcome');
+      if (!seen) {
+        setTimeout(() => overlay.classList.add('show'), 800); // slight delay so menu renders first
+      }
+      yes.addEventListener('click', () => {
+        localStorage.setItem('brc_seen_welcome', '1');
+        overlay.classList.remove('show');
+        document.getElementById('btn-tutorial') && document.getElementById('btn-tutorial').click();
       });
-    } else {
+      no.addEventListener('click', () => {
+        localStorage.setItem('brc_seen_welcome', '1');
+        overlay.classList.remove('show');
+      });
+    })();
+
+    // NET connects on demand — no pre-init needed
+    if (false) {
       const bar = document.getElementById('online-status-bar');
       if (bar) bar.textContent = window._BKC_SERVER_URL ? 'Connecting…' : '⚠ No server configured — set window._BKC_SERVER_URL';
     }
