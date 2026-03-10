@@ -5570,7 +5570,7 @@
         if (socket) { socket.off(); socket.disconnect(); socket = null; connected = false; }
         loadSocketIo(() => {
           setStatus('⏳ Connecting to server…');
-          socket = window.io(SERVER_URL, { transports: ['polling', 'websocket'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
+          socket = window.io(SERVER_URL, { transports: ['websocket', 'polling'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
           // IMPORTANT: call _attachHandlers first (it does socket.off() then re-adds all handlers).
           // connect/connect_error/disconnect are added INSIDE _attachHandlers so they never get wiped.
           _attachHandlers(cb);
@@ -6138,7 +6138,7 @@
         const snapDt = _p2SnapNextTime - _p2SnapPrevTime;  // time between the two snaps
         if (snapDt < 1) { _applyUnitPositions(_p2SnapNext, 1.0); return; }
         // How far we are between prev and next snap (0=at prev, 1=at next, can overshoot slightly)
-        const t = Math.min(1.4, (now - _p2SnapNextTime) / snapDt + 1.0);
+        const t = Math.min(1.1, (now - _p2SnapNextTime) / snapDt + 1.0);
         _applyUnitPositions(_p2SnapPrev, 0, _p2SnapNext, t);
       }
 
@@ -6602,7 +6602,46 @@
     }
 
     // Live resize: just re-scale the canvas visually — game coords never change
-    document.addEventListener('visibilitychange', () => { if (!document.hidden && G) G.lastTime = null; });
+    // ── Online P1 background-tab fix ─────────────────────────────────────────
+    // When P1 hides the tab, rAF stops firing → P2 freezes (no state updates).
+    // We fall back to setInterval(16ms) while hidden, then restore rAF on return.
+    let _onlineBgInterval = null;
+    function _startOnlineBgLoop() {
+      if (_onlineBgInterval) return;
+      _onlineBgInterval = setInterval(() => {
+        if (!G || !G.running) { _stopOnlineBgLoop(); return; }
+        const ts = performance.now();
+        if (!G.lastTime) G.lastTime = ts;
+        G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
+        G.lastTime = ts;
+        // Run full simulation tick (P1 authoritative path only)
+        if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 1) {
+          G.elapsed = (G.elapsed || 0) + G.dt;
+          updateEconomy(G.dt); updateMid(G.dt); updateSiege(G.dt);
+          updateRogueEvent(G.dt); _tickWildCards(G.dt); updateAI(G.dt);
+          updateSpies(G.dt); updateUnits(G.dt); updateProjectiles(G.dt);
+          _tickLastStandGrace(G.dt); checkLastStand();
+          if (GAME_MODE === 'conquest') updateConquest(G.dt);
+          updateGroundFX(G.dt); updateBloodPools(G.dt); updateParticles(G.dt);
+          updateHUD(); checkWin();
+        }
+      }, 16);
+    }
+    function _stopOnlineBgLoop() {
+      if (_onlineBgInterval) { clearInterval(_onlineBgInterval); _onlineBgInterval = null; }
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // Only keep sim alive if we're P1 in an online game
+        if (G && G.running && typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 1) {
+          _startOnlineBgLoop();
+        }
+      } else {
+        _stopOnlineBgLoop();
+        if (G) G.lastTime = null; // reset dt so first frame after return isn't huge
+        if (G && G.running) requestAnimationFrame(gameLoop); // restart rAF
+      }
+    });
 
     window.addEventListener('resize', () => {
       resizeGameCanvas();
@@ -13953,6 +13992,11 @@
       const cur = pid === 1 ? P1_MODE : P2_MODE;
       const next = ((cur + dir) + 3) % 3;
       switchMode(pid, next);
+      // Sync tab switch to opponent in online mode
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        const sel = pid === 1 ? P1_SEL : P2_SEL;
+        NET.sendAction({ type: 'hoverCard', pid, cardIdx: sel, mode: next });
+      }
     }
 
     function navigate(pid, dir) {
@@ -13962,6 +14006,10 @@
       sel = Math.max(0, Math.min(max, sel + dir));
       if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
       refreshSel(pid);
+      // Sync selection to opponent in online mode
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'hoverCard', pid, cardIdx: sel, mode });
+      }
     }
 
     function activate(pid) {
@@ -15377,7 +15425,7 @@
     // ── TOUCH DEVICE DETECTION ────────────────────────────────────────────────
     (function _initTouchControls() {
       const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      if (!isTouchDevice) return;
+      if (!isTouchDevice || window.innerWidth >= 1024) return;
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
