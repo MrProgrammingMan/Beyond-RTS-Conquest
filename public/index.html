@@ -514,7 +514,8 @@
 
     /* MENU */
     #sc-menu {
-      overflow: hidden;
+      overflow-y: auto;
+      justify-content: flex-start;
     }
 
     #menu-canvas {
@@ -539,8 +540,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(24px, 4vh, 56px);
-      padding-bottom: clamp(48px, 7vh, 72px);
+      gap: clamp(12px, 2.2vh, 36px);
+      padding-top: clamp(16px, 3vh, 40px);
+      padding-bottom: clamp(56px, 8vh, 80px);
     }
 
     .menu-eyebrow {
@@ -563,7 +565,7 @@
     .menu-btns {
       display: flex;
       flex-direction: column;
-      gap: clamp(5px, .9vh, 11px);
+      gap: clamp(4px, .7vh, 9px);
       align-items: center;
       width: clamp(260px, 30vw, 400px);
     }
@@ -3252,67 +3254,194 @@
 
     /* ── ONLINE MULTIPLAYER ─────────────────────────────────── */
     #sc-online {
-      background: #07070f;
+      background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(116, 185, 255, .06), transparent 65%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(212, 168, 67, .05), transparent 60%), #07070f;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: clamp(20px, 4vh, 50px) clamp(16px, 4vw, 60px);
-      gap: clamp(14px, 2.5vh, 28px);
+      padding: clamp(16px, 3vh, 36px) clamp(16px, 4vw, 60px) clamp(20px, 4vh, 50px);
+      gap: clamp(10px, 1.8vh, 22px);
       overflow-y: auto;
     }
 
     #online-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(.7rem, 1.1vw, .9rem);
-      color: rgba(212, 168, 67, .7);
-      letter-spacing: .08em;
-      min-height: 1.4em;
-      text-align: center;
+      font-size: clamp(.68rem, 1vw, .82rem);
+      letter-spacing: .07em;
+      background: rgba(0, 0, 0, .45);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 16px;
+      min-height: 1.9em;
+    }
+
+    #online-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #555;
+      flex-shrink: 0;
+      transition: background .3s;
+    }
+
+    #online-status-text {
+      color: rgba(212, 168, 67, .65);
+    }
+
+    @keyframes dotPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.75);
+      }
     }
 
     #online-panels {
       display: flex;
-      gap: clamp(16px, 3vw, 40px);
+      gap: clamp(12px, 2vw, 28px);
       align-items: flex-start;
       justify-content: center;
       flex-wrap: wrap;
       width: 100%;
-      max-width: 820px;
+      max-width: 980px;
     }
 
     .online-panel {
       flex: 1;
-      min-width: 240px;
-      max-width: 340px;
-      background: rgba(0, 0, 0, .4);
+      min-width: 280px;
+      max-width: 440px;
+      background: rgba(255, 255, 255, .025);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: clamp(16px, 2.5vh, 26px) clamp(14px, 2vw, 22px);
+      border-radius: 12px;
+      padding: clamp(18px, 3vh, 30px) clamp(18px, 2.5vw, 30px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .online-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(212, 168, 67, .5), transparent);
+    }
+
+    #panel-quickmatch::before {
+      background: linear-gradient(90deg, transparent, rgba(116, 185, 255, .6), transparent);
+    }
+
+    .online-panel-icon {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1;
+      margin-bottom: -4px;
     }
 
     .online-panel-title {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1rem, 1.6vw, 1.3rem);
+      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
       font-weight: 700;
       color: var(--gold);
-      letter-spacing: .1em;
+      letter-spacing: .12em;
+    }
+
+    #panel-quickmatch .online-panel-title {
+      color: #74b9ff;
     }
 
     .online-panel-sub {
-      font-size: clamp(.65rem, 1vw, .82rem);
+      font-size: clamp(.66rem, .95vw, .8rem);
       color: var(--dim);
       text-align: center;
       letter-spacing: .04em;
+      line-height: 1.55;
+      max-width: 320px;
+    }
+
+    .online-sep {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0;
+    }
+
+    /* Mode selector */
+    .mode-sel-label {
+      font-family: Rajdhani, sans-serif;
+      font-size: .62rem;
+      color: var(--dim);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .mode-sel-group {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .mode-sel-btn {
+      flex: 1;
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.68rem, 1vw, .82rem);
+      font-weight: 700;
+      letter-spacing: .07em;
+      padding: 7px 4px;
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 6px;
+      color: var(--dim);
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+      text-align: center;
+    }
+
+    .mode-sel-btn:hover {
+      background: rgba(255, 255, 255, .07);
+      color: var(--text);
+    }
+
+    .mode-sel-btn.ms-active {
+      background: rgba(212, 168, 67, .15);
+      border-color: rgba(212, 168, 67, .55);
+      color: var(--gold);
+    }
+
+    #panel-quickmatch .mode-sel-btn.ms-active {
+      background: rgba(116, 185, 255, .12);
+      border-color: rgba(116, 185, 255, .5);
+      color: #74b9ff;
     }
 
     .online-btn {
       width: 100%;
-      padding: 10px 0;
-      font-size: clamp(.8rem, 1.2vw, 1rem) !important;
+      padding: 11px 0;
+      font-size: clamp(.82rem, 1.2vw, 1.02rem) !important;
+    }
+
+    #panel-quickmatch .online-btn.primary {
+      background: linear-gradient(135deg, rgba(116, 185, 255, .2), rgba(116, 185, 255, .08)) !important;
+      border-color: rgba(116, 185, 255, .5) !important;
+      color: #74b9ff !important;
+    }
+
+    #panel-quickmatch .online-btn.primary:hover {
+      background: linear-gradient(135deg, rgba(116, 185, 255, .3), rgba(116, 185, 255, .15)) !important;
     }
 
     .online-hint {
@@ -3333,14 +3462,19 @@
 
     #room-code-display {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-size: clamp(2rem, 4vw, 3.2rem);
       font-weight: 700;
       color: var(--p1);
-      letter-spacing: .25em;
+      letter-spacing: .3em;
       text-align: center;
-      text-shadow: 0 0 20px var(--p1g);
+      text-shadow: 0 0 24px var(--p1g);
       cursor: pointer;
       user-select: all;
+      transition: opacity .15s;
+    }
+
+    #room-code-display:hover {
+      opacity: .8;
     }
 
     .online-join-row {
@@ -3353,15 +3487,16 @@
       flex: 1;
       background: rgba(0, 0, 0, .5);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       color: var(--text);
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(.9rem, 1.4vw, 1.1rem);
-      letter-spacing: .2em;
-      padding: 6px 10px;
+      font-size: clamp(.9rem, 1.4vw, 1.15rem);
+      letter-spacing: .25em;
+      padding: 8px 10px;
       text-align: center;
       text-transform: uppercase;
       outline: none;
+      transition: border-color .15s;
     }
 
     .online-input:focus {
@@ -3373,10 +3508,35 @@
       align-items: center;
       justify-content: center;
       font-family: Rajdhani, sans-serif;
-      font-size: .9rem;
+      font-size: .82rem;
       color: var(--dim);
       letter-spacing: .1em;
       padding: 0 4px;
+      opacity: .6;
+    }
+
+    #online-or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--dim);
+      font-family: Rajdhani, sans-serif;
+      font-size: .8rem;
+      letter-spacing: .15em;
+      opacity: .5;
+      align-self: center;
+      width: 100%;
+      max-width: 40px;
+      flex-direction: column;
+    }
+
+    #online-or-divider::before,
+    #online-or-divider::after {
+      content: '';
+      flex: 1;
+      height: 60px;
+      width: 1px;
+      background: var(--border);
     }
 
     #online-connecting {
@@ -3392,9 +3552,9 @@
     }
 
     .online-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(212, 168, 67, .2);
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(212, 168, 67, .15);
       border-top-color: var(--gold);
       border-radius: 50%;
       animation: spin .8s linear infinite;
@@ -3418,8 +3578,13 @@
       font-size: clamp(.7rem, 1vw, .85rem) !important;
       padding: 6px 18px !important;
       background: transparent !important;
-      border-color: var(--border) !important;
+      border-color: rgba(255, 255, 255, .12) !important;
+      color: rgba(255, 255, 255, .3) !important;
+    }
+
+    .online-back-btn:hover {
       color: var(--dim) !important;
+      border-color: var(--border) !important;
     }
 
     #online-badge {
@@ -3440,11 +3605,44 @@
       pointer-events: none;
     }
 
+    /* Online draft — locked state when it's opponent's turn */
+    #sc-draft.online-draft-active .fcards-scroll {
+      transition: opacity .25s;
+    }
+
+    #sc-draft.online-draft-active.opponent-turn .fcards-scroll,
+    #sc-draft.online-draft-active.opponent-turn #btn-draft-start {
+      opacity: 0.32;
+      pointer-events: none;
+    }
+
+    #online-draft-status {
+      display: none;
+      position: fixed;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 10, 18, .88);
+      border: 1px solid rgba(212, 168, 67, .35);
+      border-radius: 8px;
+      padding: 7px 22px;
+      font-family: Rajdhani, sans-serif;
+      font-size: .82rem;
+      color: rgba(212, 168, 67, .9);
+      letter-spacing: .06em;
+      z-index: 900;
+      white-space: nowrap;
+    }
+
+    #sc-draft.online-draft-active #online-draft-status {
+      display: block;
+    }
+
     #online-dc-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, .85);
+      background: rgba(0, 0, 0, .88);
       z-index: 600;
       flex-direction: column;
       align-items: center;
@@ -4617,97 +4815,118 @@
   </div>
   <!-- AI VS AI mode label inlined into faction screen JS -->
   <!-- ONLINE MULTIPLAYER -->
-  <div id="sc-online" class="screen" style="background:#07070f;">
-    <div class="sc-title" style="font-size:clamp(1.1rem,2vw,1.5rem);margin-bottom:0;">🌐 ONLINE PLAY</div>
-    <div id="online-status-bar">Not connected</div>
+  <div id="sc-online" class="screen">
 
+    <!-- Header -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;">
+      <div class="sc-title" style="font-size:clamp(1.15rem,2.2vw,1.6rem);margin-bottom:0;">🌐 ONLINE PLAY</div>
+      <div id="online-status-bar">
+        <span id="online-status-dot"></span>
+        <span id="online-status-text">Not connected</span>
+      </div>
+    </div>
+
+    <!-- Panels -->
     <div id="online-panels">
 
-      <!-- ── QUICK MATCH ────────────────────────────────── -->
+      <!-- ─── QUICK MATCH ─────────────────────────────────────── -->
       <div class="online-panel" id="panel-quickmatch">
-        <div class="online-panel-title">⚡ QUICK MATCH</div>
-        <div class="online-panel-sub">Get paired with a random opponent automatically. No code needed — just click and
-          wait.</div>
-        <button class="btn primary online-btn" id="btn-quickmatch">FIND MATCH</button>
+        <div class="online-panel-icon">⚡</div>
+        <div class="online-panel-title">QUICK MATCH</div>
+        <div class="online-panel-sub">Get instantly paired with a random opponent. No codes, no setup — just pick a mode
+          and play.</div>
+
+        <div class="online-sep"></div>
+
+        <div class="mode-sel-label">GAME MODE</div>
+        <div class="mode-sel-group" id="qm-mode-btns">
+          <button class="mode-sel-btn ms-active" data-mode="vs">⚔ Standard</button>
+          <button class="mode-sel-btn" data-mode="sudden_death">⚡ Sudden</button>
+          <button class="mode-sel-btn" data-mode="conquest">🏴 Conquest</button>
+          <button class="mode-sel-btn" data-mode="draft">🃏 Draft</button>
+        </div>
+
+        <button class="btn primary online-btn" id="btn-quickmatch">⚡ FIND MATCH</button>
         <div class="online-error" id="qm-error"></div>
-        <!-- Status shown while searching -->
         <div class="online-hint" id="quickmatch-status" style="display:none;"></div>
         <button class="btn" id="btn-cancel-qm"
-          style="display:none;width:100%;font-size:.78rem;padding:6px 0;margin-top:2px;opacity:.7;"
-          onclick="NET.cancelSearch()">✕ CANCEL SEARCH</button>
+          style="display:none;width:100%;font-size:.78rem;padding:7px 0;opacity:.7;" onclick="NET.cancelSearch()">✕
+          CANCEL SEARCH</button>
       </div>
 
-      <div class="online-divider" style="align-self:center;padding:20px 0;">— OR —</div>
+      <!-- vertical OR divider -->
+      <div id="online-or-divider">OR</div>
 
-      <!-- ── PRIVATE ROOM ───────────────────────────────── -->
+      <!-- ─── PRIVATE ROOM ─────────────────────────────────────── -->
       <div class="online-panel" id="panel-private">
-        <div class="online-panel-title">🔒 PRIVATE ROOM</div>
-        <div class="online-panel-sub">Play with a specific friend. Create a room, share the code, they enter it to join.
+        <div class="online-panel-icon">🔒</div>
+        <div class="online-panel-title">PRIVATE ROOM</div>
+        <div class="online-panel-sub">Play with a friend. Create a room and share the 4-letter code, or enter theirs to
+          join instantly.</div>
+
+        <div class="online-sep"></div>
+
+        <div class="mode-sel-label">GAME MODE</div>
+        <div class="mode-sel-group" id="room-mode-btns">
+          <button class="mode-sel-btn ms-active" data-mode="vs">⚔ Standard</button>
+          <button class="mode-sel-btn" data-mode="sudden_death">⚡ Sudden</button>
+          <button class="mode-sel-btn" data-mode="conquest">🏴 Conquest</button>
+          <button class="mode-sel-btn" data-mode="draft">🃏 Draft</button>
         </div>
 
-        <!-- CREATE section -->
-        <div style="width:100%;display:flex;flex-direction:column;gap:8px;align-items:center;">
-          <div
-            style="font-family:Rajdhani,sans-serif;font-size:.68rem;color:var(--dim);letter-spacing:.08em;text-align:center;">
-            STEP 1 — CREATE YOUR ROOM</div>
-          <button class="btn online-btn" id="btn-createroom">🏠 CREATE ROOM</button>
-          <!-- Shown after room is created -->
-          <div id="created-room-info"
-            style="display:none;flex-direction:column;align-items:center;gap:6px;width:100%;padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.25);border-radius:6px;">
-            <div style="font-family:Rajdhani,sans-serif;font-size:.65rem;color:var(--dim);letter-spacing:.08em;">YOUR
-              ROOM CODE — share with your friend:</div>
-            <div id="room-code-display" title="Click to copy"
-              onclick="(function(el){const c=el.dataset.code||el.textContent;navigator.clipboard&&navigator.clipboard.writeText(c);const o=el.textContent;el.textContent='✓ COPIED!';setTimeout(()=>el.textContent=o,1400);})(this)">
-            </div>
-            <div style="font-size:.62rem;color:var(--dim);opacity:.7;">Click the code to copy it</div>
-            <div id="waiting-for-friend"
-              style="font-family:Rajdhani,sans-serif;font-size:.8rem;color:rgba(212,168,67,.85);letter-spacing:.05em;text-align:center;">
-              ⏳ Waiting for your friend to join…</div>
-            <button class="btn" style="font-size:.72rem;padding:4px 14px;opacity:.6;margin-top:2px;"
-              onclick="NET.cancelSearch()">✕ CANCEL</button>
+        <div class="online-sep"></div>
+
+        <!-- CREATE -->
+        <button class="btn online-btn" id="btn-createroom">🏠 CREATE ROOM</button>
+        <div id="created-room-info"
+          style="display:none;flex-direction:column;align-items:center;gap:6px;width:100%;padding:12px 10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.25);border-radius:8px;">
+          <div style="font-family:Rajdhani,sans-serif;font-size:.63rem;color:var(--dim);letter-spacing:.1em;">YOUR ROOM
+            CODE — click to copy</div>
+          <div id="room-code-display" title="Click to copy"
+            onclick="(function(el){const c=el.dataset.code||el.textContent;navigator.clipboard&&navigator.clipboard.writeText(c);const o=el.textContent;el.textContent='✓ COPIED!';setTimeout(()=>el.textContent=o,1400);})(this)">
           </div>
+          <div id="waiting-for-friend"
+            style="font-family:Rajdhani,sans-serif;font-size:.78rem;color:rgba(212,168,67,.85);letter-spacing:.05em;text-align:center;">
+            ⏳ Waiting for friend…</div>
+          <button class="btn" style="font-size:.7rem;padding:4px 14px;opacity:.55;" onclick="NET.cancelSearch()">✕
+            CANCEL</button>
         </div>
 
-        <div class="online-divider" style="width:100%;margin:4px 0;font-size:.7rem;">— or join a friend's room —</div>
+        <div class="online-divider" style="width:100%;margin:2px 0;font-size:.7rem;">— or join a friend's room —</div>
 
-        <!-- JOIN section -->
-        <div style="width:100%;display:flex;flex-direction:column;gap:8px;align-items:center;">
-          <div
-            style="font-family:Rajdhani,sans-serif;font-size:.68rem;color:var(--dim);letter-spacing:.08em;text-align:center;">
-            STEP 2 — ENTER YOUR FRIEND'S CODE</div>
-          <div class="online-join-row">
-            <input class="online-input" id="room-code-input" maxlength="6" placeholder="A B C D" autocomplete="off"
-              spellcheck="false" style="letter-spacing:.3em;text-align:center;text-transform:uppercase;" />
-            <button class="btn online-btn" id="btn-joinroom" style="flex:0;white-space:nowrap;padding:6px 18px;">JOIN
-              →</button>
-          </div>
-          <div class="online-error" id="join-error"></div>
-          <div class="online-error" id="room-error"></div>
+        <!-- JOIN -->
+        <div class="online-join-row">
+          <input class="online-input" id="room-code-input" maxlength="6" placeholder="ABCD" autocomplete="off"
+            spellcheck="false" />
+          <button class="btn online-btn" id="btn-joinroom" style="flex:0;white-space:nowrap;padding:8px 20px;">JOIN
+            →</button>
         </div>
+        <div class="online-error" id="join-error"></div>
+        <div class="online-error" id="room-error"></div>
       </div>
     </div>
 
     <button class="btn online-back-btn" id="btn-online-back">← BACK TO MENU</button>
 
-    <!-- Connecting overlay (full-screen spinner) -->
+    <!-- Full-screen connecting overlay -->
     <div id="online-connecting" style="display:none;">
       <div class="online-spinner"></div>
       <div id="online-connecting-msg">Connecting…</div>
       <div
-        style="font-family:Rajdhani,sans-serif;font-size:.7rem;color:var(--dim);text-align:center;max-width:260px;line-height:1.5;">
-        First connection may take 30–60 seconds if the server is waking up from sleep.
+        style="font-family:Rajdhani,sans-serif;font-size:.72rem;color:var(--dim);text-align:center;max-width:240px;line-height:1.6;">
+        First connection may take 30–60s if the server is waking up.
       </div>
       <button class="btn" style="font-size:.82rem;padding:6px 20px;" onclick="NET.cancelSearch()">✕ CANCEL</button>
     </div>
 
     <div id="online-badge" style="display:none;">🟢 ONLINE</div>
     <div id="online-dc-overlay">
-      <div class="dc-title">⚠ DISCONNECTED</div>
-      <div style="font-family:Rajdhani,sans-serif;font-size:.9rem;color:var(--dim);">Connection to opponent lost.</div>
+      <div class="dc-title">⚠ OPPONENT DISCONNECTED</div>
+      <div style="font-family:Rajdhani,sans-serif;font-size:.95rem;color:var(--dim);">Your opponent left or lost
+        connection.</div>
       <button class="btn" onclick="NET.cleanup()" style="margin-top:8px;">← RETURN TO MENU</button>
     </div>
   </div>
-
   <!-- FACTION -->
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
@@ -4821,6 +5040,8 @@
         style="font-family:'Rajdhani', sans-serif;font-size:clamp(.55rem,.9vw,.72rem);color:var(--dim);letter-spacing:.07em;text-align:center;"></span>
       <button class="btn primary" id="btn-draft-start" disabled>START BATTLE →</button>
     </div>
+    <!-- Online draft — floating status pill -->
+    <div id="online-draft-status">⏳ Waiting for opponent…</div>
   </div>
   <!-- DEV PANEL -->
   <!-- Dev overlay is now just a small keep-alive element for legacy refs -->
@@ -5325,6 +5546,7 @@
       let connected = false;
       let _onlineMode = false;
       let _qmTimeout = null;
+      let _createdRoomMode = 'vs'; // saved when host creates a room — used in opponentJoined
 
       const SERVER_URL = window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com';
 
@@ -5379,8 +5601,15 @@
         });
         socket.on('disconnect', () => {
           connected = false;
-          if (_onlineMode && typeof G !== 'undefined' && G && G.running) {
-            document.getElementById('online-dc-overlay').classList.add('show');
+          if (_onlineMode) {
+            const onGame = document.getElementById('sc-game')?.classList.contains('active');
+            const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
+            if ((onGame || onFaction)) {
+              document.getElementById('online-dc-overlay').classList.add('show');
+              if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
+            } else {
+              setStatus('⚠ Connection lost', true);
+            }
           } else {
             setStatus('⚠ Disconnected — click any option to reconnect', true);
           }
@@ -5389,11 +5618,13 @@
         socket.on('waiting', () => {
           // In queue — dismiss the overlay so user can see they're actively searching
           hideConnecting();
+          const gm = (document.querySelector('#qm-mode-btns .ms-active') || {}).dataset?.mode || 'vs';
+          const modeLabel = ({ vs: 'Standard', sudden_death: 'Sudden Death', conquest: 'Conquest' })[gm] || gm;
           const el = document.getElementById('quickmatch-status');
-          if (el) { el.textContent = '⏳ In queue — searching for an opponent…'; el.style.display = ''; }
+          if (el) { el.textContent = `⏳ Searching for a ${modeLabel} opponent…`; el.style.display = ''; }
           const cancel = document.getElementById('btn-cancel-qm');
           if (cancel) cancel.style.display = '';
-          setStatus('⏳ In matchmaking queue — waiting for an opponent');
+          setStatus(`⏳ In queue — searching for ${modeLabel} match`);
           clearTimeout(_qmTimeout);
           _qmTimeout = setTimeout(() => {
             const qs = document.getElementById('quickmatch-status');
@@ -5430,8 +5661,8 @@
 
         socket.on('opponentJoined', () => {
           const wff = document.getElementById('waiting-for-friend');
-          if (wff) wff.textContent = '✓ Friend joined! Entering faction select…';
-          setTimeout(() => _enterFactionSelect('vs'), 800);
+          if (wff) wff.textContent = '✓ Friend joined! Entering…';
+          setTimeout(() => _enterFactionSelect(_createdRoomMode), 800);
         });
 
         socket.on('roomJoined', ({ code, pid, gameMode }) => {
@@ -5522,7 +5753,14 @@
         });
 
         socket.on('opponentDisconnected', () => {
-          if (_onlineMode) document.getElementById('online-dc-overlay').classList.add('show');
+          if (_onlineMode) {
+            const onGame = document.getElementById('sc-game')?.classList.contains('active');
+            const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
+            if (onGame || onFaction) {
+              document.getElementById('online-dc-overlay').classList.add('show');
+              if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
+            }
+          }
         });
       }
 
@@ -5549,11 +5787,84 @@
       }
 
       function _enterFactionSelect(gameMode) {
+        if (gameMode === 'draft') { _enterOnlineDraft(); return; }
         GAME_MODE = gameMode || 'vs';
         window._pendingPlayerSetup = 'vs';
         _onlineMode = true;   // must be true NOW so isOnline() works during faction select
         showScreen('sc-faction');
         _setupOnlineFactionScreen();
+      }
+
+      function _enterOnlineDraft() {
+        GAME_MODE = 'draft';
+        _onlineMode = true;
+        // Reset shared draft state
+        DRAFT = { state: 'p1ban1', banned: [], bansByPlayer: [[], []], picks: [null, null], cursors: [0, 0] };
+        fSelected = [null, null];
+        P1_FACTION = null; P2_FACTION = null;
+        _buildDraftCards();
+        _updateDraftBanner();
+        document.getElementById('btn-draft-start').disabled = true;
+
+        const sc = document.getElementById('sc-draft');
+        sc.classList.add('online-draft-active');
+
+        // Label players with their side
+        const p1label = document.getElementById('draft-p1-label');
+        const p2label = document.getElementById('draft-p2-label');
+        if (p1label) p1label.textContent = myPid === 1 ? '🔵 YOU (P1)' : '🔵 PLAYER 1';
+        if (p2label) p2label.textContent = myPid === 2 ? '🔴 YOU (P2)' : '🔴 PLAYER 2';
+
+        // Hide back/start buttons — handled by online flow
+        const backBtn = document.getElementById('btn-draft-back');
+        if (backBtn) backBtn.style.display = 'none';
+        const startBtn = document.getElementById('btn-draft-start');
+        if (startBtn) startBtn.style.display = 'none';
+
+        showScreen('sc-draft');
+        _updateOnlineDraftLock();
+        _draftMoveCursor(1, 0);
+        _draftMoveCursor(2, 0);
+        setStatus(`You are Player ${myPid} — draft is live`);
+      }
+
+      function _updateOnlineDraftLock() {
+        if (!_onlineMode || GAME_MODE !== 'draft') return;
+        const sc = document.getElementById('sc-draft');
+        if (!sc) return;
+        const activePid = _draftActivePid();
+        const isMyTurnNow = (activePid === myPid);
+        const isDone = DRAFT.state === 'done';
+        sc.classList.toggle('opponent-turn', !isMyTurnNow && !isDone);
+        const statusEl = document.getElementById('online-draft-status');
+        if (statusEl) {
+          if (isDone) {
+            statusEl.textContent = '✓ Draft complete — starting battle…';
+          } else if (isMyTurnNow) {
+            const stepInfo = DRAFT_STEP_LABELS[DRAFT.state];
+            const action = DRAFT.state.includes('ban') ? 'BAN' : 'PICK';
+            statusEl.textContent = `⚡ YOUR TURN — ${action} a faction`;
+          } else {
+            statusEl.textContent = '⏳ Waiting for opponent…';
+          }
+        }
+      }
+
+      function sendDraftAction(fi) {
+        if (!_onlineMode || !socket || !connected) return;
+        socket.emit('gameAction', { type: 'draftAction', fi, pid: myPid });
+      }
+
+      function _onlineDraftDone() {
+        // Draft finished — each player sends their picked faction; server fires startGame
+        const pickedFi = DRAFT.picks[myPid - 1];
+        if (pickedFi === null || pickedFi === undefined) return;
+        const faction = FACTIONS[pickedFi];
+        if (!faction) return;
+        _updateOnlineDraftLock();
+        setTimeout(() => {
+          if (socket && _onlineMode) socket.emit('factionSelected', { factionId: faction.id });
+        }, 400);
       }
 
       function _setupOnlineFactionScreen() {
@@ -5616,6 +5927,13 @@
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
+          case 'draftAction': {
+            // Opponent made a draft move — apply it bypassing the active-player guard
+            if (GAME_MODE === 'draft' && NET.isOnline()) {
+              _draftConfirm(action.pid, action.fi, true /* isRemote */);
+            }
+            break;
+          }
         } // end switch
       } // end _executeRemoteAction
 
@@ -5635,32 +5953,42 @@
       }
 
       // ── Matchmaking entry points ──────────────────────────────────────
+      function _getSelectedMode(groupId) {
+        const active = document.querySelector(`#${groupId} .mode-sel-btn.ms-active`);
+        return active ? active.dataset.mode : 'vs';
+      }
+      const MODE_LABELS = { vs: 'Standard', sudden_death: 'Sudden Death', conquest: 'Conquest', draft: 'Draft' };
+
       function quickMatch() {
         _clearErrors();
+        const gm = _getSelectedMode('qm-mode-btns');
+        const label = MODE_LABELS[gm] || gm;
         if (socket && connected) {
           setStatus('✓ Connected — joining queue…');
-          showConnecting('Joining matchmaking queue…');
-          socket.emit('joinPublic', { gameMode: 'vs' });
+          showConnecting(`Finding ${label} match…`);
+          socket.emit('joinPublic', { gameMode: gm });
         } else {
           showConnecting('Connecting to server…');
           connect(() => {
-            document.getElementById('online-connecting-msg').textContent = 'Joining matchmaking queue…';
+            document.getElementById('online-connecting-msg').textContent = `Finding ${label} match…`;
             setStatus('✓ Connected — joining queue…');
-            socket.emit('joinPublic', { gameMode: 'vs' });
+            socket.emit('joinPublic', { gameMode: gm });
           });
         }
       }
 
       function createRoom() {
         _clearErrors();
+        const gm = _getSelectedMode('room-mode-btns');
+        _createdRoomMode = gm;
         if (socket && connected) {
           showConnecting('Creating room…');
-          socket.emit('createRoom', { gameMode: 'vs' });
+          socket.emit('createRoom', { gameMode: gm });
         } else {
           showConnecting('Connecting to server…');
           connect(() => {
             document.getElementById('online-connecting-msg').textContent = 'Creating room…';
-            socket.emit('createRoom', { gameMode: 'vs' });
+            socket.emit('createRoom', { gameMode: gm });
           });
         }
       }
@@ -5728,6 +6056,18 @@
         if (backBtn) backBtn.style.display = '';
         const cdOverlay = document.getElementById('online-faction-countdown');
         if (cdOverlay) cdOverlay.style.display = 'none';
+        // Reset online draft state
+        const scDraft = document.getElementById('sc-draft');
+        if (scDraft) { scDraft.classList.remove('online-draft-active', 'opponent-turn'); }
+        const draftBack = document.getElementById('btn-draft-back');
+        if (draftBack) draftBack.style.display = '';
+        const draftStart = document.getElementById('btn-draft-start');
+        if (draftStart) { draftStart.style.display = ''; draftStart.disabled = true; }
+        const p1label = document.getElementById('draft-p1-label');
+        const p2label = document.getElementById('draft-p2-label');
+        if (p1label) p1label.textContent = '🔵 PLAYER 1';
+        if (p2label) p2label.textContent = '🔴 PLAYER 2';
+        _createdRoomMode = 'vs';
         if (socket) { socket.off(); socket.disconnect(); socket = null; }
         setStatus('Not connected');
         showScreen('sc-menu');
@@ -5739,8 +6079,18 @@
       }
 
       function setStatus(msg, isError) {
-        const el = document.getElementById('online-status-bar');
-        if (el) { el.textContent = msg; el.style.color = isError ? '#e74c3c' : 'rgba(212,168,67,.7)'; }
+        const dot = document.getElementById('online-status-dot');
+        const txt = document.getElementById('online-status-text');
+        if (txt) { txt.textContent = msg; txt.style.color = isError ? '#e74c3c' : 'rgba(212,168,67,.75)'; }
+        if (dot) {
+          dot.style.animation = '';
+          if (isError) { dot.style.background = '#e74c3c'; }
+          else if (msg.startsWith('✓') || msg.startsWith('🟢')) { dot.style.background = '#2ecc71'; }
+          else if (msg.startsWith('⏳') || msg.startsWith('⌛')) {
+            dot.style.background = '#f39c12';
+            dot.style.animation = 'dotPulse .9s ease-in-out infinite';
+          } else { dot.style.background = '#555'; }
+        }
       }
 
       function showConnecting(msg) {
@@ -5763,19 +6113,30 @@
       return {
         isOnline, getPid, isMyTurn, sendAction, sendFaction, sendHover, requestEvent,
         reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
-        joinRoom, cancelSearch, cleanup, setStatus
+        joinRoom, cancelSearch, cleanup, setStatus,
+        sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone
       };
     })();
 
-    // Wire online lobby buttons
+    // Wire online lobby buttons + mode selectors
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('btn-quickmatch').addEventListener('click', () => NET.quickMatch());
       document.getElementById('btn-createroom').addEventListener('click', () => NET.createRoom());
       document.getElementById('btn-joinroom').addEventListener('click', () => NET.joinRoom(document.getElementById('room-code-input').value));
       document.getElementById('btn-online-back').addEventListener('click', () => NET.cleanup());
       document.getElementById('room-code-input').addEventListener('keydown', e => { if (e.key === 'Enter') NET.joinRoom(e.target.value); });
-      // Uppercase input as you type
       document.getElementById('room-code-input').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase(); });
+      // Mode selector groups
+      ['qm-mode-btns', 'room-mode-btns'].forEach(groupId => {
+        const group = document.getElementById(groupId);
+        if (!group) return;
+        group.addEventListener('click', e => {
+          const btn = e.target.closest('.mode-sel-btn');
+          if (!btn) return;
+          group.querySelectorAll('.mode-sel-btn').forEach(b => b.classList.remove('ms-active'));
+          btn.classList.add('ms-active');
+        });
+      });
     });
 
 
@@ -12909,11 +13270,13 @@
       // Draft screen keyboard nav
       if (document.getElementById('sc-draft').classList.contains('active') && DRAFT.state !== 'done') {
         const ap = _draftActivePid();
-        if (ap === 1) {
+        // Online: only the player whose pid matches the active draft player can use keys
+        const _draftOnlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
+        if (ap === 1 && (!_draftOnlinePid || _draftOnlinePid === 1)) {
           if (e.code === KEYS.p1Up) { _draftMoveCursor(1, -1); e.preventDefault(); return; }
           if (e.code === KEYS.p1Down) { _draftMoveCursor(1, 1); e.preventDefault(); return; }
           if (e.code === KEYS.p1Act) { _draftConfirm(1, DRAFT.cursors[0]); e.preventDefault(); return; }
-        } else if (ap === 2) {
+        } else if (ap === 2 && (!_draftOnlinePid || _draftOnlinePid === 2)) {
           if (e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(2, -1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(2, 1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { _draftConfirm(2, DRAFT.cursors[1]); e.preventDefault(); return; }
@@ -13184,8 +13547,12 @@
     document.getElementById('btn-change-faction').addEventListener('click', () => {
       G = null; AI_FACTION_IDX = null;
       fSelected = [null, null];
-      // Draft mode — go back to draft screen for a new draft
+      // Draft mode — go back to draft screen for a new draft (or menu if online)
       if (GAME_MODE === 'draft') {
+        if (typeof NET !== 'undefined' && NET.isOnline()) {
+          NET.cleanup();
+          return;
+        }
         startDraftMode();
         return;
       }
@@ -13879,13 +14246,18 @@
       });
     }
 
-    function _draftConfirm(pid, fi) {
-      // Only the active player can act
-      if (_draftActivePid() !== pid) return;
+    function _draftConfirm(pid, fi, isRemote) {
+      // Only the active player can act (skip check for remote relay)
+      if (!isRemote && _draftActivePid() !== pid) return;
       // Can't pick an already-picked faction
       if (DRAFT.picks[0] === fi || DRAFT.picks[1] === fi) return;
       // Can't pick a banned faction during pick phase
       if ((DRAFT.state === 'p1pick' || DRAFT.state === 'p2pick') && DRAFT.banned.includes(fi)) return; // can't pick a banned faction
+
+      // In online mode, broadcast this action to the opponent (only for local moves)
+      if (!isRemote && NET.isOnline() && GAME_MODE === 'draft') {
+        NET.sendDraftAction(fi);
+      }
 
       if (DRAFT.state.includes('ban')) {
         // Ban
@@ -13943,6 +14315,17 @@
         document.getElementById('btn-draft-start').disabled = false;
         // Clear all cursors
         document.querySelectorAll('#sc-draft .fcard').forEach(c => c.classList.remove('fkey-cursor'));
+        // Online: auto-send faction and wait for server startGame
+        if (NET.isOnline()) {
+          document.getElementById('btn-draft-start').style.display = 'none';
+          NET.onlineDraftDone();
+          return;
+        }
+      }
+
+      // Update online lock state after each draft action
+      if (NET.isOnline() && GAME_MODE === 'draft') {
+        NET.updateOnlineDraftLock();
       }
     }
 
