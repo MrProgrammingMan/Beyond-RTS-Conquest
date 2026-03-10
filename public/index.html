@@ -6661,6 +6661,7 @@
 
     function trySpawnSpy(pid) {
       if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
+      const _spyWasOnline = typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid);
       const p = G.players[pid - 1];
       if (p.souls < SPY_DEF.souls || p.bodies < SPY_DEF.bodies) return;
       if (G.spies.filter(s => s.owner === pid).length >= 2) { showPopup(p.baseX, G.groundY - 60, 'SPY MAX (2)', '#636e72', pid); return; }
@@ -6683,6 +6684,7 @@
       showPopup(p.baseX, G.groundY - 70, '🕵️ SPY DEPLOYED', '#b2bec3', pid);
       SFX.spawnLight && SFX.spawnLight();
       updateHUD();
+      if (_spyWasOnline) NET.sendAction({ type: 'spawnSpy', pid });
     }
 
     function updateSpies(dt) {
@@ -8245,6 +8247,7 @@
           const TC = { mel: 't-mel', rng: 't-rng', air: 't-air', wrk: 't-wrk', sum: 't-sum' };
           card.innerHTML = `<span class="utypetag ${TC[def.type]}">${TL[def.type]}</span><span class="uicon">${def.icon}</span><span class="uname">${def.name}</span><div class="ucost"><span class="ctag cs">💀${def.souls}</span><span class="ctag cb">🦴${def.bodies}</span></div>`;
           card.addEventListener('click', () => {
+            if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
             if (pid === 1) P1_SEL = i; else P2_SEL = i;
             if (pid === 1) P1_MODE = 0; else P2_MODE = 0;
             refreshSel(pid);
@@ -8283,6 +8286,7 @@
           card.className = 'upcard'; card.dataset.idx = i;
           card.innerHTML = `<div class="upcard-name">${up.name}</div><div class="upcard-desc">${up.desc}</div><div class="upcard-cost"><span class="ctag cs">💀${up.cost.souls}</span><span class="ctag cb">🦴${up.cost.bodies}</span></div>`;
           card.addEventListener('click', () => {
+            if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
             if (pid === 1) P1_SEL = i; else P2_SEL = i;
             if (pid === 1) P1_MODE = 1; else P2_MODE = 1;
             refreshSel(pid);
@@ -8299,6 +8303,7 @@
           const durLabel = bf.duration > 0 ? `${bf.duration}s` : 'Instant';
           card.innerHTML = `<div class="bfcard-icon">${bf.icon}</div><div class="bfcard-name">${bf.name}</div><div class="bfcard-desc">${bf.desc}</div><div class="bfcard-cost">💀${bf.cost}</div><div class="bfcard-meta">${bf.duration > 0 ? '⏱' + durLabel : '⚡ Instant'} · 🔄${bf.cooldown}s cd</div><div class="bfcard-cd-ring" id="p${pid}-bf-ring-${i}"></div>`;
           card.addEventListener('click', () => {
+            if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
             if (pid === 1) P1_SEL = i; else P2_SEL = i;
             if (pid === 1) P1_MODE = 2; else P2_MODE = 2;
             refreshSel(pid);
@@ -8702,6 +8707,9 @@
       else if ((def.souls || 0) > 9) SFX.spawnHeavy();
       else SFX.spawnLight();
       updateHUD();
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'spawn', pid, unitId });
+      }
     }
 
     function tryBuyUpgrade(pid, idx, cardEl) {
@@ -8718,6 +8726,9 @@
       SFX.upgrade(); updateHUD();
       // Gold flash ripple across all friendly units
       if (G._upgradeFlash) G._upgradeFlash[pid - 1] = 1.4;
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'buyUpgrade', pid, idx });
+      }
     }
 
     function applyUpgrade(pid, up) {
@@ -8834,6 +8845,9 @@
       p.souls -= bf.cost;
       p.buffCooldowns[idx] = bf.cooldown;
       p.buffUsed = (p.buffUsed || 0) + 1;
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'activateBuff', pid, idx });
+      }
       if (bf.id === 'warcry') {
         p.activeBuffs.warcry = bf.duration;
         G.units.filter(u => u.player === pid && !u.def.isWorker).forEach(u => { u._warcryed = bf.duration; });
@@ -12960,21 +12974,25 @@
 
       // P1 controls — disabled in aivsai
       const _isAiVsAiKb = GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai';
-      if (!_isAiVsAiKb && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
-      else if (!_isAiVsAiKb && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
+      // Online: each player only controls their own pid
+      const _kbOnlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
+      const _kb1Ok = !_kbOnlinePid || _kbOnlinePid === 1;
+      const _kb2Ok = !_kbOnlinePid || _kbOnlinePid === 2;
+      if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
+      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
+      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
+      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
+      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
+      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
+      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
-      else if ((GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Up) { e.preventDefault(); cycleMode(2, 1); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Down) { e.preventDefault(); cycleMode(2, -1); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter'))) { e.preventDefault(); activate(2); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Taunt) { e.preventDefault(); triggerEmote(2); }
+      else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2WorkerMid) { e.preventDefault(); toggleWorkerMid(2); }
       else {
         for (let s = 0; s < 7; s++) {
           if (KEYS['p1Slot' + s] && e.code === KEYS['p1Slot' + s]) { e.preventDefault(); directSpawnSlot(1, s); break; }
@@ -12987,6 +13005,9 @@
       if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
       if (!G || !G.running || G.paused) return;
       G.workerMidMode[pid - 1] = !G.workerMidMode[pid - 1];
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'toggleWorkerMid', pid });
+      }
       const on = G.workerMidMode[pid - 1];
       const p = G.players[pid - 1];
       // When turning OFF, abort any workers currently en route to mid
@@ -14399,7 +14420,18 @@
       const _origShow = showScreen;
       showScreen = function (id) {
         _origShow(id);
-        tc.style.display = id === 'sc-game' ? 'flex' : 'none';
+        if (id === 'sc-game') {
+          tc.style.display = 'flex';
+          // In online mode, only show the local player's half
+          if (typeof NET !== 'undefined' && NET.isOnline()) {
+            const pid = NET.getPid();
+            document.getElementById('touch-p1').style.display = pid === 1 ? '' : 'none';
+            const tp2 = document.getElementById('touch-p2');
+            if (tp2) tp2.style.display = pid === 2 ? '' : 'none';
+          }
+        } else {
+          tc.style.display = 'none';
+        }
       };
     })();
 
