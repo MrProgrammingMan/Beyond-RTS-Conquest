@@ -31,7 +31,7 @@
       --fs-md: clamp(.82rem, 1.25vw, 1.1rem);
       --fs-lg: clamp(1rem, 1.8vw, 1.5rem);
       --fs-xl: clamp(1.3rem, 3vw, 2.6rem);
-      --fs-xxl: clamp(1.8rem, 5vw, 4rem);
+      --fs-xxl: clamp(1.4rem, 3vw, 2.4rem);
       --hud: clamp(130px, 22vh, 200px);
       --gap: clamp(3px, .4vw, 7px);
     }
@@ -540,14 +540,15 @@
       flex-direction: column;
       align-items: center;
       gap: clamp(24px, 4vh, 56px);
+      padding-bottom: clamp(48px, 7vh, 72px);
     }
 
     .menu-eyebrow {
-      font-size: var(--fs-sm);
-      letter-spacing: .4em;
+      font-size: var(--fs-xs);
+      letter-spacing: .3em;
       color: var(--gold);
-      opacity: .7;
-      margin-bottom: .5em;
+      opacity: .85;
+      margin-bottom: .3em;
     }
 
     .menu-title {
@@ -2917,14 +2918,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: clamp(6px, 1vh, 12px) clamp(4px, .5vw, 8px);
+      gap: 2px;
+      padding: 4px 3px;
       cursor: pointer;
       transition: border-color .14s;
       position: relative;
       overflow: hidden;
       min-width: 0;
-      min-height: clamp(80px, 12vh, 130px);
+      min-height: clamp(52px, 7vh, 80px);
     }
 
     .bfcard:hover {
@@ -2945,7 +2946,7 @@
     }
 
     .bfcard-icon {
-      font-size: clamp(2.5rem, 5.5vh, 4.5rem);
+      font-size: clamp(.9rem, 1.8vh, 1.4rem);
       line-height: 1;
     }
 
@@ -2964,10 +2965,11 @@
 
     .bfcard-name {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-size: clamp(.6rem, .9vw, .8rem);
       color: var(--gold);
-      letter-spacing: .05em;
+      letter-spacing: .03em;
       text-align: center;
+      line-height: 1;
     }
 
     .bfcard-meta {
@@ -2980,7 +2982,7 @@
 
     .bfcard-cost {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      font-size: clamp(.6rem, .85vw, .78rem);
       color: var(--soul);
     }
 
@@ -4606,7 +4608,8 @@
         MUTE</button>
       <button class="btn" onclick="_goFullscreen()" id="btn-fullscreen-menu"
         style="font-size:clamp(.6rem,.9vw,.8rem);padding:5px 14px;letter-spacing:.1em;border-color:rgba(212,168,67,.4);color:rgba(212,168,67,.85);">⛶
-        FULLSCREEN</button>
+        FULLSCREEN <span id="menu-fs-key-badge"
+          style="margin-left:5px;font-size:.75em;opacity:.65;background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);border-radius:3px;padding:1px 5px;letter-spacing:.05em;"></span></button>
       <span
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.44rem,.68vw,.58rem);color:var(--dim);letter-spacing:.07em;opacity:.55;">BEYOND
         RTS CONQUEST · v1.0</span>
@@ -4893,6 +4896,19 @@
           </div>
         </div>
       </div>
+      <div class="rebind-section-title">⛶ GLOBAL KEYS</div>
+      <div class="rebind-grid" style="max-width:360px;">
+        <div class="rebind-col">
+          <div class="rebind-row"><span>⛶ Fullscreen toggle</span><button class="rkey" id="rk-fullscreen"></button>
+          </div>
+          <div class="rebind-row" style="opacity:.5;pointer-events:none;"><span>⏸ Pause</span><kbd
+              style="font-family:monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:2px 6px;border-radius:3px;">ESC</kbd>
+          </div>
+          <div class="rebind-row" style="opacity:.5;pointer-events:none;"><span>🔇 Mute</span><kbd
+              style="font-family:monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:2px 6px;border-radius:3px;">M</kbd>
+          </div>
+        </div>
+      </div>
       <div class="rebind-section-title">⚡ DIRECT SPAWN HOTKEYS <span
           style="font-size:.65rem;color:var(--dim);font-family:sans-serif;font-weight:normal;margin-left:8px;">Optional
           — press a key to assign, click CLEAR to remove</span></div>
@@ -4958,8 +4974,10 @@
         <div class="ctrl-panel ctrl-p2" id="ctrl-p2-panel">
           <h3>PLAYER 2</h3>
         </div>
-        <div class="ctrl-panel" style="text-align:center;">
-          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause </div>
+        <div class="ctrl-panel" id="ctrl-global-panel" style="text-align:center;">
+          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause</div>
+          <div class="ctrl-row" style="justify-content:center;"><kbd id="ctrl-fs-key-badge">`</kbd> Fullscreen <span
+              style="font-size:.7em;color:var(--gold);">(rebindable)</span></div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);">Modes: UNITS →
             UPGRADES → BUFFS</div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);margin-top:4px;">
@@ -4969,7 +4987,8 @@
       <div
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.6rem,.9vw,.75rem);color:var(--dim);letter-spacing:.06em;text-align:center;margin-top:8px;line-height:1.8;border-top:1px solid var(--border);padding-top:10px;max-width:620px;margin-left:auto;margin-right:auto;">
         GLOBAL KEYS: &nbsp;<b style="color:var(--text)">ESC</b> = Pause &nbsp;·&nbsp; <b style="color:var(--text)">M</b>
-        = Mute audio &nbsp;·&nbsp; <b style="color:var(--text)">F11</b> = Fullscreen &nbsp;·&nbsp; <b
+        = Mute &nbsp;·&nbsp; <span id="global-fs-key-label"></span> = Fullscreen <span
+          style="color:var(--gold);font-size:.85em;">(rebindable — see Key Bindings)</span> &nbsp;·&nbsp; <b
           style="color:var(--text)">←/→</b> = Vote during events</div>
       <button class="btn" id="btn-ctrl-back">← BACK</button>
     </div>
@@ -5051,7 +5070,8 @@
     </div>
     <div id="ingame-mode-badge">VS</div>
     <div id="ingame-util-btns"><button class="ingame-util-btn mute-btn" onclick="toggleMute()">🔊 MUTE</button><button
-        class="ingame-util-btn" onclick="_goFullscreen()">⛶ FULL</button></div>
+        class="ingame-util-btn" onclick="_goFullscreen()" id="btn-ingame-full"
+        title="Toggle Fullscreen (` — rebindable in Controls)">⛶ FULL</button></div>
     <div id="hud">
       <div class="player-hud" id="p1-hud">
         <div class="hud-info">
@@ -5171,26 +5191,26 @@
   <div id="touch-controls" style="display:none">
     <div class="touch-half" id="touch-p1">
       <div class="touch-row">
-        <button class="touch-btn" ontouchstart="navigate(1,-1)" ontouchend="">◀</button>
-        <button class="touch-btn touch-act" ontouchstart="activate(1)" ontouchend="">SPAWN</button>
-        <button class="touch-btn" ontouchstart="navigate(1,1)" ontouchend="">▶</button>
+        <button class="touch-btn" id="tb-p1-left">◀</button>
+        <button class="touch-btn touch-act" id="tb-p1-spawn">SPAWN</button>
+        <button class="touch-btn" id="tb-p1-right">▶</button>
       </div>
       <div class="touch-row">
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(1,-1)" ontouchend="">↑TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(1,1)" ontouchend="">↓TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="toggleWorkerMid(1)" ontouchend="">⛏MID</button>
+        <button class="touch-btn touch-sm" id="tb-p1-tabup">↑TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p1-tabdn">↓TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p1-mid">⛏MID</button>
       </div>
     </div>
     <div class="touch-half" id="touch-p2">
       <div class="touch-row">
-        <button class="touch-btn" ontouchstart="navigate(2,-1)" ontouchend="">◀</button>
-        <button class="touch-btn touch-act" ontouchstart="activate(2)" ontouchend="">SPAWN</button>
-        <button class="touch-btn" ontouchstart="navigate(2,1)" ontouchend="">▶</button>
+        <button class="touch-btn" id="tb-p2-left">◀</button>
+        <button class="touch-btn touch-act" id="tb-p2-spawn">SPAWN</button>
+        <button class="touch-btn" id="tb-p2-right">▶</button>
       </div>
       <div class="touch-row">
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(2,-1)" ontouchend="">↑TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(2,1)" ontouchend="">↓TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="toggleWorkerMid(2)" ontouchend="">⛏MID</button>
+        <button class="touch-btn touch-sm" id="tb-p2-tabup">↑TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p2-tabdn">↓TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p2-mid">⛏MID</button>
       </div>
     </div>
   </div>
@@ -6634,6 +6654,7 @@
       p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
       p1Taunt: 'KeyF', p2Taunt: 'Numpad0',
       p1WorkerMid: 'KeyE', p2WorkerMid: 'Numpad1',
+      fullscreen: 'Backquote',
       // Optional direct-spawn hotkeys (null = unassigned)
       p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null, p1Slot5: null, p1Slot6: null,
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null, p2Slot5: null, p2Slot6: null,
@@ -6661,7 +6682,7 @@
 
     function trySpawnSpy(pid) {
       if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
-      const _spyWasOnline = typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid);
+      const _spyOnline = typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid);
       const p = G.players[pid - 1];
       if (p.souls < SPY_DEF.souls || p.bodies < SPY_DEF.bodies) return;
       if (G.spies.filter(s => s.owner === pid).length >= 2) { showPopup(p.baseX, G.groundY - 60, 'SPY MAX (2)', '#636e72', pid); return; }
@@ -6684,7 +6705,7 @@
       showPopup(p.baseX, G.groundY - 70, '🕵️ SPY DEPLOYED', '#b2bec3', pid);
       SFX.spawnLight && SFX.spawnLight();
       updateHUD();
-      if (_spyWasOnline) NET.sendAction({ type: 'spawnSpy', pid });
+      if (_spyOnline) NET.sendAction({ type: 'spawnSpy', pid });
     }
 
     function updateSpies(dt) {
@@ -10601,8 +10622,8 @@
             const willKite = kc > 0.50;
             const shouldKite = willKite && !nearOwnBase && enemyMeleeClose;
             if (shouldKite) {
-              // Speed: 0.55–0.80x normal — clearly visible but not a teleport
-              const retreatSpd = spd * (0.55 + kc * 0.25); // 0.55–0.80x speed
+              // Speed: 0.25–0.40x normal — visible but catchable by melee
+              const retreatSpd = spd * (0.25 + kc * 0.15); // 0.25–0.40x speed
               u.x -= Math.sign(dx2) * retreatSpd * dt;
               // High-kite archers try to stay behind ally melee
               if (kc > 0.70) {
@@ -12850,7 +12871,9 @@
       // Don't intercept keys when user is typing in an input field
       if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
       // M = mute toggle (global)
-      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_isRebinding) { toggleMute(); return; }
+      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_rebinding) { toggleMute(); return; }
+      // Fullscreen toggle (rebindable)
+      if (KEYS.fullscreen && e.code === KEYS.fullscreen && !e.ctrlKey && !e.altKey && !_rebinding) { _goFullscreen(); return; }
       // Rebinding intercept
       if (_rebinding) {
         if (e.code === 'Escape') { _rebinding.el.textContent = formatKey(KEYS[_rebinding.key]); _rebinding.el.classList.remove('rebinding'); _rebinding = null; return; }
@@ -12972,19 +12995,18 @@
         if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); voteForEvent(2); return; }
       }
 
-      // P1 controls — disabled in aivsai
+      // P1/P2 controls — online: each player only controls their own side
       const _isAiVsAiKb = GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai';
-      // Online: each player only controls their own pid
-      const _kbOnlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
-      const _kb1Ok = !_kbOnlinePid || _kbOnlinePid === 1;
-      const _kb2Ok = !_kbOnlinePid || _kbOnlinePid === 2;
-      if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
+      const _onKbPid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
+      const _kb1 = !_onKbPid || _onKbPid === 1;
+      const _kb2 = !_onKbPid || _onKbPid === 2;
+      if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
+      else if (!_isAiVsAiKb && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
       else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
       else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
@@ -13206,9 +13228,9 @@
     }
 
     function refreshRebindUI() {
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid', 'fullscreen'].forEach(k => {
         const el = document.getElementById('rk-' + k);
-        if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
+        if (el) { el.textContent = formatKey(KEYS[k] || '—'); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
       [1, 2].forEach(pid => {
         const faction = typeof fSelected !== 'undefined' ? FACTIONS[fSelected[pid - 1]] : null;
@@ -14006,6 +14028,15 @@
         ${kbdRow('Navigate Left', 'p2Left')}${kbdRow('Navigate Right', 'p2Right')}
         ${kbdRow('Mode Up', 'p2Up')}${kbdRow('Mode Down', 'p2Down')}
         ${kbdRow('Spawn / Activate', 'p2Act')}${kbdRow('😤 Taunt', 'p2Taunt')}${kbdRow('⛏ Worker Mid', 'p2WorkerMid')}${slotRows(2)}`;
+      // Sync fullscreen key badge in ctrl overview + footer
+      const _fsBadge = document.getElementById('ctrl-fs-key-badge');
+      if (_fsBadge) _fsBadge.textContent = KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—';
+      const _fsLabel = document.getElementById('global-fs-key-label');
+      if (_fsLabel) _fsLabel.innerHTML = `<b style="color:var(--text)">${KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—'}</b>`;
+      const _fsFull = document.getElementById('btn-ingame-full');
+      if (_fsFull) _fsFull.title = `Toggle Fullscreen (${KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—'} — rebindable in Controls)`;
+      const _fsMenuBadge = document.getElementById('menu-fs-key-badge');
+      if (_fsMenuBadge) _fsMenuBadge.textContent = KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—';
     }
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
@@ -14073,9 +14104,9 @@
 
     function refreshRebindUI() {
       // Navigation keys
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid', 'fullscreen'].forEach(k => {
         const el = document.getElementById('rk-' + k);
-        if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
+        if (el) { el.textContent = formatKey(KEYS[k] || '—'); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
       // Slot keys — show unit names if faction selected, else generic label
       [1, 2].forEach(pid => {
@@ -14414,20 +14445,34 @@
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
-      // tc stays hidden (display:none) until sc-game becomes active
-      tc.addEventListener('touchend', e => e.preventDefault(), { passive: false });
-      // Hook into showScreen (defined earlier in this script) to toggle visibility
+      // Wire using pointerdown — works in itch.io iframes unlike ontouchstart
+      function _tb(id, fn) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('pointerdown', e => { e.preventDefault(); fn(); });
+      }
+      _tb('tb-p1-left', () => navigate(1, -1));
+      _tb('tb-p1-spawn', () => activate(1));
+      _tb('tb-p1-right', () => navigate(1, 1));
+      _tb('tb-p1-tabup', () => cycleMode(1, -1));
+      _tb('tb-p1-tabdn', () => cycleMode(1, 1));
+      _tb('tb-p1-mid', () => toggleWorkerMid(1));
+      _tb('tb-p2-left', () => navigate(2, -1));
+      _tb('tb-p2-spawn', () => activate(2));
+      _tb('tb-p2-right', () => navigate(2, 1));
+      _tb('tb-p2-tabup', () => cycleMode(2, -1));
+      _tb('tb-p2-tabdn', () => cycleMode(2, 1));
+      _tb('tb-p2-mid', () => toggleWorkerMid(2));
+      // Hook into showScreen to toggle visibility and handle online pid
       const _origShow = showScreen;
       showScreen = function (id) {
         _origShow(id);
         if (id === 'sc-game') {
           tc.style.display = 'flex';
-          // In online mode, only show the local player's half
           if (typeof NET !== 'undefined' && NET.isOnline()) {
-            const pid = NET.getPid();
-            document.getElementById('touch-p1').style.display = pid === 1 ? '' : 'none';
-            const tp2 = document.getElementById('touch-p2');
-            if (tp2) tp2.style.display = pid === 2 ? '' : 'none';
+            const _tPid = NET.getPid();
+            document.getElementById('touch-p1').style.display = _tPid === 1 ? '' : 'none';
+            document.getElementById('touch-p2').style.display = _tPid === 2 ? '' : 'none';
           }
         } else {
           tc.style.display = 'none';
