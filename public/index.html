@@ -5429,19 +5429,7 @@
         });
 
         socket.on('opponentFaction', ({ pid, factionId }) => {
-          const f = FACTIONS.find(f => f.id === factionId);
-          if (!f) return;
-          // Update text label
-          const dispEl = document.getElementById(`fchosen-p${pid}`);
-          if (dispEl) dispEl.textContent = `✓ ${f.icon} ${f.name} — ${f.tagline}`;
-          // Highlight the card on their side
-          const fi = FACTIONS.findIndex(fc => fc.id === factionId);
-          if (fi !== -1) {
-            document.querySelectorAll(`#fcards-p${pid} .fcard`).forEach((c, i) => {
-              c.classList.toggle(`sel${pid}`, i === fi);
-              c.classList.remove('opponent-hover');
-            });
-          }
+          _applyOpponentFaction(pid, factionId);
         });
 
         // Opponent hover preview — show what faction they're currently looking at
@@ -5519,6 +5507,27 @@
       }
 
       // ── Faction select setup ──────────────────────────────────────────
+      // Apply opponent's faction pick — also used if event arrives before screen is open
+      let _pendingOpponentFaction = null;
+      function _applyOpponentFaction(pid, factionId) {
+        const f = FACTIONS.find(f => f.id === factionId);
+        if (!f) return;
+        // If faction screen isn't open yet, store it and apply when it opens
+        if (!document.getElementById('sc-faction').classList.contains('active')) {
+          _pendingOpponentFaction = { pid, factionId };
+          return;
+        }
+        const dispEl = document.getElementById(`fchosen-p${pid}`);
+        if (dispEl) dispEl.textContent = `✓ ${f.icon} ${f.name} — ${f.tagline}`;
+        const fi = FACTIONS.findIndex(fc => fc.id === factionId);
+        if (fi !== -1) {
+          document.querySelectorAll(`#fcards-p${pid} .fcard`).forEach((c, i) => {
+            c.classList.toggle(`sel${pid}`, i === fi);
+            c.classList.remove('opponent-hover');
+          });
+        }
+      }
+
       function _enterFactionSelect(gameMode) {
         GAME_MODE = gameMode || 'vs';
         window._pendingPlayerSetup = 'vs';
@@ -5541,6 +5550,12 @@
         const backBtn = document.getElementById('btn-faction-back');
         if (backBtn) backBtn.style.display = 'none';
         setStatus(`You are Player ${myPid} — pick your faction and lock it in`);
+        // Apply any opponent faction pick that arrived before this screen opened
+        if (_pendingOpponentFaction) {
+          const { pid, factionId } = _pendingOpponentFaction;
+          _pendingOpponentFaction = null;
+          setTimeout(() => _applyOpponentFaction(pid, factionId), 50);
+        }
       }
 
       // ── Action relay ──────────────────────────────────────────────────
@@ -12835,12 +12850,18 @@
       const _fKbSetup = window._pendingPlayerSetup || 'vs';
       if (document.getElementById('sc-faction').classList.contains('active') &&
         GAME_MODE !== 'aivsai' && GAME_MODE !== 'conquest_aivsai' && GAME_MODE !== 'sudden_death_aivsai' && _fKbSetup !== 'aivsai') {
-        if (e.code === KEYS.p1Up) { factionCursorMove(1, -1); e.preventDefault(); return; }
-        if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
-        if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
-        // P2 controls active in all human-vs-human modes (vs, draft, conquest, sudden_death, etc.)
+        // Online: each player only controls their own pid
+        const _onlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
+        const _p1Allowed = !_onlinePid || _onlinePid === 1;
+        const _p2Allowed = !_onlinePid || _onlinePid === 2;
+        if (_p1Allowed) {
+          if (e.code === KEYS.p1Up) { factionCursorMove(1, -1); e.preventDefault(); return; }
+          if (e.code === KEYS.p1Down) { factionCursorMove(1, 1); e.preventDefault(); return; }
+          if (e.code === KEYS.p1Act) { factionConfirm(1); e.preventDefault(); return; }
+        }
+        // P2 controls active in local human-vs-human modes only (not online P1)
         const _isHumanVsHuman = GAME_MODE !== 'solo' && GAME_MODE !== 'conquest_solo' && GAME_MODE !== 'sudden_death_solo' && _fKbSetup !== 'solo';
-        if (_isHumanVsHuman) {
+        if (_isHumanVsHuman && _p2Allowed) {
           if (e.code === KEYS.p2Up || e.code === KEYS.p2Left) { factionCursorMove(2, -1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Down || e.code === KEYS.p2Right) { factionCursorMove(2, 1); e.preventDefault(); return; }
           if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { factionConfirm(2); e.preventDefault(); return; }
