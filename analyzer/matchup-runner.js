@@ -74,7 +74,14 @@ async function runAllMatchups(cfg, onProgress = () => { }) {
   if (cfg.output.saveScreenshots) fs.mkdirSync(ssDir, { recursive: true });
 
   const parallel = Math.max(1, Math.min(bcfg.parallelGames || 3, 6));
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    args: [
+      '--disable-background-timer-throttling',
+      '--disable-renderer-backgrounding',
+      '--disable-backgrounding-occluded-windows',
+    ],
+  });
 
   try {
     let idx = 0;

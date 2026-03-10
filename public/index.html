@@ -7114,6 +7114,9 @@
     // QA automation helper — lets the test runner start aivsai games
     // without needing access to the closed-over let variables
     window.__qaStartAiVsAi = function (p1Idx, p2Idx, diff) {
+      window.__qaSpeedMultiplier = 30;
+      let _fakeTs = performance.now();
+      window.requestAnimationFrame = (cb) => setTimeout(() => { _fakeTs += 16.667 * 30; cb(_fakeTs); }, 0);
       AI1_FACTION_IDX = p1Idx;
       AI_FACTION_IDX = p2Idx;
       AI_DIFFICULTY = diff;
@@ -7125,13 +7128,13 @@
       window._soloAiActive = false;
       try {
         initGame();
-        window.G = G;  // ← expose the closed-over G so the runner can see it
+        window.G = G;
         window.__qaInitError = null;
       } catch (e) {
         window.__qaInitError = e.message + '\n' + (e.stack || '');
       }
     };
-    
+
     // ── RALLY BUFFS ──
     // ─── KEY BINDINGS ────────────────────────────────────────────────────────────
     let KEYS = {
@@ -8727,7 +8730,12 @@
         const _modeNames = { vs: '⚔ VS', solo: '🤖 SOLO', aivsai: '👁 AI', draft: '🃏 DRAFT', sudden: '⚡ SD', conquest: '🏴 CONQ', tournament: '🏆 TOURNEY' };
         _modeBadgeEl.textContent = _modeNames[GAME_MODE] || GAME_MODE.toUpperCase();
       }
-      requestAnimationFrame(gameLoop);
+      if (typeof window.__qaSpeedMultiplier === 'number') {
+        const _speed = window.__qaSpeedMultiplier;
+        let _fakeTs = performance.now();
+        window.requestAnimationFrame = (cb) => setTimeout(() => { _fakeTs += 16.667 * _speed; cb(_fakeTs); }, 0);
+      }
+      requestAnimationFrame(gameLoop)
     }
     // ─── HUD ──────────────────────────────────────────────────────────────────────
     function buildHUD() {
@@ -9294,14 +9302,14 @@
           // Raise this player's personal shade cap 8→16
           p.maxShades = 16;
           // Patch shade def in unitDefs
-          const shadeDef = G.unitDefs[pid].find(d => d.id === 's_shade');
+          const shadeDef = G.unitDefs[pid - 1].find(d => d.id === 's_shade');
           if (shadeDef) { shadeDef.dmg += 8; shadeDef.hp += 12; }
           // Patch living shades
           G.units.filter(u => u.player === pid + 1 && u.defId === 's_shade').forEach(u => { u.def.dmg += 8; u.maxHp += 12; u.hp = Math.min(u.hp + 12, u.maxHp); });
           // Halve necromancer passive timers
           G.units.filter(u => u.player === pid + 1 && u.defId === 'su_necro').forEach(u => { u.passiveSummonTimer = Math.min(u.passiveSummonTimer, 6); });
           // Patch necromancer passiveSummon interval in def
-          const necroDef = G.unitDefs[pid].find(d => d.id === 'su_necro');
+          const necroDef = G.unitDefs[pid - 1].find(d => d.id === 'su_necro');
           if (necroDef) necroDef.passiveSummon = 6;
           break;
         }

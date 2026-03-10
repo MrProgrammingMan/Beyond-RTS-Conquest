@@ -400,6 +400,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-screenshots/
-qa-report.html
+.env
 qa-data.json
+qa-report.html
+screenshots/
+.browser-installed
+analyzer/.env.txt

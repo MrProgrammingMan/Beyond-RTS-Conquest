@@ -12,6 +12,8 @@
  *   node run.js --quick                  5 factions × 2 games (fast sanity check)
  */
 
+require('dotenv').config();
+
 const cfg = require('./config');
 const { runAllMatchups, aggregateStats } = require('./matchup-runner');
 const { runUiAudit } = require('./ui-auditor');
@@ -22,25 +24,25 @@ const { pingCriticalBug, sendFullReport } = require('./discord');
 
 const { chromium, executablePath } = require('playwright');
 const { execSync } = require('child_process');
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
-const args        = process.argv.slice(2);
+const args = process.argv.slice(2);
 const analyzeOnly = args.includes('--analyze-only');
 const skipBalance = args.includes('--skip-balance');
-const skipUi      = args.includes('--skip-ui');
-const quickMode   = args.includes('--quick');
+const skipUi = args.includes('--skip-ui');
+const quickMode = args.includes('--quick');
 const factionsArg = args.find(a => a.startsWith('--factions='));
-const gamesArg    = args.find(a => a.startsWith('--games='));
+const gamesArg = args.find(a => a.startsWith('--games='));
 
 if (quickMode) {
-  cfg.balance.factionFilter   = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal'];
+  cfg.balance.factionFilter = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal'];
   cfg.balance.gamesPerMatchup = 2;
-  cfg.balance.parallelGames   = 3;
+  cfg.balance.parallelGames = 3;
 }
-if (factionsArg) cfg.balance.factionFilter   = factionsArg.replace('--factions=', '').split(',').map(s => s.trim());
-if (gamesArg)    cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=', '')) || cfg.balance.gamesPerMatchup;
+if (factionsArg) cfg.balance.factionFilter = factionsArg.replace('--factions=', '').split(',').map(s => s.trim());
+if (gamesArg) cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=', '')) || cfg.balance.gamesPerMatchup;
 
 const hasApiKey = !!(cfg.anthropicApiKey && cfg.anthropicApiKey !== 'YOUR_API_KEY_HERE');
 
@@ -54,18 +56,12 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ── Browser install — only if not already present ─────────────────────────────
 async function ensureBrowser() {
-  try {
-    // Check if chromium is already installed by attempting to get its path
-    const { executablePath } = require('playwright');
-    const chromiumPath = executablePath('chromium');
-    if (chromiumPath && fs.existsSync(chromiumPath)) {
-      return; // Already installed
-    }
-  } catch (_) {}
-  // Not found — install
+  const lockFile = path.join(__dirname, '.browser-installed');
+  if (fs.existsSync(lockFile)) return;
   log('  📦 Installing Chromium (first run only)...');
   try {
     execSync('npx playwright install chromium --with-deps', { stdio: 'inherit' });
+    fs.writeFileSync(lockFile, '1');
   } catch (err) {
     log(`  ⚠️  Browser install warning: ${err.message.slice(0, 100)}`);
   }
@@ -85,10 +81,10 @@ async function main() {
     process.exit(1);
   }
 
-  const factions  = cfg.balance.factionFilter || require('./matchup-runner').ALL_FACTIONS;
+  const factions = cfg.balance.factionFilter || require('./matchup-runner').ALL_FACTIONS;
   const numMatchups = factions.length * (factions.length - 1) * (cfg.balance.mirrorMatchups ? 1 : 0.5);
-  const numGames  = Math.round(numMatchups * cfg.balance.gamesPerMatchup);
-  const estMin    = Math.ceil(numGames / cfg.balance.parallelGames * 3 / 60);  // ~3s/game estimate
+  const numGames = Math.round(numMatchups * cfg.balance.gamesPerMatchup);
+  const estMin = Math.ceil(numGames / cfg.balance.parallelGames * 3 / 60);  // ~3s/game estimate
 
   log(`  Game:     ${gamePath}`);
   log(`  Mode:     ${quickMode ? '⚡ Quick' : 'Full'} · ${factions.length} factions · ${cfg.balance.gamesPerMatchup}g/matchup · ${cfg.balance.parallelGames} parallel`);
@@ -101,9 +97,9 @@ async function main() {
     fs.mkdirSync(path.resolve(cfg.output.screenshotsDir || './screenshots'), { recursive: true });
   }
 
-  let rawData       = null;
+  let rawData = null;
   let uiAuditResult = { issues: [], screenshots: [] };
-  const startTime   = Date.now();
+  const startTime = Date.now();
 
   // ════════════════════════════════════════════════════════════════════════════
   // PHASE 1: BROWSER
@@ -125,11 +121,11 @@ async function main() {
       const elapsedMs = Date.now() - t0;
       etaWindow.push(elapsedMs / done);
       if (etaWindow.length > 15) etaWindow.shift();
-      const avgMs  = etaWindow.reduce((a, b) => a + b, 0) / etaWindow.length;
+      const avgMs = etaWindow.reduce((a, b) => a + b, 0) / etaWindow.length;
       const etaSec = Math.round(avgMs * (total - done) / 1000);
-      const etaStr = done < 2 ? '…' : etaSec > 3600 ? `${Math.floor(etaSec/3600)}h${Math.floor((etaSec%3600)/60)}m`
-                                   : etaSec > 60    ? `${Math.floor(etaSec/60)}m${etaSec%60}s`
-                                   : `${etaSec}s`;
+      const etaStr = done < 2 ? '…' : etaSec > 3600 ? `${Math.floor(etaSec / 3600)}h${Math.floor((etaSec % 3600) / 60)}m`
+        : etaSec > 60 ? `${Math.floor(etaSec / 60)}m${etaSec % 60}s`
+          : `${etaSec}s`;
 
       const icon = latest.timedOut ? '⏱' : latest.hasErrors ? '🐛' : latest.hasNaN ? '⚡' : '✅';
       const errNote = latest.hasErrors && latest.firstError
@@ -180,7 +176,7 @@ async function main() {
     rawData = JSON.parse(fs.readFileSync(p, 'utf8'));
     log(`  📂 Loaded saved data (${rawData.qa?.totalGamesRun} games)`);
   } else {
-    rawData = { results:{}, factions:[], qa:{ allErrors:[], allNaNs:[], allTimedOut:[], mechanicUsage:{}, performance:{}, totalGamesRun:0 } };
+    rawData = { results: {}, factions: [], qa: { allErrors: [], allNaNs: [], allTimedOut: [], mechanicUsage: {}, performance: {}, totalGamesRun: 0 } };
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -218,7 +214,7 @@ async function main() {
       log(`  🤖 Diagnosing bugs with Claude (single batch call)...`);
       const t1 = Date.now();
       diagnosedBugs = await analyzeBugs(allErrors || [], allNaNs || [], allTimedOut || [], cfg);
-      log(`  ✅ ${diagnosedBugs.length} unique bugs diagnosed in ${((Date.now()-t1)/1000).toFixed(1)}s`);
+      log(`  ✅ ${diagnosedBugs.length} unique bugs diagnosed in ${((Date.now() - t1) / 1000).toFixed(1)}s`);
 
       // Discord pings for critical bugs
       const critical = diagnosedBugs.filter(b => b.diagnosis?.severity === 'CRITICAL');
@@ -241,7 +237,7 @@ async function main() {
 
     // Quick terminal table
     log('\n  FACTION WIN RATES:');
-    const sorted = [...rawData.factions].sort((a,b) => (aggStats[b]?.overallWinRate||50)-(aggStats[a]?.overallWinRate||50));
+    const sorted = [...rawData.factions].sort((a, b) => (aggStats[b]?.overallWinRate || 50) - (aggStats[a]?.overallWinRate || 50));
     for (const f of sorted) {
       const s = aggStats[f]; if (!s) continue;
       const flag = s.overallWinRate >= 55 ? '🔴' : s.overallWinRate <= 45 ? '🔵' : '⚪';
@@ -279,17 +275,17 @@ async function main() {
   if (cfg.discord.webhookUrl) {
     log('  ── Phase 6: Discord ───────────────────────────────────────────');
     const totalSecs = Math.round((Date.now() - startTime) / 1000);
-    const sortedFacs = Object.entries(aggStats).sort((a,b) => b[1].overallWinRate - a[1].overallWinRate);
-    const top = sortedFacs.slice(0,3).map(([f,s]) => `${f} (${s.overallWinRate}%)`).join(', ');
-    const bot = sortedFacs.slice(-3).map(([f,s]) => `${f} (${s.overallWinRate}%)`).join(', ');
+    const sortedFacs = Object.entries(aggStats).sort((a, b) => b[1].overallWinRate - a[1].overallWinRate);
+    const top = sortedFacs.slice(0, 3).map(([f, s]) => `${f} (${s.overallWinRate}%)`).join(', ');
+    const bot = sortedFacs.slice(-3).map(([f, s]) => `${f} (${s.overallWinRate}%)`).join(', ');
     const summary = [
-      `**Done** in ${Math.floor(totalSecs/60)}m${totalSecs%60}s`,
-      `📊 ${rawData.qa?.totalGamesRun||0} games · ${diagnosedBugs.length} bugs · ${uiAuditResult.issues.length} UI issues`,
+      `**Done** in ${Math.floor(totalSecs / 60)}m${totalSecs % 60}s`,
+      `📊 ${rawData.qa?.totalGamesRun || 0} games · ${diagnosedBugs.length} bugs · ${uiAuditResult.issues.length} UI issues`,
       '',
       top ? `**Top:** ${top}` : '',
       bot ? `**Weakest:** ${bot}` : '',
       '',
-      diagnosedBugs.filter(b=>b.diagnosis?.severity==='CRITICAL').length > 0
+      diagnosedBugs.filter(b => b.diagnosis?.severity === 'CRITICAL').length > 0
         ? `🔴 **CRITICAL BUGS** — see report`
         : diagnosedBugs.length > 0 ? `⚠️ ${diagnosedBugs.length} bugs` : '✅ No bugs',
     ].filter(Boolean).join('\n');
@@ -303,7 +299,7 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   const totalSecs = Math.round((Date.now() - startTime) / 1000);
   log('');
-  log(`  ✨ Done in ${Math.floor(totalSecs/60)}m${totalSecs%60}s  →  open ${path.basename(reportPath)} in browser`);
+  log(`  ✨ Done in ${Math.floor(totalSecs / 60)}m${totalSecs % 60}s  →  open ${path.basename(reportPath)} in browser`);
   log('');
 
   // Print critical prompts to terminal

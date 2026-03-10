@@ -12,12 +12,12 @@ const path = require('path');
 const { INSTRUMENTATION_SCRIPT } = require('./instrumentation');
 
 const SPEED = 30;   // Game-time multiplier. 30x = 1 real second = 30 game seconds.
-                    // Reliable range: 20–50. Higher = faster but may skip frames.
+// Reliable range: 20–50. Higher = faster but may skip frames.
 
 async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
   const {
-    difficulty   = 'hard',
-    timeoutMs    = 45_000,
+    difficulty = 'hard',
+    timeoutMs = 45_000,
     browser,
     captureErrors = true,
   } = opts;
@@ -115,6 +115,8 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
       Date.now = () => _origDateNow() + _fakeOffset;
 
       // ── Start the game ────────────────────────────────────────────────────
+      window.__qaSpeedMultiplier = 30;
+
       if (typeof window.__qaStartAiVsAi === 'function') {
         window.__qaStartAiVsAi(p1Idx, p2Idx, diff);
         if (window.__qaInitError) return { error: 'initGame threw: ' + window.__qaInitError };
@@ -164,14 +166,14 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
           p2BaseHp: Math.max(0, Math.round(G.players[1]?.baseHp || 0)),
           p1Faction: G.factions?.[0]?.id || '',
           p2Faction: G.factions?.[1]?.id || '',
-          errors:       window.__qa.errors,
-          warnings:     window.__qa.warnings,
-          nanEvents:    window.__qa.nanEvents,
-          mechanics:    { ...window.__qa.mechanics },
+          errors: window.__qa.errors,
+          warnings: window.__qa.warnings,
+          nanEvents: window.__qa.nanEvents,
+          mechanics: { ...window.__qa.mechanics },
           performance: {
-            avgFrameMs:  Math.round(avgFt * 10) / 10,
-            maxFrameMs:  Math.round(maxFt),
-            longTasks:   window.__qa.performance.longTasks,
+            avgFrameMs: Math.round(avgFt * 10) / 10,
+            maxFrameMs: Math.round(maxFt),
+            longTasks: window.__qa.performance.longTasks,
             frameSamples: ft.length,
           },
           screenHistory: window.__qa.screenHistory,
@@ -189,14 +191,14 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
         const G = window.G;
         return {
           winnerPid: -1, timedOut: true,
-          elapsed:     Math.round(G?.elapsed || 0),
-          p1BaseHp:    G?.players?.[0]?.baseHp || 0,
-          p2BaseHp:    G?.players?.[1]?.baseHp || 0,
-          p1Faction:   G?.factions?.[0]?.id || '',
-          p2Faction:   G?.factions?.[1]?.id || '',
-          errors:      window.__qa?.errors || [],
-          nanEvents:   window.__qa?.nanEvents || [],
-          mechanics:   window.__qa?.mechanics || {},
+          elapsed: Math.round(G?.elapsed || 0),
+          p1BaseHp: G?.players?.[0]?.baseHp || 0,
+          p2BaseHp: G?.players?.[1]?.baseHp || 0,
+          p1Faction: G?.factions?.[0]?.id || '',
+          p2Faction: G?.factions?.[1]?.id || '',
+          errors: window.__qa?.errors || [],
+          nanEvents: window.__qa?.nanEvents || [],
+          mechanics: window.__qa?.mechanics || {},
           performance: { avgFrameMs: 0, maxFrameMs: 0, longTasks: [], frameSamples: 0 },
           screenHistory: window.__qa?.screenHistory || [],
         };
@@ -213,8 +215,8 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
     return result;
 
   } finally {
-    await page.close().catch(() => {});
-    await ctx.close().catch(() => {});
+    await page.close().catch(() => { });
+    await ctx.close().catch(() => { });
   }
 }
 
