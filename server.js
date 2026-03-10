@@ -1,7 +1,7 @@
 /**
  * Beyond Kings' Conquest — Online Multiplayer Server
  * Run: node server.js
- * Deploy: Render / Railway / Fly.io (free tier)
+ * Deploy: Render
  */
 
 const express = require('express');
@@ -135,6 +135,29 @@ io.on('connection', (socket) => {
     console.log(`[+] ${socket.id} joined room ${code.toUpperCase()}`);
   });
 
+  // ── FACTION HOVER (preview while browsing) ───────────────────────────────
+  socket.on('factionHover', ({ factionId }) => {
+    const room = rooms.get(socket._bkcRoom);
+    if (!room) return;
+    const pid = socket._bkcPid;
+    const other = room.players.find(p => p !== socket);
+    if (other) other.emit('opponentHover', { pid, factionId });
+  });
+
+  // ── CANCEL SEARCH ─────────────────────────────────────────────────────────
+  socket.on('cancelSearch', () => {
+    // Remove from public queue if waiting
+    const qi = waitingQueue.indexOf(socket);
+    if (qi !== -1) { waitingQueue.splice(qi, 1); socket._inQueue = false; }
+    // Clean up any created room that hasn't started
+    const room = rooms.get(socket._bkcRoom);
+    if (room && !room.started && room.players.length === 1) {
+      cleanupRoom(room.code);
+      socket._bkcRoom = null;
+    }
+    console.log(`[~] ${socket.id} cancelled search`);
+  });
+
   // ── FACTION SELECTED ──────────────────────────────────────────────────────
   // Relay faction choice to opponent so they can see it
   socket.on('factionSelected', ({ factionId }) => {
@@ -232,17 +255,21 @@ function pickEvent({ elapsed, p1hp, p2hp, midOwner }) {
   const losingPlayerSouls = p1hp < p2hp ? 999 : 0; // simplified — just use lopsided flag
 
   const pool = [
-    ['wanderer',       isMidLocked ? 2 : 3],
-    ['champion',       elapsed > 180 ? 2 : 0],
-    ['soul_cache',     isLopsided ? 4 : 2],
-    ['blood_moon',     2],
-    ['ancient_curse',  isLopsided ? 3 : 1],
+    ['wanderer', isMidLocked ? 2 : 3],
+    ['champion', elapsed > 180 ? 2 : 0],
+    ['soul_cache', isLopsided ? 4 : 2],
+    ['blood_moon', 2],
+    ['ancient_curse', isLopsided ? 3 : 1],
     ['veterans_rally', 2],
-    ['supply_drop',    isLopsided ? 4 : 1],
-    ['dark_eclipse',   isMidLocked ? 3 : 1],
-    ['meteor',         elapsed > 60 ? 2 : 0],
-    ['gold_rush',      isLopsided ? 1 : 3],
-    ['tremor',         elapsed > 90 ? 2 : 0],
+    ['supply_drop', isLopsided ? 4 : 1],
+    ['dark_eclipse', isMidLocked ? 3 : 1],
+    ['meteor', elapsed > 60 ? 2 : 0],
+    ['gold_rush', isLopsided ? 1 : 3],
+    ['tremor', elapsed > 90 ? 2 : 0],
+    ['plague', elapsed > 120 ? 2 : 0],
+    ['time_warp', elapsed > 150 ? 2 : 0],
+    ['arcane_surge', elapsed > 60 ? 2 : 0],
+    ['fog_of_war', elapsed > 90 ? 2 : 0],
   ].filter(([, w]) => w > 0);
 
   const total = pool.reduce((s, [, w]) => s + w, 0);
