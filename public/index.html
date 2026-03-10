@@ -5601,6 +5601,7 @@
         });
         socket.on('disconnect', () => {
           connected = false;
+          _stopStateSync();
           if (_onlineMode) {
             const onGame = document.getElementById('sc-game')?.classList.contains('active');
             const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
@@ -5688,10 +5689,20 @@
           const theirPid = pid;
           const f = FACTIONS.find(f => f.id === factionId);
           if (!f) return;
-          // Dim-highlight the card they're hovering
+          // Faction-select screen: highlight on their column
           document.querySelectorAll(`#fcards-p${theirPid} .fcard`).forEach(c => c.classList.remove('opponent-hover'));
-          const cards = document.querySelectorAll(`#fcards-p${theirPid} .fcard`);
-          cards.forEach(c => { if (c.dataset.factionId === factionId) c.classList.add('opponent-hover'); });
+          document.querySelectorAll(`#fcards-p${theirPid} .fcard`).forEach(c => { if (c.dataset.factionId === factionId) c.classList.add('opponent-hover'); });
+          // Draft screen: show hover on BOTH columns (same card set) so you can see what they're eyeing
+          if (document.getElementById('sc-draft')?.classList.contains('active')) {
+            [1, 2].forEach(col => {
+              document.querySelectorAll(`#draft-fcards-p${col} .fcard`).forEach(c => {
+                const wasHover = c.classList.contains('opponent-hover');
+                const shouldHover = c.dataset.factionId === factionId && !c.classList.contains('draft-banned');
+                if (!wasHover && shouldHover) c.classList.add('opponent-hover');
+                else if (wasHover && !shouldHover) c.classList.remove('opponent-hover');
+              });
+            });
+          }
         });
 
         socket.on('startGame', ({ p1Faction, p2Faction, seed, gameMode }) => {
@@ -5714,6 +5725,7 @@
                 overlay.style.display = 'none';
                 initGame();
                 showScreen('sc-game');
+                _startStateSync();
                 return;
               }
               numEl.textContent = n;
@@ -5726,6 +5738,7 @@
           } else {
             initGame();
             showScreen('sc-game');
+            _startStateSync();
           }
         });
 
@@ -5893,12 +5906,100 @@
       // ── Action relay ──────────────────────────────────────────────────
       function sendAction(action) {
         if (!_onlineMode || !socket || !connected) return;
+        // Attach resource snapshot so recipient can reconcile before executing
+        if (typeof G !== 'undefined' && G && action.pid) {
+          const p = G.players[action.pid - 1];
+          if (p) action._res = { souls: p.souls, bodies: p.bodies };
+        }
         socket.emit('gameAction', action);
       }
 
+      // ── Periodic full-state sync ──────────────────────────────────────
+      let _syncInterval = null;
+      function _startStateSync() {
+        if (_syncInterval) clearInterval(_syncInterval);
+        _syncInterval = setInterval(_broadcastStateSync, 2500);
+      }
+      function _stopStateSync() {
+        if (_syncInterval) { clearInterval(_syncInterval); _syncInterval = null; }
+      }
+
+      function _broadcastStateSync() {
+        if (!_onlineMode || !socket || !connected || typeof G === 'undefined' || !G || !G.running) return;
+        // Each player is authoritative for their OWN data — send only your own player state.
+        // P1 additionally sends unit positions (cheaper than both doing it).
+        const p = G.players[myPid - 1];
+        const syncPayload = {
+          type: 'stateSync',
+          pid: myPid,
+          res: {
+            souls: p.souls, bodies: p.bodies, baseHp: p.baseHp,
+            unitCap: p.unitCap, workerCap: p.workerCap || 3,
+            despStacks: p.despStacks || 0
+          },
+          midOwner: G.midOwner,
+          midOwnerTimer: G.midOwnerTimer || 0,
+          elapsed: G.elapsed || 0,
+        };
+        // P1 (host) also syncs all unit positions + HP as the authoritative simulation
+        if (myPid === 1) {
+          syncPayload.units = G.units.map(u => ({
+            id: u.id, x: Math.round(u.x), y: Math.round(u.y),
+            hp: Math.round(u.hp), player: u.player, dead: u.dead
+          }));
+        }
+        socket.emit('gameAction', syncPayload);
+      }
+
       function _executeRemoteAction(action) {
-        if (typeof G === 'undefined' || !G || !G.running) return;
+        // stateSync handled even when game is momentarily paused
+        if (action.type === 'stateSync') {
+          if (typeof G === 'undefined' || !G) return;
+          const remotePid = action.pid;
+          const rp = G.players[remotePid - 1];
+          if (!rp) return;
+          const res = action.res;
+          // Apply opponent's authoritative resource state (smooth blend to avoid HUD flicker)
+          rp.souls = res.souls;
+          rp.bodies = res.bodies;
+          // Only lower base HP (never restore it remotely — prevents desync of death)
+          if (res.baseHp < rp.baseHp) rp.baseHp = res.baseHp;
+          rp.unitCap = res.unitCap;
+          rp.workerCap = res.workerCap;
+          rp.despStacks = res.despStacks;
+          // Sync shared world state (from whoever sent it — both send midOwner, take latest)
+          if (Math.abs((action.elapsed || 0) - (G.elapsed || 0)) < 5) {
+            G.midOwner = action.midOwner;
+            G.midOwnerTimer = action.midOwnerTimer;
+          }
+          // P1 also sends unit positions — apply as authoritative corrections (lerp to avoid snap)
+          if (action.units && Array.isArray(action.units)) {
+            action.units.forEach(snap => {
+              const u = G.units.find(u => u.id === snap.id);
+              if (!u) return;
+              if (snap.dead) { u.hp = 0; return; }
+              // Gentle lerp: 30% toward authoritative position per sync tick
+              u.x += (snap.x - u.x) * 0.3;
+              u.y += (snap.y - u.y) * 0.3;
+              u.hp = snap.hp;
+            });
+          }
+          return;
+        }
+
+        if (!G || !G.running) return;
         const { type, pid } = action;
+
+        // Reconcile resource state BEFORE executing the action so both machines
+        // start from identical values (fixes economy drift between frames)
+        if (action._res && G.players && pid) {
+          const p = G.players[pid - 1];
+          if (p) {
+            p.souls = action._res.souls;
+            p.bodies = action._res.bodies;
+          }
+        }
+
         let cardEl = null;
         if (action.cardIdx !== undefined) {
           const grid = document.getElementById(`p${pid}-grid`);
@@ -6032,6 +6133,7 @@
 
       function cleanup() {
         clearTimeout(_qmTimeout);
+        _stopStateSync();
         _onlineMode = false; myPid = null; roomCode = null; _netRoomCode = '';
         connected = false;
         // UI reset
@@ -13272,14 +13374,27 @@
         const ap = _draftActivePid();
         // Online: only the player whose pid matches the active draft player can use keys
         const _draftOnlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
-        if (ap === 1 && (!_draftOnlinePid || _draftOnlinePid === 1)) {
-          if (e.code === KEYS.p1Up) { _draftMoveCursor(1, -1); e.preventDefault(); return; }
-          if (e.code === KEYS.p1Down) { _draftMoveCursor(1, 1); e.preventDefault(); return; }
-          if (e.code === KEYS.p1Act) { _draftConfirm(1, DRAFT.cursors[0]); e.preventDefault(); return; }
-        } else if (ap === 2 && (!_draftOnlinePid || _draftOnlinePid === 2)) {
-          if (e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(2, -1); e.preventDefault(); return; }
-          if (e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(2, 1); e.preventDefault(); return; }
-          if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { _draftConfirm(2, DRAFT.cursors[1]); e.preventDefault(); return; }
+        // In online mode, always use your own myPid for cursor/confirm (click either column)
+        const _effectivePid = _draftOnlinePid || ap;
+        if (!_draftOnlinePid || _draftOnlinePid === ap) {
+          // It's your turn (or local mode)
+          if (_effectivePid === 1 || (!_draftOnlinePid && ap === 1)) {
+            if (e.code === KEYS.p1Up) { _draftMoveCursor(1, -1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Down) { _draftMoveCursor(1, 1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Act) { _draftConfirm(1, DRAFT.cursors[0]); e.preventDefault(); return; }
+          }
+          if (_effectivePid === 2 || (!_draftOnlinePid && ap === 2)) {
+            if (e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(2, -1); e.preventDefault(); return; }
+            if (e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(2, 1); e.preventDefault(); return; }
+            if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { _draftConfirm(2, DRAFT.cursors[1]); e.preventDefault(); return; }
+          }
+          // In online mode, allow EITHER P1 OR P2 keys to control your cursor
+          if (_draftOnlinePid) {
+            const myCursor = DRAFT.cursors[_draftOnlinePid - 1];
+            if (e.code === KEYS.p1Up || e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(_draftOnlinePid, -1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Down || e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(_draftOnlinePid, 1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Act || e.code === KEYS.p2Act || e.code === 'NumpadEnter') { _draftConfirm(_draftOnlinePid, myCursor); e.preventDefault(); return; }
+          }
         }
         return;
       }
@@ -14197,6 +14312,7 @@
           const card = document.createElement('div');
           card.className = 'fcard';
           card.dataset.fi = fi;
+          card.dataset.factionId = f.id;
           const wins = SESSION.factionWins[f.id] || 0;
           const winBadge = wins > 0 ? `<span class="fcard-win-badge">${wins >= 5 ? '🏆' : '🔥'.repeat(Math.min(wins, 4))} ${wins}W</span>` : '';
           card.innerHTML = `
@@ -14207,7 +14323,14 @@
             <div class="fcard-tag">${f.tagline}</div>
             <div class="fcard-passive" style="font-size:clamp(.6rem,1vw,.78rem);color:rgba(255,255,255,.55);">✦ ${f.passive}</div>
             <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
-          card.addEventListener('click', () => _draftConfirm(pid, fi));
+          // In online draft: clicks always act for the locally-controlled player (myPid).
+          // In local draft: clicks act for the column they belong to.
+          card.addEventListener('click', () => {
+            const actingPid = (typeof NET !== 'undefined' && NET.isOnline() && GAME_MODE === 'draft')
+              ? NET.getPid()
+              : pid;
+            _draftConfirm(actingPid, fi);
+          });
           container.appendChild(card);
         });
       });
@@ -14244,6 +14367,14 @@
           if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       });
+      // Online: broadcast cursor hover to opponent so they see your selection
+      if (typeof NET !== 'undefined' && NET.isOnline() && GAME_MODE === 'draft') {
+        const _myDraftPid = NET.getPid();
+        if (_draftActivePid() === _myDraftPid && pid === _myDraftPid) {
+          const hoverFaction = FACTIONS[DRAFT.cursors[pid - 1]];
+          if (hoverFaction) NET.sendHover(hoverFaction.id);
+        }
+      }
     }
 
     function _draftConfirm(pid, fi, isRemote) {
