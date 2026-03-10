@@ -90,14 +90,21 @@ async function main() {
 
     const live = [];
     const t0 = Date.now();
+    let _etaWindow = [];
 
     rawData = await runAllMatchups(cfg, ({ done, total, latest }) => {
-      const elapsed = ((Date.now() - t0) / 1000).toFixed(0);
-      const eta = done > 0 ? Math.round((Date.now() - t0) / done * (total - done) / 1000) : '?';
-      const etaStr = isNaN(eta) || eta > 3600 ? '?s' : eta > 60 ? `${Math.floor(eta / 60)}m${eta % 60}s` : `${eta}s`;
+      const elapsedMs = Date.now() - t0;
+      const elapsed = (elapsedMs / 1000).toFixed(0);
+      // Rolling ETA: use last 20 games for a stable estimate
+      if (!_etaWindow) _etaWindow = [];
+      _etaWindow.push(elapsedMs / done);
+      if (_etaWindow.length > 20) _etaWindow.shift();
+      const avgMs = _etaWindow.reduce((a, b) => a + b, 0) / _etaWindow.length;
+      const etaSec = Math.round(avgMs * (total - done) / 1000);
+      const etaStr = done < 3 ? '…' : etaSec > 3600 ? `${Math.floor(etaSec / 3600)}h${Math.floor((etaSec % 3600) / 60)}m` : etaSec > 60 ? `${Math.floor(etaSec / 60)}m${etaSec % 60}s` : `${etaSec}s`;
       const icon = latest.timedOut ? '⏱' : latest.hasErrors ? '🐛' : latest.hasNaN ? '⚡' : latest.result.includes('wins') ? '✅' : '🤝';
       const errStr = latest.hasErrors && latest.firstError
-        ? ` ↳ ${latest.firstError}`
+        ? ` ↳ ${latest.firstError.slice(0, 60)}`
         : latest.hasErrors ? ' [ERRORS]' : '';
       live.unshift(`  ${icon} ${latest.p1} vs ${latest.p2} → ${latest.result}${errStr}`);
       if (live.length > 4) live.pop();

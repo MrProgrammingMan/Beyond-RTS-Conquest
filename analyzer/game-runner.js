@@ -117,34 +117,7 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
     let result = null;
     let errorScreenshot = null;
 
-    // ── Diagnostic: after 3s real time, dump game state to stderr ─────────────
-    setTimeout(async () => {
-      try {
-        const diag = await page.evaluate(() => {
-          const G = window.G;
-          if (!G) return 'G is null — initGame may have failed silently';
-          return {
-            running: G.running,
-            elapsed: G.elapsed,
-            p1Hp: G.players?.[0]?.baseHp,
-            p2Hp: G.players?.[1]?.baseHp,
-            units: G.units?.length,
-            p1Faction: G.factions?.[0]?.id,
-            p2Faction: G.factions?.[1]?.id,
-            errors: window.__qa?.errors?.length,
-            firstError: window.__qa?.errors?.[0]?.message?.slice(0, 200),
-          };
-        }).catch(e => 'evaluate failed: ' + e.message);
-        process.stderr.write(`\n  [DIAG ${p1FactionId} vs ${p2FactionId}] ${JSON.stringify(diag)}\n`);
-      } catch (_) { }
-    }, 3000);
 
-    // ── Print first error to stderr immediately (full message, not truncated) ──
-    const _firstErrCheck = await page.evaluate(() => window.__qa?.errors?.[0] || null).catch(() => null);
-    if (_firstErrCheck) {
-      process.stderr.write(`\n  !! GAME ERROR (${p1FactionId} vs ${p2FactionId}): ${(_firstErrCheck.message || '').replace(/\n/g, ' ')}\n`);
-      if (_firstErrCheck.stack) process.stderr.write(`     ${_firstErrCheck.stack.split('\n').slice(0, 3).join(' | ')}\n`);
-    }
 
     while (Date.now() - pollStart < timeoutMs) {
       // Check if we need to screenshot a new error
