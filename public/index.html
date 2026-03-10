@@ -9682,11 +9682,18 @@
       // Can attack base if no enemies are within close proximity
       // Melee: only blocked by enemies within actual engagement range (~80px)
       // Ranged: blocked by enemies within 120px (they can shoot from further back)
+      const ebase = G.players[u.player === 1 ? 1 : 0];
       const isRangedUnit = u.def.range > 60;
       const blockRange = isRangedUnit ? 120 : Math.max(u.def.range * 1.8, 80);
       const enemies = G.units.filter(e => e.player !== u.player && !e.offscreen && !e.def.isWorker);
       if (enemies.length === 0) return true;
-      return !enemies.some(e => rangeDist(u, e) < blockRange);
+      // Only blocked by enemies that are between this unit and the enemy base (same side)
+      const toBase = Math.sign(ebase.baseX - u.x);
+      return !enemies.some(e => {
+        if (rangeDist(u, e) >= blockRange) return false;
+        // Enemy must be on the base-side of this unit to block it
+        return Math.sign(e.x - u.x) === toBase || Math.abs(e.x - u.x) < 20;
+      });
     }
 
     function doAttack(attacker, target, frenzyMult) {
@@ -11415,8 +11422,11 @@
       const _decayWarn = _isTourney ? 150 : 210;
       if (sec > _decayStart) {
         // Only apply decay during stalemates — if one base is already below 55, let combat finish it
+        const elapsed = sec - _decayStart;
         const bothHealthy = G.players.every(p => p.baseHp >= 55);
-        if (bothHealthy) {
+        // After 8 minutes of total game time, force decay regardless of HP — prevents infinite stalemates
+        const forceDecay = sec > 480;
+        if (bothHealthy || forceDecay) {
           G.siegeDecay = true;
           const elapsed = sec - _decayStart;
           // Tournament: faster escalating decay to keep matches 3–7 min
