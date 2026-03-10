@@ -7116,7 +7116,13 @@
     window.__qaStartAiVsAi = function (p1Idx, p2Idx, diff) {
       window.__qaSpeedMultiplier = 30;
       let _fakeTs = performance.now();
-      window.requestAnimationFrame = (cb) => setTimeout(() => { _fakeTs += 16.667 * 30; cb(_fakeTs); }, 0);
+      window.requestAnimationFrame = (cb) => {
+        const ch = new MessageChannel();
+        _fakeTs += 16.667 * 30;
+        const ts = _fakeTs;
+        ch.port1.onmessage = () => cb(ts);
+        ch.port2.postMessage(0);
+      };
       AI1_FACTION_IDX = p1Idx;
       AI_FACTION_IDX = p2Idx;
       AI_DIFFICULTY = diff;
@@ -7129,6 +7135,7 @@
       try {
         initGame();
         window.G = G;
+        G._speedMult = 40;
         window.__qaInitError = null;
       } catch (e) {
         window.__qaInitError = e.message + '\n' + (e.stack || '');
