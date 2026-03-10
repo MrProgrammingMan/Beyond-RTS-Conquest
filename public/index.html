@@ -31,7 +31,7 @@
       --fs-md: clamp(.82rem, 1.25vw, 1.1rem);
       --fs-lg: clamp(1rem, 1.8vw, 1.5rem);
       --fs-xl: clamp(1.3rem, 3vw, 2.6rem);
-      --fs-xxl: clamp(1.8rem, 5vw, 4rem);
+      --fs-xxl: clamp(1.4rem, 3vw, 2.4rem);
       --hud: clamp(130px, 22vh, 200px);
       --gap: clamp(3px, .4vw, 7px);
     }
@@ -514,7 +514,8 @@
 
     /* MENU */
     #sc-menu {
-      overflow: hidden;
+      overflow-y: auto;
+      justify-content: flex-start;
     }
 
     #menu-canvas {
@@ -539,15 +540,17 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: clamp(24px, 4vh, 56px);
+      gap: clamp(12px, 2.2vh, 36px);
+      padding-top: clamp(16px, 3vh, 40px);
+      padding-bottom: clamp(56px, 8vh, 80px);
     }
 
     .menu-eyebrow {
-      font-size: var(--fs-sm);
-      letter-spacing: .4em;
+      font-size: var(--fs-xs);
+      letter-spacing: .3em;
       color: var(--gold);
-      opacity: .7;
-      margin-bottom: .5em;
+      opacity: .85;
+      margin-bottom: .3em;
     }
 
     .menu-title {
@@ -562,7 +565,7 @@
     .menu-btns {
       display: flex;
       flex-direction: column;
-      gap: clamp(5px, .9vh, 11px);
+      gap: clamp(4px, .7vh, 9px);
       align-items: center;
       width: clamp(260px, 30vw, 400px);
     }
@@ -2917,14 +2920,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: clamp(6px, 1vh, 12px) clamp(4px, .5vw, 8px);
+      gap: 2px;
+      padding: 4px 3px;
       cursor: pointer;
       transition: border-color .14s;
       position: relative;
       overflow: hidden;
       min-width: 0;
-      min-height: clamp(80px, 12vh, 130px);
+      min-height: clamp(52px, 7vh, 80px);
     }
 
     .bfcard:hover {
@@ -2945,7 +2948,7 @@
     }
 
     .bfcard-icon {
-      font-size: clamp(2.5rem, 5.5vh, 4.5rem);
+      font-size: clamp(.9rem, 1.8vh, 1.4rem);
       line-height: 1;
     }
 
@@ -2964,10 +2967,11 @@
 
     .bfcard-name {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-size: clamp(.6rem, .9vw, .8rem);
       color: var(--gold);
-      letter-spacing: .05em;
+      letter-spacing: .03em;
       text-align: center;
+      line-height: 1;
     }
 
     .bfcard-meta {
@@ -2980,7 +2984,7 @@
 
     .bfcard-cost {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(1rem, 1.4vw, 1.2rem);
+      font-size: clamp(.6rem, .85vw, .78rem);
       color: var(--soul);
     }
 
@@ -3250,67 +3254,194 @@
 
     /* ── ONLINE MULTIPLAYER ─────────────────────────────────── */
     #sc-online {
-      background: #07070f;
+      background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(116, 185, 255, .06), transparent 65%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(212, 168, 67, .05), transparent 60%), #07070f;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding: clamp(20px, 4vh, 50px) clamp(16px, 4vw, 60px);
-      gap: clamp(14px, 2.5vh, 28px);
+      padding: clamp(16px, 3vh, 36px) clamp(16px, 4vw, 60px) clamp(20px, 4vh, 50px);
+      gap: clamp(10px, 1.8vh, 22px);
       overflow-y: auto;
     }
 
     #online-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(.7rem, 1.1vw, .9rem);
-      color: rgba(212, 168, 67, .7);
-      letter-spacing: .08em;
-      min-height: 1.4em;
-      text-align: center;
+      font-size: clamp(.68rem, 1vw, .82rem);
+      letter-spacing: .07em;
+      background: rgba(0, 0, 0, .45);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 16px;
+      min-height: 1.9em;
+    }
+
+    #online-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #555;
+      flex-shrink: 0;
+      transition: background .3s;
+    }
+
+    #online-status-text {
+      color: rgba(212, 168, 67, .65);
+    }
+
+    @keyframes dotPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.75);
+      }
     }
 
     #online-panels {
       display: flex;
-      gap: clamp(16px, 3vw, 40px);
+      gap: clamp(12px, 2vw, 28px);
       align-items: flex-start;
       justify-content: center;
       flex-wrap: wrap;
       width: 100%;
-      max-width: 820px;
+      max-width: 980px;
     }
 
     .online-panel {
       flex: 1;
-      min-width: 240px;
-      max-width: 340px;
-      background: rgba(0, 0, 0, .4);
+      min-width: 280px;
+      max-width: 440px;
+      background: rgba(255, 255, 255, .025);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: clamp(16px, 2.5vh, 26px) clamp(14px, 2vw, 22px);
+      border-radius: 12px;
+      padding: clamp(18px, 3vh, 30px) clamp(18px, 2.5vw, 30px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .online-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(212, 168, 67, .5), transparent);
+    }
+
+    #panel-quickmatch::before {
+      background: linear-gradient(90deg, transparent, rgba(116, 185, 255, .6), transparent);
+    }
+
+    .online-panel-icon {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1;
+      margin-bottom: -4px;
     }
 
     .online-panel-title {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1rem, 1.6vw, 1.3rem);
+      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
       font-weight: 700;
       color: var(--gold);
-      letter-spacing: .1em;
+      letter-spacing: .12em;
+    }
+
+    #panel-quickmatch .online-panel-title {
+      color: #74b9ff;
     }
 
     .online-panel-sub {
-      font-size: clamp(.65rem, 1vw, .82rem);
+      font-size: clamp(.66rem, .95vw, .8rem);
       color: var(--dim);
       text-align: center;
       letter-spacing: .04em;
+      line-height: 1.55;
+      max-width: 320px;
+    }
+
+    .online-sep {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0;
+    }
+
+    /* Mode selector */
+    .mode-sel-label {
+      font-family: Rajdhani, sans-serif;
+      font-size: .62rem;
+      color: var(--dim);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      align-self: flex-start;
+    }
+
+    .mode-sel-group {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .mode-sel-btn {
+      flex: 1;
+      font-family: Rajdhani, sans-serif;
+      font-size: clamp(.68rem, 1vw, .82rem);
+      font-weight: 700;
+      letter-spacing: .07em;
+      padding: 7px 4px;
+      background: rgba(0, 0, 0, .35);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 6px;
+      color: var(--dim);
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+      text-align: center;
+    }
+
+    .mode-sel-btn:hover {
+      background: rgba(255, 255, 255, .07);
+      color: var(--text);
+    }
+
+    .mode-sel-btn.ms-active {
+      background: rgba(212, 168, 67, .15);
+      border-color: rgba(212, 168, 67, .55);
+      color: var(--gold);
+    }
+
+    #panel-quickmatch .mode-sel-btn.ms-active {
+      background: rgba(116, 185, 255, .12);
+      border-color: rgba(116, 185, 255, .5);
+      color: #74b9ff;
     }
 
     .online-btn {
       width: 100%;
-      padding: 10px 0;
-      font-size: clamp(.8rem, 1.2vw, 1rem) !important;
+      padding: 11px 0;
+      font-size: clamp(.82rem, 1.2vw, 1.02rem) !important;
+    }
+
+    #panel-quickmatch .online-btn.primary {
+      background: linear-gradient(135deg, rgba(116, 185, 255, .2), rgba(116, 185, 255, .08)) !important;
+      border-color: rgba(116, 185, 255, .5) !important;
+      color: #74b9ff !important;
+    }
+
+    #panel-quickmatch .online-btn.primary:hover {
+      background: linear-gradient(135deg, rgba(116, 185, 255, .3), rgba(116, 185, 255, .15)) !important;
     }
 
     .online-hint {
@@ -3331,14 +3462,19 @@
 
     #room-code-display {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-size: clamp(2rem, 4vw, 3.2rem);
       font-weight: 700;
       color: var(--p1);
-      letter-spacing: .25em;
+      letter-spacing: .3em;
       text-align: center;
-      text-shadow: 0 0 20px var(--p1g);
+      text-shadow: 0 0 24px var(--p1g);
       cursor: pointer;
       user-select: all;
+      transition: opacity .15s;
+    }
+
+    #room-code-display:hover {
+      opacity: .8;
     }
 
     .online-join-row {
@@ -3351,15 +3487,16 @@
       flex: 1;
       background: rgba(0, 0, 0, .5);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       color: var(--text);
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(.9rem, 1.4vw, 1.1rem);
-      letter-spacing: .2em;
-      padding: 6px 10px;
+      font-size: clamp(.9rem, 1.4vw, 1.15rem);
+      letter-spacing: .25em;
+      padding: 8px 10px;
       text-align: center;
       text-transform: uppercase;
       outline: none;
+      transition: border-color .15s;
     }
 
     .online-input:focus {
@@ -3371,10 +3508,35 @@
       align-items: center;
       justify-content: center;
       font-family: Rajdhani, sans-serif;
-      font-size: .9rem;
+      font-size: .82rem;
       color: var(--dim);
       letter-spacing: .1em;
       padding: 0 4px;
+      opacity: .6;
+    }
+
+    #online-or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--dim);
+      font-family: Rajdhani, sans-serif;
+      font-size: .8rem;
+      letter-spacing: .15em;
+      opacity: .5;
+      align-self: center;
+      width: 100%;
+      max-width: 40px;
+      flex-direction: column;
+    }
+
+    #online-or-divider::before,
+    #online-or-divider::after {
+      content: '';
+      flex: 1;
+      height: 60px;
+      width: 1px;
+      background: var(--border);
     }
 
     #online-connecting {
@@ -3390,9 +3552,9 @@
     }
 
     .online-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(212, 168, 67, .2);
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(212, 168, 67, .15);
       border-top-color: var(--gold);
       border-radius: 50%;
       animation: spin .8s linear infinite;
@@ -3416,8 +3578,13 @@
       font-size: clamp(.7rem, 1vw, .85rem) !important;
       padding: 6px 18px !important;
       background: transparent !important;
-      border-color: var(--border) !important;
+      border-color: rgba(255, 255, 255, .12) !important;
+      color: rgba(255, 255, 255, .3) !important;
+    }
+
+    .online-back-btn:hover {
       color: var(--dim) !important;
+      border-color: var(--border) !important;
     }
 
     #online-badge {
@@ -3438,11 +3605,44 @@
       pointer-events: none;
     }
 
+    /* Online draft — locked state when it's opponent's turn */
+    #sc-draft.online-draft-active .fcards-scroll {
+      transition: opacity .25s;
+    }
+
+    #sc-draft.online-draft-active.opponent-turn .fcards-scroll,
+    #sc-draft.online-draft-active.opponent-turn #btn-draft-start {
+      opacity: 0.32;
+      pointer-events: none;
+    }
+
+    #online-draft-status {
+      display: none;
+      position: fixed;
+      bottom: 72px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 10, 18, .88);
+      border: 1px solid rgba(212, 168, 67, .35);
+      border-radius: 8px;
+      padding: 7px 22px;
+      font-family: Rajdhani, sans-serif;
+      font-size: .82rem;
+      color: rgba(212, 168, 67, .9);
+      letter-spacing: .06em;
+      z-index: 900;
+      white-space: nowrap;
+    }
+
+    #sc-draft.online-draft-active #online-draft-status {
+      display: block;
+    }
+
     #online-dc-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, .85);
+      background: rgba(0, 0, 0, .88);
       z-index: 600;
       flex-direction: column;
       align-items: center;
@@ -4606,7 +4806,8 @@
         MUTE</button>
       <button class="btn" onclick="_goFullscreen()" id="btn-fullscreen-menu"
         style="font-size:clamp(.6rem,.9vw,.8rem);padding:5px 14px;letter-spacing:.1em;border-color:rgba(212,168,67,.4);color:rgba(212,168,67,.85);">⛶
-        FULLSCREEN</button>
+        FULLSCREEN <span id="menu-fs-key-badge"
+          style="margin-left:5px;font-size:.75em;opacity:.65;background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);border-radius:3px;padding:1px 5px;letter-spacing:.05em;"></span></button>
       <span
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.44rem,.68vw,.58rem);color:var(--dim);letter-spacing:.07em;opacity:.55;">BEYOND
         RTS CONQUEST · v1.0</span>
@@ -4614,97 +4815,118 @@
   </div>
   <!-- AI VS AI mode label inlined into faction screen JS -->
   <!-- ONLINE MULTIPLAYER -->
-  <div id="sc-online" class="screen" style="background:#07070f;">
-    <div class="sc-title" style="font-size:clamp(1.1rem,2vw,1.5rem);margin-bottom:0;">🌐 ONLINE PLAY</div>
-    <div id="online-status-bar">Not connected</div>
+  <div id="sc-online" class="screen">
 
+    <!-- Header -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:7px;">
+      <div class="sc-title" style="font-size:clamp(1.15rem,2.2vw,1.6rem);margin-bottom:0;">🌐 ONLINE PLAY</div>
+      <div id="online-status-bar">
+        <span id="online-status-dot"></span>
+        <span id="online-status-text">Not connected</span>
+      </div>
+    </div>
+
+    <!-- Panels -->
     <div id="online-panels">
 
-      <!-- ── QUICK MATCH ────────────────────────────────── -->
+      <!-- ─── QUICK MATCH ─────────────────────────────────────── -->
       <div class="online-panel" id="panel-quickmatch">
-        <div class="online-panel-title">⚡ QUICK MATCH</div>
-        <div class="online-panel-sub">Get paired with a random opponent automatically. No code needed — just click and
-          wait.</div>
-        <button class="btn primary online-btn" id="btn-quickmatch">FIND MATCH</button>
+        <div class="online-panel-icon">⚡</div>
+        <div class="online-panel-title">QUICK MATCH</div>
+        <div class="online-panel-sub">Get instantly paired with a random opponent. No codes, no setup — just pick a mode
+          and play.</div>
+
+        <div class="online-sep"></div>
+
+        <div class="mode-sel-label">GAME MODE</div>
+        <div class="mode-sel-group" id="qm-mode-btns">
+          <button class="mode-sel-btn ms-active" data-mode="vs">⚔ Standard</button>
+          <button class="mode-sel-btn" data-mode="sudden_death">⚡ Sudden</button>
+          <button class="mode-sel-btn" data-mode="conquest">🏴 Conquest</button>
+          <button class="mode-sel-btn" data-mode="draft">🃏 Draft</button>
+        </div>
+
+        <button class="btn primary online-btn" id="btn-quickmatch">⚡ FIND MATCH</button>
         <div class="online-error" id="qm-error"></div>
-        <!-- Status shown while searching -->
         <div class="online-hint" id="quickmatch-status" style="display:none;"></div>
         <button class="btn" id="btn-cancel-qm"
-          style="display:none;width:100%;font-size:.78rem;padding:6px 0;margin-top:2px;opacity:.7;"
-          onclick="NET.cancelSearch()">✕ CANCEL SEARCH</button>
+          style="display:none;width:100%;font-size:.78rem;padding:7px 0;opacity:.7;" onclick="NET.cancelSearch()">✕
+          CANCEL SEARCH</button>
       </div>
 
-      <div class="online-divider" style="align-self:center;padding:20px 0;">— OR —</div>
+      <!-- vertical OR divider -->
+      <div id="online-or-divider">OR</div>
 
-      <!-- ── PRIVATE ROOM ───────────────────────────────── -->
+      <!-- ─── PRIVATE ROOM ─────────────────────────────────────── -->
       <div class="online-panel" id="panel-private">
-        <div class="online-panel-title">🔒 PRIVATE ROOM</div>
-        <div class="online-panel-sub">Play with a specific friend. Create a room, share the code, they enter it to join.
+        <div class="online-panel-icon">🔒</div>
+        <div class="online-panel-title">PRIVATE ROOM</div>
+        <div class="online-panel-sub">Play with a friend. Create a room and share the 4-letter code, or enter theirs to
+          join instantly.</div>
+
+        <div class="online-sep"></div>
+
+        <div class="mode-sel-label">GAME MODE</div>
+        <div class="mode-sel-group" id="room-mode-btns">
+          <button class="mode-sel-btn ms-active" data-mode="vs">⚔ Standard</button>
+          <button class="mode-sel-btn" data-mode="sudden_death">⚡ Sudden</button>
+          <button class="mode-sel-btn" data-mode="conquest">🏴 Conquest</button>
+          <button class="mode-sel-btn" data-mode="draft">🃏 Draft</button>
         </div>
 
-        <!-- CREATE section -->
-        <div style="width:100%;display:flex;flex-direction:column;gap:8px;align-items:center;">
-          <div
-            style="font-family:Rajdhani,sans-serif;font-size:.68rem;color:var(--dim);letter-spacing:.08em;text-align:center;">
-            STEP 1 — CREATE YOUR ROOM</div>
-          <button class="btn online-btn" id="btn-createroom">🏠 CREATE ROOM</button>
-          <!-- Shown after room is created -->
-          <div id="created-room-info"
-            style="display:none;flex-direction:column;align-items:center;gap:6px;width:100%;padding:10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.25);border-radius:6px;">
-            <div style="font-family:Rajdhani,sans-serif;font-size:.65rem;color:var(--dim);letter-spacing:.08em;">YOUR
-              ROOM CODE — share with your friend:</div>
-            <div id="room-code-display" title="Click to copy"
-              onclick="(function(el){const c=el.dataset.code||el.textContent;navigator.clipboard&&navigator.clipboard.writeText(c);const o=el.textContent;el.textContent='✓ COPIED!';setTimeout(()=>el.textContent=o,1400);})(this)">
-            </div>
-            <div style="font-size:.62rem;color:var(--dim);opacity:.7;">Click the code to copy it</div>
-            <div id="waiting-for-friend"
-              style="font-family:Rajdhani,sans-serif;font-size:.8rem;color:rgba(212,168,67,.85);letter-spacing:.05em;text-align:center;">
-              ⏳ Waiting for your friend to join…</div>
-            <button class="btn" style="font-size:.72rem;padding:4px 14px;opacity:.6;margin-top:2px;"
-              onclick="NET.cancelSearch()">✕ CANCEL</button>
+        <div class="online-sep"></div>
+
+        <!-- CREATE -->
+        <button class="btn online-btn" id="btn-createroom">🏠 CREATE ROOM</button>
+        <div id="created-room-info"
+          style="display:none;flex-direction:column;align-items:center;gap:6px;width:100%;padding:12px 10px;background:rgba(0,0,0,.3);border:1px solid rgba(212,168,67,.25);border-radius:8px;">
+          <div style="font-family:Rajdhani,sans-serif;font-size:.63rem;color:var(--dim);letter-spacing:.1em;">YOUR ROOM
+            CODE — click to copy</div>
+          <div id="room-code-display" title="Click to copy"
+            onclick="(function(el){const c=el.dataset.code||el.textContent;navigator.clipboard&&navigator.clipboard.writeText(c);const o=el.textContent;el.textContent='✓ COPIED!';setTimeout(()=>el.textContent=o,1400);})(this)">
           </div>
+          <div id="waiting-for-friend"
+            style="font-family:Rajdhani,sans-serif;font-size:.78rem;color:rgba(212,168,67,.85);letter-spacing:.05em;text-align:center;">
+            ⏳ Waiting for friend…</div>
+          <button class="btn" style="font-size:.7rem;padding:4px 14px;opacity:.55;" onclick="NET.cancelSearch()">✕
+            CANCEL</button>
         </div>
 
-        <div class="online-divider" style="width:100%;margin:4px 0;font-size:.7rem;">— or join a friend's room —</div>
+        <div class="online-divider" style="width:100%;margin:2px 0;font-size:.7rem;">— or join a friend's room —</div>
 
-        <!-- JOIN section -->
-        <div style="width:100%;display:flex;flex-direction:column;gap:8px;align-items:center;">
-          <div
-            style="font-family:Rajdhani,sans-serif;font-size:.68rem;color:var(--dim);letter-spacing:.08em;text-align:center;">
-            STEP 2 — ENTER YOUR FRIEND'S CODE</div>
-          <div class="online-join-row">
-            <input class="online-input" id="room-code-input" maxlength="6" placeholder="A B C D" autocomplete="off"
-              spellcheck="false" style="letter-spacing:.3em;text-align:center;text-transform:uppercase;" />
-            <button class="btn online-btn" id="btn-joinroom" style="flex:0;white-space:nowrap;padding:6px 18px;">JOIN
-              →</button>
-          </div>
-          <div class="online-error" id="join-error"></div>
-          <div class="online-error" id="room-error"></div>
+        <!-- JOIN -->
+        <div class="online-join-row">
+          <input class="online-input" id="room-code-input" maxlength="6" placeholder="ABCD" autocomplete="off"
+            spellcheck="false" />
+          <button class="btn online-btn" id="btn-joinroom" style="flex:0;white-space:nowrap;padding:8px 20px;">JOIN
+            →</button>
         </div>
+        <div class="online-error" id="join-error"></div>
+        <div class="online-error" id="room-error"></div>
       </div>
     </div>
 
     <button class="btn online-back-btn" id="btn-online-back">← BACK TO MENU</button>
 
-    <!-- Connecting overlay (full-screen spinner) -->
+    <!-- Full-screen connecting overlay -->
     <div id="online-connecting" style="display:none;">
       <div class="online-spinner"></div>
       <div id="online-connecting-msg">Connecting…</div>
       <div
-        style="font-family:Rajdhani,sans-serif;font-size:.7rem;color:var(--dim);text-align:center;max-width:260px;line-height:1.5;">
-        First connection may take 30–60 seconds if the server is waking up from sleep.
+        style="font-family:Rajdhani,sans-serif;font-size:.72rem;color:var(--dim);text-align:center;max-width:240px;line-height:1.6;">
+        First connection may take 30–60s if the server is waking up.
       </div>
       <button class="btn" style="font-size:.82rem;padding:6px 20px;" onclick="NET.cancelSearch()">✕ CANCEL</button>
     </div>
 
     <div id="online-badge" style="display:none;">🟢 ONLINE</div>
     <div id="online-dc-overlay">
-      <div class="dc-title">⚠ DISCONNECTED</div>
-      <div style="font-family:Rajdhani,sans-serif;font-size:.9rem;color:var(--dim);">Connection to opponent lost.</div>
+      <div class="dc-title">⚠ OPPONENT DISCONNECTED</div>
+      <div style="font-family:Rajdhani,sans-serif;font-size:.95rem;color:var(--dim);">Your opponent left or lost
+        connection.</div>
       <button class="btn" onclick="NET.cleanup()" style="margin-top:8px;">← RETURN TO MENU</button>
     </div>
   </div>
-
   <!-- FACTION -->
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
@@ -4818,6 +5040,8 @@
         style="font-family:'Rajdhani', sans-serif;font-size:clamp(.55rem,.9vw,.72rem);color:var(--dim);letter-spacing:.07em;text-align:center;"></span>
       <button class="btn primary" id="btn-draft-start" disabled>START BATTLE →</button>
     </div>
+    <!-- Online draft — floating status pill -->
+    <div id="online-draft-status">⏳ Waiting for opponent…</div>
   </div>
   <!-- DEV PANEL -->
   <!-- Dev overlay is now just a small keep-alive element for legacy refs -->
@@ -4893,6 +5117,19 @@
           </div>
         </div>
       </div>
+      <div class="rebind-section-title">⛶ GLOBAL KEYS</div>
+      <div class="rebind-grid" style="max-width:360px;">
+        <div class="rebind-col">
+          <div class="rebind-row"><span>⛶ Fullscreen toggle</span><button class="rkey" id="rk-fullscreen"></button>
+          </div>
+          <div class="rebind-row" style="opacity:.5;pointer-events:none;"><span>⏸ Pause</span><kbd
+              style="font-family:monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:2px 6px;border-radius:3px;">ESC</kbd>
+          </div>
+          <div class="rebind-row" style="opacity:.5;pointer-events:none;"><span>🔇 Mute</span><kbd
+              style="font-family:monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:2px 6px;border-radius:3px;">M</kbd>
+          </div>
+        </div>
+      </div>
       <div class="rebind-section-title">⚡ DIRECT SPAWN HOTKEYS <span
           style="font-size:.65rem;color:var(--dim);font-family:sans-serif;font-weight:normal;margin-left:8px;">Optional
           — press a key to assign, click CLEAR to remove</span></div>
@@ -4958,8 +5195,10 @@
         <div class="ctrl-panel ctrl-p2" id="ctrl-p2-panel">
           <h3>PLAYER 2</h3>
         </div>
-        <div class="ctrl-panel" style="text-align:center;">
-          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause </div>
+        <div class="ctrl-panel" id="ctrl-global-panel" style="text-align:center;">
+          <div class="ctrl-row" style="justify-content:center;"><kbd>ESC</kbd> Pause</div>
+          <div class="ctrl-row" style="justify-content:center;"><kbd id="ctrl-fs-key-badge">`</kbd> Fullscreen <span
+              style="font-size:.7em;color:var(--gold);">(rebindable)</span></div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);">Modes: UNITS →
             UPGRADES → BUFFS</div>
           <div class="ctrl-row" style="justify-content:center;font-size:var(--fs-xs);color:var(--dim);margin-top:4px;">
@@ -4969,7 +5208,8 @@
       <div
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.6rem,.9vw,.75rem);color:var(--dim);letter-spacing:.06em;text-align:center;margin-top:8px;line-height:1.8;border-top:1px solid var(--border);padding-top:10px;max-width:620px;margin-left:auto;margin-right:auto;">
         GLOBAL KEYS: &nbsp;<b style="color:var(--text)">ESC</b> = Pause &nbsp;·&nbsp; <b style="color:var(--text)">M</b>
-        = Mute audio &nbsp;·&nbsp; <b style="color:var(--text)">F11</b> = Fullscreen &nbsp;·&nbsp; <b
+        = Mute &nbsp;·&nbsp; <span id="global-fs-key-label"></span> = Fullscreen <span
+          style="color:var(--gold);font-size:.85em;">(rebindable — see Key Bindings)</span> &nbsp;·&nbsp; <b
           style="color:var(--text)">←/→</b> = Vote during events</div>
       <button class="btn" id="btn-ctrl-back">← BACK</button>
     </div>
@@ -5051,7 +5291,8 @@
     </div>
     <div id="ingame-mode-badge">VS</div>
     <div id="ingame-util-btns"><button class="ingame-util-btn mute-btn" onclick="toggleMute()">🔊 MUTE</button><button
-        class="ingame-util-btn" onclick="_goFullscreen()">⛶ FULL</button></div>
+        class="ingame-util-btn" onclick="_goFullscreen()" id="btn-ingame-full"
+        title="Toggle Fullscreen (` — rebindable in Controls)">⛶ FULL</button></div>
     <div id="hud">
       <div class="player-hud" id="p1-hud">
         <div class="hud-info">
@@ -5171,26 +5412,26 @@
   <div id="touch-controls" style="display:none">
     <div class="touch-half" id="touch-p1">
       <div class="touch-row">
-        <button class="touch-btn" ontouchstart="navigate(1,-1)" ontouchend="">◀</button>
-        <button class="touch-btn touch-act" ontouchstart="activate(1)" ontouchend="">SPAWN</button>
-        <button class="touch-btn" ontouchstart="navigate(1,1)" ontouchend="">▶</button>
+        <button class="touch-btn" id="tb-p1-left">◀</button>
+        <button class="touch-btn touch-act" id="tb-p1-spawn">SPAWN</button>
+        <button class="touch-btn" id="tb-p1-right">▶</button>
       </div>
       <div class="touch-row">
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(1,-1)" ontouchend="">↑TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(1,1)" ontouchend="">↓TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="toggleWorkerMid(1)" ontouchend="">⛏MID</button>
+        <button class="touch-btn touch-sm" id="tb-p1-tabup">↑TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p1-tabdn">↓TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p1-mid">⛏MID</button>
       </div>
     </div>
     <div class="touch-half" id="touch-p2">
       <div class="touch-row">
-        <button class="touch-btn" ontouchstart="navigate(2,-1)" ontouchend="">◀</button>
-        <button class="touch-btn touch-act" ontouchstart="activate(2)" ontouchend="">SPAWN</button>
-        <button class="touch-btn" ontouchstart="navigate(2,1)" ontouchend="">▶</button>
+        <button class="touch-btn" id="tb-p2-left">◀</button>
+        <button class="touch-btn touch-act" id="tb-p2-spawn">SPAWN</button>
+        <button class="touch-btn" id="tb-p2-right">▶</button>
       </div>
       <div class="touch-row">
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(2,-1)" ontouchend="">↑TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="cycleMode(2,1)" ontouchend="">↓TAB</button>
-        <button class="touch-btn touch-sm" ontouchstart="toggleWorkerMid(2)" ontouchend="">⛏MID</button>
+        <button class="touch-btn touch-sm" id="tb-p2-tabup">↑TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p2-tabdn">↓TAB</button>
+        <button class="touch-btn touch-sm" id="tb-p2-mid">⛏MID</button>
       </div>
     </div>
   </div>
@@ -5305,6 +5546,7 @@
       let connected = false;
       let _onlineMode = false;
       let _qmTimeout = null;
+      let _createdRoomMode = 'vs'; // saved when host creates a room — used in opponentJoined
 
       const SERVER_URL = window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com';
 
@@ -5359,8 +5601,16 @@
         });
         socket.on('disconnect', () => {
           connected = false;
-          if (_onlineMode && typeof G !== 'undefined' && G && G.running) {
-            document.getElementById('online-dc-overlay').classList.add('show');
+          _stopStateSync();
+          if (_onlineMode) {
+            const onGame = document.getElementById('sc-game')?.classList.contains('active');
+            const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
+            if ((onGame || onFaction)) {
+              document.getElementById('online-dc-overlay').classList.add('show');
+              if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
+            } else {
+              setStatus('⚠ Connection lost', true);
+            }
           } else {
             setStatus('⚠ Disconnected — click any option to reconnect', true);
           }
@@ -5369,11 +5619,13 @@
         socket.on('waiting', () => {
           // In queue — dismiss the overlay so user can see they're actively searching
           hideConnecting();
+          const gm = (document.querySelector('#qm-mode-btns .ms-active') || {}).dataset?.mode || 'vs';
+          const modeLabel = ({ vs: 'Standard', sudden_death: 'Sudden Death', conquest: 'Conquest' })[gm] || gm;
           const el = document.getElementById('quickmatch-status');
-          if (el) { el.textContent = '⏳ In queue — searching for an opponent…'; el.style.display = ''; }
+          if (el) { el.textContent = `⏳ Searching for a ${modeLabel} opponent…`; el.style.display = ''; }
           const cancel = document.getElementById('btn-cancel-qm');
           if (cancel) cancel.style.display = '';
-          setStatus('⏳ In matchmaking queue — waiting for an opponent');
+          setStatus(`⏳ In queue — searching for ${modeLabel} match`);
           clearTimeout(_qmTimeout);
           _qmTimeout = setTimeout(() => {
             const qs = document.getElementById('quickmatch-status');
@@ -5410,8 +5662,8 @@
 
         socket.on('opponentJoined', () => {
           const wff = document.getElementById('waiting-for-friend');
-          if (wff) wff.textContent = '✓ Friend joined! Entering faction select…';
-          setTimeout(() => _enterFactionSelect('vs'), 800);
+          if (wff) wff.textContent = '✓ Friend joined! Entering…';
+          setTimeout(() => _enterFactionSelect(_createdRoomMode), 800);
         });
 
         socket.on('roomJoined', ({ code, pid, gameMode }) => {
@@ -5437,10 +5689,20 @@
           const theirPid = pid;
           const f = FACTIONS.find(f => f.id === factionId);
           if (!f) return;
-          // Dim-highlight the card they're hovering
+          // Faction-select screen: highlight on their column
           document.querySelectorAll(`#fcards-p${theirPid} .fcard`).forEach(c => c.classList.remove('opponent-hover'));
-          const cards = document.querySelectorAll(`#fcards-p${theirPid} .fcard`);
-          cards.forEach(c => { if (c.dataset.factionId === factionId) c.classList.add('opponent-hover'); });
+          document.querySelectorAll(`#fcards-p${theirPid} .fcard`).forEach(c => { if (c.dataset.factionId === factionId) c.classList.add('opponent-hover'); });
+          // Draft screen: show hover on BOTH columns (same card set) so you can see what they're eyeing
+          if (document.getElementById('sc-draft')?.classList.contains('active')) {
+            [1, 2].forEach(col => {
+              document.querySelectorAll(`#draft-fcards-p${col} .fcard`).forEach(c => {
+                const wasHover = c.classList.contains('opponent-hover');
+                const shouldHover = c.dataset.factionId === factionId && !c.classList.contains('draft-banned');
+                if (!wasHover && shouldHover) c.classList.add('opponent-hover');
+                else if (wasHover && !shouldHover) c.classList.remove('opponent-hover');
+              });
+            });
+          }
         });
 
         socket.on('startGame', ({ p1Faction, p2Faction, seed, gameMode }) => {
@@ -5463,6 +5725,7 @@
                 overlay.style.display = 'none';
                 initGame();
                 showScreen('sc-game');
+                _startStateSync();
                 return;
               }
               numEl.textContent = n;
@@ -5475,6 +5738,7 @@
           } else {
             initGame();
             showScreen('sc-game');
+            _startStateSync();
           }
         });
 
@@ -5502,7 +5766,14 @@
         });
 
         socket.on('opponentDisconnected', () => {
-          if (_onlineMode) document.getElementById('online-dc-overlay').classList.add('show');
+          if (_onlineMode) {
+            const onGame = document.getElementById('sc-game')?.classList.contains('active');
+            const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
+            if (onGame || onFaction) {
+              document.getElementById('online-dc-overlay').classList.add('show');
+              if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
+            }
+          }
         });
       }
 
@@ -5529,11 +5800,84 @@
       }
 
       function _enterFactionSelect(gameMode) {
+        if (gameMode === 'draft') { _enterOnlineDraft(); return; }
         GAME_MODE = gameMode || 'vs';
         window._pendingPlayerSetup = 'vs';
         _onlineMode = true;   // must be true NOW so isOnline() works during faction select
         showScreen('sc-faction');
         _setupOnlineFactionScreen();
+      }
+
+      function _enterOnlineDraft() {
+        GAME_MODE = 'draft';
+        _onlineMode = true;
+        // Reset shared draft state
+        DRAFT = { state: 'p1ban1', banned: [], bansByPlayer: [[], []], picks: [null, null], cursors: [0, 0] };
+        fSelected = [null, null];
+        P1_FACTION = null; P2_FACTION = null;
+        _buildDraftCards();
+        _updateDraftBanner();
+        document.getElementById('btn-draft-start').disabled = true;
+
+        const sc = document.getElementById('sc-draft');
+        sc.classList.add('online-draft-active');
+
+        // Label players with their side
+        const p1label = document.getElementById('draft-p1-label');
+        const p2label = document.getElementById('draft-p2-label');
+        if (p1label) p1label.textContent = myPid === 1 ? '🔵 YOU (P1)' : '🔵 PLAYER 1';
+        if (p2label) p2label.textContent = myPid === 2 ? '🔴 YOU (P2)' : '🔴 PLAYER 2';
+
+        // Hide back/start buttons — handled by online flow
+        const backBtn = document.getElementById('btn-draft-back');
+        if (backBtn) backBtn.style.display = 'none';
+        const startBtn = document.getElementById('btn-draft-start');
+        if (startBtn) startBtn.style.display = 'none';
+
+        showScreen('sc-draft');
+        _updateOnlineDraftLock();
+        _draftMoveCursor(1, 0);
+        _draftMoveCursor(2, 0);
+        setStatus(`You are Player ${myPid} — draft is live`);
+      }
+
+      function _updateOnlineDraftLock() {
+        if (!_onlineMode || GAME_MODE !== 'draft') return;
+        const sc = document.getElementById('sc-draft');
+        if (!sc) return;
+        const activePid = _draftActivePid();
+        const isMyTurnNow = (activePid === myPid);
+        const isDone = DRAFT.state === 'done';
+        sc.classList.toggle('opponent-turn', !isMyTurnNow && !isDone);
+        const statusEl = document.getElementById('online-draft-status');
+        if (statusEl) {
+          if (isDone) {
+            statusEl.textContent = '✓ Draft complete — starting battle…';
+          } else if (isMyTurnNow) {
+            const stepInfo = DRAFT_STEP_LABELS[DRAFT.state];
+            const action = DRAFT.state.includes('ban') ? 'BAN' : 'PICK';
+            statusEl.textContent = `⚡ YOUR TURN — ${action} a faction`;
+          } else {
+            statusEl.textContent = '⏳ Waiting for opponent…';
+          }
+        }
+      }
+
+      function sendDraftAction(fi) {
+        if (!_onlineMode || !socket || !connected) return;
+        socket.emit('gameAction', { type: 'draftAction', fi, pid: myPid });
+      }
+
+      function _onlineDraftDone() {
+        // Draft finished — each player sends their picked faction; server fires startGame
+        const pickedFi = DRAFT.picks[myPid - 1];
+        if (pickedFi === null || pickedFi === undefined) return;
+        const faction = FACTIONS[pickedFi];
+        if (!faction) return;
+        _updateOnlineDraftLock();
+        setTimeout(() => {
+          if (socket && _onlineMode) socket.emit('factionSelected', { factionId: faction.id });
+        }, 400);
       }
 
       function _setupOnlineFactionScreen() {
@@ -5562,12 +5906,100 @@
       // ── Action relay ──────────────────────────────────────────────────
       function sendAction(action) {
         if (!_onlineMode || !socket || !connected) return;
+        // Attach resource snapshot so recipient can reconcile before executing
+        if (typeof G !== 'undefined' && G && action.pid) {
+          const p = G.players[action.pid - 1];
+          if (p) action._res = { souls: p.souls, bodies: p.bodies };
+        }
         socket.emit('gameAction', action);
       }
 
+      // ── Periodic full-state sync ──────────────────────────────────────
+      let _syncInterval = null;
+      function _startStateSync() {
+        if (_syncInterval) clearInterval(_syncInterval);
+        _syncInterval = setInterval(_broadcastStateSync, 2500);
+      }
+      function _stopStateSync() {
+        if (_syncInterval) { clearInterval(_syncInterval); _syncInterval = null; }
+      }
+
+      function _broadcastStateSync() {
+        if (!_onlineMode || !socket || !connected || typeof G === 'undefined' || !G || !G.running) return;
+        // Each player is authoritative for their OWN data — send only your own player state.
+        // P1 additionally sends unit positions (cheaper than both doing it).
+        const p = G.players[myPid - 1];
+        const syncPayload = {
+          type: 'stateSync',
+          pid: myPid,
+          res: {
+            souls: p.souls, bodies: p.bodies, baseHp: p.baseHp,
+            unitCap: p.unitCap, workerCap: p.workerCap || 3,
+            despStacks: p.despStacks || 0
+          },
+          midOwner: G.midOwner,
+          midOwnerTimer: G.midOwnerTimer || 0,
+          elapsed: G.elapsed || 0,
+        };
+        // P1 (host) also syncs all unit positions + HP as the authoritative simulation
+        if (myPid === 1) {
+          syncPayload.units = G.units.map(u => ({
+            id: u.id, x: Math.round(u.x), y: Math.round(u.y),
+            hp: Math.round(u.hp), player: u.player, dead: u.dead
+          }));
+        }
+        socket.emit('gameAction', syncPayload);
+      }
+
       function _executeRemoteAction(action) {
-        if (typeof G === 'undefined' || !G || !G.running) return;
+        // stateSync handled even when game is momentarily paused
+        if (action.type === 'stateSync') {
+          if (typeof G === 'undefined' || !G) return;
+          const remotePid = action.pid;
+          const rp = G.players[remotePid - 1];
+          if (!rp) return;
+          const res = action.res;
+          // Apply opponent's authoritative resource state (smooth blend to avoid HUD flicker)
+          rp.souls = res.souls;
+          rp.bodies = res.bodies;
+          // Only lower base HP (never restore it remotely — prevents desync of death)
+          if (res.baseHp < rp.baseHp) rp.baseHp = res.baseHp;
+          rp.unitCap = res.unitCap;
+          rp.workerCap = res.workerCap;
+          rp.despStacks = res.despStacks;
+          // Sync shared world state (from whoever sent it — both send midOwner, take latest)
+          if (Math.abs((action.elapsed || 0) - (G.elapsed || 0)) < 5) {
+            G.midOwner = action.midOwner;
+            G.midOwnerTimer = action.midOwnerTimer;
+          }
+          // P1 also sends unit positions — apply as authoritative corrections (lerp to avoid snap)
+          if (action.units && Array.isArray(action.units)) {
+            action.units.forEach(snap => {
+              const u = G.units.find(u => u.id === snap.id);
+              if (!u) return;
+              if (snap.dead) { u.hp = 0; return; }
+              // Gentle lerp: 30% toward authoritative position per sync tick
+              u.x += (snap.x - u.x) * 0.3;
+              u.y += (snap.y - u.y) * 0.3;
+              u.hp = snap.hp;
+            });
+          }
+          return;
+        }
+
+        if (!G || !G.running) return;
         const { type, pid } = action;
+
+        // Reconcile resource state BEFORE executing the action so both machines
+        // start from identical values (fixes economy drift between frames)
+        if (action._res && G.players && pid) {
+          const p = G.players[pid - 1];
+          if (p) {
+            p.souls = action._res.souls;
+            p.bodies = action._res.bodies;
+          }
+        }
+
         let cardEl = null;
         if (action.cardIdx !== undefined) {
           const grid = document.getElementById(`p${pid}-grid`);
@@ -5596,6 +6028,13 @@
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
+          case 'draftAction': {
+            // Opponent made a draft move — apply it bypassing the active-player guard
+            if (GAME_MODE === 'draft' && NET.isOnline()) {
+              _draftConfirm(action.pid, action.fi, true /* isRemote */);
+            }
+            break;
+          }
         } // end switch
       } // end _executeRemoteAction
 
@@ -5615,32 +6054,42 @@
       }
 
       // ── Matchmaking entry points ──────────────────────────────────────
+      function _getSelectedMode(groupId) {
+        const active = document.querySelector(`#${groupId} .mode-sel-btn.ms-active`);
+        return active ? active.dataset.mode : 'vs';
+      }
+      const MODE_LABELS = { vs: 'Standard', sudden_death: 'Sudden Death', conquest: 'Conquest', draft: 'Draft' };
+
       function quickMatch() {
         _clearErrors();
+        const gm = _getSelectedMode('qm-mode-btns');
+        const label = MODE_LABELS[gm] || gm;
         if (socket && connected) {
           setStatus('✓ Connected — joining queue…');
-          showConnecting('Joining matchmaking queue…');
-          socket.emit('joinPublic', { gameMode: 'vs' });
+          showConnecting(`Finding ${label} match…`);
+          socket.emit('joinPublic', { gameMode: gm });
         } else {
           showConnecting('Connecting to server…');
           connect(() => {
-            document.getElementById('online-connecting-msg').textContent = 'Joining matchmaking queue…';
+            document.getElementById('online-connecting-msg').textContent = `Finding ${label} match…`;
             setStatus('✓ Connected — joining queue…');
-            socket.emit('joinPublic', { gameMode: 'vs' });
+            socket.emit('joinPublic', { gameMode: gm });
           });
         }
       }
 
       function createRoom() {
         _clearErrors();
+        const gm = _getSelectedMode('room-mode-btns');
+        _createdRoomMode = gm;
         if (socket && connected) {
           showConnecting('Creating room…');
-          socket.emit('createRoom', { gameMode: 'vs' });
+          socket.emit('createRoom', { gameMode: gm });
         } else {
           showConnecting('Connecting to server…');
           connect(() => {
             document.getElementById('online-connecting-msg').textContent = 'Creating room…';
-            socket.emit('createRoom', { gameMode: 'vs' });
+            socket.emit('createRoom', { gameMode: gm });
           });
         }
       }
@@ -5684,6 +6133,7 @@
 
       function cleanup() {
         clearTimeout(_qmTimeout);
+        _stopStateSync();
         _onlineMode = false; myPid = null; roomCode = null; _netRoomCode = '';
         connected = false;
         // UI reset
@@ -5708,6 +6158,18 @@
         if (backBtn) backBtn.style.display = '';
         const cdOverlay = document.getElementById('online-faction-countdown');
         if (cdOverlay) cdOverlay.style.display = 'none';
+        // Reset online draft state
+        const scDraft = document.getElementById('sc-draft');
+        if (scDraft) { scDraft.classList.remove('online-draft-active', 'opponent-turn'); }
+        const draftBack = document.getElementById('btn-draft-back');
+        if (draftBack) draftBack.style.display = '';
+        const draftStart = document.getElementById('btn-draft-start');
+        if (draftStart) { draftStart.style.display = ''; draftStart.disabled = true; }
+        const p1label = document.getElementById('draft-p1-label');
+        const p2label = document.getElementById('draft-p2-label');
+        if (p1label) p1label.textContent = '🔵 PLAYER 1';
+        if (p2label) p2label.textContent = '🔴 PLAYER 2';
+        _createdRoomMode = 'vs';
         if (socket) { socket.off(); socket.disconnect(); socket = null; }
         setStatus('Not connected');
         showScreen('sc-menu');
@@ -5719,8 +6181,18 @@
       }
 
       function setStatus(msg, isError) {
-        const el = document.getElementById('online-status-bar');
-        if (el) { el.textContent = msg; el.style.color = isError ? '#e74c3c' : 'rgba(212,168,67,.7)'; }
+        const dot = document.getElementById('online-status-dot');
+        const txt = document.getElementById('online-status-text');
+        if (txt) { txt.textContent = msg; txt.style.color = isError ? '#e74c3c' : 'rgba(212,168,67,.75)'; }
+        if (dot) {
+          dot.style.animation = '';
+          if (isError) { dot.style.background = '#e74c3c'; }
+          else if (msg.startsWith('✓') || msg.startsWith('🟢')) { dot.style.background = '#2ecc71'; }
+          else if (msg.startsWith('⏳') || msg.startsWith('⌛')) {
+            dot.style.background = '#f39c12';
+            dot.style.animation = 'dotPulse .9s ease-in-out infinite';
+          } else { dot.style.background = '#555'; }
+        }
       }
 
       function showConnecting(msg) {
@@ -5743,19 +6215,30 @@
       return {
         isOnline, getPid, isMyTurn, sendAction, sendFaction, sendHover, requestEvent,
         reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
-        joinRoom, cancelSearch, cleanup, setStatus
+        joinRoom, cancelSearch, cleanup, setStatus,
+        sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone
       };
     })();
 
-    // Wire online lobby buttons
+    // Wire online lobby buttons + mode selectors
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('btn-quickmatch').addEventListener('click', () => NET.quickMatch());
       document.getElementById('btn-createroom').addEventListener('click', () => NET.createRoom());
       document.getElementById('btn-joinroom').addEventListener('click', () => NET.joinRoom(document.getElementById('room-code-input').value));
       document.getElementById('btn-online-back').addEventListener('click', () => NET.cleanup());
       document.getElementById('room-code-input').addEventListener('keydown', e => { if (e.key === 'Enter') NET.joinRoom(e.target.value); });
-      // Uppercase input as you type
       document.getElementById('room-code-input').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase(); });
+      // Mode selector groups
+      ['qm-mode-btns', 'room-mode-btns'].forEach(groupId => {
+        const group = document.getElementById(groupId);
+        if (!group) return;
+        group.addEventListener('click', e => {
+          const btn = e.target.closest('.mode-sel-btn');
+          if (!btn) return;
+          group.querySelectorAll('.mode-sel-btn').forEach(b => b.classList.remove('ms-active'));
+          btn.classList.add('ms-active');
+        });
+      });
     });
 
 
@@ -6634,6 +7117,7 @@
       p2Left: 'ArrowLeft', p2Right: 'ArrowRight', p2Up: 'ArrowUp', p2Down: 'ArrowDown', p2Act: 'Enter',
       p1Taunt: 'KeyF', p2Taunt: 'Numpad0',
       p1WorkerMid: 'KeyE', p2WorkerMid: 'Numpad1',
+      fullscreen: 'Backquote',
       // Optional direct-spawn hotkeys (null = unassigned)
       p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null, p1Slot5: null, p1Slot6: null,
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null, p2Slot5: null, p2Slot6: null,
@@ -6661,7 +7145,7 @@
 
     function trySpawnSpy(pid) {
       if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
-      const _spyWasOnline = typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid);
+      const _spyOnline = typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid);
       const p = G.players[pid - 1];
       if (p.souls < SPY_DEF.souls || p.bodies < SPY_DEF.bodies) return;
       if (G.spies.filter(s => s.owner === pid).length >= 2) { showPopup(p.baseX, G.groundY - 60, 'SPY MAX (2)', '#636e72', pid); return; }
@@ -6684,7 +7168,7 @@
       showPopup(p.baseX, G.groundY - 70, '🕵️ SPY DEPLOYED', '#b2bec3', pid);
       SFX.spawnLight && SFX.spawnLight();
       updateHUD();
-      if (_spyWasOnline) NET.sendAction({ type: 'spawnSpy', pid });
+      if (_spyOnline) NET.sendAction({ type: 'spawnSpy', pid });
     }
 
     function updateSpies(dt) {
@@ -10601,8 +11085,8 @@
             const willKite = kc > 0.50;
             const shouldKite = willKite && !nearOwnBase && enemyMeleeClose;
             if (shouldKite) {
-              // Speed: 0.55–0.80x normal — clearly visible but not a teleport
-              const retreatSpd = spd * (0.55 + kc * 0.25); // 0.55–0.80x speed
+              // Speed: 0.25–0.40x normal — visible but catchable by melee
+              const retreatSpd = spd * (0.25 + kc * 0.15); // 0.25–0.40x speed
               u.x -= Math.sign(dx2) * retreatSpd * dt;
               // High-kite archers try to stay behind ally melee
               if (kc > 0.70) {
@@ -12850,7 +13334,9 @@
       // Don't intercept keys when user is typing in an input field
       if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
       // M = mute toggle (global)
-      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_isRebinding) { toggleMute(); return; }
+      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_rebinding) { toggleMute(); return; }
+      // Fullscreen toggle (rebindable)
+      if (KEYS.fullscreen && e.code === KEYS.fullscreen && !e.ctrlKey && !e.altKey && !_rebinding) { _goFullscreen(); return; }
       // Rebinding intercept
       if (_rebinding) {
         if (e.code === 'Escape') { _rebinding.el.textContent = formatKey(KEYS[_rebinding.key]); _rebinding.el.classList.remove('rebinding'); _rebinding = null; return; }
@@ -12886,14 +13372,29 @@
       // Draft screen keyboard nav
       if (document.getElementById('sc-draft').classList.contains('active') && DRAFT.state !== 'done') {
         const ap = _draftActivePid();
-        if (ap === 1) {
-          if (e.code === KEYS.p1Up) { _draftMoveCursor(1, -1); e.preventDefault(); return; }
-          if (e.code === KEYS.p1Down) { _draftMoveCursor(1, 1); e.preventDefault(); return; }
-          if (e.code === KEYS.p1Act) { _draftConfirm(1, DRAFT.cursors[0]); e.preventDefault(); return; }
-        } else if (ap === 2) {
-          if (e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(2, -1); e.preventDefault(); return; }
-          if (e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(2, 1); e.preventDefault(); return; }
-          if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { _draftConfirm(2, DRAFT.cursors[1]); e.preventDefault(); return; }
+        // Online: only the player whose pid matches the active draft player can use keys
+        const _draftOnlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
+        // In online mode, always use your own myPid for cursor/confirm (click either column)
+        const _effectivePid = _draftOnlinePid || ap;
+        if (!_draftOnlinePid || _draftOnlinePid === ap) {
+          // It's your turn (or local mode)
+          if (_effectivePid === 1 || (!_draftOnlinePid && ap === 1)) {
+            if (e.code === KEYS.p1Up) { _draftMoveCursor(1, -1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Down) { _draftMoveCursor(1, 1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Act) { _draftConfirm(1, DRAFT.cursors[0]); e.preventDefault(); return; }
+          }
+          if (_effectivePid === 2 || (!_draftOnlinePid && ap === 2)) {
+            if (e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(2, -1); e.preventDefault(); return; }
+            if (e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(2, 1); e.preventDefault(); return; }
+            if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { _draftConfirm(2, DRAFT.cursors[1]); e.preventDefault(); return; }
+          }
+          // In online mode, allow EITHER P1 OR P2 keys to control your cursor
+          if (_draftOnlinePid) {
+            const myCursor = DRAFT.cursors[_draftOnlinePid - 1];
+            if (e.code === KEYS.p1Up || e.code === KEYS.p2Up || e.code === 'ArrowUp') { _draftMoveCursor(_draftOnlinePid, -1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Down || e.code === KEYS.p2Down || e.code === 'ArrowDown') { _draftMoveCursor(_draftOnlinePid, 1); e.preventDefault(); return; }
+            if (e.code === KEYS.p1Act || e.code === KEYS.p2Act || e.code === 'NumpadEnter') { _draftConfirm(_draftOnlinePid, myCursor); e.preventDefault(); return; }
+          }
         }
         return;
       }
@@ -12972,19 +13473,18 @@
         if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); voteForEvent(2); return; }
       }
 
-      // P1 controls — disabled in aivsai
+      // P1/P2 controls — online: each player only controls their own side
       const _isAiVsAiKb = GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai';
-      // Online: each player only controls their own pid
-      const _kbOnlinePid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
-      const _kb1Ok = !_kbOnlinePid || _kbOnlinePid === 1;
-      const _kb2Ok = !_kbOnlinePid || _kbOnlinePid === 2;
-      if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
-      else if (!_isAiVsAiKb && _kb1Ok && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
+      const _onKbPid = (typeof NET !== 'undefined' && NET.isOnline()) ? NET.getPid() : null;
+      const _kb1 = !_onKbPid || _onKbPid === 1;
+      const _kb2Ok = !_onKbPid || _onKbPid === 2;
+      if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Left) { e.preventDefault(); navigate(1, -1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Right) { e.preventDefault(); navigate(1, 1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Up) { e.preventDefault(); cycleMode(1, 1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Down) { e.preventDefault(); cycleMode(1, -1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Act) { e.preventDefault(); activate(1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1Taunt) { e.preventDefault(); triggerEmote(1); }
+      else if (!_isAiVsAiKb && _kb1 && e.code === KEYS.p1WorkerMid) { e.preventDefault(); toggleWorkerMid(1); }
       // P2 controls — disabled when AI controls P2
       else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Left) { e.preventDefault(); navigate(2, -1); }
       else if (_kb2Ok && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'tournament') && e.code === KEYS.p2Right) { e.preventDefault(); navigate(2, 1); }
@@ -13162,8 +13662,12 @@
     document.getElementById('btn-change-faction').addEventListener('click', () => {
       G = null; AI_FACTION_IDX = null;
       fSelected = [null, null];
-      // Draft mode — go back to draft screen for a new draft
+      // Draft mode — go back to draft screen for a new draft (or menu if online)
       if (GAME_MODE === 'draft') {
+        if (typeof NET !== 'undefined' && NET.isOnline()) {
+          NET.cleanup();
+          return;
+        }
         startDraftMode();
         return;
       }
@@ -13206,9 +13710,9 @@
     }
 
     function refreshRebindUI() {
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid', 'fullscreen'].forEach(k => {
         const el = document.getElementById('rk-' + k);
-        if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
+        if (el) { el.textContent = formatKey(KEYS[k] || '—'); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
       [1, 2].forEach(pid => {
         const faction = typeof fSelected !== 'undefined' ? FACTIONS[fSelected[pid - 1]] : null;
@@ -13808,6 +14312,7 @@
           const card = document.createElement('div');
           card.className = 'fcard';
           card.dataset.fi = fi;
+          card.dataset.factionId = f.id;
           const wins = SESSION.factionWins[f.id] || 0;
           const winBadge = wins > 0 ? `<span class="fcard-win-badge">${wins >= 5 ? '🏆' : '🔥'.repeat(Math.min(wins, 4))} ${wins}W</span>` : '';
           card.innerHTML = `
@@ -13818,7 +14323,14 @@
             <div class="fcard-tag">${f.tagline}</div>
             <div class="fcard-passive" style="font-size:clamp(.6rem,1vw,.78rem);color:rgba(255,255,255,.55);">✦ ${f.passive}</div>
             <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
-          card.addEventListener('click', () => _draftConfirm(pid, fi));
+          // In online draft: clicks always act for the locally-controlled player (myPid).
+          // In local draft: clicks act for the column they belong to.
+          card.addEventListener('click', () => {
+            const actingPid = (typeof NET !== 'undefined' && NET.isOnline() && GAME_MODE === 'draft')
+              ? NET.getPid()
+              : pid;
+            _draftConfirm(actingPid, fi);
+          });
           container.appendChild(card);
         });
       });
@@ -13855,15 +14367,28 @@
           if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
       });
+      // Online: broadcast cursor hover to opponent so they see your selection
+      if (typeof NET !== 'undefined' && NET.isOnline() && GAME_MODE === 'draft') {
+        const _myDraftPid = NET.getPid();
+        if (_draftActivePid() === _myDraftPid && pid === _myDraftPid) {
+          const hoverFaction = FACTIONS[DRAFT.cursors[pid - 1]];
+          if (hoverFaction) NET.sendHover(hoverFaction.id);
+        }
+      }
     }
 
-    function _draftConfirm(pid, fi) {
-      // Only the active player can act
-      if (_draftActivePid() !== pid) return;
+    function _draftConfirm(pid, fi, isRemote) {
+      // Only the active player can act (skip check for remote relay)
+      if (!isRemote && _draftActivePid() !== pid) return;
       // Can't pick an already-picked faction
       if (DRAFT.picks[0] === fi || DRAFT.picks[1] === fi) return;
       // Can't pick a banned faction during pick phase
       if ((DRAFT.state === 'p1pick' || DRAFT.state === 'p2pick') && DRAFT.banned.includes(fi)) return; // can't pick a banned faction
+
+      // In online mode, broadcast this action to the opponent (only for local moves)
+      if (!isRemote && NET.isOnline() && GAME_MODE === 'draft') {
+        NET.sendDraftAction(fi);
+      }
 
       if (DRAFT.state.includes('ban')) {
         // Ban
@@ -13921,6 +14446,17 @@
         document.getElementById('btn-draft-start').disabled = false;
         // Clear all cursors
         document.querySelectorAll('#sc-draft .fcard').forEach(c => c.classList.remove('fkey-cursor'));
+        // Online: auto-send faction and wait for server startGame
+        if (NET.isOnline()) {
+          document.getElementById('btn-draft-start').style.display = 'none';
+          NET.onlineDraftDone();
+          return;
+        }
+      }
+
+      // Update online lock state after each draft action
+      if (NET.isOnline() && GAME_MODE === 'draft') {
+        NET.updateOnlineDraftLock();
       }
     }
 
@@ -14006,6 +14542,15 @@
         ${kbdRow('Navigate Left', 'p2Left')}${kbdRow('Navigate Right', 'p2Right')}
         ${kbdRow('Mode Up', 'p2Up')}${kbdRow('Mode Down', 'p2Down')}
         ${kbdRow('Spawn / Activate', 'p2Act')}${kbdRow('😤 Taunt', 'p2Taunt')}${kbdRow('⛏ Worker Mid', 'p2WorkerMid')}${slotRows(2)}`;
+      // Sync fullscreen key badge in ctrl overview + footer
+      const _fsBadge = document.getElementById('ctrl-fs-key-badge');
+      if (_fsBadge) _fsBadge.textContent = KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—';
+      const _fsLabel = document.getElementById('global-fs-key-label');
+      if (_fsLabel) _fsLabel.innerHTML = `<b style="color:var(--text)">${KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—'}</b>`;
+      const _fsFull = document.getElementById('btn-ingame-full');
+      if (_fsFull) _fsFull.title = `Toggle Fullscreen (${KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—'} — rebindable in Controls)`;
+      const _fsMenuBadge = document.getElementById('menu-fs-key-badge');
+      if (_fsMenuBadge) _fsMenuBadge.textContent = KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—';
     }
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
@@ -14073,9 +14618,9 @@
 
     function refreshRebindUI() {
       // Navigation keys
-      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid'].forEach(k => {
+      ['p1Left', 'p1Right', 'p1Up', 'p1Down', 'p1Act', 'p1Taunt', 'p1WorkerMid', 'p2Left', 'p2Right', 'p2Up', 'p2Down', 'p2Act', 'p2Taunt', 'p2WorkerMid', 'fullscreen'].forEach(k => {
         const el = document.getElementById('rk-' + k);
-        if (el) { el.textContent = formatKey(KEYS[k]); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
+        if (el) { el.textContent = formatKey(KEYS[k] || '—'); el.className = 'rkey'; el.onclick = () => startRebind(k, el); }
       });
       // Slot keys — show unit names if faction selected, else generic label
       [1, 2].forEach(pid => {
@@ -14414,20 +14959,34 @@
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
-      // tc stays hidden (display:none) until sc-game becomes active
-      tc.addEventListener('touchend', e => e.preventDefault(), { passive: false });
-      // Hook into showScreen (defined earlier in this script) to toggle visibility
+      // Wire using pointerdown — works in itch.io iframes unlike ontouchstart
+      function _tb(id, fn) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('pointerdown', e => { e.preventDefault(); fn(); });
+      }
+      _tb('tb-p1-left', () => navigate(1, -1));
+      _tb('tb-p1-spawn', () => activate(1));
+      _tb('tb-p1-right', () => navigate(1, 1));
+      _tb('tb-p1-tabup', () => cycleMode(1, -1));
+      _tb('tb-p1-tabdn', () => cycleMode(1, 1));
+      _tb('tb-p1-mid', () => toggleWorkerMid(1));
+      _tb('tb-p2-left', () => navigate(2, -1));
+      _tb('tb-p2-spawn', () => activate(2));
+      _tb('tb-p2-right', () => navigate(2, 1));
+      _tb('tb-p2-tabup', () => cycleMode(2, -1));
+      _tb('tb-p2-tabdn', () => cycleMode(2, 1));
+      _tb('tb-p2-mid', () => toggleWorkerMid(2));
+      // Hook into showScreen to toggle visibility and handle online pid
       const _origShow = showScreen;
       showScreen = function (id) {
         _origShow(id);
         if (id === 'sc-game') {
           tc.style.display = 'flex';
-          // In online mode, only show the local player's half
           if (typeof NET !== 'undefined' && NET.isOnline()) {
-            const pid = NET.getPid();
-            document.getElementById('touch-p1').style.display = pid === 1 ? '' : 'none';
-            const tp2 = document.getElementById('touch-p2');
-            if (tp2) tp2.style.display = pid === 2 ? '' : 'none';
+            const _tPid = NET.getPid();
+            document.getElementById('touch-p1').style.display = _tPid === 1 ? '' : 'none';
+            document.getElementById('touch-p2').style.display = _tPid === 2 ? '' : 'none';
           }
         } else {
           tc.style.display = 'none';
