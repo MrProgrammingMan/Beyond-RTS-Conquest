@@ -540,6 +540,7 @@
       flex-direction: column;
       align-items: center;
       gap: clamp(24px, 4vh, 56px);
+      padding-bottom: clamp(48px, 7vh, 72px);
     }
 
     .menu-eyebrow {
@@ -4607,7 +4608,8 @@
         MUTE</button>
       <button class="btn" onclick="_goFullscreen()" id="btn-fullscreen-menu"
         style="font-size:clamp(.6rem,.9vw,.8rem);padding:5px 14px;letter-spacing:.1em;border-color:rgba(212,168,67,.4);color:rgba(212,168,67,.85);">⛶
-        FULLSCREEN</button>
+        FULLSCREEN <span id="menu-fs-key-badge"
+          style="margin-left:5px;font-size:.75em;opacity:.65;background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);border-radius:3px;padding:1px 5px;letter-spacing:.05em;"></span></button>
       <span
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.44rem,.68vw,.58rem);color:var(--dim);letter-spacing:.07em;opacity:.55;">BEYOND
         RTS CONQUEST · v1.0</span>
@@ -12734,9 +12736,9 @@
     // ─── INPUT ───────────────────────────────────────────────────────────────────
     document.addEventListener('keydown', e => {
       // M = mute toggle (global)
-      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_isRebinding) { toggleMute(); return; }
+      if (e.code === 'KeyM' && !e.ctrlKey && !e.altKey && !_rebinding) { toggleMute(); return; }
       // Fullscreen toggle (rebindable)
-      if (KEYS.fullscreen && e.code === KEYS.fullscreen && !e.ctrlKey && !e.altKey && !_isRebinding) { _goFullscreen(); return; }
+      if (KEYS.fullscreen && e.code === KEYS.fullscreen && !e.ctrlKey && !e.altKey && !_rebinding) { _goFullscreen(); return; }
       // Rebinding intercept
       if (_rebinding) {
         if (e.code === 'Escape') { _rebinding.el.textContent = formatKey(KEYS[_rebinding.key]); _rebinding.el.classList.remove('rebinding'); _rebinding = null; return; }
@@ -13886,6 +13888,8 @@
       if (_fsLabel) _fsLabel.innerHTML = `<b style="color:var(--text)">${KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—'}</b>`;
       const _fsFull = document.getElementById('btn-ingame-full');
       if (_fsFull) _fsFull.title = `Toggle Fullscreen (${KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—'} — rebindable in Controls)`;
+      const _fsMenuBadge = document.getElementById('menu-fs-key-badge');
+      if (_fsMenuBadge) _fsMenuBadge.textContent = KEYS.fullscreen ? formatKey(KEYS.fullscreen) : '—';
     }
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
