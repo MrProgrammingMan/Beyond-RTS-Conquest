@@ -17,7 +17,7 @@ module.exports = {
 
   // ── BALANCE SETTINGS ──────────────────────────────────────────────────────
   balance: {
-    gamesPerMatchup: 5,       // 5=quick, 10=reliable, 20=high confidence
+    gamesPerMatchup: 20,       // 5=quick, 10=reliable, 20=high confidence
     aiDifficulty:   'hard',   // 'easy'|'medium'|'hard'|'expert'
     parallelGames:   3,       // concurrent browser tabs (RAM: ~300MB each)
     mirrorMatchups:  true,    // run A-vs-B AND B-vs-A
@@ -80,7 +80,7 @@ module.exports = {
 
   // ── ANTHROPIC API ─────────────────────────────────────────────────────────
   // Used for: balance analysis, auto bug-diagnosis, fix suggestions
-  anthropicApiKey: process.env.ANTHROPIC_API_KEY || 'YOUR_API_KEY_HERE',
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY || null,
 
   // ── DISCORD ────────────────────────────────────────────────────────────────
   discord: {
