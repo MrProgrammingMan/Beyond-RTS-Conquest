@@ -5338,6 +5338,8 @@
             connected = false;
             if (_onlineMode && typeof G !== 'undefined' && G && G.running) {
               document.getElementById('online-dc-overlay').classList.add('show');
+            } else {
+              setStatus('⚠ Disconnected from server — click any option to reconnect', true);
             }
           });
           _attachHandlers();
@@ -5506,8 +5508,23 @@
           case 'spawnSpy': trySpawnSpy(pid); break;
           case 'voteMoveCursor': voteMoveCursor(pid, action.dir); break;
           case 'voteForEvent': voteForEvent(pid); break;
-        }
-      }
+          case 'hoverCard': {
+            const { cardIdx, mode } = action;
+            if (pid === 1) { P1_MODE = mode; } else { P2_MODE = mode; }
+            if (mode === 0) {
+              // unit/spy card
+              const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
+              const sel = cardIdx === 99 ? defs.length : Math.min(cardIdx, defs.length);
+              if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
+            } else {
+              if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
+            }
+            updateStatPanel(pid);
+            document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
+            break;
+          }
+        } // end switch
+      } // end _executeRemoteAction
 
       function requestEvent(elapsed, p1hp, p2hp, midOwner) {
         if (!_onlineMode || !socket || myPid !== 1) return;
@@ -5527,17 +5544,30 @@
       // ── Matchmaking entry points ──────────────────────────────────────
       function quickMatch() {
         _clearErrors();
-        showConnecting('Connecting to server…');
-        connect(() => {
-          document.getElementById('online-connecting-msg').textContent = 'Looking for an opponent…';
+        if (socket && connected) {
+          showConnecting('Looking for an opponent…');
           socket.emit('joinPublic', { gameMode: 'vs' });
-        });
+        } else {
+          showConnecting('Connecting to server…');
+          connect(() => {
+            document.getElementById('online-connecting-msg').textContent = 'Looking for an opponent…';
+            socket.emit('joinPublic', { gameMode: 'vs' });
+          });
+        }
       }
 
       function createRoom() {
         _clearErrors();
-        showConnecting('Creating room…');
-        connect(() => socket.emit('createRoom', { gameMode: 'vs' }));
+        if (socket && connected) {
+          showConnecting('Creating room…');
+          socket.emit('createRoom', { gameMode: 'vs' });
+        } else {
+          showConnecting('Connecting to server…');
+          connect(() => {
+            document.getElementById('online-connecting-msg').textContent = 'Creating room…';
+            socket.emit('createRoom', { gameMode: 'vs' });
+          });
+        }
       }
 
       function joinRoom(code) {
@@ -5547,8 +5577,16 @@
           if (je) je.textContent = '❌ Enter the 4-letter code your friend shared with you';
           return;
         }
-        showConnecting('Joining room ' + code.trim().toUpperCase() + '…');
-        connect(() => socket.emit('joinRoom', { code: code.trim().toUpperCase() }));
+        if (socket && connected) {
+          showConnecting('Joining room ' + code.trim().toUpperCase() + '…');
+          socket.emit('joinRoom', { code: code.trim().toUpperCase() });
+        } else {
+          showConnecting('Connecting to server…');
+          connect(() => {
+            document.getElementById('online-connecting-msg').textContent = 'Joining room ' + code.trim().toUpperCase() + '…';
+            socket.emit('joinRoom', { code: code.trim().toUpperCase() });
+          });
+        }
       }
 
       function cancelSearch() {
@@ -8128,7 +8166,7 @@
             refreshSel(pid);
             trySpawn(pid, def.id, card);
           });
-          card.addEventListener('mouseenter', e => { showTT(e, def); if (pid === 1) P1_SEL = i; else P2_SEL = i; if (pid === 1) P1_MODE = 0; else P2_MODE = 0; updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); });
+          card.addEventListener('mouseenter', e => { showTT(e, def); if (pid === 1) P1_SEL = i; else P2_SEL = i; if (pid === 1) P1_MODE = 0; else P2_MODE = 0; updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 0 }); });
           card.addEventListener('mouseleave', () => { hideTT(); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           grid.appendChild(card);
         });
@@ -8146,7 +8184,7 @@
             refreshSel(pid);
             trySpawnSpy(pid);
           });
-          spyCard.addEventListener('mouseenter', e => { showTT(e, SPY_DEF); const _sd = G.factions[pid - 1].units.filter(d => !d.isSpawned); if (pid === 1) { P1_SEL = _sd.length; P1_MODE = 0; } else { P2_SEL = _sd.length; P2_MODE = 0; } updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); });
+          spyCard.addEventListener('mouseenter', e => { showTT(e, SPY_DEF); const _sd = G.factions[pid - 1].units.filter(d => !d.isSpawned); const _spyIdx = _sd.length; if (pid === 1) { P1_SEL = _spyIdx; P1_MODE = 0; } else { P2_SEL = _spyIdx; P2_MODE = 0; } updateStatPanel(pid); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible'); if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: 99, mode: 0 }); });
           spyCard.addEventListener('mouseleave', () => { hideTT(); document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           grid.appendChild(spyCard);
         }
