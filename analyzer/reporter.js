@@ -1,11 +1,15 @@
 /**
- * reporter.js
- * Builds the master HTML report covering:
- *  - Bug reports (with paste-to-Claude prompts)
- *  - UI audit (with screenshots)
- *  - Mechanic usage
- *  - Performance
- *  - Balance matrix + analysis
+ * reporter.js — Beyond RTS QA Report Builder
+ *
+ * Improvements over old version:
+ *  - Screenshots embedded as base64 (self-contained HTML, no broken paths)
+ *  - Lightbox modal for full-size screenshot viewing
+ *  - New "Prompts" tab with ALL paste-to-Claude prompts in one place
+ *  - Bug search/filter by severity
+ *  - Collapsible bug details
+ *  - Unified "Copy All Bugs" mega-prompt button
+ *  - Better balance matrix with hover tooltips
+ *  - mdToHtml improvements (handles lists, blockquotes)
  */
 
 const fs   = require('fs');
@@ -17,79 +21,187 @@ const FACTION_ICONS = {
   bloodpact:'🩸', menders:'💚',
 };
 
-function buildReport({
-  balanceData, aggStats, balanceAnalysis,
-  diagnosedBugs, uiAuditResult,
-  cfg, runMeta,
-}) {
-  const { results, factions, qa } = balanceData;
-  const uiIssues   = uiAuditResult?.issues || [];
-  const screenshots = uiAuditResult?.screenshots || [];
-
-  const totalBugs = diagnosedBugs.length;
-  const criticalBugs = diagnosedBugs.filter(b => b.diagnosis?.severity === 'CRITICAL' || b.severity === 'critical');
-  const timestamp = new Date().toLocaleString();
+function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, cfg, runMeta }) {
+  const { results, factions, qa }   = balanceData;
+  const uiIssues                    = uiAuditResult?.issues      || [];
+  const screenshots                 = uiAuditResult?.screenshots || [];
+  const totalBugs                   = diagnosedBugs.length;
+  const criticalBugs                = diagnosedBugs.filter(b => ['CRITICAL'].includes((b.diagnosis?.severity || b.severity || '').toUpperCase()));
+  const timestamp                   = new Date().toLocaleString();
+  const runDurSec                   = Math.round(((runMeta?.endTime || Date.now()) - (runMeta?.startTime || Date.now())) / 1000);
+  const runDurStr                   = runDurSec > 60 ? `${Math.floor(runDurSec/60)}m ${runDurSec%60}s` : `${runDurSec}s`;
+  const inlineScreenshots           = cfg.output?.inlineScreenshots !== false;
 
   // ── Balance matrix ─────────────────────────────────────────────────────────
-  let matrixHtml = `<table class="matrix"><thead><tr><th></th>`;
-  for (const f of factions) matrixHtml += `<th title="${f}">${FACTION_ICONS[f]||'?'}</th>`;
+  let matrixHtml = `<div class="matrix-scroll"><table class="matrix"><thead><tr><th class="corner"></th>`;
+  for (const f of factions) matrixHtml += `<th title="${f}">${FACTION_ICONS[f]||'?'}<br><span class="mat-lbl">${f}</span></th>`;
   matrixHtml += `</tr></thead><tbody>`;
   for (const f1 of factions) {
-    matrixHtml += `<tr><th class="row-label">${FACTION_ICONS[f1]||''} ${f1}</th>`;
+    matrixHtml += `<tr><td class="row-label">${FACTION_ICONS[f1]||''} ${f1}</td>`;
     for (const f2 of factions) {
       if (f1 === f2) { matrixHtml += `<td class="self">—</td>`; continue; }
       const r = results[f1]?.[f2];
-      if (!r) { matrixHtml += `<td>—</td>`; continue; }
+      if (!r) { matrixHtml += `<td class="na">—</td>`; continue; }
       const games = r.p1Wins + r.p2Wins + r.draws + r.timeouts;
       const rate  = games > 0 ? Math.round(r.p1Wins / games * 100) : 50;
       const cls   = rate>=65?'hot':rate>=55?'warm':rate<=35?'cold':rate<=45?'cool':'neutral';
-      matrixHtml += `<td class="${cls}" title="${f1} vs ${f2}: ${rate}% (${games}g)">${rate}%</td>`;
+      matrixHtml += `<td class="${cls}" title="${f1} vs ${f2}: ${rate}% win rate (${games} games)\n${r.p1Wins}W ${r.p2Wins}L ${r.draws}D ${r.timeouts}T">${rate}%</td>`;
     }
     matrixHtml += `</tr>`;
   }
-  matrixHtml += `</tbody></table>`;
+  matrixHtml += `</tbody></table></div>`;
 
   // ── Win rate bars ──────────────────────────────────────────────────────────
   const sortedF = [...factions].sort((a,b) => (aggStats[b]?.overallWinRate||50)-(aggStats[a]?.overallWinRate||50));
   let barsHtml = '';
   for (const f of sortedF) {
     const s = aggStats[f]; if (!s) continue;
-    const wr = s.overallWinRate;
-    const cls = wr>=55?'hot':wr<=45?'cold':'ok';
+    const wr  = s.overallWinRate;
+    const cls = wr >= 55 ? 'hot' : wr <= 45 ? 'cold' : 'ok';
     const dur = `${Math.floor(s.avgGameDuration/60)}m${String(s.avgGameDuration%60).padStart(2,'0')}s`;
+    const tier = wr>=60?'S':wr>=55?'A':wr>=48?'B':wr>=43?'C':'D';
+    const tierCls = {S:'tier-s',A:'tier-a',B:'tier-b',C:'tier-c',D:'tier-d'}[tier];
     barsHtml += `<div class="bar-row">
-      <div class="bar-label-name">${FACTION_ICONS[f]||''} <strong>${f}</strong></div>
-      <div class="bar-wrap"><div class="bar bar-${cls}" style="width:${Math.min(wr*1.8,100)}%"></div><span class="bar-pct">${wr}%</span></div>
-      <div class="bar-meta">avg ${dur} · best: ${s.bestMatchup.faction||'?'} (${Math.round(s.bestMatchup.rate*100)}%) · worst: ${s.worstMatchup.faction||'?'} (${Math.round(s.worstMatchup.rate*100)}%)</div>
+      <span class="tier-badge ${tierCls}">${tier}</span>
+      <div class="bar-name">${FACTION_ICONS[f]||''} <strong>${f}</strong></div>
+      <div class="bar-track"><div class="bar bar-${cls}" style="width:${Math.min(wr*1.8,100)}%"></div></div>
+      <span class="bar-pct ${cls}">${wr}%</span>
+      <span class="bar-detail">avg ${dur} · best vs ${s.bestMatchup.faction||'?'} (${Math.round((s.bestMatchup.rate||0)*100)}%) · worst vs ${s.worstMatchup.faction||'?'} (${Math.round((s.worstMatchup.rate||0)*100)}%)</span>
     </div>`;
   }
 
   // ── Bug cards ──────────────────────────────────────────────────────────────
   let bugsHtml = '';
   if (diagnosedBugs.length === 0) {
-    bugsHtml = `<div class="no-issues">✅ No bugs detected across ${qa.totalGamesRun} games</div>`;
+    bugsHtml = `<div class="empty-state">✅ No bugs detected across ${qa.totalGamesRun} games</div>`;
   } else {
-    for (const bug of diagnosedBugs) {
-      const sev = (bug.diagnosis?.severity || bug.severity || 'medium').toUpperCase();
-      const sevCls = sev === 'CRITICAL' ? 'sev-critical' : sev === 'HIGH' ? 'sev-high' : sev === 'MEDIUM' ? 'sev-medium' : 'sev-low';
-      const hasPrompt = bug.diagnosis?.pasteToClaudePrompt;
+    // Filter bar
+    bugsHtml += `<div class="filter-bar">
+      <input type="text" id="bug-search" placeholder="🔍 Search bugs..." oninput="filterBugs()" class="search-input">
+      <div class="sev-filters">
+        <button class="sev-filter active" data-sev="ALL"  onclick="setSevFilter('ALL',this)">All (${diagnosedBugs.length})</button>
+        ${['CRITICAL','HIGH','MEDIUM','LOW'].map(s => {
+          const c = diagnosedBugs.filter(b=>(b.diagnosis?.severity||b.severity||'').toUpperCase()===s).length;
+          return c > 0 ? `<button class="sev-filter sev-filter-${s.toLowerCase()}" data-sev="${s}" onclick="setSevFilter('${s}',this)">${s} (${c})</button>` : '';
+        }).join('')}
+      </div>
+    </div>`;
+
+    bugsHtml += `<div id="bug-list">`;
+    for (let bi = 0; bi < diagnosedBugs.length; bi++) {
+      const bug  = diagnosedBugs[bi];
+      const sev  = (bug.diagnosis?.severity || bug.severity || 'medium').toUpperCase();
+      const sevCls = sev==='CRITICAL'?'sev-critical':sev==='HIGH'?'sev-high':sev==='MEDIUM'?'sev-medium':'sev-low';
+      const matchupStr = (bug.matchups || [bug.matchup]).filter(Boolean).join(', ');
+      const hasPrompt  = bug.diagnosis?.pasteToClaudePrompt;
+
       bugsHtml += `
-      <div class="bug-card ${sevCls}">
-        <div class="bug-header">
-          <span class="bug-sev ${sevCls}">${sev}</span>
-          <span class="bug-type">${bug.type || 'error'}</span>
+      <div class="bug-card ${sevCls}" data-sev="${sev}" data-text="${escAttr((bug.message||'')+(bug.type||'')+(matchupStr||''))}">
+        <div class="bug-header" onclick="toggleBug(${bi})">
+          <span class="bug-sev-badge ${sevCls}">${sev}</span>
+          <span class="bug-type-label">${escHtml(bug.type || 'error')}</span>
           <span class="bug-occ">×${bug.occurrences || 1}</span>
-          <span class="bug-matchup">${(bug.matchups || [bug.matchup]).filter(Boolean).join(', ')}</span>
+          <span class="bug-matchup-label">${escHtml(matchupStr)}</span>
+          <span class="bug-chevron" id="chev-${bi}">▼</span>
         </div>
-        <div class="bug-message"><code>${escHtml(bug.message || '')}</code></div>
-        ${bug.stack ? `<details><summary>Stack trace</summary><pre class="stack">${escHtml(bug.stack)}</pre></details>` : ''}
-        ${bug.diagnosis?.likelyCause ? `<div class="bug-section"><strong>Likely Cause:</strong> ${escHtml(bug.diagnosis.likelyCause)}</div>` : ''}
-        ${bug.diagnosis?.reproSteps  ? `<div class="bug-section"><strong>Repro Steps:</strong><br>${escHtml(bug.diagnosis.reproSteps).replace(/\n/g,'<br>')}</div>` : ''}
-        ${bug.diagnosis?.suggestedFix? `<div class="bug-section"><strong>Suggested Fix:</strong> ${escHtml(bug.diagnosis.suggestedFix)}</div>` : ''}
-        ${bug.diagnosis?.whereToLook ? `<div class="bug-section"><strong>Where to Look:</strong> ${escHtml(bug.diagnosis.whereToLook)}</div>` : ''}
-        ${hasPrompt ? `<div class="paste-prompt"><div class="paste-label">📋 Paste this to Claude →</div><pre class="paste-text">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre><button class="copy-btn" onclick="copyText(this)">Copy</button></div>` : ''}
-        ${bug.screenshotPath ? `<div class="bug-section"><strong>Screenshot:</strong> <code>${bug.screenshotPath}</code></div>` : ''}
+        <div class="bug-message"><code>${escHtml((bug.message || '').slice(0,300))}</code></div>
+        <div class="bug-body" id="bugbody-${bi}" style="display:none">
+          ${bug.stack ? `<details class="stack-details"><summary>Stack trace</summary><pre class="stack">${escHtml(bug.stack)}</pre></details>` : ''}
+          ${bug.diagnosis?.likelyCause ? `<div class="diag-row"><span class="diag-lbl">🔍 Cause</span><span class="diag-val">${escHtml(bug.diagnosis.likelyCause)}</span></div>` : ''}
+          ${bug.diagnosis?.reproSteps  ? `<div class="diag-row"><span class="diag-lbl">🔁 Repro</span><span class="diag-val">${escHtml(bug.diagnosis.reproSteps).replace(/\\n/g,'<br>')}</span></div>` : ''}
+          ${bug.diagnosis?.whereToLook ? `<div class="diag-row"><span class="diag-lbl">📂 Where</span><span class="diag-val"><code>${escHtml(bug.diagnosis.whereToLook)}</code></span></div>` : ''}
+          ${bug.diagnosis?.suggestedFix? `<div class="diag-row"><span class="diag-lbl">🔧 Fix</span><span class="diag-val">${escHtml(bug.diagnosis.suggestedFix)}</span></div>` : ''}
+          ${hasPrompt ? `<div class="prompt-box">
+            <div class="prompt-label">📋 Paste to Claude</div>
+            <pre class="prompt-text" id="bugprompt-${bi}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
+            <button class="copy-btn" onclick="copyById('bugprompt-${bi}',this)">Copy</button>
+          </div>` : ''}
+          ${bug.screenshotPath ? `<div class="diag-row"><span class="diag-lbl">📸 Screenshot</span><span class="diag-val"><code>${escHtml(bug.screenshotPath)}</code></span></div>` : ''}
+        </div>
       </div>`;
+    }
+    bugsHtml += `</div>`;
+  }
+
+  // ── Prompts tab ────────────────────────────────────────────────────────────
+  const allPrompts = diagnosedBugs.filter(b => b.diagnosis?.pasteToClaudePrompt);
+  let promptsHtml = '';
+  if (allPrompts.length === 0) {
+    promptsHtml = `<div class="empty-state">No paste-to-Claude prompts generated (no bugs diagnosed, or no API key).</div>`;
+  } else {
+    const megaPrompt = allPrompts.map((b, i) =>
+      `=== BUG ${i+1}: ${b.type} [${(b.diagnosis?.severity||'').toUpperCase()}] ===\n${b.diagnosis.pasteToClaudePrompt}`
+    ).join('\n\n');
+
+    promptsHtml += `<div class="prompt-mega-box">
+      <div class="prompt-mega-header">
+        <div>
+          <strong>All ${allPrompts.length} prompt(s) combined</strong>
+          <span style="color:var(--dim);font-size:12px;margin-left:8px;">Paste everything at once, or copy individual prompts below</span>
+        </div>
+        <button class="copy-btn copy-big" onclick="copyById('mega-prompt',this)">📋 Copy All (${allPrompts.length})</button>
+      </div>
+      <pre class="prompt-text" id="mega-prompt" style="max-height:200px">${escHtml(megaPrompt)}</pre>
+    </div>`;
+
+    for (let i = 0; i < allPrompts.length; i++) {
+      const bug = allPrompts[i];
+      const sev = (bug.diagnosis?.severity || '').toUpperCase();
+      const sevCls = sev==='CRITICAL'?'sev-critical':sev==='HIGH'?'sev-high':sev==='MEDIUM'?'sev-medium':'sev-low';
+      promptsHtml += `<div class="prompt-card ${sevCls}">
+        <div class="prompt-card-header">
+          <span class="bug-sev-badge ${sevCls}">${sev}</span>
+          <span class="prompt-bug-type">${escHtml(bug.type || 'error')}</span>
+          <span style="color:var(--dim);font-size:12px">${escHtml((bug.matchups||[bug.matchup]).filter(Boolean).join(', '))}</span>
+        </div>
+        <pre class="prompt-text" id="prompt-${i}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
+        <button class="copy-btn" onclick="copyById('prompt-${i}',this)">Copy</button>
+      </div>`;
+    }
+
+    // Balance prompt
+    if (balanceAnalysis) {
+      const bm = balanceAnalysis.match(/===BALANCE PROMPT START===([\s\S]+?)===BALANCE PROMPT END===/);
+      if (bm) {
+        promptsHtml += `<div class="prompt-card" style="border-color:var(--gold)">
+          <div class="prompt-card-header">
+            <span class="bug-sev-badge" style="background:rgba(240,165,0,.2);color:var(--gold)">BALANCE</span>
+            <span class="prompt-bug-type">Balance Patch Prompt</span>
+          </div>
+          <pre class="prompt-text" id="balance-prompt">${escHtml(bm[1].trim())}</pre>
+          <button class="copy-btn" onclick="copyById('balance-prompt',this)">Copy</button>
+        </div>`;
+      }
+    }
+  }
+
+  // ── Screenshots ────────────────────────────────────────────────────────────
+  let ssHtml = '';
+  if (screenshots.length === 0) {
+    ssHtml = `<div class="empty-state">No screenshots (enable saveScreenshots in config.js)</div>`;
+  } else {
+    const byScreen = {};
+    for (const ss of screenshots) {
+      (byScreen[ss.screen] = byScreen[ss.screen] || []).push(ss);
+    }
+    for (const [screen, ssList] of Object.entries(byScreen)) {
+      ssHtml += `<h3 class="ss-screen-title">${screen}</h3><div class="ss-grid">`;
+      for (const ss of ssList) {
+        let imgSrc;
+        if (inlineScreenshots && ss.path && fs.existsSync(ss.path)) {
+          const b64 = fs.readFileSync(ss.path).toString('base64');
+          imgSrc = `data:image/png;base64,${b64}`;
+        } else {
+          // Fallback to relative path
+          imgSrc = path.relative(path.dirname(cfg.output.reportPath || './qa-report.html'), ss.path || '').replace(/\\/g, '/');
+        }
+        ssHtml += `<div class="ss-card" onclick="openLightbox('${imgSrc}','${escAttr(ss.viewport)} (${ss.width}×${ss.height})')">
+          <img src="${imgSrc}" alt="${escAttr(ss.viewport)}" loading="lazy">
+          <div class="ss-label">📱 ${escHtml(ss.viewport)} <span class="ss-dims">${ss.width}×${ss.height}</span></div>
+          <div class="ss-zoom-hint">Click to enlarge</div>
+        </div>`;
+      }
+      ssHtml += `</div>`;
     }
   }
 
@@ -99,313 +211,548 @@ function buildReport({
   const uiWarnings = uiIssues.filter(i => i.severity === 'warning');
   const uiInfos    = uiIssues.filter(i => i.severity === 'info');
   if (uiIssues.length === 0) {
-    uiHtml = `<div class="no-issues">✅ No UI issues detected</div>`;
+    uiHtml = `<div class="empty-state">✅ No UI issues detected</div>`;
   } else {
-    const renderIssueGroup = (issues, label, cls) => issues.length === 0 ? '' :
-      `<h3 class="${cls}">${label} (${issues.length})</h3>` +
-      issues.map(i => `<div class="ui-issue ${cls}">
-        <span class="ui-type">${i.type}</span>
-        <span class="ui-screen">${i.screen||''}</span>
-        <span class="ui-vp">${i.viewportSize||i.viewport||''}</span>
-        <div class="ui-msg">${escHtml(i.message||'')}</div>
-        ${i.element ? `<code class="ui-el">${escHtml(i.element)}</code>` : ''}
-      </div>`).join('');
-
-    uiHtml = renderIssueGroup(uiErrors,'🔴 Errors','ui-error')
-           + renderIssueGroup(uiWarnings,'🟡 Warnings','ui-warning')
-           + renderIssueGroup(uiInfos,'ℹ️ Info','ui-info');
-  }
-
-  // ── Screenshots grid ───────────────────────────────────────────────────────
-  let ssHtml = '';
-  if (screenshots.length === 0) {
-    ssHtml = `<p style="color:var(--dim)">No screenshots captured (enable saveScreenshots in config.js)</p>`;
-  } else {
-    // Group by screen
-    const byScreen = {};
-    for (const ss of screenshots) {
-      if (!byScreen[ss.screen]) byScreen[ss.screen] = [];
-      byScreen[ss.screen].push(ss);
-    }
-    for (const [screen, ssList] of Object.entries(byScreen)) {
-      ssHtml += `<h3>${screen}</h3><div class="ss-grid">`;
-      for (const ss of ssList) {
-        const rel = path.relative(path.dirname(cfg.output.reportPath || './qa-report.html'), ss.path);
-        ssHtml += `<div class="ss-card"><img src="${rel}" alt="${ss.viewport}" loading="lazy"><div class="ss-label">${ss.viewport} (${ss.width}×${ss.height})</div></div>`;
-      }
-      ssHtml += `</div>`;
-    }
+    const renderGroup = (issues, label, cls) => {
+      if (issues.length === 0) return '';
+      return `<h3 class="ui-group-title ${cls}">${label} <span class="badge">${issues.length}</span></h3>` +
+        issues.map(i => `<div class="ui-issue-row ${cls}">
+          <div class="ui-issue-meta">
+            <span class="ui-type-badge">${escHtml(i.type)}</span>
+            ${i.screen ? `<span class="ui-screen-badge">${escHtml(i.screen)}</span>` : ''}
+            ${i.viewportSize ? `<span class="ui-vp-badge">${escHtml(i.viewportSize)}</span>` : ''}
+          </div>
+          <div class="ui-issue-msg">${escHtml(i.message || '')}</div>
+          ${i.element ? `<code class="ui-el-code">${escHtml(i.element)}</code>` : ''}
+          ${i.size ? `<code class="ui-el-code">${i.size.width}×${i.size.height}px</code>` : ''}
+        </div>`).join('');
+    };
+    uiHtml = renderGroup(uiErrors,'🔴 Errors','ui-error')
+           + renderGroup(uiWarnings,'🟡 Warnings','ui-warning')
+           + renderGroup(uiInfos,'ℹ️ Info','ui-info');
   }
 
   // ── Mechanics ──────────────────────────────────────────────────────────────
-  let mechHtml = '';
   const totalGames = qa.totalGamesRun || 1;
   const threshold  = cfg.mechanics?.unusedThresholdPct || 15;
+  let mechHtml = '';
   for (const [key, count] of Object.entries(qa.mechanicUsage || {})) {
     const pct     = Math.round(count / totalGames * 100);
     const flagged = pct < threshold;
-    const cls     = flagged ? 'mech-low' : 'mech-ok';
-    mechHtml += `<div class="mech-row ${cls}">
-      <span class="mech-key">${key.replace(/_/g,' ')}</span>
-      <div class="mech-bar-wrap"><div class="mech-bar" style="width:${Math.min(pct*2,100)}%"></div></div>
+    const barW    = Math.min(pct * 2, 100);
+    const barClr  = flagged ? 'var(--orange)' : pct > 60 ? 'var(--green)' : 'var(--blue)';
+    mechHtml += `<div class="mech-row ${flagged?'mech-flagged':''}">
+      <span class="mech-name">${key.replace(/_/g,' ')}</span>
+      <div class="mech-track"><div class="mech-fill" style="width:${barW}%;background:${barClr}"></div></div>
       <span class="mech-pct">${pct}%</span>
+      <span class="mech-count">${count}×</span>
       ${flagged ? `<span class="mech-flag">⚠️ rarely used</span>` : ''}
     </div>`;
   }
 
-  // ── Performance ───────────────────────────────────────────────────────────
-  const avgFtAll = qa.performance?.avgFrameMsAll || [];
-  const avgAvgFt = avgFtAll.length > 0 ? Math.round(avgFtAll.reduce((a,b)=>a+b,0)/avgFtAll.length*10)/10 : 0;
-  const maxFtAll = qa.performance?.maxFrameMsAll || [];
-  const overallMaxFt = maxFtAll.length > 0 ? Math.max(...maxFtAll) : 0;
-  const longTasks = qa.performance?.longTasksAll || [];
-  const perfHtml = `
-    <div class="stats-grid">
-      <div class="stat-card ${avgAvgFt>33?'stat-bad':avgAvgFt>20?'stat-warn':'stat-ok'}">
-        <div class="stat-num">${avgAvgFt}ms</div><div class="stat-lbl">Avg frame time</div>
-      </div>
-      <div class="stat-card ${overallMaxFt>200?'stat-bad':overallMaxFt>100?'stat-warn':'stat-ok'}">
-        <div class="stat-num">${overallMaxFt}ms</div><div class="stat-lbl">Worst frame spike</div>
-      </div>
-      <div class="stat-card ${longTasks.length>10?'stat-bad':longTasks.length>3?'stat-warn':'stat-ok'}">
-        <div class="stat-num">${longTasks.length}</div><div class="stat-lbl">Long tasks (>100ms)</div>
-      </div>
-    </div>
-    ${longTasks.length > 0 ? `<details><summary>Long task details (${longTasks.length})</summary><pre>${longTasks.slice(0,20).map(t=>`${t.dt}ms in ${t.matchup||'unknown'}`).join('\n')}</pre></details>` : ''}`;
+  // ── Performance ────────────────────────────────────────────────────────────
+  const avgFtAll      = qa.performance?.avgFrameMsAll || [];
+  const avgAvgFt      = avgFtAll.length  > 0 ? Math.round(avgFtAll.reduce((a,b)=>a+b,0)/avgFtAll.length*10)/10 : 0;
+  const maxFtAll      = qa.performance?.maxFrameMsAll || [];
+  const overallMaxFt  = maxFtAll.length  > 0 ? Math.max(...maxFtAll) : 0;
+  const longTasks     = qa.performance?.longTasksAll  || [];
+  const ftGrade       = avgAvgFt > 33 ? 'stat-bad' : avgAvgFt > 20 ? 'stat-warn' : 'stat-ok';
+  const maxGrade      = overallMaxFt > 200 ? 'stat-bad' : overallMaxFt > 100 ? 'stat-warn' : 'stat-ok';
+  const ltGrade       = longTasks.length > 10 ? 'stat-bad' : longTasks.length > 3 ? 'stat-warn' : 'stat-ok';
+
+  const perfHtml = `<div class="stats-grid">
+    <div class="stat-card ${ftGrade}"><div class="stat-num">${avgAvgFt}ms</div><div class="stat-lbl">Avg frame time<br><small>target: &lt;16ms</small></div></div>
+    <div class="stat-card ${maxGrade}"><div class="stat-num">${overallMaxFt}ms</div><div class="stat-lbl">Worst frame spike<br><small>target: &lt;100ms</small></div></div>
+    <div class="stat-card ${ltGrade}"><div class="stat-num">${longTasks.length}</div><div class="stat-lbl">Long tasks (&gt;100ms)<br><small>target: 0</small></div></div>
+    <div class="stat-card"><div class="stat-num">${qa.totalGamesRun}</div><div class="stat-lbl">Games simulated<br><small>${runDurStr} total</small></div></div>
+  </div>
+  ${longTasks.length > 0 ? `<details><summary style="cursor:pointer;color:var(--gold)">Long task breakdown (${longTasks.length})</summary>
+    <pre style="margin-top:8px">${longTasks.slice(0,30).map(t=>`${String(t.dt).padStart(5)}ms  ${t.matchup||'unknown'}`).join('\n')}</pre>
+  </details>` : ''}`;
 
   // ── Balance analysis ───────────────────────────────────────────────────────
-  const balHtml = balanceAnalysis
-    ? mdToHtml(balanceAnalysis
-        .replace(/===BALANCE PROMPT START===/g, '<div class="paste-prompt"><div class="paste-label">📋 Balance Patch Prompt → Paste to Claude</div><pre class="paste-text">')
-        .replace(/===BALANCE PROMPT END===/g,   '</pre><button class="copy-btn" onclick="copyText(this)">Copy</button></div>'))
-    : '<p style="color:var(--dim)">Balance analysis unavailable (no Anthropic API key)</p>';
+  let balHtml = '';
+  if (balanceAnalysis) {
+    const cleaned = balanceAnalysis
+      .replace(/===BALANCE PROMPT START===([\s\S]+?)===BALANCE PROMPT END===/g,
+        (_, p) => `<div class="prompt-box"><div class="prompt-label">📋 Balance Patch Prompt</div><pre class="prompt-text" id="bal-main-prompt">${escHtml(p.trim())}</pre><button class="copy-btn" onclick="copyById('bal-main-prompt',this)">Copy</button></div>`);
+    balHtml = mdToHtml(cleaned);
+  } else {
+    balHtml = `<div class="empty-state">Balance analysis unavailable (no Anthropic API key set)</div>`;
+  }
 
-  // ── Summary numbers ────────────────────────────────────────────────────────
+  // ── Overview critical section ──────────────────────────────────────────────
+  let criticalSection = '';
+  if (criticalBugs.length > 0) {
+    criticalSection = `<div class="critical-banner">
+      <h2>🔴 ${criticalBugs.length} Critical Issue${criticalBugs.length>1?'s':''} Need Immediate Attention</h2>
+      ${criticalBugs.map((b,i) => `<div class="critical-item">
+        <div class="critical-item-header">
+          <code>${escHtml(b.type)}</code>
+          <span style="color:var(--dim)">${escHtml((b.matchups||[b.matchup]).filter(Boolean).join(', '))}</span>
+        </div>
+        <div class="critical-msg">${escHtml((b.message||'').slice(0,200))}</div>
+        ${b.diagnosis?.pasteToClaudePrompt ? `<div class="prompt-box" style="margin-top:10px">
+          <div class="prompt-label">📋 Fix Prompt</div>
+          <pre class="prompt-text" id="crit-prompt-${i}">${escHtml(b.diagnosis.pasteToClaudePrompt)}</pre>
+          <button class="copy-btn" onclick="copyById('crit-prompt-${i}',this)">Copy</button>
+        </div>` : ''}
+      </div>`).join('')}
+    </div>`;
+  }
+
+  // ── Softlocks on overview ──────────────────────────────────────────────────
   const softlockCount = qa.allTimedOut?.length || 0;
-  const totalErrors   = qa.allErrors?.length   || 0;
+  const softlockSection = softlockCount > 0 ? `<div class="warning-banner">
+    <strong>⏱ ${softlockCount} game(s) timed out (possible softlock)</strong>
+    <div style="margin-top:8px;font-size:13px;color:var(--dim)">
+      ${[...new Set((qa.allTimedOut||[]).map(t=>t.matchup))].slice(0,8).join(', ')}
+    </div>
+  </div>` : '';
 
-  const html = `<!DOCTYPE html>
+  // ── Nav badge helper ───────────────────────────────────────────────────────
+  const bugBadge  = totalBugs > 0 ? ` <span class="nav-badge ${criticalBugs.length?'badge-red':'badge-orange'}">${totalBugs}</span>` : ' <span class="nav-badge badge-green">✓</span>';
+  const uiBadge   = uiErrors.length  > 0 ? ` <span class="nav-badge badge-red">${uiIssues.length}</span>` : uiIssues.length > 0 ? ` <span class="nav-badge badge-orange">${uiIssues.length}</span>` : ' <span class="nav-badge badge-green">✓</span>';
+  const promptBadge = allPrompts.length > 0 ? ` <span class="nav-badge badge-gold">${allPrompts.length}</span>` : '';
+
+  // ── Full HTML ──────────────────────────────────────────────────────────────
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Beyond RTS — QA Report</title>
 <style>
-:root{--bg:#0c0c0e;--surface:#14161a;--border:#252830;--gold:#f0a500;--text:#cdd3e0;--dim:#6b7280;--red:#e74c3c;--orange:#e67e22;--green:#27ae60;--blue:#3498db;--purple:#8e44ad;}
+/* ── Reset & base ── */
+:root{
+  --bg:#0b0c0f;--surface:#13151a;--surface2:#1a1d24;--border:#23262f;
+  --gold:#f0a500;--gold2:#ffcc44;--text:#cdd3e0;--dim:#6b7280;--dimmer:#3d4250;
+  --red:#e74c3c;--orange:#e67e22;--green:#2ecc71;--blue:#3498db;--purple:#9b59b6;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font:14px/1.6 'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 a{color:var(--gold);}
-.header{background:linear-gradient(135deg,#1a0800,#0c0c0e);border-bottom:2px solid var(--gold);padding:28px 36px;display:flex;align-items:center;gap:20px;}
-.header h1{font-size:1.8rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
-.header .meta{color:var(--dim);font-size:12px;margin-top:4px;}
-.nav{display:flex;gap:0;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;}
-.nav a{padding:12px 20px;color:var(--dim);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;font-size:13px;font-weight:600;letter-spacing:.5px;}
-.nav a:hover,.nav a.active{color:var(--gold);border-bottom-color:var(--gold);}
-.tab-content{display:none;} .tab-content.active{display:block;}
-.container{max-width:1400px;margin:0 auto;padding:24px 20px;}
-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:20px;}
-h2{font-size:.95rem;text-transform:uppercase;letter-spacing:1px;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:16px;}
-h3{color:var(--text);font-size:.95rem;margin:14px 0 8px;}
-p,li{margin-bottom:8px;color:var(--text);}
-code{background:#1e2028;padding:1px 6px;border-radius:3px;font-family:monospace;font-size:12px;color:#81ecec;}
-pre{background:#0d0f14;border:1px solid var(--border);border-radius:6px;padding:14px;overflow-x:auto;font-size:12px;font-family:monospace;line-height:1.5;color:#b2f5ea;white-space:pre-wrap;}
+code{background:#1c1f27;padding:1px 6px;border-radius:3px;font:12px/1.4 'JetBrains Mono','Consolas',monospace;color:#81ecec;}
+pre{background:#0d0f14;border:1px solid var(--border);border-radius:6px;padding:14px;overflow-x:auto;font:12px/1.5 'JetBrains Mono','Consolas',monospace;color:#b2f5ea;white-space:pre-wrap;word-break:break-word;}
 strong{color:#fff;}
-details>summary{cursor:pointer;color:var(--gold);margin:8px 0;}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
-.stat-card{background:#1a1c22;border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;}
-.stat-card.stat-ok{border-color:#27ae6055;}.stat-card.stat-warn{border-color:#e67e2255;}.stat-card.stat-bad{border-color:#e74c3c55;}
-.stat-num{font-size:1.6rem;font-weight:700;color:var(--gold);}
-.stat-lbl{font-size:11px;color:var(--dim);margin-top:2px;}
-/* matrix */
+details>summary{cursor:pointer;color:var(--gold);font-size:13px;padding:4px 0;}
+h2{font-size:.85rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:16px;}
+h3{font-size:.9rem;color:var(--text);margin:16px 0 8px;}
+p{margin-bottom:8px;color:var(--text);}
+/* ── Header ── */
+.header{background:linear-gradient(160deg,#170a00 0%,#0b0c0f 60%);border-bottom:2px solid var(--gold);padding:24px 32px;display:flex;align-items:center;gap:20px;}
+.header-icon{font-size:2.5rem;line-height:1;}
+.header-title{font-size:1.7rem;font-weight:800;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.header-meta{font-size:12px;color:var(--dim);margin-top:4px;display:flex;flex-wrap:wrap;gap:10px;}
+.header-meta span{display:flex;align-items:center;gap:4px;}
+/* ── Nav ── */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;position:sticky;top:0;z-index:100;}
+.nav a{padding:13px 18px;color:var(--dim);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;font-size:13px;font-weight:600;letter-spacing:.4px;display:flex;align-items:center;gap:4px;transition:color .15s;}
+.nav a:hover{color:var(--text);}
+.nav a.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-badge{font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;line-height:1.4;}
+.badge-red{background:rgba(231,76,60,.25);color:#ff8080;}
+.badge-orange{background:rgba(230,126,34,.25);color:#ffb347;}
+.badge-green{background:rgba(46,204,113,.2);color:#55ee88;}
+.badge-gold{background:rgba(240,165,0,.2);color:var(--gold);}
+/* ── Layout ── */
+.tab{display:none;}.tab.active{display:block;}
+.container{max-width:1500px;margin:0 auto;padding:24px 20px;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:20px;}
+/* ── Stat cards ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;}
+.stat-card.stat-ok{border-color:rgba(46,204,113,.3);}
+.stat-card.stat-warn{border-color:rgba(230,126,34,.35);}
+.stat-card.stat-bad{border-color:rgba(231,76,60,.4);}
+.stat-num{font-size:1.7rem;font-weight:800;color:var(--gold);line-height:1.2;}
+.stat-lbl{font-size:11px;color:var(--dim);margin-top:3px;}
+.stat-lbl small{display:block;font-size:10px;margin-top:2px;color:var(--dimmer);}
+/* ── Balance bars ── */
+.bar-row{display:grid;grid-template-columns:24px 130px 1fr 50px 1fr;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.bar-row:last-child{border-bottom:none;}
+.bar-name{font-size:13px;}
+.bar-track{height:14px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.bar{height:100%;border-radius:4px;transition:width .3s;}
+.bar-hot{background:linear-gradient(90deg,var(--red),#ff6b6b);}
+.bar-ok{background:linear-gradient(90deg,var(--green),#00d68f);}
+.bar-cold{background:linear-gradient(90deg,var(--purple),#8e44ad);}
+.bar-pct{font-size:13px;font-weight:700;text-align:right;}
+.hot{color:#ff8080;}.ok{color:var(--green);}.cold{color:#bf94e4;}
+.bar-detail{font-size:11px;color:var(--dim);}
+.tier-badge{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.tier-s{background:rgba(231,76,60,.3);color:#ff8080;}
+.tier-a{background:rgba(230,126,34,.3);color:#ffb347;}
+.tier-b{background:rgba(46,204,113,.2);color:var(--green);}
+.tier-c{background:rgba(52,152,219,.2);color:#74b9ff;}
+.tier-d{background:rgba(142,68,173,.25);color:#bf94e4;}
+/* ── Matrix ── */
 .matrix-scroll{overflow-x:auto;}
 .matrix{border-collapse:collapse;font-size:12px;width:100%;}
-.matrix th,.matrix td{padding:5px 7px;border:1px solid var(--border);text-align:center;white-space:nowrap;}
-.matrix thead th{background:#1a1c22;color:var(--gold);font-size:15px;}
-.matrix .row-label{background:#1a1c22;text-align:left;font-weight:600;min-width:120px;}
-.matrix .self{color:var(--border);}
-.hot{background:rgba(231,76,60,.3);color:#ff8080;font-weight:700;}
-.warm{background:rgba(230,126,34,.2);color:#ffb347;}
-.neutral{color:var(--dim);}
-.cool{background:rgba(52,152,219,.15);color:#74b9ff;}
-.cold{background:rgba(142,68,173,.3);color:#bf94e4;font-weight:700;}
-/* bars */
-.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
-.bar-label-name{min-width:120px;font-size:13px;}
-.bar-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:160px;}
-.bar{height:16px;border-radius:3px;min-width:2px;}
-.bar-hot{background:var(--red);}.bar-ok{background:var(--green);}.bar-cold{background:var(--purple);}
-.bar-pct{font-size:13px;font-weight:700;min-width:40px;}
-.bar-meta{color:var(--dim);font-size:12px;width:100%;padding-left:132px;}
-/* bugs */
-.bug-card{border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:14px;}
-.bug-card.sev-critical{border-left:4px solid var(--red);background:rgba(231,76,60,.05);}
+.matrix th,.matrix td{padding:6px 8px;border:1px solid var(--border);text-align:center;white-space:nowrap;}
+.matrix thead th{background:var(--surface2);font-size:13px;line-height:1.3;}
+.mat-lbl{font-size:10px;color:var(--dim);display:block;}
+.corner{background:var(--surface2);}
+.row-label{background:var(--surface2);text-align:left;font-weight:600;min-width:130px;font-size:12px;}
+.self{color:var(--dimmer);background:var(--surface2);}
+.na{color:var(--dimmer);}
+.matrix .hot{background:rgba(231,76,60,.35);color:#ff8080;font-weight:700;}
+.matrix .warm{background:rgba(230,126,34,.25);color:#ffb347;font-weight:600;}
+.matrix .neutral{color:var(--dim);}
+.matrix .cool{background:rgba(52,152,219,.18);color:#74b9ff;}
+.matrix .cold{background:rgba(142,68,173,.3);color:#bf94e4;font-weight:700;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;}
+.legend span{display:flex;align-items:center;gap:5px;}
+.ld{width:10px;height:10px;border-radius:2px;display:inline-block;}
+/* ── Bug cards ── */
+.filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:8px;}
+.search-input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--text);font:13px/1 inherit;flex:1;min-width:200px;outline:none;}
+.search-input:focus{border-color:var(--gold);}
+.sev-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.sev-filter{background:var(--surface);border:1px solid var(--border);color:var(--dim);padding:5px 12px;border-radius:20px;cursor:pointer;font:12px/1 inherit;font-weight:600;}
+.sev-filter.active,.sev-filter:hover{border-color:var(--gold);color:var(--gold);}
+.sev-filter-critical.active{border-color:var(--red);color:var(--red);background:rgba(231,76,60,.1);}
+.sev-filter-high.active{border-color:var(--orange);color:var(--orange);background:rgba(230,126,34,.1);}
+.sev-filter-medium.active{border-color:#f1c40f;color:#f1c40f;background:rgba(241,196,15,.08);}
+.sev-filter-low.active{border-color:var(--blue);color:var(--blue);background:rgba(52,152,219,.1);}
+.bug-card{border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;transition:border-color .15s;}
+.bug-card.sev-critical{border-left:4px solid var(--red);}
 .bug-card.sev-high{border-left:4px solid var(--orange);}
 .bug-card.sev-medium{border-left:4px solid #f1c40f;}
 .bug-card.sev-low{border-left:4px solid var(--blue);}
-.bug-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
-.bug-sev{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;letter-spacing:.5px;}
-.sev-critical .bug-sev{background:rgba(231,76,60,.3);color:#ff8080;}
-.sev-high .bug-sev{background:rgba(230,126,34,.3);color:#ffb347;}
-.sev-medium .bug-sev{background:rgba(241,196,15,.2);color:#f1c40f;}
-.sev-low .bug-sev{background:rgba(52,152,219,.2);color:#74b9ff;}
-.bug-type{font-weight:600;}.bug-occ{color:var(--dim);font-size:12px;}
-.bug-matchup{color:var(--dim);font-size:12px;margin-left:auto;}
-.bug-message{margin-bottom:10px;font-size:13px;}
-.bug-section{margin:8px 0;font-size:13px;}
-.stack{font-size:11px;max-height:200px;overflow-y:auto;margin-top:6px;}
-.no-issues{padding:20px;text-align:center;color:var(--green);font-weight:600;}
-/* paste prompt */
-.paste-prompt{background:#0a1628;border:2px solid var(--gold);border-radius:8px;padding:16px;margin:14px 0;}
-.paste-label{color:var(--gold);font-weight:700;font-size:13px;margin-bottom:10px;letter-spacing:.5px;}
-.paste-text{font-size:12px;color:#b2f5ea;white-space:pre-wrap;max-height:300px;overflow-y:auto;}
-.copy-btn{margin-top:8px;background:#1a2d4a;border:1px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit;}
+.bug-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:var(--surface2);flex-wrap:wrap;}
+.bug-header:hover{background:#1e2130;}
+.bug-sev-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;letter-spacing:.5px;white-space:nowrap;}
+.sev-critical .bug-sev-badge{background:rgba(231,76,60,.2);color:#ff8080;}
+.sev-high .bug-sev-badge{background:rgba(230,126,34,.2);color:#ffb347;}
+.sev-medium .bug-sev-badge{background:rgba(241,196,15,.15);color:#f1c40f;}
+.sev-low .bug-sev-badge{background:rgba(52,152,219,.15);color:#74b9ff;}
+.bug-type-label{font-weight:600;font-size:13px;}
+.bug-occ{color:var(--dim);font-size:12px;background:var(--bg);padding:1px 6px;border-radius:3px;}
+.bug-matchup-label{color:var(--dim);font-size:12px;margin-left:auto;}
+.bug-chevron{color:var(--dim);font-size:11px;transition:transform .2s;margin-left:4px;}
+.bug-message{padding:8px 14px 8px;font-size:12px;border-bottom:1px solid var(--border);}
+.bug-body{padding:14px;background:var(--bg);border-top:1px solid var(--border);}
+.diag-row{display:grid;grid-template-columns:90px 1fr;gap:10px;margin-bottom:10px;font-size:13px;}
+.diag-lbl{color:var(--dim);font-weight:600;font-size:12px;padding-top:1px;}
+.diag-val{line-height:1.6;}
+.stack-details{margin-bottom:12px;}
+.stack{max-height:200px;overflow-y:auto;font-size:11px;}
+/* ── Prompt boxes ── */
+.prompt-box{background:#0a1628;border:2px solid rgba(240,165,0,.4);border-radius:8px;padding:14px;margin:12px 0;}
+.prompt-label{color:var(--gold);font-weight:700;font-size:12px;margin-bottom:8px;letter-spacing:.5px;}
+.prompt-text{font-size:12px;color:#b2f5ea;max-height:240px;overflow-y:auto;}
+.copy-btn{margin-top:8px;background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.4);color:var(--gold);padding:6px 14px;border-radius:5px;cursor:pointer;font:12px/1 inherit;font-weight:600;transition:all .15s;}
 .copy-btn:hover{background:var(--gold);color:#000;}
-/* ui issues */
-.ui-issue{border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;}
-.ui-issue.ui-error{border-left:3px solid var(--red);}
-.ui-issue.ui-warning{border-left:3px solid var(--orange);}
-.ui-issue.ui-info{border-left:3px solid var(--blue);}
-.ui-type{font-weight:600;font-size:12px;}.ui-screen,.ui-vp{color:var(--dim);font-size:12px;}
-.ui-msg{width:100%;font-size:13px;}.ui-el{display:block;margin-top:4px;}
-.ui-error h3{color:var(--red);}.ui-warning h3{color:var(--orange);}.ui-info h3{color:var(--blue);}
-/* screenshots */
-.ss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:16px;}
-.ss-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-.ss-card img{width:100%;height:180px;object-fit:cover;display:block;background:#111;}
-.ss-label{padding:6px 10px;font-size:12px;color:var(--dim);background:var(--surface);}
-/* mechanics */
-.mech-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
-.mech-key{min-width:180px;font-size:13px;text-transform:capitalize;}
-.mech-bar-wrap{flex:1;min-width:100px;background:#1a1c22;border-radius:3px;height:12px;}
-.mech-bar{height:12px;border-radius:3px;background:var(--green);}
-.mech-low .mech-bar{background:var(--orange);}
-.mech-pct{min-width:40px;font-size:13px;font-weight:600;}
+.copy-big{padding:8px 18px;font-size:13px;}
+/* ── Prompts tab ── */
+.prompt-mega-box{background:#0a1628;border:2px solid var(--gold);border-radius:10px;padding:16px;margin-bottom:20px;}
+.prompt-mega-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+.prompt-card{border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:12px;}
+.prompt-card.sev-critical{border-left:4px solid var(--red);}
+.prompt-card.sev-high{border-left:4px solid var(--orange);}
+.prompt-card.sev-medium{border-left:4px solid #f1c40f;}
+.prompt-card.sev-low{border-left:4px solid var(--blue);}
+.prompt-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.prompt-bug-type{font-weight:600;font-size:13px;}
+/* ── Banners ── */
+.critical-banner{background:rgba(231,76,60,.06);border:2px solid rgba(231,76,60,.4);border-radius:10px;padding:20px;margin-bottom:20px;}
+.critical-banner h2{color:var(--red);border-color:rgba(231,76,60,.3);}
+.critical-item{background:rgba(231,76,60,.04);border:1px solid rgba(231,76,60,.2);border-radius:8px;padding:14px;margin-top:12px;}
+.critical-item-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+.critical-msg{font-size:13px;color:var(--dim);}
+.warning-banner{background:rgba(230,126,34,.06);border:1px solid rgba(230,126,34,.3);border-radius:8px;padding:14px;margin-bottom:16px;color:var(--orange);}
+/* ── Screenshots ── */
+.ss-screen-title{margin:16px 0 10px;color:var(--gold);}
+.ss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px;}
+.ss-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:zoom-in;transition:border-color .15s;position:relative;}
+.ss-card:hover{border-color:var(--gold);}
+.ss-card img{width:100%;height:170px;object-fit:cover;display:block;background:#111;}
+.ss-label{padding:7px 10px;font-size:12px;color:var(--text);background:var(--surface2);display:flex;align-items:center;justify-content:space-between;}
+.ss-dims{color:var(--dim);font-size:11px;}
+.ss-zoom-hint{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);color:#fff;font-size:10px;padding:3px 6px;border-radius:4px;opacity:0;transition:opacity .2s;}
+.ss-card:hover .ss-zoom-hint{opacity:1;}
+/* ── Lightbox ── */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;flex-direction:column;align-items:center;justify-content:center;cursor:zoom-out;}
+#lightbox.open{display:flex;}
+#lb-img{max-width:94vw;max-height:86vh;border:2px solid var(--gold);border-radius:4px;box-shadow:0 0 60px rgba(0,0,0,.8);}
+#lb-label{color:var(--dim);font-size:13px;margin-top:10px;}
+#lb-close{position:absolute;top:16px;right:20px;color:var(--dim);font-size:24px;cursor:pointer;background:none;border:none;line-height:1;}
+#lb-close:hover{color:#fff;}
+/* ── UI issues ── */
+.ui-group-title{margin:16px 0 8px;font-size:.85rem;display:flex;align-items:center;gap:8px;}
+.ui-group-title.ui-error{color:var(--red);}
+.ui-group-title.ui-warning{color:var(--orange);}
+.ui-group-title.ui-info{color:var(--blue);}
+.badge{background:var(--surface2);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;}
+.ui-issue-row{border:1px solid var(--border);border-radius:6px;padding:10px;margin-bottom:6px;}
+.ui-issue-row.ui-error{border-left:3px solid var(--red);}
+.ui-issue-row.ui-warning{border-left:3px solid var(--orange);}
+.ui-issue-row.ui-info{border-left:3px solid var(--blue);}
+.ui-issue-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.ui-type-badge{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600;}
+.ui-screen-badge,.ui-vp-badge{background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--dim);}
+.ui-issue-msg{font-size:13px;line-height:1.5;}
+.ui-el-code{display:inline-block;margin-top:4px;}
+/* ── Mechanics ── */
+.mech-row{display:grid;grid-template-columns:200px 1fr 50px 40px auto;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.mech-row.mech-flagged .mech-name{color:var(--orange);}
+.mech-name{font-size:13px;text-transform:capitalize;}
+.mech-track{height:10px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.mech-fill{height:100%;border-radius:3px;transition:width .3s;}
+.mech-pct{font-size:13px;font-weight:700;text-align:right;}
+.mech-count{font-size:11px;color:var(--dim);}
 .mech-flag{color:var(--orange);font-size:12px;}
-.legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;}
-.legend span{display:flex;align-items:center;gap:5px;}
-.ld{width:10px;height:10px;border-radius:2px;}
+/* ── Analysis ── */
+.analysis h2{color:var(--gold);font-size:.95rem;}
+.analysis h3{color:var(--text);font-size:.9rem;margin:14px 0 6px;}
+/* ── Empty state ── */
+.empty-state{padding:24px;text-align:center;color:var(--green);font-weight:600;font-size:14px;}
+/* ── Responsive ── */
+@media(max-width:700px){
+  .bar-row{grid-template-columns:24px 1fr 60px;}.bar-detail,.bar-track{display:none;}
+  .mech-row{grid-template-columns:1fr 50px auto;}
+  .diag-row{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div id="lb-label"></div>
+</div>
+
+<!-- HEADER -->
 <div class="header">
+  <div class="header-icon">⚔️</div>
   <div>
-    <h1>⚔ Beyond RTS — QA Report</h1>
-    <div class="meta">
-      ${timestamp} · ${qa.totalGamesRun} games · ${cfg.balance.aiDifficulty} AI · ${factions.length} factions ·
-      ${totalBugs > 0 ? `<span style="color:var(--red)">⚠ ${totalBugs} bugs</span>` : '<span style="color:var(--green)">✅ 0 bugs</span>'} ·
-      ${uiIssues.length} UI issues · ${softlockCount} softlocks
+    <div class="header-title">Beyond RTS — QA Report</div>
+    <div class="header-meta">
+      <span>🕐 ${escHtml(timestamp)}</span>
+      <span>🎮 ${qa.totalGamesRun} games</span>
+      <span>🤖 ${escHtml(cfg.balance.aiDifficulty)} AI</span>
+      <span>🏴 ${factions.length} factions</span>
+      <span>⏱ ${escHtml(runDurStr)}</span>
+      <span>${totalBugs > 0 ? `<span style="color:var(--red)">⚠️ ${totalBugs} bug${totalBugs>1?'s':''}</span>` : '<span style="color:var(--green)">✅ 0 bugs</span>'}</span>
+      ${softlockCount > 0 ? `<span style="color:var(--orange)">⏱ ${softlockCount} softlock${softlockCount>1?'s':''}</span>` : ''}
     </div>
   </div>
 </div>
 
+<!-- NAV -->
 <nav class="nav">
-  <a href="#" class="active" onclick="showTab('overview',this)">Overview</a>
-  <a href="#" onclick="showTab('bugs',this)">🐛 Bugs${totalBugs?` (${totalBugs})`:''}${criticalBugs.length?` 🔴`:'✅'}</a>
-  <a href="#" onclick="showTab('ui',this)">🖼 UI${uiIssues.length?` (${uiIssues.length})`:'✅'}</a>
-  <a href="#" onclick="showTab('mechanics',this)">⚙️ Mechanics</a>
-  <a href="#" onclick="showTab('performance',this)">📊 Performance</a>
-  <a href="#" onclick="showTab('balance',this)">⚔️ Balance</a>
+  <a href="#" class="active" onclick="return showTab('overview',this)">📊 Overview</a>
+  <a href="#" onclick="return showTab('bugs',this)">🐛 Bugs${bugBadge}</a>
+  <a href="#" onclick="return showTab('prompts',this)">📋 Prompts${promptBadge}</a>
+  <a href="#" onclick="return showTab('ui',this)">🖼 UI${uiBadge}</a>
+  <a href="#" onclick="return showTab('mechanics',this)">⚙️ Mechanics</a>
+  <a href="#" onclick="return showTab('performance',this)">📈 Performance</a>
+  <a href="#" onclick="return showTab('balance',this)">⚔️ Balance</a>
 </nav>
 
 <div class="container">
 
-<!-- OVERVIEW -->
-<div id="tab-overview" class="tab-content active">
-  <section>
-    <h2>Summary</h2>
+<!-- ═══ OVERVIEW ═══ -->
+<div id="tab-overview" class="tab active">
+  ${criticalSection}
+  ${softlockSection}
+  <div class="section">
+    <h2>Run Summary</h2>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num">${qa.totalGamesRun}</div><div class="stat-lbl">Games Played</div></div>
-      <div class="stat-card ${criticalBugs.length>0?'stat-bad':totalBugs>0?'stat-warn':'stat-ok'}"><div class="stat-num">${totalBugs}</div><div class="stat-lbl">Bugs Found</div></div>
-      <div class="stat-card ${softlockCount>0?'stat-bad':'stat-ok'}"><div class="stat-num">${softlockCount}</div><div class="stat-lbl">Softlocks</div></div>
-      <div class="stat-card ${uiErrors.length>0?'stat-bad':'stat-ok'}"><div class="stat-num">${uiIssues.length}</div><div class="stat-lbl">UI Issues</div></div>
-      <div class="stat-card"><div class="stat-num">${screenshots.length}</div><div class="stat-lbl">Screenshots</div></div>
-      <div class="stat-card ${qa.allNaNs?.length>0?'stat-bad':'stat-ok'}"><div class="stat-num">${qa.allNaNs?.length||0}</div><div class="stat-lbl">NaN Events</div></div>
+      <div class="stat-card ${criticalBugs.length>0?'stat-bad':totalBugs>0?'stat-warn':'stat-ok'}">
+        <div class="stat-num">${totalBugs}</div><div class="stat-lbl">Bugs Found<small>${criticalBugs.length} critical</small></div>
+      </div>
+      <div class="stat-card ${softlockCount>0?'stat-bad':'stat-ok'}">
+        <div class="stat-num">${softlockCount}</div><div class="stat-lbl">Softlocks</div>
+      </div>
+      <div class="stat-card ${uiErrors.length>0?'stat-bad':uiIssues.length>0?'stat-warn':'stat-ok'}">
+        <div class="stat-num">${uiIssues.length}</div><div class="stat-lbl">UI Issues<small>${uiErrors.length} errors</small></div>
+      </div>
+      <div class="stat-card ${(qa.allNaNs?.length||0)>0?'stat-bad':'stat-ok'}">
+        <div class="stat-num">${qa.allNaNs?.length||0}</div><div class="stat-lbl">NaN Events</div>
+      </div>
+      <div class="stat-card"><div class="stat-num">${allPrompts.length}</div><div class="stat-lbl">Claude Prompts<small>ready to paste</small></div></div>
     </div>
-  </section>
-  ${criticalBugs.length > 0 ? `<section style="border-color:var(--red)"><h2 style="color:var(--red)">🔴 Critical Issues Requiring Immediate Attention</h2>${criticalBugs.map(b=>`<div class="bug-card sev-critical"><div class="bug-header"><span class="bug-sev sev-critical">CRITICAL</span><span class="bug-type">${b.type}</span><span class="bug-matchup">${(b.matchups||[]).join(', ')}</span></div><div class="bug-message"><code>${escHtml(b.message||'')}</code></div>${b.diagnosis?.pasteToClaudePrompt?`<div class="paste-prompt"><div class="paste-label">📋 Paste to Claude →</div><pre class="paste-text">${escHtml(b.diagnosis.pasteToClaudePrompt)}</pre><button class="copy-btn" onclick="copyText(this)">Copy</button></div>`:''}</div>`).join('')}</section>` : ''}
+  </div>
+  ${factions.length > 0 ? `<div class="section"><h2>Quick Faction Standings</h2>${barsHtml}</div>` : ''}
 </div>
 
-<!-- BUGS -->
-<div id="tab-bugs" class="tab-content">
-  <section><h2>🐛 Bug Reports (${diagnosedBugs.length})</h2>${bugsHtml}</section>
+<!-- ═══ BUGS ═══ -->
+<div id="tab-bugs" class="tab">
+  <div class="section">
+    <h2>Bug Reports (${diagnosedBugs.length})</h2>
+    ${bugsHtml}
+  </div>
 </div>
 
-<!-- UI -->
-<div id="tab-ui" class="tab-content">
-  <section><h2>📸 Screenshots</h2>${ssHtml}</section>
-  <section><h2>🔍 UI Issues (${uiIssues.length})</h2>${uiHtml}</section>
+<!-- ═══ PROMPTS ═══ -->
+<div id="tab-prompts" class="tab">
+  <div class="section">
+    <h2>📋 Paste-to-Claude Prompts</h2>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Copy individual prompts or use "Copy All" to paste everything at once. Each prompt is self-contained and tells Claude exactly what's broken.</p>
+    ${promptsHtml}
+  </div>
 </div>
 
-<!-- MECHANICS -->
-<div id="tab-mechanics" class="tab-content">
-  <section>
+<!-- ═══ UI ═══ -->
+<div id="tab-ui" class="tab">
+  <div class="section">
+    <h2>📸 Screenshots — click to enlarge</h2>
+    ${ssHtml}
+  </div>
+  <div class="section">
+    <h2>UI Issues (${uiIssues.length})</h2>
+    ${uiHtml}
+  </div>
+</div>
+
+<!-- ═══ MECHANICS ═══ -->
+<div id="tab-mechanics" class="tab">
+  <div class="section">
     <h2>⚙️ Mechanic Usage</h2>
-    <p style="color:var(--dim);margin-bottom:14px;font-size:13px;">Percentage of games where this mechanic was used at least once. Under ${cfg.mechanics?.unusedThresholdPct||15}% is flagged as potentially broken or undiscoverable.</p>
-    ${mechHtml}
-  </section>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Percentage of games where each mechanic was used. Under ${threshold}% is flagged — likely broken, too expensive, or players don't discover it.</p>
+    ${mechHtml || `<div class="empty-state">No mechanic data (balance run required)</div>`}
+  </div>
 </div>
 
-<!-- PERFORMANCE -->
-<div id="tab-performance" class="tab-content">
-  <section><h2>📊 Performance</h2>${perfHtml}</section>
+<!-- ═══ PERFORMANCE ═══ -->
+<div id="tab-performance" class="tab">
+  <div class="section"><h2>📈 Performance</h2>${perfHtml}</div>
 </div>
 
-<!-- BALANCE -->
-<div id="tab-balance" class="tab-content">
-  <section><h2>📈 Win Rates</h2>${barsHtml}</section>
-  <section>
-    <h2>🗺 Matchup Matrix</h2>
+<!-- ═══ BALANCE ═══ -->
+<div id="tab-balance" class="tab">
+  <div class="section">
+    <h2>Win Rate Overview</h2>
+    ${barsHtml || `<div class="empty-state">No balance data</div>`}
+  </div>
+  <div class="section">
+    <h2>Matchup Matrix — hover cells for details</h2>
     <div class="legend">
-      <span><span class="ld" style="background:rgba(231,76,60,.5)"></span>≥65% favored</span>
-      <span><span class="ld" style="background:rgba(230,126,34,.3)"></span>55-64%</span>
-      <span><span class="ld" style="background:#252830"></span>45-54% balanced</span>
-      <span><span class="ld" style="background:rgba(52,152,219,.25)"></span>35-44%</span>
-      <span><span class="ld" style="background:rgba(142,68,173,.35)"></span>≤34% unfavored</span>
+      <span><span class="ld" style="background:rgba(231,76,60,.5)"></span>≥65% win</span>
+      <span><span class="ld" style="background:rgba(230,126,34,.3)"></span>55–64%</span>
+      <span><span class="ld" style="background:var(--border)"></span>45–54% balanced</span>
+      <span><span class="ld" style="background:rgba(52,152,219,.3)"></span>35–44%</span>
+      <span><span class="ld" style="background:rgba(142,68,173,.4)"></span>≤34% losing</span>
     </div>
-    <div class="matrix-scroll">${matrixHtml}</div>
-  </section>
-  <section><h2>🤖 AI Balance Analysis</h2><div class="analysis">${balHtml}</div></section>
+    ${matrixHtml}
+  </div>
+  <div class="section analysis">
+    <h2>🤖 AI Balance Analysis</h2>
+    <div class="analysis">${balHtml}</div>
+  </div>
 </div>
 
 </div><!-- /container -->
 
 <script>
+// ── Tab switching ──────────────────────────────────────────────────────────
 function showTab(id, el) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
   el.classList.add('active');
   return false;
 }
-function copyText(btn) {
-  const pre = btn.previousElementSibling;
-  navigator.clipboard.writeText(pre.textContent).then(() => {
+
+// ── Bug toggle ─────────────────────────────────────────────────────────────
+function toggleBug(i) {
+  const body = document.getElementById('bugbody-' + i);
+  const chev = document.getElementById('chev-' + i);
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  chev.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+// ── Bug filter ─────────────────────────────────────────────────────────────
+let _activeSev = 'ALL';
+function setSevFilter(sev, btn) {
+  _activeSev = sev;
+  document.querySelectorAll('.sev-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterBugs();
+}
+function filterBugs() {
+  const q = (document.getElementById('bug-search')?.value || '').toLowerCase();
+  document.querySelectorAll('#bug-list .bug-card').forEach(card => {
+    const matchSev  = _activeSev === 'ALL' || card.dataset.sev === _activeSev;
+    const matchText = !q || (card.dataset.text || '').toLowerCase().includes(q);
+    card.style.display = (matchSev && matchText) ? '' : 'none';
+  });
+}
+
+// ── Copy ───────────────────────────────────────────────────────────────────
+function copyById(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.style.background = 'rgba(46,204,113,.15)';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = el.textContent;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
     btn.textContent = '✅ Copied!';
     setTimeout(() => btn.textContent = 'Copy', 2000);
   });
 }
+
+// ── Lightbox ───────────────────────────────────────────────────────────────
+function openLightbox(src, label) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-label').textContent = label;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
 </body>
 </html>`;
-
-  return html;
 }
 
+// ── Markdown → HTML ────────────────────────────────────────────────────────
 function mdToHtml(text) {
   return text
+    .replace(/===BALANCE PROMPT START===([\s\S]+?)===BALANCE PROMPT END===/g, '$1') // already handled
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\[HIGH\]/g,'<span style="color:var(--red);font-weight:700;">[HIGH]</span>')
-    .replace(/\[MED\]/g, '<span style="color:var(--orange);font-weight:700;">[MED]</span>')
-    .replace(/\[LOW\]/g, '<span style="color:var(--blue);font-weight:700;">[LOW]</span>')
+    .replace(/^\- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/gs, m => `<ul>${m}</ul>`)
+    .replace(/\[HIGH\]/g,  '<span style="color:var(--red);font-weight:700;">[HIGH]</span>')
+    .replace(/\[MED\]/g,   '<span style="color:var(--orange);font-weight:700;">[MED]</span>')
+    .replace(/\[LOW\]/g,   '<span style="color:var(--blue);font-weight:700;">[LOW]</span>')
+    .replace(/\[CRITICAL\]/g, '<span style="color:var(--red);font-weight:700;">[CRITICAL]</span>')
     .replace(/\n{2,}/g, '</p><p>')
-    .replace(/^(?!<[hp])/gm, '');
+    .replace(/^(?!<[hup])/gm, '');
 }
 
 function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function escAttr(s) {
+  return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
 }
 
 module.exports = { buildReport };

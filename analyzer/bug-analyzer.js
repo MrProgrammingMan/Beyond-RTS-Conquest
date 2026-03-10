@@ -1,7 +1,9 @@
 /**
  * bug-analyzer.js
- * Deduplicates bugs, then sends each unique bug to the Claude API.
- * Returns: diagnosed bugs with reproduction steps + suggested fixes + paste-to-Claude prompts.
+ * Diagnoses all bugs in a SINGLE batched Claude API call.
+ *
+ * Old approach: 1 Claude call per unique bug → 10 bugs = 10 sequential API calls (~30s)
+ * New approach: 1 Claude call with ALL bugs → always ~3-5s regardless of bug count
  */
 
 const Anthropic = require('@anthropic-ai/sdk');
@@ -9,173 +11,141 @@ const Anthropic = require('@anthropic-ai/sdk');
 async function analyzeBugs(allErrors, allNaNs, allTimedOut, cfg) {
   const client = new Anthropic({ apiKey: cfg.anthropicApiKey });
 
-  // ── Deduplicate errors ────────────────────────────────────────────────────
-  // Group by message signature — same error in 3 matchups = 1 bug report
   const uniqueErrors = deduplicateErrors(allErrors);
   const uniqueNaNs   = deduplicateNaNs(allNaNs);
-  const diagnosedBugs = [];
 
-  // ── Diagnose each unique bug via Claude ───────────────────────────────────
-  for (const bug of [...uniqueErrors, ...uniqueNaNs]) {
-    try {
-      const diagnosis = await diagnoseOneBug(client, bug);
-      diagnosedBugs.push({ ...bug, diagnosis });
-    } catch (err) {
-      diagnosedBugs.push({ ...bug, diagnosis: { error: err.message } });
-    }
-  }
+  const bugs = [
+    ...uniqueErrors,
+    ...uniqueNaNs,
+  ];
 
-  // ── Diagnose softlocks ────────────────────────────────────────────────────
+  // Add softlock entry if any games timed out
   if (allTimedOut.length > 0) {
-    try {
-      const softlockDiag = await diagnoseSoftlocks(client, allTimedOut);
-      diagnosedBugs.push({
-        type: 'softlock',
-        severity: 'critical',
-        occurrences: allTimedOut.length,
-        affectedMatchups: [...new Set(allTimedOut.map(t => t.matchup))],
-        examples: allTimedOut.slice(0, 3),
-        diagnosis: softlockDiag,
-      });
-    } catch (err) {
-      diagnosedBugs.push({
-        type: 'softlock', severity: 'critical',
-        occurrences: allTimedOut.length,
-        diagnosis: { error: err.message },
-      });
+    bugs.push({
+      type:     'softlock',
+      message:  `${allTimedOut.length} game(s) never ended (timed out)`,
+      matchups: [...new Set(allTimedOut.map(t => t.matchup))],
+      occurrences: allTimedOut.length,
+      examples: allTimedOut.slice(0, 3),
+      isSoftlock: true,
+    });
+  }
+
+  if (bugs.length === 0) return [];
+
+  // ── Single batched Claude call ────────────────────────────────────────────
+  try {
+    return await diagnoseBatch(client, bugs);
+  } catch (err) {
+    console.error('  ⚠️  Bug diagnosis API call failed:', err.message);
+    // Return undetermined bugs so report still shows them
+    return bugs.map(b => ({ ...b, diagnosis: { severity: 'MEDIUM', likelyCause: 'Diagnosis failed: ' + err.message, rawText: '' } }));
+  }
+}
+
+async function diagnoseBatch(client, bugs) {
+  // Format each bug into a numbered entry
+  const bugEntries = bugs.map((bug, i) => {
+    const matchupStr = (bug.matchups || [bug.matchup]).filter(Boolean).join(', ') || 'unknown';
+    const stateStr   = JSON.stringify(bug.gameState || bug.examples?.[0] || {}, null, 2).slice(0, 400);
+    const extras = bug.isSoftlock
+      ? `Examples:\n${(bug.examples || []).slice(0,3).map(t => `  - ${t.matchup}: elapsed=${t.elapsed}s P1=${t.p1BaseHp}hp P2=${t.p2BaseHp}hp`).join('\n')}`
+      : `Stack: ${(bug.stack || 'none').slice(0, 300)}
+Game state: ${stateStr}${bug.nanPath ? `\nNaN path: ${bug.nanPath}` : ''}`;
+
+    return `--- BUG ${i + 1} ---
+Type: ${bug.type}
+Message: ${(bug.message || '').slice(0, 200)}
+Matchups: ${matchupStr} (×${bug.occurrences || 1})
+${extras}`;
+  }).join('\n\n');
+
+  const prompt = `You are a game bug analyst for "Beyond RTS Conquest" — a ~15,000-line single-file browser RTS (vanilla JS + Canvas).
+
+GAME SUMMARY: 2-player base defense. Players spend Souls + Bodies on units, capture mid for income, use spies/upgrades/buffs. Base hits 0 HP = lose.
+
+Below are ${bugs.length} unique bug(s) found during automated playtesting. Diagnose ALL of them.
+
+${bugEntries}
+
+For EACH bug, output a JSON object on a single line (no markdown, no extra text — output ONLY a JSON array):
+
+[
+  {
+    "index": 1,
+    "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+    "likelyCause": "2-3 sentence explanation",
+    "reproSteps": "numbered steps as a single string with \\n separators",
+    "whereToLook": "function names / variable names / patterns to search in index.html",
+    "suggestedFix": "concrete fix suggestion or pseudo-code",
+    "pasteToClaudePrompt": "Ready-to-paste message starting with the game context, describing this bug precisely, including game state, and asking for a fix. Make this detailed and self-contained."
+  },
+  ...
+]
+
+Rules:
+- Output ONLY the JSON array, no other text
+- Every bug must have an entry (index 1 through ${bugs.length})
+- pasteToClaudePrompt must be a single string (escape newlines as \\n)
+- Keep pasteToClaudePrompt under 800 chars`;
+
+  const response = await client.messages.create({
+    model:      'claude-sonnet-4-20250514',
+    max_tokens: Math.min(4000, bugs.length * 600 + 200),
+    messages:   [{ role: 'user', content: prompt }],
+  });
+
+  const rawText = response.content.filter(b => b.type === 'text').map(b => b.text).join('');
+
+  // Parse JSON response
+  let parsed;
+  try {
+    // Strip any accidental markdown fences
+    const clean = rawText.replace(/```json|```/g, '').trim();
+    parsed = JSON.parse(clean);
+  } catch (_) {
+    // Fallback: try to extract JSON array from text
+    const match = rawText.match(/\[[\s\S]+\]/);
+    if (match) {
+      try { parsed = JSON.parse(match[0]); } catch (_) { parsed = []; }
+    } else {
+      parsed = [];
     }
   }
 
-  return diagnosedBugs;
-}
-
-async function diagnoseOneBug(client, bug) {
-  const prompt = `You are a game bug analyst reviewing an automated playtest report for "Beyond RTS Conquest" — a single-file browser RTS game (index.html ~15,000 lines, vanilla JS + Canvas).
-
-BUG REPORT:
-Type: ${bug.type}
-Message: ${bug.message}
-Stack trace: ${bug.stack || 'none'}
-Occurred in matchup(s): ${(bug.matchups || [bug.matchup]).join(', ')}
-Occurrences: ${bug.occurrences || 1}
-Game state at time of error: ${JSON.stringify(bug.gameState || {}, null, 2)}
-${bug.nanPath ? `NaN detected at: ${bug.nanPath}` : ''}
-
-Write a structured bug report in this exact format:
-
-SEVERITY: [CRITICAL / HIGH / MEDIUM / LOW]
-
-LIKELY CAUSE:
-[2-3 sentences explaining what probably caused this, based on the message + stack + game state]
-
-REPRODUCTION STEPS:
-1. [step]
-2. [step]
-3. [step]
-(be specific — mention factions involved if relevant)
-
-WHERE TO LOOK IN CODE:
-[Function names, variable names, or code patterns to search for in index.html]
-
-SUGGESTED FIX:
-[Concrete suggestion — if you can infer the fix from the error, give exact code or logic to change]
-
-PASTE TO CLAUDE:
-[Write a ready-to-send message for the developer to paste to their coding assistant Claude.
- It should: explain the game context, describe the bug precisely, include the game state, and ask for a fix.
- Start with >>>PROMPT START<<< and end with >>>PROMPT END<<<]`;
-
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1000,
-    messages: [{ role: 'user', content: prompt }],
+  // Merge diagnoses back into bug objects
+  return bugs.map((bug, i) => {
+    const diag = parsed.find(d => d.index === i + 1) || parsed[i];
+    if (!diag) return { ...bug, diagnosis: { severity: 'MEDIUM', likelyCause: 'Diagnosis unavailable', rawText } };
+    return {
+      ...bug,
+      diagnosis: {
+        severity:            (diag.severity || 'MEDIUM').toUpperCase(),
+        likelyCause:         diag.likelyCause || '',
+        reproSteps:          diag.reproSteps  || '',
+        whereToLook:         diag.whereToLook || '',
+        suggestedFix:        diag.suggestedFix || '',
+        pasteToClaudePrompt: diag.pasteToClaudePrompt
+          ? diag.pasteToClaudePrompt.replace(/\\n/g, '\n')
+          : null,
+        rawText: JSON.stringify(diag),
+      },
+    };
   });
-
-  const text = response.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
-  return parseDiagnosis(text);
 }
 
-async function diagnoseSoftlocks(client, timedOutGames) {
-  const examples = timedOutGames.slice(0, 5).map(t =>
-    `- ${t.matchup} (game ${t.gameNum}): elapsed ${t.elapsed}s, P1 base ${t.p1BaseHp}hp, P2 base ${t.p2BaseHp}hp, errors: ${t.errors?.length || 0}`
-  ).join('\n');
-
-  const prompt = `You are a game bug analyst. "Beyond RTS Conquest" is a single-file browser RTS.
-
-${timedOutGames.length} games timed out (never ended) during automated playtesting.
-
-AFFECTED MATCHUPS:
-${[...new Set(timedOutGames.map(t => t.matchup))].join(', ')}
-
-EXAMPLES:
-${examples}
-
-This could be: units stuck pathing, base HP stuck above 0 but no units attacking it, an infinite loop in a game system, or a faction passive that creates units indefinitely preventing either base from dying.
-
-Write a bug report using the same format:
-
-SEVERITY: CRITICAL
-
-LIKELY CAUSE:
-...
-
-REPRODUCTION STEPS:
-...
-
-WHERE TO LOOK IN CODE:
-...
-
-SUGGESTED FIX:
-...
-
-PASTE TO CLAUDE:
-[>>>PROMPT START<<< ... >>>PROMPT END<<<]`;
-
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 800,
-    messages: [{ role: 'user', content: prompt }],
-  });
-
-  const text = response.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
-  return parseDiagnosis(text);
-}
-
-function parseDiagnosis(text) {
-  const extract = (label, nextLabel) => {
-    const re = new RegExp(`${label}[:\\s]*\\n([\\s\\S]+?)(?=\\n${nextLabel}|$)`, 'i');
-    const m = text.match(re);
-    return m ? m[1].trim() : '';
-  };
-
-  const severityMatch = text.match(/SEVERITY:\s*(CRITICAL|HIGH|MEDIUM|LOW)/i);
-  const promptMatch   = text.match(/>>>PROMPT START<<<([\s\S]+?)>>>PROMPT END<<</);
-
-  return {
-    severity:          severityMatch ? severityMatch[1].toUpperCase() : 'MEDIUM',
-    likelyCause:       extract('LIKELY CAUSE', 'REPRODUCTION'),
-    reproSteps:        extract('REPRODUCTION STEPS', 'WHERE TO LOOK'),
-    whereToLook:       extract('WHERE TO LOOK IN CODE', 'SUGGESTED FIX'),
-    suggestedFix:      extract('SUGGESTED FIX', 'PASTE TO CLAUDE'),
-    pasteToClaudePrompt: promptMatch ? promptMatch[1].trim() : null,
-    rawText:           text,
-  };
-}
+// ── Deduplication ─────────────────────────────────────────────────────────────
 
 function deduplicateErrors(errors) {
   const bySignature = new Map();
   for (const e of errors) {
-    // Signature: first 120 chars of message + file + line
     const sig = `${(e.message || '').slice(0, 120)}|${e.filename || ''}|${e.line || 0}`;
     if (!bySignature.has(sig)) {
       bySignature.set(sig, { ...e, occurrences: 1, matchups: [e.matchup].filter(Boolean) });
     } else {
-      const existing = bySignature.get(sig);
-      existing.occurrences++;
-      if (e.matchup && !existing.matchups.includes(e.matchup)) {
-        existing.matchups.push(e.matchup);
-      }
-      // Keep the game state from the first occurrence
+      const ex = bySignature.get(sig);
+      ex.occurrences++;
+      if (e.matchup && !ex.matchups.includes(e.matchup)) ex.matchups.push(e.matchup);
     }
   }
   return Array.from(bySignature.values());
@@ -186,13 +156,15 @@ function deduplicateNaNs(nanEvents) {
   for (const n of nanEvents) {
     const sig = n.path || 'unknown';
     if (!byPath.has(sig)) {
-      byPath.set(sig, { ...n, type: 'nan_detected', severity: 'high',
-        message: `NaN/Infinity detected at ${n.path} = ${n.value}`,
-        occurrences: 1, matchups: [n.matchup].filter(Boolean) });
+      byPath.set(sig, {
+        ...n, type: 'nan_detected',
+        message: `NaN/Infinity at ${n.path} = ${n.value}`,
+        occurrences: 1, matchups: [n.matchup].filter(Boolean),
+      });
     } else {
-      const existing = byPath.get(sig);
-      existing.occurrences++;
-      if (n.matchup && !existing.matchups.includes(n.matchup)) existing.matchups.push(n.matchup);
+      const ex = byPath.get(sig);
+      ex.occurrences++;
+      if (n.matchup && !ex.matchups.includes(n.matchup)) ex.matchups.push(n.matchup);
     }
   }
   return Array.from(byPath.values());

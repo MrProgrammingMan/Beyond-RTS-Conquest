@@ -1,4 +1,9 @@
 // ─── BEYOND RTS QA SYSTEM — CONFIGURATION ─────────────────────────────────────
+//
+// QUICK GUIDE:
+//   Full 10-faction run (270 games):  ~8–12 min  → gamesPerMatchup:3, parallelGames:4
+//   Quick sanity check (50 games):    ~2–3 min   → run: node run.js --quick
+//   UI only (no games):               ~1 min     → run: node run.js --skip-balance
 
 module.exports = {
 
@@ -7,38 +12,38 @@ module.exports = {
 
   // ── WHAT TO RUN ────────────────────────────────────────────────────────────
   run: {
-    balance: true,   // faction matchup win rate testing
-    bugs: true,   // JS error capture, NaN detection, softlock detection
-    ui: true,   // screenshot audit, element overlap, off-screen checks
-    mechanics: true,   // spy/mid/upgrade/buff/laststand usage tracking
+    balance:     true,   // faction matchup win rate testing
+    bugs:        true,   // JS error capture, NaN detection, softlock detection
+    ui:          true,   // screenshot audit, element overlap, off-screen checks
+    mechanics:   true,   // spy/mid/upgrade/buff/laststand usage tracking
     performance: true,   // frame timing, memory, long tasks
-    mobile: true,   // repeat ui audit at mobile viewport sizes
+    mobile:      true,   // repeat ui audit at mobile viewport sizes
   },
 
   // ── BALANCE SETTINGS ──────────────────────────────────────────────────────
   balance: {
-    gamesPerMatchup: 3,       // 5=quick, 10=reliable, 20=high confidence
-    aiDifficulty: 'hard',   // 'easy'|'medium'|'hard'|'expert'
-    parallelGames: 6,       // concurrent browser tabs (RAM: ~300MB each)
-    mirrorMatchups: true,    // run A-vs-B AND B-vs-A
-    factionFilter: null,    // null = all factions, or ['warriors','brutes',...]
-    gameTimeoutSecs: 120,
+    gamesPerMatchup: 3,       // 3=quick, 5=reliable, 10=high confidence
+    aiDifficulty:   'hard',   // 'easy'|'medium'|'hard'|'expert'
+    parallelGames:   4,       // Recommended: 3-4. Each tab ~300MB RAM. 6 = lag city.
+    mirrorMatchups:  true,    // run A-vs-B AND B-vs-A (doubles accuracy, doubles time)
+    factionFilter:   null,    // null=all factions, or ['warriors','brutes',...]
+    gameTimeoutSecs: 45,      // Real seconds before giving up. With 30x speed hack
+                              // this represents ~22 in-game minutes — more than enough.
   },
 
   // ── BUG DETECTION ─────────────────────────────────────────────────────────
   bugs: {
-    captureConsoleErrors: true,
-    captureConsoleWarnings: false,  // too noisy; flip to true if you want warnings
-    detectNaN: true,    // scan G state for NaN/Infinity every 5s
-    detectSoftlocks: true,    // flag if game doesn't end within timeout
-    detectMemoryLeaks: true,    // flag if JS heap grows > threshold
-    memoryLeakThresholdMB: 400,
-    screenshotOnError: true,    // take a screenshot when a JS error fires
+    captureConsoleErrors:   true,
+    captureConsoleWarnings: false,  // flip to true if you want warnings (noisy)
+    detectNaN:              true,   // scan G state for NaN/Infinity every 10s
+    detectSoftlocks:        true,   // flag if game doesn't end within timeout
+    detectMemoryLeaks:      true,   // flag if JS heap grows > threshold
+    memoryLeakThresholdMB:  400,
+    screenshotOnError:      true,   // screenshot when a JS error fires
   },
 
   // ── UI AUDIT ──────────────────────────────────────────────────────────────
   ui: {
-    // Screens to screenshot and audit
     screens: [
       'sc-menu',        // main menu
       'sc-faction',     // faction select
@@ -47,26 +52,24 @@ module.exports = {
     ],
     desktopViewports: [
       { width: 1920, height: 1080, label: '1080p' },
-      { width: 1366, height: 768, label: 'laptop' },
-      { width: 1024, height: 768, label: 'tablet-landscape' },
+      { width: 1366, height: 768,  label: 'laptop' },
+      { width: 1024, height: 768,  label: 'tablet-landscape' },
     ],
     mobileViewports: [
-      { width: 390, height: 844, label: 'iphone-14' },
-      { width: 412, height: 915, label: 'android-xl' },
-      { width: 375, height: 667, label: 'iphone-se' },
-      { width: 768, height: 1024, label: 'ipad-portrait' },
+      { width: 390,  height: 844,  label: 'iphone-14' },
+      { width: 412,  height: 915,  label: 'android-xl' },
+      { width: 375,  height: 667,  label: 'iphone-se' },
+      { width: 768,  height: 1024, label: 'ipad-portrait' },
     ],
-    checkOverlaps: true,   // detect elements that overlap each other
-    checkOffscreen: true,   // detect elements clipped outside viewport
-    checkContrast: true,   // very basic text contrast check
-    checkTouchTargets: true,   // flag buttons smaller than 44×44px on mobile
+    checkOverlaps:    true,   // detect elements overlapping each other
+    checkOffscreen:   true,   // detect elements clipped outside viewport
+    checkContrast:    true,   // basic text contrast check
+    checkTouchTargets:true,   // flag buttons smaller than 44×44px on mobile
   },
 
   // ── MECHANICS TRACKING ────────────────────────────────────────────────────
   mechanics: {
-    // Flag if a mechanic is used in fewer than X% of games
-    // (potential sign it's broken, too expensive, or players don't know about it)
-    unusedThresholdPct: 15,
+    unusedThresholdPct: 15,   // flag if used in <15% of games
     track: [
       'spy_deployed',
       'mid_captured',
@@ -79,34 +82,29 @@ module.exports = {
   },
 
   // ── ANTHROPIC API ─────────────────────────────────────────────────────────
-  // Used for: balance analysis, auto bug-diagnosis, fix suggestions
   anthropicApiKey: process.env.ANTHROPIC_API_KEY || null,
 
   // ── DISCORD ────────────────────────────────────────────────────────────────
   discord: {
-    // Your Discord webhook URL
-    // Server Settings → Integrations → Webhooks → New Webhook → Copy URL
     webhookUrl: 'https://discord.com/api/webhooks/1480926658474016871/93fkVlEzGSf7xCSkloCvztmJg-K4XlnX2BXn0-5F12Tq2-iETwUl3_hvz2q9ILF7U3ft' || null,
-
-    // Your Discord user ID (right-click your name → Copy User ID)
-    // Used to @mention you on critical bugs
-    pingUserId: '739519255946461396' || null,   // e.g. '123456789012345678'
-
-    // What triggers an immediate ping (doesn't wait for full report)
+    pingUserId: '739519255946461396' || null,
     pingOn: {
-      jsErrors: true,   // any uncaught JS exception
-      softlocks: true,   // game gets stuck
-      nanDetected: true,   // NaN/Infinity in game state
+      jsErrors:    true,
+      softlocks:   true,
+      nanDetected: true,
     },
   },
 
   // ── OUTPUT ────────────────────────────────────────────────────────────────
   output: {
-    reportPath: './qa-report.html',
-    rawDataPath: './qa-data.json',
-    screenshotsDir: './screenshots',
+    reportPath:      './qa-report.html',
+    rawDataPath:     './qa-data.json',
+    screenshotsDir:  './screenshots',
     saveScreenshots: true,
-    saveRawData: true,
+    saveRawData:     true,
+    // Embed screenshots as base64 in the HTML report (self-contained, no broken links)
+    // Set false only if report file size becomes a problem (>20MB)
+    inlineScreenshots: true,
   },
 
 };
