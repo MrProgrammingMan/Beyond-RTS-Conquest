@@ -464,8 +464,6 @@
       cursor: pointer;
       border-radius: 3px;
       transition: all .18s;
-      min-height: 44px;
-      min-width: 44px;
     }
 
     .btn:hover {
@@ -517,13 +515,7 @@
     /* MENU */
     #sc-menu {
       overflow-y: auto;
-      overflow-x: hidden;
       justify-content: flex-start;
-      align-items: center;
-    }
-
-    #sc-menu .menu-content {
-      min-height: min-content;
     }
 
     #menu-canvas {
@@ -626,10 +618,6 @@
       padding: clamp(5px, .8vh, 10px);
       border-radius: 4px;
       line-height: 1.6;
-      min-height: 44px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     .faction-plabel span {
@@ -639,13 +627,13 @@
     }
 
     .p1l {
-      color: #5ba3d4;
+      color: var(--p1);
       border: 1px solid var(--p1d);
       background: rgba(36, 113, 163, .08);
     }
 
     .p2l {
-      color: #e8695d;
+      color: var(--p2);
       border: 1px solid var(--p2d);
       background: rgba(192, 57, 43, .08);
     }
@@ -2932,14 +2920,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
-      padding: 4px 3px;
+      gap: 3px;
+      padding: 6px 5px;
       cursor: pointer;
       transition: border-color .14s;
       position: relative;
       overflow: hidden;
       min-width: 0;
-      min-height: clamp(52px, 7vh, 80px);
+      min-height: clamp(68px, 9vh, 100px);
     }
 
     .bfcard:hover {
@@ -2960,12 +2948,12 @@
     }
 
     .bfcard-icon {
-      font-size: clamp(.9rem, 1.8vh, 1.4rem);
+      font-size: clamp(1.1rem, 2.2vh, 1.7rem);
       line-height: 1;
     }
 
     .bfcard-desc {
-      font-size: clamp(.58rem, .8vw, .72rem);
+      font-size: clamp(.62rem, .88vw, .78rem);
       color: rgba(255, 255, 255, .55);
       text-align: center;
       line-height: 1.3;
@@ -3848,7 +3836,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, .75);
-      z-index: 300;
+      z-index: 9999;
       align-items: center;
       justify-content: center;
     }
@@ -4142,8 +4130,6 @@
 
     .go-btns {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
       gap: clamp(10px, 2vw, 22px);
     }
 
@@ -4774,7 +4760,7 @@
             <div class="menu-btn-sub">Two players, same keyboard</div>
           </div>
           <div class="menu-btn-entry"><button class="btn" id="btn-online-play"
-              style="border-color:rgba(116,185,255,.6);color:#a8d4ff;" onclick="showScreen('sc-online')">🌐 ONLINE
+              style="border-color:rgba(116,185,255,.5);color:#74b9ff;" onclick="showScreen('sc-online')">🌐 ONLINE
               PLAY</button>
             <div class="menu-btn-sub">Play vs a friend or stranger over the internet</div>
           </div>
@@ -4805,8 +4791,8 @@
         </div>
 
         <div style="display:none">
-          <button id="mode-vs" aria-label="Versus mode"></button><button id="mode-solo" aria-label="Solo mode"></button>
-          <button id="btn-rebind" aria-label="Rebind keys"></button>
+          <button id="mode-vs"></button><button id="mode-solo"></button>
+          <button id="btn-rebind"></button>
         </div>
       </div>
       <div
@@ -5758,6 +5744,9 @@
 
         socket.on('remoteAction', (action) => { _executeRemoteAction(action); });
 
+        // Full game state from P1 — P2 applies it every ~80ms ──────────────
+        socket.on('stateUpdate', (state) => { _applyFullState(state); });
+
         socket.on('fireEvent', ({ eventId, nextDelay }) => {
           if (typeof G === 'undefined' || !G || !G.running) return;
           G.activeEvent = { type: eventId, timer: 0 };
@@ -5779,11 +5768,17 @@
           G._pendingRogueSpawnX = G.canvasW * spawnX;
         });
 
-        socket.on('opponentDisconnected', () => {
+        socket.on('opponentDisconnected', ({ youWin } = {}) => {
           if (_onlineMode) {
             const onGame = document.getElementById('sc-game')?.classList.contains('active');
             const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
-            if (onGame || onFaction) {
+            if (onGame && youWin && typeof G !== 'undefined' && G && G.running) {
+              // Opponent quit mid-game — kill their base and trigger the win screen
+              const opponentIdx = myPid === 1 ? 1 : 0;
+              if (G.players[opponentIdx]) G.players[opponentIdx].baseHp = 0;
+              G.running = false;
+              checkWin();
+            } else if (onGame || onFaction) {
               document.getElementById('online-dc-overlay').classList.add('show');
               if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
             }
@@ -5928,78 +5923,163 @@
         socket.emit('gameAction', action);
       }
 
-      // ── Periodic full-state sync ──────────────────────────────────────
+      // ── P1-authoritative state broadcast (80ms interval) ───────────────
+      // P1 runs the full simulation. P2 only renders — it does NOT run physics.
+      // Every 80ms P1 serialises everything and sends it via stateUpdate.
+      // P2 inputs (spawn, buff, upgrade, etc.) still go through gameAction so
+      // P1 can apply them locally; the next broadcast reflects the change.
       let _syncInterval = null;
       function _startStateSync() {
         if (_syncInterval) clearInterval(_syncInterval);
-        _syncInterval = setInterval(_broadcastStateSync, 2500);
+        if (myPid === 1) _syncInterval = setInterval(_broadcastFullState, 80);
+        // P2 does nothing here — it just receives stateUpdate from the server
       }
       function _stopStateSync() {
         if (_syncInterval) { clearInterval(_syncInterval); _syncInterval = null; }
       }
 
-      function _broadcastStateSync() {
-        if (!_onlineMode || !socket || !connected || typeof G === 'undefined' || !G || !G.running) return;
-        // Each player is authoritative for their OWN data — send only your own player state.
-        // P1 additionally sends unit positions (cheaper than both doing it).
-        const p = G.players[myPid - 1];
-        const syncPayload = {
-          type: 'stateSync',
-          pid: myPid,
-          res: {
-            souls: p.souls, bodies: p.bodies, baseHp: p.baseHp,
-            unitCap: p.unitCap, workerCap: p.workerCap || 3,
-            despStacks: p.despStacks || 0
-          },
-          midOwner: G.midOwner,
-          midOwnerTimer: G.midOwnerTimer || 0,
-          elapsed: G.elapsed || 0,
-        };
-        // P1 (host) also syncs all unit positions + HP as the authoritative simulation
-        if (myPid === 1) {
-          syncPayload.units = G.units.map(u => ({
-            id: u.id, x: Math.round(u.x), y: Math.round(u.y),
-            hp: Math.round(u.hp), player: u.player, dead: u.dead
-          }));
-        }
-        socket.emit('gameAction', syncPayload);
+      function _broadcastFullState() {
+        if (!_onlineMode || !socket || !connected) return;
+        if (typeof G === 'undefined' || !G) return;
+        try {
+          const payload = {
+            running: G.running,
+            elapsed: G.elapsed || 0,
+            midOwner: G.midOwner,
+            midOwnerTimer: G.midOwnerTimer || 0,
+            midCapturing: G.midCapturing || null,
+            midCapFrac: G.midCapFrac || 0,
+            siegeDecay: G.siegeDecay || false,
+            workerMidMode: [...(G.workerMidMode || [false, false])],
+            shake: G.shake || 0,
+            shakeX: G.shakeX || 0,
+            shakeY: G.shakeY || 0,
+            players: G.players.map(p => ({
+              souls: p.souls,
+              bodies: p.bodies,
+              baseHp: p.baseHp,
+              unitCap: p.unitCap,
+              workerCap: p.workerCap || 3,
+              despStacks: p.despStacks || 0,
+              buffCooldowns: [...(p.buffCooldowns || [0, 0, 0])],
+              activeBuffs: { ...p.activeBuffs },
+              ownedUpgrades: [...(p.ownedUpgrades || new Set())],
+              workers: p.workers || 0,
+              lastStand: p.lastStand || false,
+              _lastStandGrace: p._lastStandGrace || 0,
+              soulsSpent: p.soulsSpent || 0,
+            })),
+            units: G.units.map(u => ({
+              id: u.id, x: u.x, y: u.y, hp: u.hp, maxHp: u.maxHp,
+              player: u.player, dead: u.dead || false,
+              defId: u.defId || (u.def && u.def.id),
+              _warcryed: u._warcryed || 0,
+              _ironwalled: u._ironwalled || 0,
+              slowTimer: u.slowTimer || 0,
+              _speedMult: u._speedMult || 1,
+              dmgMult: u.dmgMult || 1,
+              _menderRetreating: u._menderRetreating || false,
+              _growStacks: u._growStacks || 0,
+              _returnDmgBonus: u._returnDmgBonus || 0,
+              _rallySpeed: u._rallySpeed || false,
+              aerial: u.aerial || false,
+              isWorker: u.isWorker || false,
+              goToMid: u.goToMid || false,
+            })),
+            projectiles: G.projectiles.map(p => ({
+              id: p.id, x: p.x, y: p.y, tx: p.tx, ty: p.ty,
+              player: p.player, dmg: p.dmg, dead: p.dead || false,
+              defId: p.defId || (p.def && p.def.id),
+              speed: p.speed || 400,
+              isHeal: p.isHeal || false,
+            })),
+            spies: (G.spies || []).map(s => ({ ...s })),
+            bloodPools: (G.bloodPools || []).map(b => ({ x: b.x, y: b.y, r: b.r, t: b.t })),
+          };
+          socket.emit('stateUpdate', payload);
+        } catch (e) { /* serialisation error — skip frame */ }
+      }
+
+      // ── Apply full authoritative state (P2 only, arrives from server) ────
+      function _applyFullState(state) {
+        if (typeof G === 'undefined' || !G) return;
+        try {
+          // ── Players ──
+          state.players.forEach((ps, i) => {
+            const p = G.players[i];
+            if (!p) return;
+            p.souls = ps.souls; p.bodies = ps.bodies; p.baseHp = ps.baseHp;
+            p.unitCap = ps.unitCap; p.workerCap = ps.workerCap;
+            p.despStacks = ps.despStacks;
+            p.buffCooldowns = ps.buffCooldowns;
+            p.activeBuffs = ps.activeBuffs;
+            p.ownedUpgrades = new Set(ps.ownedUpgrades);
+            p.workers = ps.workers;
+            p.lastStand = ps.lastStand;
+            p._lastStandGrace = ps._lastStandGrace;
+            p.soulsSpent = ps.soulsSpent;
+          });
+
+          // ── Units: update existing, create missing, remove dead ──
+          const byId = new Map(G.units.map(u => [u.id, u]));
+          G.units = state.units.filter(s => !s.dead).map(snap => {
+            const ex = byId.get(snap.id);
+            if (ex) {
+              ex.x = snap.x; ex.y = snap.y; ex.hp = snap.hp;
+              ex._warcryed = snap._warcryed; ex._ironwalled = snap._ironwalled;
+              ex.slowTimer = snap.slowTimer; ex._speedMult = snap._speedMult;
+              ex.dmgMult = snap.dmgMult; ex._menderRetreating = snap._menderRetreating;
+              ex._growStacks = snap._growStacks; ex._returnDmgBonus = snap._returnDmgBonus;
+              ex._rallySpeed = snap._rallySpeed; ex.goToMid = snap.goToMid;
+              return ex;
+            }
+            // New unit — reconstruct minimal object for rendering
+            const faction = G.factions[snap.player - 1];
+            if (!faction) return null;
+            const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
+            const def = allDefs.find(d => d.id === snap.defId);
+            if (!def) return null;
+            return {
+              id: snap.id, x: snap.x, y: snap.y, hp: snap.hp, maxHp: snap.maxHp,
+              player: snap.player, def, defId: snap.defId, dead: false,
+              target: null, attackTimer: 0, radius: def.radius || 12,
+              color: def.color, slowTimer: 0, _speedMult: 1,
+              _warcryed: 0, _ironwalled: 0, dmgMult: 1,
+              _menderRetreating: false, _growStacks: 0,
+              passiveSummonTimer: 0, aerial: snap.aerial,
+              isWorker: snap.isWorker, goToMid: snap.goToMid,
+              isGuard: def.isSpawned || false,
+            };
+          }).filter(Boolean);
+
+          // ── Projectiles: update existing, create missing ──
+          const byProjId = new Map(G.projectiles.map(p => [p.id, p]));
+          G.projectiles = state.projectiles.filter(s => !s.dead).map(snap => {
+            const ex = byProjId.get(snap.id);
+            if (ex) { ex.x = snap.x; ex.y = snap.y; return ex; }
+            return { ...snap };
+          }).filter(Boolean);
+
+          // ── Shared world ──
+          G.midOwner = state.midOwner; G.midOwnerTimer = state.midOwnerTimer;
+          G.midCapturing = state.midCapturing; G.midCapFrac = state.midCapFrac;
+          G.elapsed = state.elapsed; G.siegeDecay = state.siegeDecay;
+          G.workerMidMode = state.workerMidMode;
+          G.spies = state.spies || [];
+          G.shake = state.shake; G.shakeX = state.shakeX; G.shakeY = state.shakeY;
+          G.bloodPools = state.bloodPools || [];
+
+          // ── Game end ──
+          if (state.running === false && G.running !== false) {
+            G.running = false;
+            checkWin();
+          }
+        } catch (e) { /* apply error — skip frame */ }
       }
 
       function _executeRemoteAction(action) {
         // stateSync handled even when game is momentarily paused
-        if (action.type === 'stateSync') {
-          if (typeof G === 'undefined' || !G) return;
-          const remotePid = action.pid;
-          const rp = G.players[remotePid - 1];
-          if (!rp) return;
-          const res = action.res;
-          // Apply opponent's authoritative resource state (smooth blend to avoid HUD flicker)
-          rp.souls = res.souls;
-          rp.bodies = res.bodies;
-          // Only lower base HP (never restore it remotely — prevents desync of death)
-          if (res.baseHp < rp.baseHp) rp.baseHp = res.baseHp;
-          rp.unitCap = res.unitCap;
-          rp.workerCap = res.workerCap;
-          rp.despStacks = res.despStacks;
-          // Sync shared world state (from whoever sent it — both send midOwner, take latest)
-          if (Math.abs((action.elapsed || 0) - (G.elapsed || 0)) < 5) {
-            G.midOwner = action.midOwner;
-            G.midOwnerTimer = action.midOwnerTimer;
-          }
-          // P1 also sends unit positions — apply as authoritative corrections (lerp to avoid snap)
-          if (action.units && Array.isArray(action.units)) {
-            action.units.forEach(snap => {
-              const u = G.units.find(u => u.id === snap.id);
-              if (!u) return;
-              if (snap.dead) { u.hp = 0; return; }
-              // Gentle lerp: 30% toward authoritative position per sync tick
-              u.x += (snap.x - u.x) * 0.3;
-              u.y += (snap.y - u.y) * 0.3;
-              u.hp = snap.hp;
-            });
-          }
-          return;
-        }
+        if (action.type === 'stateSync') return; // replaced by stateUpdate event
 
         if (!G || !G.running) return;
         const { type, pid } = action;
@@ -6039,6 +6119,7 @@
               if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
             }
             updateStatPanel(pid);
+            updateHUD(); // force card highlight refresh on remote client
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
@@ -7285,9 +7366,9 @@
     }
 
     const RALLY_BUFFS = [
-      { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 20, duration: 8, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 8s.' },
-      { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 18, duration: 10, cooldown: 50, desc: 'All units take 40% less damage for 10s.' },
-      { id: 'bodyboon', name: 'Body Boon', icon: '💥', cost: 25, duration: 0, cooldown: 40, desc: 'Instantly converts 50 Souls into +22 Bodies. Short cooldown — use aggressively when souls are high.' },
+      { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 35, duration: 8, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 8s.' },
+      { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 30, duration: 10, cooldown: 50, desc: 'All units take 40% less damage for 10s.' },
+      { id: 'bodyboon', name: 'Body Boon', icon: '💥', cost: 45, duration: 0, cooldown: 40, desc: 'Instantly converts 50 Souls into +22 Bodies. Short cooldown — use aggressively when souls are high.' },
       { id: 'blitz', name: 'Blitz Rush', icon: '🔥', cost: 23, duration: 6, cooldown: 55, desc: 'All units +40% speed and +25% attack rate for 6s. Best used to push a breaking front line.' },
       { id: 'soul_tide', name: 'Soul Tide', icon: '🌊', cost: 8, duration: 25, cooldown: 90, desc: 'Spend 8 Souls to gain +3.0💀/s for 25s (+75 net souls). Use early or when behind on economy.' },
     ];
@@ -7446,7 +7527,7 @@
       // ── Step 11: Rally Buffs ──
       {
         title: '⚡ RALLY BUFFS — TACTICAL TOOLS',
-        body: 'The BUFFS tab (press W twice from Units) has 3 temporary power-ups shared across all factions:\n\n⚡ War Cry — +25% speed & attack for 6s (💀40)\n🛡 Iron Wall — 40% less damage for 8s (💀35)\n🦴 Body Boon — spend 60💀 to get +14🦴 instantly\n\nEach has a cooldown. Use them at the right moment — War Cry before a push, Iron Wall when taking heavy pressure, Body Boon when souls are high but bodies are the bottleneck.',
+        body: 'The BUFFS tab (press W twice from Units) has 3 temporary power-ups shared across all factions:\n\n⚡ War Cry — +25% speed & attack for 8s (💀35)\n🛡 Iron Wall — 40% less damage for 10s (💀30)\n🦴 Body Boon — spend 45💀 to get +22🦴 instantly\n\nEach has a cooldown. Use them at the right moment — War Cry before a push, Iron Wall when taking heavy pressure, Body Boon when souls are high but bodies are the bottleneck.',
         highlight: 'p1-tabs',
         arrowDir: 'down',
         pause: true,
@@ -7750,7 +7831,7 @@
       hard: {
         interval: 1.1, spawnChance: 0.90, saveThreshold: 14,
         usesBuffs: true, buysUpgrades: true, defenseReact: true,
-        adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: false,
+        adapts: true, savesUp: true, resourceSave: true, counterPlays: true, usesSpy: true,
         midPressure: true, resourcePatience: 0.35, aiWorkerCap: 3, confusionChance: 0, upgradeSmarts: true, counterStr: 0.60,
         workerMidSmarts: 0.9,
       },
@@ -8088,9 +8169,9 @@
       const midOwned = G.midOwner === pid;
       const lowBodies = p.bodies < 10;
       const critBodies = p.bodies < 5;  // critically low
-      const richSouls = p.souls > bf[2].cost + 20;  // 80+
-      const flushSouls = p.souls > bf[2].cost + 60;  // 120+ — soul overflow, nowhere to spend
-      const pushingSouls = p.souls > bf[2].cost + 40;  // 100+
+      const richSouls = p.souls > bf[2].cost + 20;  // 65+
+      const flushSouls = p.souls > bf[2].cost + 60;  // 105+ — soul overflow, nowhere to spend
+      const pushingSouls = p.souls > bf[2].cost + 40;  // 85+
       // Soul overflow: souls are piling up and bodies are the bottleneck — convert them
       const soulOverflow = can2 && flushSouls && p.bodies < p.workerCap * 6;
 
@@ -11439,16 +11520,19 @@
         // Only apply decay during stalemates — if one base is already below 55, let combat finish it
         const elapsed = sec - _decayStart;
         const bothHealthy = G.players.every(p => p.baseHp >= 55);
-        // After 8 minutes of total game time, force decay regardless of HP — prevents infinite stalemates
-        const forceDecay = sec > 480;
+        // After 5 minutes of total game time, force decay regardless of HP — prevents infinite stalemates
+        const forceDecay = sec > 300;
         if (bothHealthy || forceDecay) {
           G.siegeDecay = true;
           const elapsed = sec - _decayStart;
           // Tournament: faster escalating decay to keep matches 3–7 min
-          // Normal: gentle stalemate nudge
+          // Normal: gentle stalemate nudge, but accelerated when both bases full and game dragging
+          const bothFull = G.players.every(p => p.baseHp >= 95);
           let rate;
           if (_isTourney) {
             rate = elapsed > 120 ? 0.15 : elapsed > 60 ? 0.09 : 0.05; // 3/5.4/9 HP/min
+          } else if (bothFull && sec > 300) {
+            rate = elapsed > 90 ? 0.12 : 0.07; // aggressive decay when completely stalemated
           } else {
             rate = elapsed > 90 ? 0.05 : 0.025;
           }
@@ -12739,6 +12823,19 @@
       G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
       G.lastTime = ts;
       if (G.paused) { if (G_eventVote) _tickEventVote(G.dt); requestAnimationFrame(gameLoop); return; }
+
+      // ── P2 render-only mode ───────────────────────────────────────────────
+      // When online as P2, P1 is the authority. Skip ALL physics — just render
+      // the state that arrives via stateUpdate every ~80ms. Local particles
+      // still tick so visual effects look smooth.
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
+        updateParticles(G.dt);
+        drawGame();
+        updateHUD();
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+
       G.elapsed = (G.elapsed || 0) + G.dt;
       updateEconomy(G.dt);
       updateMid(G.dt);
@@ -13894,7 +13991,7 @@
     const AI_DIFF_DESCRIPTIONS = {
       easy: 'Fully random unit picks. Slow and inconsistent. Purely for learning the game.',
       medium: 'Buys upgrades occasionally, reacts slowly to threats. Makes frequent mistakes and ignores counters. Manageable with some practice.',
-      hard: 'Fast spawns, counter-picks your army, uses buffs strategically and saves for upgrades. Punishes poor choices. A real challenge.',
+      hard: 'Fast spawns, counter-picks your army, uses buffs and upgrades strategically, deploys spies when ahead. Punishes poor choices. A real challenge.',
       expert: 'Near-instant reactions, nearly always optimal picks, uses spy, adapts every few seconds. Will punish any mistake. Very difficult.',
     };
     function setGameMode(mode) {
@@ -14723,7 +14820,7 @@
       if (!overlay || !yes || !no) return;
       const seen = localStorage.getItem('brc_seen_welcome');
       if (!seen) {
-        setTimeout(() => overlay.classList.add('show'), 800); // slight delay so menu renders first
+        setTimeout(() => overlay.classList.add('show'), 1200); // delay so menu fully renders
       }
       yes.addEventListener('click', () => {
         localStorage.setItem('brc_seen_welcome', '1');

@@ -199,6 +199,17 @@ io.on('connection', (socket) => {
     if (other) other.emit('remoteAction', action);
   });
 
+  // ── AUTHORITATIVE STATE BROADCAST (P1 → P2 only) ─────────────────────────
+  // P1 runs the full simulation. Every ~80ms it serialises the full game state
+  // and sends it here. Server forwards ONLY to P2 — never echoed back to P1.
+  socket.on('stateUpdate', (data) => {
+    const room = rooms.get(socket._bkcRoom);
+    if (!room || !room.started) return;
+    if (socket._bkcPid !== 1) return;            // only P1 is allowed to send this
+    const p2 = room.players.find(p => p !== socket);
+    if (p2 && p2.connected) p2.emit('stateUpdate', data);
+  });
+
   // ── EVENT SYNC ────────────────────────────────────────────────────────────
   // Server picks which random event fires (so both clients get same event).
   // Client tells server "time for an event", server picks and broadcasts.
@@ -246,7 +257,10 @@ io.on('connection', (socket) => {
     const room = rooms.get(socket._bkcRoom);
     if (!room) return;
     const other = room.players.find(p => p !== socket);
-    if (other) other.emit('opponentDisconnected');
+    if (other) {
+      // If the game was live, the remaining player wins; otherwise just show DC overlay
+      other.emit('opponentDisconnected', { youWin: !!room.started });
+    }
     cleanupRoom(room.code);
   });
 });
