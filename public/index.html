@@ -5316,10 +5316,11 @@
         if (socket && connected) { cb(); return; }
         if (socket) { socket.off(); socket.disconnect(); socket = null; connected = false; }
         loadSocketIo(() => {
+          setStatus('⏳ Connecting to server…');
           socket = window.io(SERVER_URL, { transports: ['polling', 'websocket'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
           socket.on('connect', () => {
             connected = true;
-            setStatus('✓ Connected to server');
+            setStatus('✓ Connected — sending request…');
             cb();
           });
           let _connectAttempts = 0;
@@ -5351,19 +5352,20 @@
         socket.off(); // clear before adding — prevents duplicates on reconnect
 
         socket.on('waiting', () => {
+          // In queue — dismiss the overlay so user can see they're actively searching
+          hideConnecting();
           const el = document.getElementById('quickmatch-status');
-          if (el) { el.textContent = '⏳ Searching for an opponent…'; el.style.display = ''; }
+          if (el) { el.textContent = '⏳ In queue — searching for an opponent…'; el.style.display = ''; }
           const cancel = document.getElementById('btn-cancel-qm');
           if (cancel) cancel.style.display = '';
-          document.getElementById('online-connecting-msg').textContent = 'Searching for an opponent…';
-          // Auto-timeout: if no match after 90s, give up gracefully
+          setStatus('⏳ In matchmaking queue — waiting for an opponent');
           clearTimeout(_qmTimeout);
           _qmTimeout = setTimeout(() => {
-            hideConnecting();
             const qs = document.getElementById('quickmatch-status');
-            if (qs) { qs.textContent = '⌛ No opponent found after 90s — try again or use a Private Room.'; qs.style.display = ''; }
+            if (qs) { qs.textContent = '⌛ No opponent found after 90s. Try again or use a Private Room.'; }
             const c = document.getElementById('btn-cancel-qm');
             if (c) c.style.display = '';
+            setStatus('⌛ Queue timed out — no opponent found', true);
           }, 90000);
         });
 
@@ -5371,8 +5373,9 @@
           roomCode = code; myPid = pid;
           clearTimeout(_qmTimeout);
           hideConnecting();
+          setStatus(`✓ Match found! You are Player ${pid} — entering faction select…`);
           const qs = document.getElementById('quickmatch-status');
-          if (qs) { qs.textContent = '✓ Opponent found! Loading faction select…'; qs.style.display = ''; }
+          if (qs) { qs.textContent = `✓ Match found! You are Player ${pid}`; qs.style.display = ''; }
           setTimeout(() => _enterFactionSelect(gameMode), 600);
         });
 
@@ -5545,12 +5548,14 @@
       function quickMatch() {
         _clearErrors();
         if (socket && connected) {
-          showConnecting('Looking for an opponent…');
+          setStatus('✓ Connected — joining queue…');
+          showConnecting('Joining matchmaking queue…');
           socket.emit('joinPublic', { gameMode: 'vs' });
         } else {
           showConnecting('Connecting to server…');
           connect(() => {
-            document.getElementById('online-connecting-msg').textContent = 'Looking for an opponent…';
+            document.getElementById('online-connecting-msg').textContent = 'Joining matchmaking queue…';
+            setStatus('✓ Connected — joining queue…');
             socket.emit('joinPublic', { gameMode: 'vs' });
           });
         }
