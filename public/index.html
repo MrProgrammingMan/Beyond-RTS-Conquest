@@ -5570,7 +5570,7 @@
         if (socket) { socket.off(); socket.disconnect(); socket = null; connected = false; }
         loadSocketIo(() => {
           setStatus('⏳ Connecting to server…');
-          socket = window.io(SERVER_URL, { transports: ['websocket', 'polling'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
+          socket = window.io(SERVER_URL, { transports: ['polling', 'websocket'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
           // IMPORTANT: call _attachHandlers first (it does socket.off() then re-adds all handlers).
           // connect/connect_error/disconnect are added INSIDE _attachHandlers so they never get wiped.
           _attachHandlers(cb);
@@ -6012,10 +6012,20 @@
       let _p2SnapPrevTime = 0; // performance.now() when _p2SnapPrev was received
       let _p2SnapNextTime = 0; // performance.now() when _p2SnapNext was received
 
+      // ── P2 client-side prediction ──────────────────────────────────────────
+      // When P2 spends resources or spawns a unit, we apply it locally immediately
+      // and protect those values from being overwritten by P1 snapshots for 300ms.
+      // By then P1 will have processed the action and the snapshot will be correct.
+      let _p2ActionProtectUntil = 0;
+
+      function recordLocalAction() {
+        if (myPid === 2) _p2ActionProtectUntil = performance.now() + 300;
+      }
+
       function _startStateSync() {
         if (_syncInterval) clearInterval(_syncInterval);
         if (myPid === 1) {
-          _syncInterval = setInterval(_broadcastFullState, 33); // ~30fps snapshots
+          _syncInterval = setInterval(_broadcastFullState, 16); // ~60fps snapshots
         }
       }
       function _stopStateSync() {
@@ -6100,18 +6110,35 @@
       function _applyInstantState(snap) {
         if (typeof G === 'undefined' || !G) return;
         try {
+          const _protecting = myPid === 2 && performance.now() < _p2ActionProtectUntil;
           snap.p.forEach((ps, i) => {
             const p = G.players[i]; if (!p) return;
-            p.souls = ps[0]; p.bodies = ps[1];
-            p.baseHp = ps[2] / 10;
-            p.unitCap = ps[3]; p.workerCap = ps[4];
-            p.despStacks = ps[5]; p.workers = ps[6];
-            p.lastStand = ps[7] === 1;
-            p._lastStandGrace = ps[8] / 10;
-            if (!p.activeBuffs) p.activeBuffs = {};
-            p.activeBuffs.warcry = ps[9] / 10;
-            p.activeBuffs.ironwall = ps[10] / 10;
-            p.buffCooldowns = [ps[11] / 10, ps[12] / 10, ps[13] / 10];
+            // If P2 just spent resources, don't overwrite them — P1's snapshot was
+            // computed before it processed our action, so it shows pre-spend values.
+            // After the 300ms window, P1 will have confirmed and we sync normally.
+            if (_protecting && i === 1) {
+              // Keep local souls/bodies/workers — only update everything else
+              p.baseHp = ps[2] / 10;
+              p.unitCap = ps[3]; p.workerCap = ps[4];
+              p.despStacks = ps[5];
+              p.lastStand = ps[7] === 1;
+              p._lastStandGrace = ps[8] / 10;
+              if (!p.activeBuffs) p.activeBuffs = {};
+              p.activeBuffs.warcry = ps[9] / 10;
+              p.activeBuffs.ironwall = ps[10] / 10;
+              p.buffCooldowns = [ps[11] / 10, ps[12] / 10, ps[13] / 10];
+            } else {
+              p.souls = ps[0]; p.bodies = ps[1];
+              p.baseHp = ps[2] / 10;
+              p.unitCap = ps[3]; p.workerCap = ps[4];
+              p.despStacks = ps[5]; p.workers = ps[6];
+              p.lastStand = ps[7] === 1;
+              p._lastStandGrace = ps[8] / 10;
+              if (!p.activeBuffs) p.activeBuffs = {};
+              p.activeBuffs.warcry = ps[9] / 10;
+              p.activeBuffs.ironwall = ps[10] / 10;
+              p.buffCooldowns = [ps[11] / 10, ps[12] / 10, ps[13] / 10];
+            }
           });
           G.midOwner = snap.mo;
           G.midOwnerTimer = (snap.mt || 0) / 10;
@@ -6138,7 +6165,7 @@
         const snapDt = _p2SnapNextTime - _p2SnapPrevTime;  // time between the two snaps
         if (snapDt < 1) { _applyUnitPositions(_p2SnapNext, 1.0); return; }
         // How far we are between prev and next snap (0=at prev, 1=at next, can overshoot slightly)
-        const t = Math.min(1.1, (now - _p2SnapNextTime) / snapDt + 1.0);
+        const t = Math.min(1.4, (now - _p2SnapNextTime) / snapDt + 1.0);
         _applyUnitPositions(_p2SnapPrev, 0, _p2SnapNext, t);
       }
 
@@ -6155,15 +6182,21 @@
           const useSnap = snapB || snapA;
           const currentIds = new Set(useSnap.u.map(u => u[0]));
 
-          // Remove units that are gone from the authoritative snapshot
-          G.units = G.units.filter(u => currentIds.has(u.id));
+          // Remove units gone from authoritative snapshot — but keep P2 ghost predictions
+          // for up to 350ms so spawns feel instant. When the real unit arrives from P1,
+          // the ghost is replaced.
+          const now = performance.now();
+          G.units = G.units.filter(u => currentIds.has(u.id) || (u._ghost && now - u._ghostTime < 350));
 
           useSnap.u.forEach(snap => {
             const [id, nx, ny, nhp, player, defId, isAerial, isWorker,
               warcryT10, ironwallT10, goToMid] = snap;
             let u = G.units.find(uu => uu.id === id);
             if (!u) {
-              // New unit — reconstruct
+              // New unit from P1 — evict matching ghost if one exists (our prediction)
+              const ghostIdx = G.units.findIndex(gu => gu._ghost && gu.defId === defId && gu.player === player);
+              if (ghostIdx !== -1) G.units.splice(ghostIdx, 1);
+              // Reconstruct from snapshot
               const faction = G.factions[player - 1];
               if (!faction) return;
               const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
@@ -6249,19 +6282,17 @@
           case 'voteForEvent': voteForEvent(pid); break;
           case 'hoverCard': {
             const { cardIdx, mode } = action;
-            const curMode = pid === 1 ? P1_MODE : P2_MODE;
-            // If tab changed, switchMode handles panel visibility + refreshSel
-            if (mode !== curMode) switchMode(pid, mode);
-            // Apply the specific card index
+            if (pid === 1) { P1_MODE = mode; } else { P2_MODE = mode; }
             if (mode === 0) {
+              // unit/spy card
               const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
               const sel = cardIdx === 99 ? defs.length : Math.min(cardIdx, defs.length);
               if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
             } else {
               if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
             }
-            refreshSel(pid); // THIS is what actually toggles the .sel CSS class on cards
             updateStatPanel(pid);
+            updateHUD(); // force card highlight refresh so remote selection is visible
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
@@ -6461,7 +6492,8 @@
         interpolateUnits: _interpolateUnits,
         reportVoteResult, requestRogueSpawn, quickMatch, createRoom,
         joinRoom, cancelSearch, cleanup, setStatus,
-        sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone
+        sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone,
+        recordLocalAction,
       };
     })();
 
@@ -6604,44 +6636,7 @@
     }
 
     // Live resize: just re-scale the canvas visually — game coords never change
-    // ── Online P1 background-tab fix ─────────────────────────────────────────
-    // When P1 hides their tab rAF stops → P2 freezes (no state updates).
-    // Fall back to setInterval while hidden, restore rAF on return.
-    let _onlineBgInterval = null;
-    function _startOnlineBgLoop() {
-      if (_onlineBgInterval) return;
-      _onlineBgInterval = setInterval(() => {
-        if (!G || !G.running) { _stopOnlineBgLoop(); return; }
-        const ts = performance.now();
-        if (!G.lastTime) G.lastTime = ts;
-        G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
-        G.lastTime = ts;
-        if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 1) {
-          G.elapsed = (G.elapsed || 0) + G.dt;
-          updateEconomy(G.dt); updateMid(G.dt); updateSiege(G.dt);
-          updateRogueEvent(G.dt); _tickWildCards(G.dt); updateAI(G.dt);
-          updateSpies(G.dt); updateUnits(G.dt); updateProjectiles(G.dt);
-          _tickLastStandGrace(G.dt); checkLastStand();
-          if (GAME_MODE === 'conquest') updateConquest(G.dt);
-          updateGroundFX(G.dt); updateBloodPools(G.dt); updateParticles(G.dt);
-          updateHUD(); checkWin();
-        }
-      }, 16);
-    }
-    function _stopOnlineBgLoop() {
-      if (_onlineBgInterval) { clearInterval(_onlineBgInterval); _onlineBgInterval = null; }
-    }
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        if (G && G.running && typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 1) {
-          _startOnlineBgLoop();
-        }
-      } else {
-        _stopOnlineBgLoop();
-        if (G) G.lastTime = null;
-        if (G && G.running) requestAnimationFrame(gameLoop);
-      }
-    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && G) G.lastTime = null; });
 
     window.addEventListener('resize', () => {
       resizeGameCanvas();
@@ -7482,7 +7477,7 @@
       showPopup(p.baseX, G.groundY - 70, '🕵️ SPY DEPLOYED', '#b2bec3', pid);
       SFX.spawnLight && SFX.spawnLight();
       updateHUD();
-      if (_spyOnline) NET.sendAction({ type: 'spawnSpy', pid });
+      if (_spyOnline) { NET.recordLocalAction(); NET.sendAction({ type: 'spawnSpy', pid }); }
     }
 
     function updateSpies(dt) {
@@ -9575,6 +9570,12 @@
         showPopup(p.baseX, G.groundY - 85, `🩸 +${refund}💀 TITHE`, '#c0392b', pid);
       }
       spawnUnit(pid, unitId, false);
+      // P2 client-side prediction: tag unit as ghost so it survives until P1 confirms it
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        const newUnit = G.units[G.units.length - 1];
+        if (newUnit) { newUnit._ghost = true; newUnit._ghostTime = performance.now(); }
+        NET.recordLocalAction();
+      }
       if (cardEl) { cardEl.classList.remove('spawn-flash'); void cardEl.offsetWidth; cardEl.classList.add('spawn-flash'); }
       // Tiered spawn audio
       if (def.isSpawned) SFX.spawnGuard();
@@ -9604,6 +9605,7 @@
       // Gold flash ripple across all friendly units
       if (G._upgradeFlash) G._upgradeFlash[pid - 1] = 1.4;
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.recordLocalAction();
         NET.sendAction({ type: 'buyUpgrade', pid, idx });
       }
     }
@@ -9723,6 +9725,7 @@
       p.buffCooldowns[idx] = bf.cooldown;
       p.buffUsed = (p.buffUsed || 0) + 1;
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.recordLocalAction();
         NET.sendAction({ type: 'activateBuff', pid, idx });
       }
       if (bf.id === 'warcry') {
@@ -13112,10 +13115,16 @@
       if (G.paused) { if (G_eventVote) _tickEventVote(G.dt); requestAnimationFrame(gameLoop); return; }
 
       // ── P2 render-only mode ───────────────────────────────────────────────
-      // P1 is the authority. P2 skips ALL physics, interpolates unit positions
-      // between the two most recently received snapshots, then just renders.
+      // P1 is the authority. P2 skips physics but runs economy locally so
+      // soul income and buff cooldowns feel instant rather than snapping on
+      // P1 snapshots. P1's snapshots correct any tiny drift every 16ms.
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
-        NET.interpolateUnits();  // smooth 60fps positions between 30fps snapshots
+        NET.interpolateUnits();  // smooth 60fps positions between snapshots
+        updateEconomy(G.dt);     // local economy tick — makes soul income feel live
+        // Tick buff cooldowns locally so they don't feel delayed
+        if (G.players) G.players.forEach(p => {
+          if (p.buffCooldowns) p.buffCooldowns = p.buffCooldowns.map(c => Math.max(0, c - G.dt));
+        });
         updateParticles(G.dt);   // local cosmetic effects
         drawGame();
         updateHUD();
@@ -13992,9 +14001,6 @@
       const cur = pid === 1 ? P1_MODE : P2_MODE;
       const next = ((cur + dir) + 3) % 3;
       switchMode(pid, next);
-      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
-        NET.sendAction({ type: 'hoverCard', pid, cardIdx: 0, mode: next });
-      }
     }
 
     function navigate(pid, dir) {
@@ -14004,9 +14010,6 @@
       sel = Math.max(0, Math.min(max, sel + dir));
       if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
       refreshSel(pid);
-      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
-        NET.sendAction({ type: 'hoverCard', pid, cardIdx: sel, mode });
-      }
     }
 
     function activate(pid) {
@@ -15422,7 +15425,7 @@
     // ── TOUCH DEVICE DETECTION ────────────────────────────────────────────────
     (function _initTouchControls() {
       const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      if (!isTouchDevice || window.innerWidth >= 1024) return;
+      if (!isTouchDevice) return;
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
