@@ -6249,17 +6249,19 @@
           case 'voteForEvent': voteForEvent(pid); break;
           case 'hoverCard': {
             const { cardIdx, mode } = action;
-            if (pid === 1) { P1_MODE = mode; } else { P2_MODE = mode; }
+            const curMode = pid === 1 ? P1_MODE : P2_MODE;
+            // If tab changed, switchMode handles panel visibility + refreshSel
+            if (mode !== curMode) switchMode(pid, mode);
+            // Apply the specific card index
             if (mode === 0) {
-              // unit/spy card
               const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
               const sel = cardIdx === 99 ? defs.length : Math.min(cardIdx, defs.length);
               if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
             } else {
               if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
             }
+            refreshSel(pid); // THIS is what actually toggles the .sel CSS class on cards
             updateStatPanel(pid);
-            updateHUD(); // force card highlight refresh so remote selection is visible
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
@@ -6603,8 +6605,8 @@
 
     // Live resize: just re-scale the canvas visually — game coords never change
     // ── Online P1 background-tab fix ─────────────────────────────────────────
-    // When P1 hides the tab, rAF stops firing → P2 freezes (no state updates).
-    // We fall back to setInterval(16ms) while hidden, then restore rAF on return.
+    // When P1 hides their tab rAF stops → P2 freezes (no state updates).
+    // Fall back to setInterval while hidden, restore rAF on return.
     let _onlineBgInterval = null;
     function _startOnlineBgLoop() {
       if (_onlineBgInterval) return;
@@ -6614,7 +6616,6 @@
         if (!G.lastTime) G.lastTime = ts;
         G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
         G.lastTime = ts;
-        // Run full simulation tick (P1 authoritative path only)
         if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 1) {
           G.elapsed = (G.elapsed || 0) + G.dt;
           updateEconomy(G.dt); updateMid(G.dt); updateSiege(G.dt);
@@ -6632,14 +6633,13 @@
     }
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        // Only keep sim alive if we're P1 in an online game
         if (G && G.running && typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 1) {
           _startOnlineBgLoop();
         }
       } else {
         _stopOnlineBgLoop();
-        if (G) G.lastTime = null; // reset dt so first frame after return isn't huge
-        if (G && G.running) requestAnimationFrame(gameLoop); // restart rAF
+        if (G) G.lastTime = null;
+        if (G && G.running) requestAnimationFrame(gameLoop);
       }
     });
 
@@ -13992,10 +13992,8 @@
       const cur = pid === 1 ? P1_MODE : P2_MODE;
       const next = ((cur + dir) + 3) % 3;
       switchMode(pid, next);
-      // Sync tab switch to opponent in online mode
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
-        const sel = pid === 1 ? P1_SEL : P2_SEL;
-        NET.sendAction({ type: 'hoverCard', pid, cardIdx: sel, mode: next });
+        NET.sendAction({ type: 'hoverCard', pid, cardIdx: 0, mode: next });
       }
     }
 
@@ -14006,7 +14004,6 @@
       sel = Math.max(0, Math.min(max, sel + dir));
       if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
       refreshSel(pid);
-      // Sync selection to opponent in online mode
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
         NET.sendAction({ type: 'hoverCard', pid, cardIdx: sel, mode });
       }
