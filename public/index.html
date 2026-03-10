@@ -4772,6 +4772,17 @@
       <span class="mirror-warn" id="mirror-warn">⚠ Mirror Match</span>
       <button class="btn primary" id="btn-start" disabled>START BATTLE →</button>
     </div>
+    <!-- Online-only countdown overlay shown when both players have picked -->
+    <div id="online-faction-countdown"
+      style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.82);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+      <div style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;">BOTH PLAYERS
+        READY</div>
+      <div id="online-faction-countdown-num"
+        style="font-family:Rajdhani,sans-serif;font-size:6rem;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(212,168,67,.6);">
+      </div>
+      <div style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;">BATTLE
+        STARTING…</div>
+    </div>
   </div>
   <!-- DRAFT MODE -->
   <div id="sc-draft" class="screen"
@@ -5420,8 +5431,17 @@
         socket.on('opponentFaction', ({ pid, factionId }) => {
           const f = FACTIONS.find(f => f.id === factionId);
           if (!f) return;
+          // Update text label
           const dispEl = document.getElementById(`fchosen-p${pid}`);
-          if (dispEl) dispEl.textContent = `${f.icon} ${f.name} — ${f.tagline}`;
+          if (dispEl) dispEl.textContent = `✓ ${f.icon} ${f.name} — ${f.tagline}`;
+          // Highlight the card on their side
+          const fi = FACTIONS.findIndex(fc => fc.id === factionId);
+          if (fi !== -1) {
+            document.querySelectorAll(`#fcards-p${pid} .fcard`).forEach((c, i) => {
+              c.classList.toggle(`sel${pid}`, i === fi);
+              c.classList.remove('opponent-hover');
+            });
+          }
         });
 
         // Opponent hover preview — show what faction they're currently looking at
@@ -5444,8 +5464,30 @@
           _onlineMode = true;
           window._onlineSeed = seed;
           document.getElementById('online-badge').style.display = 'block';
-          initGame();
-          showScreen('sc-game');
+          // Show 3-second countdown before launching
+          const overlay = document.getElementById('online-faction-countdown');
+          const numEl = document.getElementById('online-faction-countdown-num');
+          if (overlay && numEl) {
+            overlay.style.display = 'flex';
+            let n = 3;
+            const tick = () => {
+              if (n <= 0) {
+                overlay.style.display = 'none';
+                initGame();
+                showScreen('sc-game');
+                return;
+              }
+              numEl.textContent = n;
+              numEl.style.transform = 'scale(1.3)';
+              setTimeout(() => { if (numEl) numEl.style.transform = 'scale(1)'; }, 200);
+              n--;
+              setTimeout(tick, 900);
+            };
+            tick();
+          } else {
+            initGame();
+            showScreen('sc-game');
+          }
         });
 
         socket.on('remoteAction', (action) => { _executeRemoteAction(action); });
@@ -5486,11 +5528,19 @@
 
       function _setupOnlineFactionScreen() {
         const theirPid = myPid === 1 ? 2 : 1;
+        // Dim opponent side — they pick on their own machine
         const theirPanel = document.getElementById(`fcards-p${theirPid}`);
         if (theirPanel) { theirPanel.style.opacity = '0.35'; theirPanel.style.pointerEvents = 'none'; }
         const theirLabel = document.getElementById(`fchosen-p${theirPid}`);
         if (theirLabel) theirLabel.textContent = '⏳ Waiting for opponent to pick…';
-        setStatus(`You are PLAYER ${myPid}  ·  Room: ${roomCode}  ·  Click or press your Confirm key to lock in`);
+        // Hide local START button and mode-row — server starts the game automatically
+        const startBtn = document.getElementById('btn-start');
+        if (startBtn) startBtn.style.display = 'none';
+        const modeRow = document.getElementById('faction-mode-row');
+        if (modeRow) modeRow.style.display = 'none';
+        const backBtn = document.getElementById('btn-faction-back');
+        if (backBtn) backBtn.style.display = 'none';
+        setStatus(`You are Player ${myPid} — pick your faction and lock it in`);
       }
 
       // ── Action relay ──────────────────────────────────────────────────
@@ -5633,6 +5683,15 @@
           const panel = document.getElementById(`fcards-p${pid}`);
           if (panel) { panel.style.opacity = ''; panel.style.pointerEvents = ''; }
         });
+        // Restore hidden faction-screen elements
+        const startBtn = document.getElementById('btn-start');
+        if (startBtn) { startBtn.style.display = ''; startBtn.disabled = true; }
+        const modeRow = document.getElementById('faction-mode-row');
+        if (modeRow) modeRow.style.display = '';
+        const backBtn = document.getElementById('btn-faction-back');
+        if (backBtn) backBtn.style.display = '';
+        const cdOverlay = document.getElementById('online-faction-countdown');
+        if (cdOverlay) cdOverlay.style.display = 'none';
         if (socket) { socket.off(); socket.disconnect(); socket = null; }
         setStatus('Not connected');
         showScreen('sc-menu');
