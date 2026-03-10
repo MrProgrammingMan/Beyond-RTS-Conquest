@@ -3270,22 +3270,22 @@
 
     #online-panels {
       display: flex;
-      gap: clamp(16px, 3vw, 48px);
-      align-items: stretch;
+      gap: clamp(16px, 3vw, 40px);
+      align-items: flex-start;
       justify-content: center;
       flex-wrap: wrap;
       width: 100%;
-      max-width: 780px;
+      max-width: 820px;
     }
 
     .online-panel {
       flex: 1;
-      min-width: 220px;
-      max-width: 320px;
+      min-width: 240px;
+      max-width: 340px;
       background: rgba(0, 0, 0, .4);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: clamp(16px, 2.5vh, 28px) clamp(14px, 2vw, 24px);
+      padding: clamp(16px, 2.5vh, 26px) clamp(14px, 2vw, 22px);
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -4634,7 +4634,7 @@
           onclick="NET.cancelSearch()">✕ CANCEL SEARCH</button>
       </div>
 
-      <div class="online-divider">— OR —</div>
+      <div class="online-divider" style="align-self:center;padding:20px 0;">— OR —</div>
 
       <!-- ── PRIVATE ROOM ───────────────────────────────── -->
       <div class="online-panel" id="panel-private">
@@ -5316,15 +5316,23 @@
         if (socket && connected) { cb(); return; }
         if (socket) { socket.off(); socket.disconnect(); socket = null; connected = false; }
         loadSocketIo(() => {
-          socket = window.io(SERVER_URL, { transports: ['websocket'], timeout: 15000 });
+          socket = window.io(SERVER_URL, { transports: ['polling', 'websocket'], timeout: 20000, reconnectionAttempts: 3, reconnectionDelay: 2000 });
           socket.on('connect', () => {
             connected = true;
             setStatus('✓ Connected to server');
             cb();
           });
-          socket.on('connect_error', () => {
-            setStatus('❌ Connection failed — server may be waking up, try again in 30s.', true);
-            hideConnecting();
+          let _connectAttempts = 0;
+          socket.on('connect_error', (err) => {
+            _connectAttempts++;
+            if (_connectAttempts <= 2) {
+              // Still retrying — update message but don't give up yet
+              document.getElementById('online-connecting-msg').textContent = `Connecting… (attempt ${_connectAttempts + 1})`;
+              setStatus(`⏳ Server waking up — retrying… (${_connectAttempts}/3)`, false);
+            } else {
+              setStatus('❌ Could not connect. Server may still be waking up — wait 30s and try again.', true);
+              hideConnecting();
+            }
           });
           socket.on('disconnect', () => {
             connected = false;
@@ -12925,6 +12933,12 @@
     }
 
     // ─── SCREENS ─────────────────────────────────────────────────────────────────
+    // Ping the server when user opens the online screen so Render wakes early
+    function _pingServer() {
+      const SERVER_URL = window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com';
+      fetch(SERVER_URL + '/ping', { method: 'GET', mode: 'no-cors' }).catch(() => { });
+    }
+
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -13967,7 +13981,7 @@
     // NET connects on demand — no pre-init needed
     if (false) {
       const bar = document.getElementById('online-status-bar');
-      if (bar) bar.textContent = window._BKC_SERVER_URL ? 'Connecting…' : '⚠ No server configured — set window._BKC_SERVER_URL';
+      if (bar) bar.textContent = 'Connecting to server…';
     }
 
     refreshRebindUI();

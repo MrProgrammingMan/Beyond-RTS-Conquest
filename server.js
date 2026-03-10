@@ -12,8 +12,13 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: '*', methods: ['GET', 'POST'] }
+  cors: { origin: '*', methods: ['GET', 'POST'] },
+  transports: ['polling', 'websocket'],  // allow polling for Render proxy compatibility
+  allowUpgrades: true,
 });
+
+// Health/wake ping — used by client to pre-warm the Render instance
+app.get('/ping', (req, res) => res.json({ ok: true, t: Date.now() }));
 
 // Serve the game client
 app.use(express.static(path.join(__dirname, 'public')));
