@@ -1,402 +1,422 @@
 /**
  * auto-fixer.js — Beyond RTS QA Auto-Fix Engine
  *
- * Takes a single diagnosed bug (with code snippets) and asks Claude to
- * produce a minimal, surgical patch.  Returns a structured result containing:
- *   - a unified diff string  (--- a/index.html / +++ b/index.html format)
- *   - a plain-English change summary
- *   - a confidence score (HIGH / MEDIUM / LOW) Claude assigned itself
- *   - the raw response for debugging
+ * Two exports:
+ *   generateFix(bug, gamePath, cfg)  → { ok, summary, diff, confidence, linesChanged }
+ *   applyDiff(diff, gamePath)        → { success, backupPath, linesChanged }
  *
- * IMPORTANT: This module NEVER writes to disk.
- * Writing (with a user confirmation gate) is done by the caller (reporter.js
- * "Apply Fix" button flow or run.js --auto-fix flag).
+ * Flow:
+ *   1. Read index.html and extract the relevant code window around the bug
+ *   2. Call Claude with the bug diagnosis + code snippets, asking for a unified diff
+ *   3. Validate the diff is structurally sound before returning it
+ *   4. applyDiff() creates a timestamped backup then patches the file in-place
  *
- * Usage (programmatic):
- *   const { generateFix } = require('./auto-fixer');
- *   const fixResult = await generateFix(diagnosedBug, gameFilePath, cfg);
- *   // fixResult.diff  — apply with applyDiff()
- *   // fixResult.ok    — false if Claude couldn't produce a confident fix
- *
- * Usage (apply a returned diff):
- *   const { applyDiff } = require('./auto-fixer');
- *   const { success, backupPath, linesChanged } = await applyDiff(fixResult.diff, gameFilePath);
+ * The diff Claude produces is a standard unified diff (--- / +++ / @@ hunks).
+ * We apply it ourselves with a pure-JS patch engine so there's no dependency
+ * on the system `patch` binary.
  */
 
 'use strict';
 
+const fs      = require('fs');
+const path    = require('path');
 const Anthropic = require('@anthropic-ai/sdk');
-const fs   = require('fs');
-const path = require('path');
-const os   = require('os');
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const MODEL = 'claude-sonnet-4-20250514';
-const MAX_TOKENS = 4096;
-
-// Minimum fraction of the diff Claude must have filled in for us to accept it.
-// A diff with zero +/- lines is useless.
-const MIN_CHANGED_LINES = 1;
-
-// ── Main export ───────────────────────────────────────────────────────────────
+// ── Main exports ──────────────────────────────────────────────────────────────
 
 /**
- * Ask Claude to generate a unified-diff fix for a single diagnosed bug.
+ * Ask Claude to produce a unified diff that fixes the given bug.
  *
- * @param {object} diagnosedBug   - bug object from bug-analyzer.js (with .diagnosis)
- * @param {string} gameFilePath   - absolute path to index.html
- * @param {object} cfg            - full config object (needs cfg.anthropicApiKey)
- * @returns {Promise<FixResult>}
+ * @param {object} bug      - diagnosed bug object (from bug-analyzer.js)
+ * @param {string} gamePath - path to index.html
+ * @param {object} cfg      - QA config (needs cfg.anthropicApiKey)
+ * @returns {Promise<{ok, summary, diff, confidence, linesChanged}>}
  */
-async function generateFix(diagnosedBug, gameFilePath, cfg) {
-  if (!cfg.anthropicApiKey) {
-    return _errorResult('No Anthropic API key configured');
+async function generateFix(bug, gamePath, cfg) {
+  const apiKey = cfg.anthropicApiKey || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return { ok: false, summary: 'No Anthropic API key configured' };
+
+  const gameSource = _readGame(gamePath);
+  if (!gameSource) return { ok: false, summary: `Could not read game file: ${gamePath}` };
+
+  const lines = gameSource.split('\n');
+  const totalLines = lines.length;
+
+  // ── Build code context: use stored snippets or re-extract around stack lines ──
+  const snippets = _buildSnippets(bug, lines);
+  if (snippets.length === 0) {
+    return { ok: false, summary: 'Could not locate relevant code in index.html' };
   }
 
-  // ── Load game source ───────────────────────────────────────────────────────
-  let sourceLines;
-  try {
-    const raw = fs.readFileSync(path.resolve(gameFilePath), 'utf8');
-    sourceLines = raw.split('\n');
-  } catch (err) {
-    return _errorResult(`Could not read game file: ${err.message}`);
-  }
+  const snippetBlock = snippets.map(s => {
+    const loc = (s.startLine !== '?' && s.endLine !== '?')
+      ? `lines ${s.startLine}–${s.endLine} of ${totalLines}`
+      : `of ${totalLines} total lines`;
+    return `[${s.label}  —  ${loc}]\n${s.code}`;
+  }).join('\n\n');
 
-  // ── Build focused context blocks ───────────────────────────────────────────
-  // We send 2 sources of context to Claude:
-  //   1. The code snippets already extracted by bug-analyzer (if any)
-  //   2. A fresh extraction of the ±40-line window around each mentioned line
-  //      number in the diagnosis, in case the snippets are shallow
-  const snippets = diagnosedBug.diagnosis?.codeSnippets || diagnosedBug._codeSnippets || [];
-  const freshWindows = _extractFreshWindows(diagnosedBug, sourceLines, snippets);
+  // ── Prompt ────────────────────────────────────────────────────────────────
+  const diagnosis = bug.diagnosis || {};
+  const prompt = `You are patching "Beyond RTS Conquest" — a single-file browser RTS game (index.html, ${totalLines} lines, vanilla JS + Canvas).
 
-  const snippetBlock = _formatSnippets(snippets, 'Pre-extracted (from bug-analyzer)');
-  const freshBlock   = _formatSnippets(freshWindows, 'Fresh extraction (wider context)');
+BUG REPORT
+Type       : ${bug.type}
+Severity   : ${diagnosis.severity || 'UNKNOWN'}
+Message    : ${(bug.message || '').slice(0, 300)}
+Matchups   : ${(bug.matchups || [bug.matchup]).filter(Boolean).join(', ')}
+Cause      : ${(diagnosis.likelyCause || '').slice(0, 400)}
+Suggested  : ${(diagnosis.suggestedFix || '').slice(0, 500)}
 
-  // ── Build the prompt ───────────────────────────────────────────────────────
-  const sev      = (diagnosedBug.diagnosis?.severity || 'MEDIUM').toUpperCase();
-  const bugType  = diagnosedBug.type || 'unknown';
-  const message  = (diagnosedBug.message || '').slice(0, 300);
-  const cause    = (diagnosedBug.diagnosis?.likelyCause || '').slice(0, 500);
-  const fixHint  = (diagnosedBug.diagnosis?.suggestedFix || '').slice(0, 600);
-  const where    = (diagnosedBug.diagnosis?.whereToLook || '').slice(0, 200);
-  const matchups = (diagnosedBug.matchups || [diagnosedBug.matchup]).filter(Boolean).join(', ');
-  const totalLines = sourceLines.length;
+RELEVANT CODE FROM THE FILE
+${snippetBlock}
 
-  const prompt = `You are a surgical code-patch generator for "Beyond RTS Conquest" — a single-file browser RTS (index.html, ${totalLines} lines, vanilla JS + Canvas).
+TASK
+Produce a minimal unified diff that fixes this bug. Requirements:
+- Output ONLY the unified diff, nothing else — no explanation, no markdown fences
+- Use standard unified diff format (--- a/index.html, +++ b/index.html, @@ hunks)
+- Each hunk must include 3 lines of unchanged context before and after the change
+- Make the smallest possible change — do not refactor surrounding code
+- If you cannot produce a confident fix, output exactly: CANNOT_FIX: <reason>
 
-Your task: produce a MINIMAL unified diff that fixes exactly one bug. Do not refactor, rename, or change anything unrelated to the fix.
+CONFIDENCE HINT (include as a comment on the very first line of your diff):
+# CONFIDENCE: HIGH   ← you are certain this fixes the root cause
+# CONFIDENCE: MEDIUM ← likely correct but edge cases possible
+# CONFIDENCE: LOW    ← uncertain, manual review strongly recommended`;
 
-═══ BUG REPORT ═══
-Severity : ${sev}
-Type     : ${bugType}
-Message  : ${message}
-Matchups : ${matchups || 'unknown'}
-Occurred : ×${diagnosedBug.occurrences || 1}
+  const client = new Anthropic({ apiKey });
 
-LIKELY CAUSE:
-${cause || '(see code snippets below)'}
-
-SUGGESTED FIX:
-${fixHint || 'See code snippets and diagnose from context.'}
-
-WHERE TO LOOK:
-${where || 'See snippets below.'}
-
-═══ RELEVANT CODE ═══
-
-${snippetBlock || '(no pre-extracted snippets available)'}
-
-${freshBlock || ''}
-
-═══ YOUR OUTPUT FORMAT ═══
-
-Respond with ONLY a JSON object — no markdown fences, no explanation outside the JSON:
-
-{
-  "confidence": "HIGH|MEDIUM|LOW",
-  "summary": "One sentence: what you changed and why",
-  "cannotFix": false,
-  "cannotFixReason": "",
-  "diff": "--- a/index.html\\n+++ b/index.html\\n@@ ... @@\\n-old line\\n+new line\\n..."
-}
-
-Rules for the diff:
-1. Standard unified diff format. File headers must be exactly:
-      --- a/index.html
-      +++ b/index.html
-2. Each hunk header: @@ -startLine,contextLines +startLine,contextLines @@ optional context
-3. Context lines (unchanged): prefix with ONE space
-4. Removed lines: prefix with -
-5. Added lines  : prefix with +
-6. Include 3 lines of context before and after each change
-7. Line numbers in hunk headers must be ACCURATE — count from the snippets above
-8. Keep the diff minimal — only touch lines directly involved in the fix
-9. If you cannot produce a confident fix (ambiguous cause, change too risky, or not
-   enough context), set "cannotFix": true, "confidence": "LOW", and leave "diff": ""
-
-Escape all newlines inside the JSON string as \\n.
-Do NOT wrap in backticks or add any text outside the JSON object.`;
-
-  // ── Call Claude ────────────────────────────────────────────────────────────
-  const client = new Anthropic({ apiKey: cfg.anthropicApiKey });
-  let rawText = '';
+  let rawText;
   try {
     const response = await client.messages.create({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }],
     });
-    rawText = response.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    rawText = response.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
   } catch (err) {
-    return _errorResult(`Claude API call failed: ${err.message}`);
+    return { ok: false, summary: `Claude API error: ${err.message}` };
   }
 
-  // ── Parse response ─────────────────────────────────────────────────────────
-  let parsed;
-  try {
-    const clean = rawText.replace(/^```(?:json)?|```$/gm, '').trim();
-    parsed = JSON.parse(clean);
-  } catch (_) {
-    // Try to extract JSON object from messy output
-    const m = rawText.match(/\{[\s\S]+\}/);
-    if (m) {
-      try { parsed = JSON.parse(m[0]); } catch (_) { parsed = null; }
-    }
+  // ── CANNOT_FIX response ───────────────────────────────────────────────────
+  if (rawText.startsWith('CANNOT_FIX:')) {
+    const reason = rawText.slice('CANNOT_FIX:'.length).trim().slice(0, 200);
+    return { ok: false, summary: reason };
   }
 
-  if (!parsed) {
-    return _errorResult('Claude returned unparseable output', rawText);
+  // ── Parse confidence hint ─────────────────────────────────────────────────
+  let confidence = 'MEDIUM';
+  const confMatch = rawText.match(/^#\s*CONFIDENCE:\s*(HIGH|MEDIUM|LOW)/im);
+  if (confMatch) confidence = confMatch[1].toUpperCase();
+
+  // Strip the confidence comment line from the diff
+  const diff = rawText.replace(/^#\s*CONFIDENCE:.*\n?/im, '').trim();
+
+  // ── Validate diff structure ───────────────────────────────────────────────
+  const validation = _validateDiff(diff);
+  if (!validation.ok) {
+    return { ok: false, summary: `Claude produced an invalid diff: ${validation.reason}` };
   }
 
-  if (parsed.cannotFix) {
-    return {
-      ok: false,
-      confidence: 'LOW',
-      summary: parsed.cannotFixReason || 'Claude could not produce a confident fix',
-      diff: '',
-      rawText,
-      bugSig: _bugSig(diagnosedBug),
-    };
-  }
+  // ── Count changed lines ───────────────────────────────────────────────────
+  const linesChanged = diff.split('\n').filter(l => l.startsWith('+') || l.startsWith('-'))
+    .filter(l => !l.startsWith('+++') && !l.startsWith('---')).length;
 
-  const diff = (parsed.diff || '').replace(/\\n/g, '\n').trim();
+  // ── Build human summary ───────────────────────────────────────────────────
+  const summary = _buildSummary(bug, diff);
 
-  // Basic sanity check — diff must have at least one +/- line
-  const changedLines = diff.split('\n').filter(l => l.startsWith('+') || l.startsWith('-'))
-    .filter(l => !l.startsWith('---') && !l.startsWith('+++'));
-
-  if (changedLines.length < MIN_CHANGED_LINES) {
-    return _errorResult('Diff contained no actual changes', rawText);
-  }
-
-  // Verify diff starts with the expected file headers
-  if (!diff.startsWith('--- a/index.html')) {
-    // Attempt to prepend the headers if Claude omitted them
-    const fixedDiff = `--- a/index.html\n+++ b/index.html\n` + diff.replace(/^---.*\n\+\+\+.*\n/, '');
-    return {
-      ok: true,
-      confidence: (parsed.confidence || 'MEDIUM').toUpperCase(),
-      summary: parsed.summary || 'Fix applied',
-      diff: fixedDiff,
-      linesChanged: changedLines.length,
-      rawText,
-      bugSig: _bugSig(diagnosedBug),
-    };
-  }
-
-  return {
-    ok: true,
-    confidence: (parsed.confidence || 'MEDIUM').toUpperCase(),
-    summary: parsed.summary || 'Fix applied',
-    diff,
-    linesChanged: changedLines.length,
-    rawText,
-    bugSig: _bugSig(diagnosedBug),
-  };
+  return { ok: true, summary, diff, confidence, linesChanged };
 }
 
-// ── Diff application ──────────────────────────────────────────────────────────
-
 /**
- * Apply a unified diff string to a file.
- * Always creates a timestamped backup before writing.
+ * Apply a unified diff string to gamePath in-place.
+ * Creates a timestamped backup first.
  *
- * @param {string} diffText       - unified diff (output of generateFix().diff)
- * @param {string} gameFilePath   - absolute path to index.html
- * @returns {{ success, backupPath, linesChanged, error }}
+ * @param {string} diff     - unified diff string
+ * @param {string} gamePath - path to index.html
+ * @returns {{ success, backupPath?, linesChanged?, error? }}
  */
-async function applyDiff(diffText, gameFilePath) {
-  const absPath = path.resolve(gameFilePath);
+async function applyDiff(diff, gamePath) {
+  const resolvedPath = path.resolve(gamePath);
 
-  if (!fs.existsSync(absPath)) {
-    return { success: false, error: `File not found: ${absPath}` };
+  // ── Read original ─────────────────────────────────────────────────────────
+  let original;
+  try {
+    original = fs.readFileSync(resolvedPath, 'utf8');
+  } catch (err) {
+    return { success: false, error: `Cannot read ${resolvedPath}: ${err.message}` };
   }
 
-  // ── Backup ────────────────────────────────────────────────────────────────
+  // ── Create timestamped backup ─────────────────────────────────────────────
   const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  const backupPath = absPath + `.backup-${ts}`;
+  const backupPath = resolvedPath.replace(/\.html$/, '') + `.backup-${ts}.html`;
   try {
-    fs.copyFileSync(absPath, backupPath);
+    fs.writeFileSync(backupPath, original);
   } catch (err) {
-    return { success: false, error: `Backup failed: ${err.message}` };
+    return { success: false, error: `Cannot create backup at ${backupPath}: ${err.message}` };
   }
 
-  // ── Parse and apply hunks ─────────────────────────────────────────────────
-  const originalLines = fs.readFileSync(absPath, 'utf8').split('\n');
-  let patchedLines;
-  try {
-    patchedLines = _applyUnifiedDiff(originalLines, diffText);
-  } catch (err) {
-    // Restore backup on parse failure
-    try { fs.copyFileSync(backupPath, absPath); } catch (_) {}
-    return { success: false, backupPath, error: `Patch application failed: ${err.message}` };
+  // ── Apply the patch ───────────────────────────────────────────────────────
+  const patchResult = _applyPatch(original, diff);
+  if (!patchResult.ok) {
+    // Restore original (backup already written so nothing lost)
+    return { success: false, error: patchResult.error, backupPath };
   }
 
-  // ── Write ─────────────────────────────────────────────────────────────────
+  // ── Write patched file ────────────────────────────────────────────────────
   try {
-    fs.writeFileSync(absPath, patchedLines.join('\n'), 'utf8');
+    fs.writeFileSync(resolvedPath, patchResult.patched);
   } catch (err) {
-    return { success: false, backupPath, error: `Write failed: ${err.message}` };
+    return { success: false, error: `Cannot write patched file: ${err.message}`, backupPath };
   }
 
-  const linesChanged = Math.abs(patchedLines.length - originalLines.length)
-    + diffText.split('\n').filter(l => (l.startsWith('+') || l.startsWith('-')) && !l.startsWith('---') && !l.startsWith('+++') ).length;
+  const linesChanged = diff.split('\n')
+    .filter(l => (l.startsWith('+') || l.startsWith('-')) && !l.startsWith('+++') && !l.startsWith('---'))
+    .length;
 
   return { success: true, backupPath, linesChanged };
 }
 
-// ── Unified diff parser & applier ─────────────────────────────────────────────
+// ── Diff validator ────────────────────────────────────────────────────────────
 
-/**
- * Pure JS unified diff applier. No shell deps, no external packages.
- * Applies hunks in order. Throws on mismatch so the caller can restore backup.
- */
-function _applyUnifiedDiff(originalLines, diffText) {
-  const lines  = diffText.split('\n');
-  const result = [...originalLines];
+function _validateDiff(diff) {
+  if (!diff || diff.trim().length < 10) return { ok: false, reason: 'empty diff' };
+  const lines = diff.split('\n');
+  const hasHunk = lines.some(l => l.startsWith('@@'));
+  if (!hasHunk) return { ok: false, reason: 'no @@ hunk headers found' };
+  const hasChange = lines.some(l => (l.startsWith('+') || l.startsWith('-')) && !l.startsWith('+++') && !l.startsWith('---'));
+  if (!hasChange) return { ok: false, reason: 'diff has no + or - lines' };
+  return { ok: true };
+}
+
+// ── Pure-JS unified diff applier ─────────────────────────────────────────────
+// Handles standard unified diff format produced by Claude / git diff.
+
+function _applyPatch(original, diff) {
+  const srcLines = original.split('\n');
+  const result   = [...srcLines];
+  let offset = 0; // line number adjustment as we apply hunks
 
   // Parse hunks
-  const hunks = [];
-  let hunk = null;
+  const hunks = _parseHunks(diff);
+  if (hunks.length === 0) return { ok: false, error: 'No valid hunks parsed from diff' };
 
-  for (const line of lines) {
-    if (line.startsWith('--- ') || line.startsWith('+++ ')) continue;
+  for (const hunk of hunks) {
+    const startIdx = hunk.oldStart - 1 + offset; // 0-indexed
 
-    const hunkHeader = line.match(/^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/);
-    if (hunkHeader) {
-      if (hunk) hunks.push(hunk);
-      hunk = {
-        origStart : parseInt(hunkHeader[1], 10) - 1,  // 0-indexed
-        origCount : parseInt(hunkHeader[2] ?? '1', 10),
-        newStart  : parseInt(hunkHeader[3], 10) - 1,
-        newCount  : parseInt(hunkHeader[4] ?? '1', 10),
-        lines     : [],
-      };
-      continue;
-    }
-    if (hunk) hunk.lines.push(line);
-  }
-  if (hunk) hunks.push(hunk);
-
-  if (hunks.length === 0) throw new Error('No hunks found in diff');
-
-  // Apply hunks in reverse order so line numbers stay valid
-  for (const h of [...hunks].reverse()) {
-    const { origStart, origCount, lines: hunkLines } = h;
-
-    // Verify context lines match (loose check — first 3 context lines only)
-    const ctxLines = hunkLines.filter(l => l.startsWith(' ')).slice(0, 3);
-    for (const ctx of ctxLines) {
-      const expected = ctx.slice(1); // strip leading space
-      // Find approximate match within ±5 lines of origStart to tolerate minor drift
-      const found = result.slice(Math.max(0, origStart - 5), origStart + h.origCount + 5)
-        .some(l => l === expected);
-      if (!found) {
-        // Soft warning — don't abort, just note the mismatch
-        // (line numbers in AI-generated diffs can drift by a few lines)
-        console.warn(`  ⚠️  auto-fixer: context mismatch near line ${origStart + 1}: "${expected.slice(0, 60)}"`);
+    // Verify context lines match (first 3 context lines as a sanity check)
+    const contextLines = hunk.lines.filter(l => l.type === 'ctx').slice(0, 3);
+    for (const ctxLine of contextLines) {
+      const srcIdx = startIdx + ctxLine.hunkOffset;
+      if (srcIdx >= 0 && srcIdx < result.length) {
+        if (result[srcIdx] !== ctxLine.text) {
+          // Try to find the correct position (file may have shifted)
+          const found = _findHunkPosition(result, hunk, startIdx);
+          if (found === -1) {
+            return { ok: false, error: `Hunk @@ -${hunk.oldStart} context mismatch — file may have changed since diff was generated` };
+          }
+          offset += found - startIdx;
+          break;
+        }
       }
     }
 
-    // Build the replacement block (new lines only, no context)
-    const removedLines = hunkLines.filter(l => l.startsWith('-')).length;
-    const addedLines   = hunkLines.filter(l => l.startsWith('+')).map(l => l.slice(1));
+    const adjustedStart = hunk.oldStart - 1 + offset;
 
-    // Splice: remove origCount lines starting at origStart, insert addedLines
-    result.splice(origStart, origCount, ...addedLines);
+    // Build replacement: take existing lines, splice in changes
+    let readIdx = adjustedStart;
+    const newLines = [];
+
+    for (const line of hunk.lines) {
+      if (line.type === 'ctx') {
+        newLines.push(result[readIdx]);
+        readIdx++;
+      } else if (line.type === 'add') {
+        newLines.push(line.text);
+      } else if (line.type === 'del') {
+        readIdx++; // skip deleted line
+      }
+    }
+
+    // Splice: replace [adjustedStart .. readIdx) with newLines
+    const deleteCount = readIdx - adjustedStart;
+    result.splice(adjustedStart, deleteCount, ...newLines);
+    offset += newLines.length - deleteCount;
   }
 
-  return result;
+  return { ok: true, patched: result.join('\n') };
 }
 
-// ── Code window extraction ────────────────────────────────────────────────────
+function _parseHunks(diff) {
+  const lines = diff.split('\n');
+  const hunks = [];
+  let current = null;
+  let hunkOffset = 0;
+
+  for (const line of lines) {
+    const hunkHeader = line.match(/^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+    if (hunkHeader) {
+      if (current) hunks.push(current);
+      current = {
+        oldStart: parseInt(hunkHeader[1], 10),
+        newStart: parseInt(hunkHeader[2], 10),
+        lines: [],
+      };
+      hunkOffset = 0;
+      continue;
+    }
+    if (!current) continue;
+
+    if (line.startsWith('+') && !line.startsWith('+++')) {
+      current.lines.push({ type: 'add', text: line.slice(1), hunkOffset });
+    } else if (line.startsWith('-') && !line.startsWith('---')) {
+      current.lines.push({ type: 'del', text: line.slice(1), hunkOffset });
+      hunkOffset++;
+    } else if (line.startsWith(' ') || line === '') {
+      current.lines.push({ type: 'ctx', text: line.startsWith(' ') ? line.slice(1) : '', hunkOffset });
+      hunkOffset++;
+    }
+  }
+  if (current) hunks.push(current);
+  return hunks;
+}
 
 /**
- * Extract fresh ±40-line windows around every line number referenced in the
- * diagnosis that isn't already covered by an existing snippet.
+ * If the exact hunk position doesn't match (file shifted), search ±100 lines.
+ * Returns the corrected 0-indexed start position, or -1 if not found.
  */
-function _extractFreshWindows(bug, sourceLines, existingSnippets) {
-  const CONTEXT = 40;
-  const windows = [];
-  const coveredLines = new Set(
-    existingSnippets.flatMap(s => {
-      const m = String(s.label || '').match(/(\d+)/);
-      return m ? [parseInt(m[1], 10)] : [];
-    })
-  );
+function _findHunkPosition(lines, hunk, nominalStart) {
+  const ctxTexts = hunk.lines.filter(l => l.type === 'ctx' || l.type === 'del').slice(0, 4).map(l => l.text);
+  if (ctxTexts.length === 0) return nominalStart;
 
-  // Collect candidate line numbers from stack + whereToLook + diagnosis text
-  const allText = [
-    bug.stack || '',
-    bug.diagnosis?.whereToLook || '',
-    bug.diagnosis?.likelyCause || '',
-    bug.diagnosis?.suggestedFix || '',
-  ].join(' ');
+  const search = Math.max(0, nominalStart - 100);
+  const end    = Math.min(lines.length, nominalStart + 100);
 
-  const lineNums = [...allText.matchAll(/:(\d{3,5}):\d*/g)]
-    .map(m => parseInt(m[1], 10))
-    .filter(n => n > 0 && n <= sourceLines.length);
+  for (let i = search; i < end; i++) {
+    let match = true;
+    for (let j = 0; j < ctxTexts.length; j++) {
+      if (lines[i + j] !== ctxTexts[j]) { match = false; break; }
+    }
+    if (match) return i;
+  }
+  return -1;
+}
 
-  const seen = new Set();
-  for (const ln of lineNums) {
-    if (seen.has(ln) || coveredLines.has(ln)) continue;
-    seen.add(ln);
-    const start = Math.max(0, ln - CONTEXT - 1);
-    const end   = Math.min(sourceLines.length - 1, ln + CONTEXT - 1);
-    const code  = sourceLines.slice(start, end + 1)
-      .map((l, i) => {
-        const num    = start + i + 1;
-        const marker = (start + i + 1) === ln ? '>>>' : '   ';
-        return `${marker} ${String(num).padStart(5)} | ${l}`;
-      }).join('\n');
-    windows.push({ label: `Fresh window around line ${ln}`, lineNum: ln, code });
-    if (windows.length >= 2) break; // cap at 2 extra windows to keep prompt size sane
+// ── Code extraction helpers ───────────────────────────────────────────────────
+
+function _readGame(gamePath) {
+  try { return fs.readFileSync(path.resolve(gamePath), 'utf8'); } catch (_) { return null; }
+}
+
+/**
+ * Build code snippets for the prompt.
+ *
+ * Priority order:
+ *   1. Pre-extracted snippets stored by bug-analyzer (already formatted, use as-is)
+ *   2. Stack trace line numbers → re-extract with wider context (±25 lines)
+ *   3. Function names from whereToLook → search index.html for definition
+ *
+ * bug-analyzer stores snippets as { label, lineNum, code } where `code` is
+ * already a pre-formatted block with line numbers and >>> markers. We use
+ * those directly rather than re-extracting from lineNum, which would produce
+ * a narrower ±18-line window without the existing formatting.
+ */
+function _buildSnippets(bug, lines, CONTEXT = 25) {
+  const snippets = [];
+  const seenLines = new Set();
+
+  // ── 1. Stored snippets from bug-analyzer (preferred — widest + pre-verified) ──
+  // diagnosis.codeSnippets is set by diagnoseBatch(); _codeSnippets is set by
+  // extractCodeSnippets() before the API call. Both use the same shape.
+  const stored = bug.diagnosis?.codeSnippets || bug._codeSnippets || [];
+  for (const s of stored.slice(0, 3)) {
+    if (snippets.length >= 3) break;
+    if (!s.code) continue;
+    // Re-extract a wider window centred on lineNum so the patcher has more
+    // context to match against. Fall back to stored code if lineNum absent.
+    if (s.lineNum && s.lineNum > 0 && s.lineNum <= lines.length) {
+      const ln0 = s.lineNum - 1; // 0-indexed
+      if (!seenLines.has(ln0)) {
+        seenLines.add(ln0);
+        snippets.push(_makeWindow(lines, ln0, CONTEXT, s.label || `Line ${s.lineNum}`));
+      }
+    } else {
+      // No lineNum: use stored code verbatim (pre-formatted)
+      snippets.push({
+        label: s.label || 'Code snippet',
+        startLine: '?', endLine: '?',
+        code: s.code,
+      });
+    }
   }
 
-  return windows;
+  if (snippets.length >= 2) return snippets;
+
+  // ── 2. Extract from stack trace ──────────────────────────────────────────
+  const stack = bug.stack || '';
+  const lineRe = /:(\d{3,5}):\d+/g;
+  let m;
+  while ((m = lineRe.exec(stack)) !== null && snippets.length < 3) {
+    const ln0 = parseInt(m[1], 10) - 1;
+    if (ln0 >= 0 && ln0 < lines.length && !seenLines.has(ln0)) {
+      seenLines.add(ln0);
+      snippets.push(_makeWindow(lines, ln0, CONTEXT, `Stack line ${ln0 + 1}`));
+    }
+  }
+
+  // ── 3. Function names from whereToLook ────────────────────────────────────
+  if (snippets.length < 3) {
+    const where = bug.diagnosis?.whereToLook || bug.whereToLook || '';
+    const fns = [...where.matchAll(/\b([a-zA-Z_][a-zA-Z0-9_]{3,})\b/g)]
+      .map(x => x[1])
+      .filter(n => !_SKIP.has(n));
+
+    for (const fn of fns) {
+      if (snippets.length >= 3) break;
+      const defRe = new RegExp(
+        `(?:function\\s+${fn}\\b|\\b${fn}\\s*[=(]|\\b${fn}\\s*:\\s*function)`
+      );
+      for (let i = 0; i < lines.length; i++) {
+        if (defRe.test(lines[i]) && !seenLines.has(i)) {
+          seenLines.add(i);
+          snippets.push(_makeWindow(lines, i, CONTEXT, `${fn} (line ${i + 1})`));
+          break;
+        }
+      }
+    }
+  }
+
+  return snippets;
 }
 
-function _formatSnippets(snippets, header) {
-  if (!snippets || snippets.length === 0) return '';
-  const body = snippets.map(s =>
-    `[${s.label || 'snippet'}]\n\`\`\`js\n${s.code || ''}\n\`\`\``
-  ).join('\n\n');
-  return `── ${header} ──\n${body}`;
+function _makeWindow(lines, centerLine0, context, label) {
+  const start = Math.max(0, centerLine0 - context);
+  const end   = Math.min(lines.length - 1, centerLine0 + context);
+  const code  = lines.slice(start, end + 1).map((l, i) => {
+    const ln     = start + i + 1;
+    const marker = (start + i) === centerLine0 ? '>>>' : '   ';
+    return `${marker} ${String(ln).padStart(5)} | ${l}`;
+  }).join('\n');
+  return { label, startLine: start + 1, endLine: end + 1, code };
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+const _SKIP = new Set([
+  'function','return','const','let','var','this','null','true','false','undefined',
+  'if','else','for','while','switch','case','break','continue','new','delete',
+  'typeof','instanceof','class','extends','import','export','from','default',
+  'async','await','try','catch','finally','throw','with','static','super',
+  'the','and','or','not','is','are','has','have','can','will','should','would',
+  'look','search','find','check','index','html','line','code','game','unit',
+  'player','base','name','file','path','type','text','data',
+]);
 
-function _errorResult(reason, rawText = '') {
-  return { ok: false, confidence: 'LOW', summary: reason, diff: '', rawText, bugSig: null };
-}
+// ── Summary builder ───────────────────────────────────────────────────────────
 
-function _bugSig(bug) {
-  const msg  = (bug.message || '').slice(0, 120);
-  const file = bug.filename || '';
-  const line = bug.line || 0;
-  return `${msg}|${file}|${line}`;
+function _buildSummary(bug, diff) {
+  const adds = diff.split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).length;
+  const dels = diff.split('\n').filter(l => l.startsWith('-') && !l.startsWith('---')).length;
+  const type = bug.type || 'bug';
+  const sev  = (bug.diagnosis?.severity || 'MEDIUM').toUpperCase();
+  return `Fix ${sev} ${type}: +${adds} / -${dels} lines`;
 }
 
 // ── Exports ───────────────────────────────────────────────────────────────────
