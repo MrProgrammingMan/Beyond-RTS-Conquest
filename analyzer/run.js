@@ -3,10 +3,11 @@
  * run.js — Beyond RTS Conquest QA System
  *
  * Usage:
- *   node run.js                          full run (games + UI + analysis + report)
+ *   node run.js                          full run (games + UI + online + analysis + report)
  *   node run.js --analyze-only           re-analyze saved qa-data.json (no games)
  *   node run.js --skip-balance           skip matchup games (UI + bugs only)
  *   node run.js --skip-ui                skip UI audit (games only)
+ *   node run.js --skip-online            skip online sync test
  *   node run.js --factions=a,b,c         only test these factions
  *   node run.js --games=N                override gamesPerMatchup
  *   node run.js --quick                  5 factions × 2 games (fast sanity check)
@@ -21,6 +22,9 @@ const { analyzeBugs } = require('./bug-analyzer');
 const { analyzeBalance } = require('./balance-analyzer');
 const { buildReport } = require('./reporter');
 const { pingCriticalBug, sendFullReport } = require('./discord');
+const { runOnlineTests } = require('./online-tester');
+const { detectAnomalies } = require('./anomaly-detector');
+const { generateFeatureAdvice } = require('./feature-advisor');
 
 const { chromium, executablePath } = require('playwright');
 const { execSync } = require('child_process');
@@ -32,6 +36,7 @@ const args = process.argv.slice(2);
 const analyzeOnly = args.includes('--analyze-only');
 const skipBalance = args.includes('--skip-balance');
 const skipUi = args.includes('--skip-ui');
+const skipOnline = args.includes('--skip-online');
 const quickMode = args.includes('--quick');
 const factionsArg = args.find(a => a.startsWith('--factions='));
 const gamesArg = args.find(a => a.startsWith('--games='));
@@ -40,6 +45,7 @@ if (quickMode) {
   cfg.balance.factionFilter = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal'];
   cfg.balance.gamesPerMatchup = 2;
   cfg.balance.parallelGames = 3;
+  cfg.online = { ...(cfg.online || {}), latencyProfiles: ['ideal'], factionPairs: [['warriors', 'brutes']] };
 }
 if (factionsArg) cfg.balance.factionFilter = factionsArg.replace('--factions=', '').split(',').map(s => s.trim());
 if (gamesArg) cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=', '')) || cfg.balance.gamesPerMatchup;
@@ -226,6 +232,73 @@ async function main() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 5.5: ONLINE SYNC TEST
+  // ════════════════════════════════════════════════════════════════════════════
+  let onlineReport = null;
+  if (!analyzeOnly && !skipOnline && cfg.run?.online !== false) {
+    log('  ── Phase 4.5: Online sync test ────────────────────────────────');
+    try {
+      onlineReport = await runOnlineTests(gamePath, cfg);
+      const g = onlineReport.overallGrade;
+      const gradeIcon = g === 'A' ? '✅' : g === 'B' ? '🟡' : g === 'C' ? '🟠' : '🔴';
+      log(`  ${gradeIcon} Online: grade ${g} · ${onlineReport.passedChecks}/${onlineReport.totalChecks} checks · ${onlineReport.issues.length} issue(s)`);
+      if (onlineReport.issues.length > 0) {
+        for (const issue of onlineReport.issues.slice(0, 3)) {
+          log(`     [${issue.severity}] ${issue.message.slice(0, 70)}`);
+        }
+      }
+    } catch (err) {
+      log(`  ⚠️  Online test failed: ${err.message}`);
+    }
+    log('');
+  } else if (analyzeOnly) {
+    log('  ℹ️  Online test skipped (--analyze-only)');
+  } else if (skipOnline) {
+    log('  ℹ️  Online test skipped (--skip-online)');
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 5.6: ANOMALY DETECTION
+  // ════════════════════════════════════════════════════════════════════════════
+  log('  ── Phase 4.6: Anomaly detection ───────────────────────────────');
+  let anomalyReport = null;
+  if (rawData.factions?.length > 0) {
+    anomalyReport = detectAnomalies(rawData, aggStats, cfg);
+    const icon = anomalyReport.hasCritical ? '🔴' : anomalyReport.anomalies.length > 0 ? '🟡' : '✅';
+    log(`  ${icon} ${anomalyReport.summary}`);
+    if (anomalyReport.hasCritical) {
+      for (const a of anomalyReport.anomalies.filter(x => x.severity === 'HIGH').slice(0, 3)) {
+        log(`     🔴 ${a.title}`);
+      }
+    }
+  } else {
+    log('  ℹ️  No game data — anomaly detection skipped');
+  }
+  log('');
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 5.7: FEATURE ADVISOR
+  // ════════════════════════════════════════════════════════════════════════════
+  log('  ── Phase 4.7: Feature advisor ─────────────────────────────────');
+  let featureAdvice = null;
+  if (cfg.run?.features !== false) {
+    if (!hasApiKey) {
+      log('  ⚠️  No API key — using heuristic feature suggestions');
+    } else {
+      log('  🤖 Generating feature suggestions with Claude...');
+    }
+    try {
+      featureAdvice = await generateFeatureAdvice(rawData, aggStats, anomalyReport, onlineReport, uiAuditResult, diagnosedBugs, cfg);
+      log(`  ✅ ${featureAdvice.summary}`);
+    } catch (err) {
+      log(`  ⚠️  Feature advisor failed: ${err.message}`);
+    }
+  } else {
+    log('  ℹ️  Feature advisor disabled in config');
+  }
+  log('');
+
+  // ════════════════════════════════════════════════════════════════════════════
   // PHASE 5: BALANCE ANALYSIS
   // ════════════════════════════════════════════════════════════════════════════
   log('  ── Phase 4: Balance analysis ──────────────────────────────────');
@@ -264,7 +337,7 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   log('  ── Phase 5: Building report ───────────────────────────────────');
 
-  const html = buildReport({ balanceData: rawData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, cfg, runMeta: { startTime, endTime: Date.now() } });
+  const html = buildReport({ balanceData: rawData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, cfg, runMeta: { startTime, endTime: Date.now() } });
   const reportPath = path.resolve(cfg.output.reportPath || './qa-report.html');
   fs.writeFileSync(reportPath, html);
   log(`  ✅ Report saved → ${reportPath}`);

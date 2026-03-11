@@ -18,6 +18,18 @@ module.exports = {
     mechanics: true,   // spy/mid/upgrade/buff/laststand usage tracking
     performance: true,   // frame timing, memory, long tasks
     mobile: true,   // repeat ui audit at mobile viewport sizes
+    online: true,   // P2 sync quality test (intercept-and-replay)
+    features: true,   // AI feature suggestion engine
+  },
+
+  // ── ONLINE SYNC TEST ──────────────────────────────────────────────────────
+  online: {
+    // Latency profiles to test (ideal/good/average/bad/awful)
+    latencyProfiles: ['ideal', 'good', 'average'],
+    // Faction pairs to test sync with (pick representative matchups)
+    factionPairs: [['warriors', 'brutes'], ['summoners', 'spirits'], ['glacial', 'infernal']],
+    // Real seconds before giving up on a test scenario
+    testTimeoutSecs: 40,
   },
 
   // ── BALANCE SETTINGS ──────────────────────────────────────────────────────

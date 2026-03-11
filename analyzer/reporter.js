@@ -12,39 +12,39 @@
  *  - mdToHtml improvements (handles lists, blockquotes)
  */
 
-const fs   = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 const FACTION_ICONS = {
-  warriors:'⚔️', summoners:'💀', brutes:'🪨', spirits:'✨',
-  verdant:'🌿', infernal:'🔥', glacial:'❄️', voltborn:'⚡',
-  bloodpact:'🩸', menders:'💚',
+  warriors: '⚔️', summoners: '💀', brutes: '🪨', spirits: '✨',
+  verdant: '🌿', infernal: '🔥', glacial: '❄️', voltborn: '⚡',
+  bloodpact: '🩸', menders: '💚',
 };
 
-function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, cfg, runMeta }) {
-  const { results, factions, qa }   = balanceData;
-  const uiIssues                    = uiAuditResult?.issues      || [];
-  const screenshots                 = uiAuditResult?.screenshots || [];
-  const totalBugs                   = diagnosedBugs.length;
-  const criticalBugs                = diagnosedBugs.filter(b => ['CRITICAL'].includes((b.diagnosis?.severity || b.severity || '').toUpperCase()));
-  const timestamp                   = new Date().toLocaleString();
-  const runDurSec                   = Math.round(((runMeta?.endTime || Date.now()) - (runMeta?.startTime || Date.now())) / 1000);
-  const runDurStr                   = runDurSec > 60 ? `${Math.floor(runDurSec/60)}m ${runDurSec%60}s` : `${runDurSec}s`;
-  const inlineScreenshots           = cfg.output?.inlineScreenshots !== false;
+function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, cfg, runMeta }) {
+  const { results, factions, qa } = balanceData;
+  const uiIssues = uiAuditResult?.issues || [];
+  const screenshots = uiAuditResult?.screenshots || [];
+  const totalBugs = diagnosedBugs.length;
+  const criticalBugs = diagnosedBugs.filter(b => ['CRITICAL'].includes((b.diagnosis?.severity || b.severity || '').toUpperCase()));
+  const timestamp = new Date().toLocaleString();
+  const runDurSec = Math.round(((runMeta?.endTime || Date.now()) - (runMeta?.startTime || Date.now())) / 1000);
+  const runDurStr = runDurSec > 60 ? `${Math.floor(runDurSec / 60)}m ${runDurSec % 60}s` : `${runDurSec}s`;
+  const inlineScreenshots = cfg.output?.inlineScreenshots !== false;
 
   // ── Balance matrix ─────────────────────────────────────────────────────────
   let matrixHtml = `<div class="matrix-scroll"><table class="matrix"><thead><tr><th class="corner"></th>`;
-  for (const f of factions) matrixHtml += `<th title="${f}">${FACTION_ICONS[f]||'?'}<br><span class="mat-lbl">${f}</span></th>`;
+  for (const f of factions) matrixHtml += `<th title="${f}">${FACTION_ICONS[f] || '?'}<br><span class="mat-lbl">${f}</span></th>`;
   matrixHtml += `</tr></thead><tbody>`;
   for (const f1 of factions) {
-    matrixHtml += `<tr><td class="row-label">${FACTION_ICONS[f1]||''} ${f1}</td>`;
+    matrixHtml += `<tr><td class="row-label">${FACTION_ICONS[f1] || ''} ${f1}</td>`;
     for (const f2 of factions) {
       if (f1 === f2) { matrixHtml += `<td class="self">—</td>`; continue; }
       const r = results[f1]?.[f2];
       if (!r) { matrixHtml += `<td class="na">—</td>`; continue; }
       const games = r.p1Wins + r.p2Wins + r.draws + r.timeouts;
-      const rate  = games > 0 ? Math.round(r.p1Wins / games * 100) : 50;
-      const cls   = rate>=65?'hot':rate>=55?'warm':rate<=35?'cold':rate<=45?'cool':'neutral';
+      const rate = games > 0 ? Math.round(r.p1Wins / games * 100) : 50;
+      const cls = rate >= 65 ? 'hot' : rate >= 55 ? 'warm' : rate <= 35 ? 'cold' : rate <= 45 ? 'cool' : 'neutral';
       matrixHtml += `<td class="${cls}" title="${f1} vs ${f2}: ${rate}% win rate (${games} games)\n${r.p1Wins}W ${r.p2Wins}L ${r.draws}D ${r.timeouts}T">${rate}%</td>`;
     }
     matrixHtml += `</tr>`;
@@ -52,21 +52,21 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   matrixHtml += `</tbody></table></div>`;
 
   // ── Win rate bars ──────────────────────────────────────────────────────────
-  const sortedF = [...factions].sort((a,b) => (aggStats[b]?.overallWinRate||50)-(aggStats[a]?.overallWinRate||50));
+  const sortedF = [...factions].sort((a, b) => (aggStats[b]?.overallWinRate || 50) - (aggStats[a]?.overallWinRate || 50));
   let barsHtml = '';
   for (const f of sortedF) {
     const s = aggStats[f]; if (!s) continue;
-    const wr  = s.overallWinRate;
+    const wr = s.overallWinRate;
     const cls = wr >= 55 ? 'hot' : wr <= 45 ? 'cold' : 'ok';
-    const dur = `${Math.floor(s.avgGameDuration/60)}m${String(s.avgGameDuration%60).padStart(2,'0')}s`;
-    const tier = wr>=60?'S':wr>=55?'A':wr>=48?'B':wr>=43?'C':'D';
-    const tierCls = {S:'tier-s',A:'tier-a',B:'tier-b',C:'tier-c',D:'tier-d'}[tier];
+    const dur = `${Math.floor(s.avgGameDuration / 60)}m${String(s.avgGameDuration % 60).padStart(2, '0')}s`;
+    const tier = wr >= 60 ? 'S' : wr >= 55 ? 'A' : wr >= 48 ? 'B' : wr >= 43 ? 'C' : 'D';
+    const tierCls = { S: 'tier-s', A: 'tier-a', B: 'tier-b', C: 'tier-c', D: 'tier-d' }[tier];
     barsHtml += `<div class="bar-row">
       <span class="tier-badge ${tierCls}">${tier}</span>
-      <div class="bar-name">${FACTION_ICONS[f]||''} <strong>${f}</strong></div>
-      <div class="bar-track"><div class="bar bar-${cls}" style="width:${Math.min(wr*1.8,100)}%"></div></div>
+      <div class="bar-name">${FACTION_ICONS[f] || ''} <strong>${f}</strong></div>
+      <div class="bar-track"><div class="bar bar-${cls}" style="width:${Math.min(wr * 1.8, 100)}%"></div></div>
       <span class="bar-pct ${cls}">${wr}%</span>
-      <span class="bar-detail">avg ${dur} · best vs ${s.bestMatchup.faction||'?'} (${Math.round((s.bestMatchup.rate||0)*100)}%) · worst vs ${s.worstMatchup.faction||'?'} (${Math.round((s.worstMatchup.rate||0)*100)}%)</span>
+      <span class="bar-detail">avg ${dur} · best vs ${s.bestMatchup.faction || '?'} (${Math.round((s.bestMatchup.rate || 0) * 100)}%) · worst vs ${s.worstMatchup.faction || '?'} (${Math.round((s.worstMatchup.rate || 0) * 100)}%)</span>
     </div>`;
   }
 
@@ -80,23 +80,23 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
       <input type="text" id="bug-search" placeholder="🔍 Search bugs..." oninput="filterBugs()" class="search-input">
       <div class="sev-filters">
         <button class="sev-filter active" data-sev="ALL"  onclick="setSevFilter('ALL',this)">All (${diagnosedBugs.length})</button>
-        ${['CRITICAL','HIGH','MEDIUM','LOW'].map(s => {
-          const c = diagnosedBugs.filter(b=>(b.diagnosis?.severity||b.severity||'').toUpperCase()===s).length;
-          return c > 0 ? `<button class="sev-filter sev-filter-${s.toLowerCase()}" data-sev="${s}" onclick="setSevFilter('${s}',this)">${s} (${c})</button>` : '';
-        }).join('')}
+        ${['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'].map(s => {
+      const c = diagnosedBugs.filter(b => (b.diagnosis?.severity || b.severity || '').toUpperCase() === s).length;
+      return c > 0 ? `<button class="sev-filter sev-filter-${s.toLowerCase()}" data-sev="${s}" onclick="setSevFilter('${s}',this)">${s} (${c})</button>` : '';
+    }).join('')}
       </div>
     </div>`;
 
     bugsHtml += `<div id="bug-list">`;
     for (let bi = 0; bi < diagnosedBugs.length; bi++) {
-      const bug  = diagnosedBugs[bi];
-      const sev  = (bug.diagnosis?.severity || bug.severity || 'medium').toUpperCase();
-      const sevCls = sev==='CRITICAL'?'sev-critical':sev==='HIGH'?'sev-high':sev==='MEDIUM'?'sev-medium':'sev-low';
+      const bug = diagnosedBugs[bi];
+      const sev = (bug.diagnosis?.severity || bug.severity || 'medium').toUpperCase();
+      const sevCls = sev === 'CRITICAL' ? 'sev-critical' : sev === 'HIGH' ? 'sev-high' : sev === 'MEDIUM' ? 'sev-medium' : 'sev-low';
       const matchupStr = (bug.matchups || [bug.matchup]).filter(Boolean).join(', ');
-      const hasPrompt  = bug.diagnosis?.pasteToClaudePrompt;
+      const hasPrompt = bug.diagnosis?.pasteToClaudePrompt;
 
       bugsHtml += `
-      <div class="bug-card ${sevCls}" data-sev="${sev}" data-text="${escAttr((bug.message||'')+(bug.type||'')+(matchupStr||''))}">
+      <div class="bug-card ${sevCls}" data-sev="${sev}" data-text="${escAttr((bug.message || '') + (bug.type || '') + (matchupStr || ''))}">
         <div class="bug-header" onclick="toggleBug(${bi})">
           <span class="bug-sev-badge ${sevCls}">${sev}</span>
           <span class="bug-type-label">${escHtml(bug.type || 'error')}</span>
@@ -104,13 +104,13 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
           <span class="bug-matchup-label">${escHtml(matchupStr)}</span>
           <span class="bug-chevron" id="chev-${bi}">▼</span>
         </div>
-        <div class="bug-message"><code>${escHtml((bug.message || '').slice(0,300))}</code></div>
+        <div class="bug-message"><code>${escHtml((bug.message || '').slice(0, 300))}</code></div>
         <div class="bug-body" id="bugbody-${bi}" style="display:none">
           ${bug.stack ? `<details class="stack-details"><summary>Stack trace</summary><pre class="stack">${escHtml(bug.stack)}</pre></details>` : ''}
           ${bug.diagnosis?.likelyCause ? `<div class="diag-row"><span class="diag-lbl">🔍 Cause</span><span class="diag-val">${escHtml(bug.diagnosis.likelyCause)}</span></div>` : ''}
-          ${bug.diagnosis?.reproSteps  ? `<div class="diag-row"><span class="diag-lbl">🔁 Repro</span><span class="diag-val">${escHtml(bug.diagnosis.reproSteps).replace(/\\n/g,'<br>')}</span></div>` : ''}
+          ${bug.diagnosis?.reproSteps ? `<div class="diag-row"><span class="diag-lbl">🔁 Repro</span><span class="diag-val">${escHtml(bug.diagnosis.reproSteps).replace(/\\n/g, '<br>')}</span></div>` : ''}
           ${bug.diagnosis?.whereToLook ? `<div class="diag-row"><span class="diag-lbl">📂 Where</span><span class="diag-val"><code>${escHtml(bug.diagnosis.whereToLook)}</code></span></div>` : ''}
-          ${bug.diagnosis?.suggestedFix? `<div class="diag-row"><span class="diag-lbl">🔧 Fix</span><span class="diag-val">${escHtml(bug.diagnosis.suggestedFix)}</span></div>` : ''}
+          ${bug.diagnosis?.suggestedFix ? `<div class="diag-row"><span class="diag-lbl">🔧 Fix</span><span class="diag-val">${escHtml(bug.diagnosis.suggestedFix)}</span></div>` : ''}
           ${hasPrompt ? `<div class="prompt-box">
             <div class="prompt-label">📋 Paste to Claude</div>
             <pre class="prompt-text" id="bugprompt-${bi}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
@@ -130,7 +130,7 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     promptsHtml = `<div class="empty-state">No paste-to-Claude prompts generated (no bugs diagnosed, or no API key).</div>`;
   } else {
     const megaPrompt = allPrompts.map((b, i) =>
-      `=== BUG ${i+1}: ${b.type} [${(b.diagnosis?.severity||'').toUpperCase()}] ===\n${b.diagnosis.pasteToClaudePrompt}`
+      `=== BUG ${i + 1}: ${b.type} [${(b.diagnosis?.severity || '').toUpperCase()}] ===\n${b.diagnosis.pasteToClaudePrompt}`
     ).join('\n\n');
 
     promptsHtml += `<div class="prompt-mega-box">
@@ -147,12 +147,12 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     for (let i = 0; i < allPrompts.length; i++) {
       const bug = allPrompts[i];
       const sev = (bug.diagnosis?.severity || '').toUpperCase();
-      const sevCls = sev==='CRITICAL'?'sev-critical':sev==='HIGH'?'sev-high':sev==='MEDIUM'?'sev-medium':'sev-low';
+      const sevCls = sev === 'CRITICAL' ? 'sev-critical' : sev === 'HIGH' ? 'sev-high' : sev === 'MEDIUM' ? 'sev-medium' : 'sev-low';
       promptsHtml += `<div class="prompt-card ${sevCls}">
         <div class="prompt-card-header">
           <span class="bug-sev-badge ${sevCls}">${sev}</span>
           <span class="prompt-bug-type">${escHtml(bug.type || 'error')}</span>
-          <span style="color:var(--dim);font-size:12px">${escHtml((bug.matchups||[bug.matchup]).filter(Boolean).join(', '))}</span>
+          <span style="color:var(--dim);font-size:12px">${escHtml((bug.matchups || [bug.matchup]).filter(Boolean).join(', '))}</span>
         </div>
         <pre class="prompt-text" id="prompt-${i}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
         <button class="copy-btn" onclick="copyById('prompt-${i}',this)">Copy</button>
@@ -205,11 +205,127 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     }
   }
 
-  // ── UI issues ──────────────────────────────────────────────────────────────
+  // ── Online report ──────────────────────────────────────────────────────────
+  let onlineHtml = '';
+  if (!onlineReport) {
+    onlineHtml = `<div class="empty-state">Online sync tests not run. Add <code>run.online = true</code> in config and re-run without <code>--skip-online</code>.</div>`;
+  } else {
+    const gradeColor = { A: 'var(--green)', B: '#f1c40f', C: 'var(--orange)', D: 'var(--red)', F: 'var(--red)' }[onlineReport.overallGrade] || 'var(--dim)';
+    onlineHtml += `<div class="stats-grid" style="margin-bottom:16px">
+      <div class="stat-card" style="border-color:${gradeColor}"><div class="stat-num" style="color:${gradeColor}">${onlineReport.overallGrade}</div><div class="stat-lbl">Overall Grade</div></div>
+      <div class="stat-card"><div class="stat-num">${onlineReport.passedChecks}</div><div class="stat-lbl">Checks passed<small>of ${onlineReport.totalChecks}</small></div></div>
+      <div class="stat-card ${onlineReport.issues.length > 0 ? 'stat-warn' : 'stat-ok'}"><div class="stat-num">${onlineReport.issues.length}</div><div class="stat-lbl">Issues found</div></div>
+    </div>`;
+
+    if (onlineReport.issues.length > 0) {
+      onlineHtml += `<h3>Issues</h3>`;
+      for (const issue of onlineReport.issues) {
+        const sev = issue.severity === 'HIGH' ? 'sev-high' : issue.severity === 'MEDIUM' ? 'sev-medium' : 'sev-low';
+        onlineHtml += `<div class="bug-card ${sev}" style="margin-bottom:8px">
+          <div class="bug-header" style="cursor:default">
+            <span class="bug-sev-badge ${sev}">${escHtml(issue.severity)}</span>
+            <span class="bug-type-label">${escHtml(issue.type.replace(/_/g, ' '))}</span>
+            ${issue.profile ? `<span class="bug-occ">${escHtml(issue.profile)}</span>` : ''}
+            ${issue.matchup ? `<span class="bug-matchup-label">${escHtml(issue.matchup)}</span>` : ''}
+          </div>
+          <div class="bug-message"><code>${escHtml(issue.message)}</code></div>
+          ${issue.prompt ? `<div class="bug-body" style="display:block;padding:12px">
+            <div class="prompt-box"><div class="prompt-label">📋 Paste to Claude</div>
+            <pre class="prompt-text" id="op-${Math.random().toString(36).slice(2)}">${escHtml(issue.prompt)}</pre></div>
+          </div>` : ''}
+        </div>`;
+      }
+    }
+
+    onlineHtml += `<h3 style="margin-top:20px">Scenario Results</h3>`;
+    for (const r of onlineReport.results) {
+      const gc = { A: 'var(--green)', B: '#f1c40f', C: 'var(--orange)', D: 'var(--red)', F: 'var(--red)' }[r.grade] || 'var(--dim)';
+      onlineHtml += `<div class="section" style="margin-bottom:12px;padding:14px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:1.4rem;font-weight:800;color:${gc}">${r.grade || '?'}</span>
+          <strong>${escHtml(r.profileName)}</strong>
+          <span style="color:var(--dim)">${escHtml(r.f1)} vs ${escHtml(r.f2)}</span>
+          <span style="color:var(--dim);font-size:12px;margin-left:auto">${r.snapshotCount} snaps · avg ${r.latencyMs?.avg || 0}ms · p95 ${r.latencyMs?.p95 || 0}ms</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${(r.checks || []).map(c => `<span style="font-size:12px;padding:2px 8px;border-radius:10px;background:${c.passed ? 'rgba(46,204,113,.15)' : 'rgba(231,76,60,.15)'};color:${c.passed ? 'var(--green)' : 'var(--red)'}${c.critical && !c.passed ? ';font-weight:700' : ''}">${c.passed ? '✓' : '✗'} ${escHtml(c.name)}</span>`).join('')}
+        </div>
+        ${r.totalDivergences > 0 ? `<div style="margin-top:8px;font-size:12px;color:var(--orange)">⚠️ ${r.totalDivergences} divergence events</div>` : ''}
+        ${r.error ? `<div style="margin-top:8px;font-size:12px;color:var(--red)">${escHtml(r.error)}</div>` : ''}
+      </div>`;
+    }
+  }
+
+  // ── Anomaly report HTML ────────────────────────────────────────────────────
+  let anomalyHtml = '';
+  const anomalies = anomalyReport?.anomalies || [];
+  if (anomalies.length === 0) {
+    anomalyHtml = `<div class="empty-state">✅ No behavioral anomalies detected${anomalyReport ? '' : ' (run with balance data to enable)'}</div>`;
+  } else {
+    for (const a of anomalies) {
+      const sevCls = a.severity === 'HIGH' ? 'sev-high' : a.severity === 'MEDIUM' ? 'sev-medium' : 'sev-low';
+      const promptId = `anom-${Math.random().toString(36).slice(2)}`;
+      anomalyHtml += `<div class="bug-card ${sevCls}" style="margin-bottom:10px">
+        <div class="bug-header" style="cursor:default">
+          <span class="bug-sev-badge ${sevCls}">${escHtml(a.severity)}</span>
+          <span class="bug-type-label">${escHtml(a.title)}</span>
+        </div>
+        <div class="bug-message" style="padding:10px 14px">${escHtml(a.detail)}</div>
+        <div class="bug-body" style="display:block;padding:12px">
+          ${a.suggestion ? `<div class="diag-row"><span class="diag-lbl">💡 Suggestion</span><span class="diag-val">${escHtml(a.suggestion)}</span></div>` : ''}
+          ${a.prompt ? `<div class="prompt-box" style="margin-top:8px">
+            <div class="prompt-label">📋 Paste to Claude</div>
+            <pre class="prompt-text" id="${promptId}">${escHtml(a.prompt)}</pre>
+            <button class="copy-btn" onclick="copyById('${promptId}',this)">Copy</button>
+          </div>` : ''}
+        </div>
+      </div>`;
+    }
+  }
+
+  // ── Feature advisor HTML ───────────────────────────────────────────────────
+  let featureHtml = '';
+  const suggestions = featureAdvice?.suggestions || [];
+  if (suggestions.length === 0) {
+    featureHtml = `<div class="empty-state">Feature suggestions unavailable${featureAdvice ? '' : ' (run with balance data to enable)'}</div>`;
+  } else {
+    const effortColors = { quick: 'var(--green)', medium: 'var(--gold)', large: 'var(--orange)' };
+    const impactColors = { high: '#ff8080', medium: 'var(--gold)', low: 'var(--dim)' };
+    const catIcons = { gameplay: '🎮', ux: '✨', balance: '⚖️', online: '🌐', performance: '📈', polish: '💎' };
+
+    // Summary bar
+    const byImpact = { high: suggestions.filter(s => s.impact === 'high').length, medium: suggestions.filter(s => s.impact === 'medium').length, low: suggestions.filter(s => s.impact === 'low').length };
+    const byEffort = { quick: suggestions.filter(s => s.effort === 'quick').length, medium: suggestions.filter(s => s.effort === 'medium').length, large: suggestions.filter(s => s.effort === 'large').length };
+    featureHtml += `<div class="stats-grid" style="margin-bottom:20px">
+      <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${suggestions.length}</div><div class="stat-lbl">Total suggestions</div></div>
+      <div class="stat-card stat-bad"><div class="stat-num" style="color:#ff8080">${byImpact.high}</div><div class="stat-lbl">High impact</div></div>
+      <div class="stat-card stat-ok"><div class="stat-num" style="color:var(--green)">${byEffort.quick}</div><div class="stat-lbl">Quick wins</div></div>
+    </div>`;
+
+    for (const s of suggestions) {
+      const promptId = `feat-${Math.random().toString(36).slice(2)}`;
+      featureHtml += `<div class="section" style="margin-bottom:12px;padding:16px;border-left:3px solid ${impactColors[s.impact] || 'var(--border)'}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+          <span style="font-size:18px">${catIcons[s.category] || '🔧'}</span>
+          <strong style="font-size:14px">#${s.priority} ${escHtml(s.title)}</strong>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.06);color:${effortColors[s.effort] || 'var(--dim)'}">effort: ${s.effort}</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.06);color:${impactColors[s.impact] || 'var(--dim)'}">impact: ${s.impact}</span>
+          <span style="font-size:11px;color:var(--dim);margin-left:auto">${escHtml(s.category)}</span>
+        </div>
+        <div style="font-size:13px;color:var(--dim);margin-bottom:8px;line-height:1.6">${escHtml(s.rationale)}</div>
+        ${s.implementation ? `<div style="font-size:13px;line-height:1.6;margin-bottom:8px">${escHtml(s.implementation)}</div>` : ''}
+        ${s.pasteToClaudePrompt ? `<div class="prompt-box">
+          <div class="prompt-label">📋 Paste to Claude</div>
+          <pre class="prompt-text" id="${promptId}">${escHtml(s.pasteToClaudePrompt)}</pre>
+          <button class="copy-btn" onclick="copyById('${promptId}',this)">Copy</button>
+        </div>` : ''}
+      </div>`;
+    }
+  }
   let uiHtml = '';
-  const uiErrors   = uiIssues.filter(i => i.severity === 'error');
+  const uiErrors = uiIssues.filter(i => i.severity === 'error');
   const uiWarnings = uiIssues.filter(i => i.severity === 'warning');
-  const uiInfos    = uiIssues.filter(i => i.severity === 'info');
+  const uiInfos = uiIssues.filter(i => i.severity === 'info');
   if (uiIssues.length === 0) {
     uiHtml = `<div class="empty-state">✅ No UI issues detected</div>`;
   } else {
@@ -227,22 +343,22 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
           ${i.size ? `<code class="ui-el-code">${i.size.width}×${i.size.height}px</code>` : ''}
         </div>`).join('');
     };
-    uiHtml = renderGroup(uiErrors,'🔴 Errors','ui-error')
-           + renderGroup(uiWarnings,'🟡 Warnings','ui-warning')
-           + renderGroup(uiInfos,'ℹ️ Info','ui-info');
+    uiHtml = renderGroup(uiErrors, '🔴 Errors', 'ui-error')
+      + renderGroup(uiWarnings, '🟡 Warnings', 'ui-warning')
+      + renderGroup(uiInfos, 'ℹ️ Info', 'ui-info');
   }
 
   // ── Mechanics ──────────────────────────────────────────────────────────────
   const totalGames = qa.totalGamesRun || 1;
-  const threshold  = cfg.mechanics?.unusedThresholdPct || 15;
+  const threshold = cfg.mechanics?.unusedThresholdPct || 15;
   let mechHtml = '';
   for (const [key, count] of Object.entries(qa.mechanicUsage || {})) {
-    const pct     = Math.round(count / totalGames * 100);
+    const pct = Math.round(count / totalGames * 100);
     const flagged = pct < threshold;
-    const barW    = Math.min(pct * 2, 100);
-    const barClr  = flagged ? 'var(--orange)' : pct > 60 ? 'var(--green)' : 'var(--blue)';
-    mechHtml += `<div class="mech-row ${flagged?'mech-flagged':''}">
-      <span class="mech-name">${key.replace(/_/g,' ')}</span>
+    const barW = Math.min(pct * 2, 100);
+    const barClr = flagged ? 'var(--orange)' : pct > 60 ? 'var(--green)' : 'var(--blue)';
+    mechHtml += `<div class="mech-row ${flagged ? 'mech-flagged' : ''}">
+      <span class="mech-name">${key.replace(/_/g, ' ')}</span>
       <div class="mech-track"><div class="mech-fill" style="width:${barW}%;background:${barClr}"></div></div>
       <span class="mech-pct">${pct}%</span>
       <span class="mech-count">${count}×</span>
@@ -251,14 +367,14 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   }
 
   // ── Performance ────────────────────────────────────────────────────────────
-  const avgFtAll      = qa.performance?.avgFrameMsAll || [];
-  const avgAvgFt      = avgFtAll.length  > 0 ? Math.round(avgFtAll.reduce((a,b)=>a+b,0)/avgFtAll.length*10)/10 : 0;
-  const maxFtAll      = qa.performance?.maxFrameMsAll || [];
-  const overallMaxFt  = maxFtAll.length  > 0 ? Math.max(...maxFtAll) : 0;
-  const longTasks     = qa.performance?.longTasksAll  || [];
-  const ftGrade       = avgAvgFt > 33 ? 'stat-bad' : avgAvgFt > 20 ? 'stat-warn' : 'stat-ok';
-  const maxGrade      = overallMaxFt > 200 ? 'stat-bad' : overallMaxFt > 100 ? 'stat-warn' : 'stat-ok';
-  const ltGrade       = longTasks.length > 10 ? 'stat-bad' : longTasks.length > 3 ? 'stat-warn' : 'stat-ok';
+  const avgFtAll = qa.performance?.avgFrameMsAll || [];
+  const avgAvgFt = avgFtAll.length > 0 ? Math.round(avgFtAll.reduce((a, b) => a + b, 0) / avgFtAll.length * 10) / 10 : 0;
+  const maxFtAll = qa.performance?.maxFrameMsAll || [];
+  const overallMaxFt = maxFtAll.length > 0 ? Math.max(...maxFtAll) : 0;
+  const longTasks = qa.performance?.longTasksAll || [];
+  const ftGrade = avgAvgFt > 33 ? 'stat-bad' : avgAvgFt > 20 ? 'stat-warn' : 'stat-ok';
+  const maxGrade = overallMaxFt > 200 ? 'stat-bad' : overallMaxFt > 100 ? 'stat-warn' : 'stat-ok';
+  const ltGrade = longTasks.length > 10 ? 'stat-bad' : longTasks.length > 3 ? 'stat-warn' : 'stat-ok';
 
   const perfHtml = `<div class="stats-grid">
     <div class="stat-card ${ftGrade}"><div class="stat-num">${avgAvgFt}ms</div><div class="stat-lbl">Avg frame time<br><small>target: &lt;16ms</small></div></div>
@@ -267,7 +383,7 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     <div class="stat-card"><div class="stat-num">${qa.totalGamesRun}</div><div class="stat-lbl">Games simulated<br><small>${runDurStr} total</small></div></div>
   </div>
   ${longTasks.length > 0 ? `<details><summary style="cursor:pointer;color:var(--gold)">Long task breakdown (${longTasks.length})</summary>
-    <pre style="margin-top:8px">${longTasks.slice(0,30).map(t=>`${String(t.dt).padStart(5)}ms  ${t.matchup||'unknown'}`).join('\n')}</pre>
+    <pre style="margin-top:8px">${longTasks.slice(0, 30).map(t => `${String(t.dt).padStart(5)}ms  ${t.matchup || 'unknown'}`).join('\n')}</pre>
   </details>` : ''}`;
 
   // ── Balance analysis ───────────────────────────────────────────────────────
@@ -285,13 +401,13 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   let criticalSection = '';
   if (criticalBugs.length > 0) {
     criticalSection = `<div class="critical-banner">
-      <h2>🔴 ${criticalBugs.length} Critical Issue${criticalBugs.length>1?'s':''} Need Immediate Attention</h2>
-      ${criticalBugs.map((b,i) => `<div class="critical-item">
+      <h2>🔴 ${criticalBugs.length} Critical Issue${criticalBugs.length > 1 ? 's' : ''} Need Immediate Attention</h2>
+      ${criticalBugs.map((b, i) => `<div class="critical-item">
         <div class="critical-item-header">
           <code>${escHtml(b.type)}</code>
-          <span style="color:var(--dim)">${escHtml((b.matchups||[b.matchup]).filter(Boolean).join(', '))}</span>
+          <span style="color:var(--dim)">${escHtml((b.matchups || [b.matchup]).filter(Boolean).join(', '))}</span>
         </div>
-        <div class="critical-msg">${escHtml((b.message||'').slice(0,200))}</div>
+        <div class="critical-msg">${escHtml((b.message || '').slice(0, 200))}</div>
         ${b.diagnosis?.pasteToClaudePrompt ? `<div class="prompt-box" style="margin-top:10px">
           <div class="prompt-label">📋 Fix Prompt</div>
           <pre class="prompt-text" id="crit-prompt-${i}">${escHtml(b.diagnosis.pasteToClaudePrompt)}</pre>
@@ -306,14 +422,20 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   const softlockSection = softlockCount > 0 ? `<div class="warning-banner">
     <strong>⏱ ${softlockCount} game(s) timed out (possible softlock)</strong>
     <div style="margin-top:8px;font-size:13px;color:var(--dim)">
-      ${[...new Set((qa.allTimedOut||[]).map(t=>t.matchup))].slice(0,8).join(', ')}
+      ${[...new Set((qa.allTimedOut || []).map(t => t.matchup))].slice(0, 8).join(', ')}
     </div>
   </div>` : '';
 
   // ── Nav badge helper ───────────────────────────────────────────────────────
-  const bugBadge  = totalBugs > 0 ? ` <span class="nav-badge ${criticalBugs.length?'badge-red':'badge-orange'}">${totalBugs}</span>` : ' <span class="nav-badge badge-green">✓</span>';
-  const uiBadge   = uiErrors.length  > 0 ? ` <span class="nav-badge badge-red">${uiIssues.length}</span>` : uiIssues.length > 0 ? ` <span class="nav-badge badge-orange">${uiIssues.length}</span>` : ' <span class="nav-badge badge-green">✓</span>';
+  const bugBadge = totalBugs > 0 ? ` <span class="nav-badge ${criticalBugs.length ? 'badge-red' : 'badge-orange'}">${totalBugs}</span>` : ' <span class="nav-badge badge-green">✓</span>';
+  const uiBadge = uiErrors.length > 0 ? ` <span class="nav-badge badge-red">${uiIssues.length}</span>` : uiIssues.length > 0 ? ` <span class="nav-badge badge-orange">${uiIssues.length}</span>` : ' <span class="nav-badge badge-green">✓</span>';
   const promptBadge = allPrompts.length > 0 ? ` <span class="nav-badge badge-gold">${allPrompts.length}</span>` : '';
+  const onlineGrade = onlineReport?.overallGrade;
+  const onlineBadge = onlineGrade ? ` <span class="nav-badge ${onlineGrade === 'A' ? 'badge-green' : onlineGrade === 'B' ? 'badge-gold' : 'badge-red'}">${onlineGrade}</span>` : '';
+  const anomalyCount = (anomalyReport?.anomalies || []).length;
+  const anomalyBadge = anomalyCount > 0 ? ` <span class="nav-badge ${anomalyReport.hasCritical ? 'badge-red' : 'badge-orange'}">${anomalyCount}</span>` : ' <span class="nav-badge badge-green">✓</span>';
+  const featureCount = (featureAdvice?.suggestions || []).length;
+  const featureBadge = featureCount > 0 ? ` <span class="nav-badge badge-gold">${featureCount}</span>` : '';
 
   // ── Full HTML ──────────────────────────────────────────────────────────────
   return `<!DOCTYPE html>
@@ -537,8 +659,8 @@ p{margin-bottom:8px;color:var(--text);}
       <span>🤖 ${escHtml(cfg.balance.aiDifficulty)} AI</span>
       <span>🏴 ${factions.length} factions</span>
       <span>⏱ ${escHtml(runDurStr)}</span>
-      <span>${totalBugs > 0 ? `<span style="color:var(--red)">⚠️ ${totalBugs} bug${totalBugs>1?'s':''}</span>` : '<span style="color:var(--green)">✅ 0 bugs</span>'}</span>
-      ${softlockCount > 0 ? `<span style="color:var(--orange)">⏱ ${softlockCount} softlock${softlockCount>1?'s':''}</span>` : ''}
+      <span>${totalBugs > 0 ? `<span style="color:var(--red)">⚠️ ${totalBugs} bug${totalBugs > 1 ? 's' : ''}</span>` : '<span style="color:var(--green)">✅ 0 bugs</span>'}</span>
+      ${softlockCount > 0 ? `<span style="color:var(--orange)">⏱ ${softlockCount} softlock${softlockCount > 1 ? 's' : ''}</span>` : ''}
     </div>
   </div>
 </div>
@@ -548,6 +670,9 @@ p{margin-bottom:8px;color:var(--text);}
   <a href="#" class="active" onclick="return showTab('overview',this)">📊 Overview</a>
   <a href="#" onclick="return showTab('bugs',this)">🐛 Bugs${bugBadge}</a>
   <a href="#" onclick="return showTab('prompts',this)">📋 Prompts${promptBadge}</a>
+  <a href="#" onclick="return showTab('online',this)">🌐 Online${onlineBadge}</a>
+  <a href="#" onclick="return showTab('anomalies',this)">🔍 Anomalies${anomalyBadge}</a>
+  <a href="#" onclick="return showTab('features',this)">💡 Features${featureBadge}</a>
   <a href="#" onclick="return showTab('ui',this)">🖼 UI${uiBadge}</a>
   <a href="#" onclick="return showTab('mechanics',this)">⚙️ Mechanics</a>
   <a href="#" onclick="return showTab('performance',this)">📈 Performance</a>
@@ -564,19 +689,22 @@ p{margin-bottom:8px;color:var(--text);}
     <h2>Run Summary</h2>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num">${qa.totalGamesRun}</div><div class="stat-lbl">Games Played</div></div>
-      <div class="stat-card ${criticalBugs.length>0?'stat-bad':totalBugs>0?'stat-warn':'stat-ok'}">
+      <div class="stat-card ${criticalBugs.length > 0 ? 'stat-bad' : totalBugs > 0 ? 'stat-warn' : 'stat-ok'}">
         <div class="stat-num">${totalBugs}</div><div class="stat-lbl">Bugs Found<small>${criticalBugs.length} critical</small></div>
       </div>
-      <div class="stat-card ${softlockCount>0?'stat-bad':'stat-ok'}">
+      <div class="stat-card ${softlockCount > 0 ? 'stat-bad' : 'stat-ok'}">
         <div class="stat-num">${softlockCount}</div><div class="stat-lbl">Softlocks</div>
       </div>
-      <div class="stat-card ${uiErrors.length>0?'stat-bad':uiIssues.length>0?'stat-warn':'stat-ok'}">
+      <div class="stat-card ${uiErrors.length > 0 ? 'stat-bad' : uiIssues.length > 0 ? 'stat-warn' : 'stat-ok'}">
         <div class="stat-num">${uiIssues.length}</div><div class="stat-lbl">UI Issues<small>${uiErrors.length} errors</small></div>
       </div>
-      <div class="stat-card ${(qa.allNaNs?.length||0)>0?'stat-bad':'stat-ok'}">
-        <div class="stat-num">${qa.allNaNs?.length||0}</div><div class="stat-lbl">NaN Events</div>
+      <div class="stat-card ${(qa.allNaNs?.length || 0) > 0 ? 'stat-bad' : 'stat-ok'}">
+        <div class="stat-num">${qa.allNaNs?.length || 0}</div><div class="stat-lbl">NaN Events</div>
       </div>
       <div class="stat-card"><div class="stat-num">${allPrompts.length}</div><div class="stat-lbl">Claude Prompts<small>ready to paste</small></div></div>
+      <div class="stat-card ${onlineGrade && onlineGrade !== 'A' ? 'stat-warn' : 'stat-ok'}"><div class="stat-num" style="color:${onlineGrade ? ({ A: 'var(--green)', B: '#f1c40f', C: 'var(--orange)', D: 'var(--red)', F: 'var(--red)' }[onlineGrade] || 'var(--dim)') : 'var(--dim)'}">${onlineGrade || '—'}</div><div class="stat-lbl">Online Grade</div></div>
+      <div class="stat-card ${anomalyCount > 0 ? (anomalyReport?.hasCritical ? 'stat-bad' : 'stat-warn') : 'stat-ok'}"><div class="stat-num">${anomalyCount}</div><div class="stat-lbl">Anomalies<small>behavioral</small></div></div>
+      <div class="stat-card"><div class="stat-num">${featureCount}</div><div class="stat-lbl">Feature Ideas<small>AI-suggested</small></div></div>
     </div>
   </div>
   ${factions.length > 0 ? `<div class="section"><h2>Quick Faction Standings</h2>${barsHtml}</div>` : ''}
@@ -596,6 +724,33 @@ p{margin-bottom:8px;color:var(--text);}
     <h2>📋 Paste-to-Claude Prompts</h2>
     <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Copy individual prompts or use "Copy All" to paste everything at once. Each prompt is self-contained and tells Claude exactly what's broken.</p>
     ${promptsHtml}
+  </div>
+</div>
+
+<!-- ═══ ONLINE ═══ -->
+<div id="tab-online" class="tab">
+  <div class="section">
+    <h2>🌐 Online Sync Test Results</h2>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Simulates P1→P2 snapshot relay with configurable network latency. Checks state divergence, mid capture arc visibility, and conquest zone sync.</p>
+    ${onlineHtml}
+  </div>
+</div>
+
+<!-- ═══ ANOMALIES ═══ -->
+<div id="tab-anomalies" class="tab">
+  <div class="section">
+    <h2>🔍 Behavioral Anomalies</h2>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Suspicious patterns detected in game data beyond plain JS errors — extreme win rates, mechanics that never fire, position bias, draw rate anomalies, and timeout clustering.</p>
+    ${anomalyHtml}
+  </div>
+</div>
+
+<!-- ═══ FEATURES ═══ -->
+<div id="tab-features" class="tab">
+  <div class="section">
+    <h2>💡 Feature Suggestions</h2>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">AI-generated suggestions based on QA findings — underused mechanics, balance patterns, UX gaps, and online issues.</p>
+    ${featureHtml}
   </div>
 </div>
 
@@ -735,9 +890,9 @@ function mdToHtml(text) {
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/^\- (.+)$/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>\n?)+/gs, m => `<ul>${m}</ul>`)
-    .replace(/\[HIGH\]/g,  '<span style="color:var(--red);font-weight:700;">[HIGH]</span>')
-    .replace(/\[MED\]/g,   '<span style="color:var(--orange);font-weight:700;">[MED]</span>')
-    .replace(/\[LOW\]/g,   '<span style="color:var(--blue);font-weight:700;">[LOW]</span>')
+    .replace(/\[HIGH\]/g, '<span style="color:var(--red);font-weight:700;">[HIGH]</span>')
+    .replace(/\[MED\]/g, '<span style="color:var(--orange);font-weight:700;">[MED]</span>')
+    .replace(/\[LOW\]/g, '<span style="color:var(--blue);font-weight:700;">[LOW]</span>')
     .replace(/\[CRITICAL\]/g, '<span style="color:var(--red);font-weight:700;">[CRITICAL]</span>')
     .replace(/\n{2,}/g, '</p><p>')
     .replace(/^(?!<[hup])/gm, '');
@@ -745,14 +900,14 @@ function mdToHtml(text) {
 
 function escHtml(s) {
   return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function escAttr(s) {
-  return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+  return String(s).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
 }
 
 module.exports = { buildReport };

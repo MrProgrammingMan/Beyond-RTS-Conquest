@@ -393,7 +393,7 @@
     }
 
     /* On large screens hide the ◀ ▶ nav arrows — keyboard handles navigation */
-    @media (min-width: 901px) and (min-height: 601px) {
+    @media (min-width: 1400px) and (min-height: 800px) and (hover: hover) and (pointer: fine) {
 
       #tb-p1-left,
       #tb-p1-right,
@@ -3815,7 +3815,6 @@
       border-color: rgba(255, 255, 255, .25) !important;
       padding: 4px 10px !important;
     }
-
     .ingame-menu-btn:hover {
       color: var(--gold) !important;
       border-color: var(--gold) !important;
@@ -5314,16 +5313,13 @@
         title="Toggle Fullscreen (` — rebindable in Controls)">⛶ FULL</button><button
         class="ingame-util-btn ingame-menu-btn" onclick="_openIngameMenu()" title="Menu">☰ MENU</button></div>
     <!-- In-game menu overlay (no pause) -->
-    <div id="ingame-menu-overlay" onclick="if(event.target===this)_closeIngameMenu()"
-      style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;">
-      <div
-        style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
+    <div id="ingame-menu-overlay" onclick="if(event.target===this)_closeIngameMenu()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;">
+      <div style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
         <div style="font-size:1.1rem;letter-spacing:.12em;color:#e8e0d0;margin-bottom:4px;">MENU</div>
         <button class="btn mute-btn" onclick="toggleMute()" style="width:100%">🔊 MUTE</button>
         <button class="btn" onclick="_goFullscreen();_closeIngameMenu()" style="width:100%">⛶ FULLSCREEN</button>
         <button class="btn" id="ingame-menu-ragequit" onclick="_closeIngameMenu();triggerRagequit()"
-          style="width:100%;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border-color:#8B0000;">☠
-          QUIT MATCH</button>
+          style="width:100%;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border-color:#8B0000;">☠ QUIT MATCH</button>
         <button class="btn" onclick="_closeIngameMenu()" style="width:100%;margin-top:4px;">✕ CLOSE</button>
       </div>
     </div>
@@ -15583,8 +15579,8 @@
     // ── TOUCH DEVICE DETECTION ────────────────────────────────────────────────
     (function _initTouchControls() {
       const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.innerWidth <= 900 || window.innerHeight <= 600;
-      if (!isTouchDevice && !isSmallScreen) return;
+      const isLargeDesktop = window.innerWidth >= 1400 && window.innerHeight >= 800 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!isTouchDevice && isLargeDesktop) return;
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
