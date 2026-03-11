@@ -3809,6 +3809,18 @@
       background: rgba(0, 0, 0, .7);
     }
 
+    .ingame-menu-btn {
+      font-size: clamp(.6rem, 1vw, .75rem) !important;
+      color: rgba(255, 255, 255, .6) !important;
+      border-color: rgba(255, 255, 255, .25) !important;
+      padding: 4px 10px !important;
+    }
+
+    .ingame-menu-btn:hover {
+      color: var(--gold) !important;
+      border-color: var(--gold) !important;
+    }
+
     /* Vote overlay hint */
     #vote-controls-hint {
       font-family: Rajdhani, sans-serif;
@@ -5295,15 +5307,26 @@
     <div id="pause-overlay">
       <div class="pause-title">PAUSED</div>
       <div class="pause-sub">Press ESC to resume</div>
-      <button onclick="triggerRagequit()"
-        style="font-family:Rajdhani,sans-serif;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border:2px solid #8B0000;padding:10px 28px;border-radius:5px;cursor:pointer;font-size:.85rem;letter-spacing:.12em;margin-top:8px;transition:all .15s;"
-        onmouseover="this.style.borderColor='#ff0000';this.style.color='#ff0000';"
-        onmouseout="this.style.borderColor='#8B0000';this.style.color='#ff4444';">☠ RAGEQUIT</button>
     </div>
     <div id="ingame-mode-badge">VS</div>
     <div id="ingame-util-btns"><button class="ingame-util-btn mute-btn" onclick="toggleMute()">🔊 MUTE</button><button
         class="ingame-util-btn" onclick="_goFullscreen()" id="btn-ingame-full"
-        title="Toggle Fullscreen (` — rebindable in Controls)">⛶ FULL</button></div>
+        title="Toggle Fullscreen (` — rebindable in Controls)">⛶ FULL</button><button
+        class="ingame-util-btn ingame-menu-btn" onclick="_openIngameMenu()" title="Menu">☰ MENU</button></div>
+    <!-- In-game menu overlay (no pause) -->
+    <div id="ingame-menu-overlay" onclick="if(event.target===this)_closeIngameMenu()"
+      style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;">
+      <div
+        style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
+        <div style="font-size:1.1rem;letter-spacing:.12em;color:#e8e0d0;margin-bottom:4px;">MENU</div>
+        <button class="btn mute-btn" onclick="toggleMute()" style="width:100%">🔊 MUTE</button>
+        <button class="btn" onclick="_goFullscreen();_closeIngameMenu()" style="width:100%">⛶ FULLSCREEN</button>
+        <button class="btn" id="ingame-menu-ragequit" onclick="_closeIngameMenu();triggerRagequit()"
+          style="width:100%;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border-color:#8B0000;">☠
+          QUIT MATCH</button>
+        <button class="btn" onclick="_closeIngameMenu()" style="width:100%;margin-top:4px;">✕ CLOSE</button>
+      </div>
+    </div>
     <div id="hud">
       <div class="player-hud" id="p1-hud">
         <div class="hud-info">
@@ -6573,6 +6596,20 @@
       });
     });
 
+
+    // ── IN-GAME MENU (no pause) ──
+    function _openIngameMenu() {
+      const ov = document.getElementById('ingame-menu-overlay');
+      if (!ov) return;
+      // Show/hide ragequit button based on mode
+      const rqBtn = document.getElementById('ingame-menu-ragequit');
+      if (rqBtn) rqBtn.style.display = (typeof G !== 'undefined' && G && G.running) ? '' : 'none';
+      ov.style.display = 'flex';
+    }
+    function _closeIngameMenu() {
+      const ov = document.getElementById('ingame-menu-overlay');
+      if (ov) ov.style.display = 'none';
+    }
 
     // ── FULLSCREEN ──
     function _goFullscreen() {
@@ -13350,11 +13387,23 @@
             const tSubs = ['The bracket doesn\'t lie.', 'Onward to glory.', 'One step closer to the crown.', 'The crowd goes wild.', 'Another challenger falls.'];
             goSub.textContent = tSubs[Math.floor(Math.random() * tSubs.length)];
           }
+          else if (typeof NET !== 'undefined' && NET.isOnline()) {
+            // Online — just neutral flavour, no mocking
+            const onlineSubs = ['Well played.', 'GG.', 'The battle is decided.', 'One commander prevails.', 'Victory secured.'];
+            goSub.textContent = onlineSubs[Math.floor(Math.random() * onlineSubs.length)];
+          }
+          else if (GAME_MODE === 'vs') {
+            // Local vs — neutral, not mocking either player
+            const vsSubs = ['Well fought.', 'The better player won today.', 'Rematch?', 'A battle for the ages.', 'One side stands victorious.'];
+            goSub.textContent = vsSubs[Math.floor(Math.random() * vsSubs.length)];
+          }
           else goSub.textContent = mockSubs[Math.floor(Math.random() * mockSubs.length)];
         }
-        // Grudge Match taunt
+        // Grudge Match taunt — only in solo/AI modes, not online or local vs
         const goTaunt = document.getElementById('go-grudge-taunt');
-        if (goTaunt && SESSION.games >= 2 && GAME_MODE !== 'tournament') {
+        const _isOnlineGO = typeof NET !== 'undefined' && NET.isOnline();
+        const _isVsGO = GAME_MODE === 'vs' || GAME_MODE === 'sudden_death' || GAME_MODE === 'conquest' || GAME_MODE === 'draft';
+        if (goTaunt && SESSION.games >= 2 && GAME_MODE !== 'tournament' && !_isOnlineGO && !_isVsGO) {
           const _winIcon = SESSION._lastWinFactionIcon || '⚔';
           const _winName = SESSION._lastWinFactionName || 'the victor';
           const grudgeTaunts = [
@@ -13598,19 +13647,20 @@
         `<div style="display:flex;gap:clamp(14px,2.5vw,40px);flex-wrap:wrap;justify-content:center;">` +
         rqG.players.map(p => {
           const pc = p.id === 1 ? '#2471a3' : '#c0392b';
-          const isLoser = p.baseHp <= 0 || true; // both get roasted
-          const insult = isLoser
+          const isQuitter = p.id === (rqG.rqQuitterPid || p.id); // shame the quitter; if unknown, shame both
+          const insult = isQuitter
             ? loserInsults[Math.floor(Math.random() * loserInsults.length)]
             : winnerInsults[Math.floor(Math.random() * winnerInsults.length)];
-          // Pick 5 random fake stats
-          const shuffled = [...fakeStats].sort(() => Math.random() - 0.5).slice(0, 5);
-          return `<div class="go-stat-col" style="border-color:${pc};min-width:clamp(200px,28vw,320px)">
-            <div class="go-stat-label" style="color:${pc};font-size:clamp(.85rem,1.3vw,1.1rem)">💀 ${(GAME_MODE === 'solo' || GAME_MODE === 'tutorial') ? (p.id === 1 ? 'YOU' : 'AI') : ('PLAYER ' + p.id)}</div>
-            <div class="go-stat-val" style="color:#e74c3c;font-size:clamp(.7rem,1vw,.85rem);font-style:italic;">"${insult}"</div>
+          // Only show fake stats for quitter; winner gets a clean summary
+          const shuffled = isQuitter ? [...fakeStats].sort(() => Math.random() - 0.5).slice(0, 5) : [];
+          const playerLabel = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial') ? (p.id === 1 ? 'YOU' : 'AI') : ('PLAYER ' + p.id);
+          return `<div class="go-stat-col" style="border-color:${pc};min-width:clamp(200px,28vw,320px)${isQuitter ? '' : ';opacity:.7'}">
+            <div class="go-stat-label" style="color:${pc};font-size:clamp(.85rem,1.3vw,1.1rem)">${isQuitter ? '🏳 ' : '🏆 '}${playerLabel}</div>
+            <div class="go-stat-val" style="color:${isQuitter ? '#e74c3c' : '#27ae60'};font-size:clamp(.7rem,1vw,.85rem);font-style:italic;">"${insult}"</div>
             <div class="go-stat-section">
-              <div class="go-row"><span>Faction</span><b style="color:#888;text-decoration:line-through">${rqG.factions[p.id - 1].icon} ${rqG.factions[p.id - 1].name}</b></div>
-              <div class="go-row"><span>Kills</span><b>${p.kills} (meaningless)</b></div>
-              <div class="go-row"><span>Base HP Left</span><b style="color:#e74c3c">${Math.max(0, Math.ceil(p.baseHp))} / 100 💀</b></div>
+              <div class="go-row"><span>Faction</span><b style="color:${isQuitter ? '#888;text-decoration:line-through' : 'inherit'}">${rqG.factions[p.id - 1].icon} ${rqG.factions[p.id - 1].name}</b></div>
+              <div class="go-row"><span>Kills</span><b>${p.kills}${isQuitter ? ' (meaningless)' : ''}</b></div>
+              <div class="go-row"><span>Base HP Left</span><b style="color:${isQuitter ? '#e74c3c' : '#27ae60'}">${Math.max(0, Math.ceil(p.baseHp))} / 100</b></div>
               ${shuffled.map(([label, val]) => `<div class="go-row"><span>${label}</span><b style="color:#e74c3c">${val()}</b></div>`).join('')}
             </div>
           </div>`;
@@ -13619,6 +13669,17 @@
 
     function triggerRagequit() {
       if (!G) return;
+      // In online mode, the quitter is always the local player
+      // In local mode, the quitter is whichever player has lower HP (losing player)
+      const _isOnlineRQ = typeof NET !== 'undefined' && NET.isOnline();
+      if (_isOnlineRQ) {
+        G.rqQuitterPid = NET.getPid();
+      } else {
+        // Assume the player with lower HP (or P1 by default) quit
+        const p1hp = G.players[0] ? G.players[0].baseHp : 100;
+        const p2hp = G.players[1] ? G.players[1].baseHp : 100;
+        G.rqQuitterPid = p1hp <= p2hp ? 1 : 2;
+      }
       G.paused = false;
       document.getElementById('pause-overlay').classList.remove('show');
       G.running = false;
