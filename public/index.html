@@ -6023,6 +6023,20 @@
         if (myPid === 2) _p2ActionProtectUntil = performance.now() + 300;
       }
 
+      // ── P1 event queues — flushed into every broadcast so P2 sees them ──
+      // showPopup and checkLastStand run on P1. We queue the events and ship
+      // them to P2 in the next snapshot so P2 can render them locally.
+      const _p1PopQueue = [];       // { x, y, txt, col, pid }
+      const _p1LastStandQueue = []; // { pid, isSuddenDeath }
+
+      function queuePopupForP2(x, y, txt, col, pid) {
+        if (myPid === 1 && _onlineMode) _p1PopQueue.push({ x: Math.round(x), y: Math.round(y), txt, col, pid });
+      }
+
+      function queueLastStandForP2(pid, isSuddenDeath) {
+        if (myPid === 1 && _onlineMode) _p1LastStandQueue.push({ pid, isSuddenDeath: isSuddenDeath ? 1 : 0 });
+      }
+
       function _startStateSync() {
         if (_syncInterval) clearInterval(_syncInterval);
         if (myPid === 1) {
@@ -6067,6 +6081,10 @@
             mt: Math.round((G.midOwnerTimer || 0) * 10),
             mc: G.midCapturing || null,
             mf: Math.round((G.midCapFrac || 0) * 100),
+            mh: G.midHolder || null,          // mid holder (who's standing in mid)
+            mct: Math.round((G.midCapTimer || 0) * 100), // cap timer ×100
+            pops: _p1PopQueue.splice(0),       // popup events queued this frame
+            lsTriggered: _p1LastStandQueue.splice(0), // last stand events
             sd: G.siegeDecay ? 1 : 0,
             wm: (G.workerMidMode || [false, false]).map(b => b ? 1 : 0),
             sh: Math.round((G.shake || 0) * 100),
@@ -6146,12 +6164,42 @@
           G.midOwnerTimer = (snap.mt || 0) / 10;
           G.midCapturing = snap.mc;
           G.midCapFrac = (snap.mf || 0) / 100;
+          G.midHolder = snap.mh || null;        // who's standing in mid
+          G.midCapTimer = (snap.mct || 0) / 100; // capture progress timer
           G.elapsed = snap.e;
           G.siegeDecay = snap.sd === 1;
           G.workerMidMode = (snap.wm || [0, 0]).map(v => v === 1);
           G.shake = (snap.sh || 0) / 100;
           G.spies = snap.sp || [];
+          // Replay popups queued by P1 this frame
+          if (snap.pops && snap.pops.length) {
+            snap.pops.forEach(({ x, y, txt, col }) => showPopup(x, y, txt, col, null));
+          }
+          // Fire last stand overlay/SFX if P1 just triggered one
+          if (snap.lsTriggered && snap.lsTriggered.length) {
+            snap.lsTriggered.forEach(({ pid, isSuddenDeath }) => _p2FireLastStand(pid, isSuddenDeath === 1));
+          }
           if (snap.r === 0 && G.running !== false) { G.running = false; checkWin(); }
+        } catch (e) { /* ignore */ }
+      }
+
+      // ── P2 fires last-stand overlay/SFX locally when P1 signals it ──────────
+      function _p2FireLastStand(pid, isSuddenDeath) {
+        try {
+          const ov = document.getElementById('last-stand-overlay');
+          if (!ov) return;
+          if (isSuddenDeath) {
+            document.getElementById('ls-title').textContent = '⚡ SUDDEN DEATH';
+            document.getElementById('ls-title').style.color = '#e67e22';
+            document.querySelector('#last-stand-overlay .ls-sub').textContent = 'BOTH SIDES ARE DESPERATE — GUARDS INBOUND';
+          } else {
+            document.getElementById('ls-title').textContent = `PLAYER ${pid} — LAST STAND`;
+            document.getElementById('ls-title').style.color = pid === 1 ? '#2471a3' : '#c0392b';
+            document.querySelector('#last-stand-overlay .ls-sub').textContent = 'THE ROYAL GUARD HAS BEEN SUMMONED';
+          }
+          ov.classList.add('show');
+          setTimeout(() => ov.classList.remove('show'), 3000);
+          if (typeof SFX !== 'undefined' && SFX.lastStand) SFX.lastStand();
         } catch (e) { /* ignore */ }
       }
 
@@ -6276,7 +6324,9 @@
           case 'voteForEvent': voteForEvent(pid); break;
           case 'hoverCard': {
             const { cardIdx, mode } = action;
-            if (pid === 1) { P1_MODE = mode; } else { P2_MODE = mode; }
+            // If tab changed, switch the visible panel (pass _remote=true to suppress echo)
+            const curMode = pid === 1 ? P1_MODE : P2_MODE;
+            if (mode !== curMode) switchMode(pid, mode, true);
             if (mode === 0) {
               // unit/spy card
               const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned);
@@ -6488,6 +6538,7 @@
         joinRoom, cancelSearch, cleanup, setStatus,
         sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone,
         recordLocalAction,
+        queuePopupForP2, queueLastStandForP2,
       };
     })();
 
@@ -9015,6 +9066,15 @@
       document.getElementById('p1-guard-timer').style.display = 'none';
       document.getElementById('p2-guard-timer').style.display = 'none';
       buildHUD(); updateHUD();
+      // Wire HUD tab clicks — switch panel and broadcast to opponent online
+      [1, 2].forEach(pid => {
+        document.querySelectorAll(`#p${pid}-tabs .hud-tab`).forEach((tab, i) => {
+          tab.addEventListener('click', () => {
+            if (typeof NET !== 'undefined' && NET.isOnline() && !NET.isMyTurn(pid)) return;
+            switchMode(pid, i);
+          });
+        });
+      });
       // Wire personality/difficulty badge tooltips in HUD
       setTimeout(() => {
         document.querySelectorAll('.pers-badge[data-pers]').forEach(el => {
@@ -9158,6 +9218,13 @@
             refreshSel(pid);
             tryBuyUpgrade(pid, i, card);
           });
+          card.addEventListener('mouseenter', () => {
+            if (pid === 1) { P1_SEL = i; P1_MODE = 1; } else { P2_SEL = i; P2_MODE = 1; }
+            updateStatPanel(pid);
+            document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
+            if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 1 });
+          });
+          card.addEventListener('mouseleave', () => { document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           upgEl.appendChild(card);
         });
         // Buff cards
@@ -9175,13 +9242,20 @@
             refreshSel(pid);
             tryActivateBuff(pid, i, card);
           });
+          card.addEventListener('mouseenter', () => {
+            if (pid === 1) { P1_SEL = i; P1_MODE = 2; } else { P2_SEL = i; P2_MODE = 2; }
+            updateStatPanel(pid);
+            document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
+            if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 2 });
+          });
+          card.addEventListener('mouseleave', () => { document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.remove('visible'); });
           bufEl.appendChild(card);
         });
       });
       refreshSel(1); refreshSel(2);
     }
 
-    function switchMode(pid, newMode) {
+    function switchMode(pid, newMode, _remote) {
       const modes = [document.getElementById(`p${pid}-grid`), document.getElementById(`p${pid}-upgrades`), document.getElementById(`p${pid}-buffs`)];
       modes.forEach((el, i) => el.style.display = i === newMode ? 'grid' : 'none');
       const tabs = document.querySelectorAll(`#p${pid}-tabs .hud-tab`);
@@ -9189,6 +9263,10 @@
       if (pid === 1) P1_MODE = newMode; else P2_MODE = newMode;
       if (pid === 1) P1_SEL = 0; else P2_SEL = 0;
       refreshSel(pid);
+      // Broadcast tab switch to opponent so they see which menu you're in
+      if (!_remote && typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'hoverCard', pid, cardIdx: 0, mode: newMode });
+      }
     }
 
     function getMaxSel(pid) {
@@ -9823,6 +9901,10 @@
     function rangeDist(u, e) { if (u.def.aerial || e.def.aerial) return Math.abs(u.x - e.x); return dist2d(u, e); }
 
     function showPopup(x, y, txt, col, pid) {
+      // If we're P1 online, queue this popup so P2 can replay it from the snapshot
+      if (typeof NET !== 'undefined' && NET.isOnline && NET.isOnline() && NET.getPid && NET.getPid() === 1) {
+        NET.queuePopupForP2(x, y, txt, col, pid);
+      }
       const el = document.createElement('div');
       el.className = 'rpop'; el.textContent = txt; el.style.color = col || '#fff';
       const cx = canvas.getBoundingClientRect();
@@ -11849,8 +11931,12 @@
           p.lastStandGrace = 2.5; // 2.5s grace — base can't die while guards spawn
           p.baseHp = Math.max(p.baseHp, threshold); // restore to full threshold, not below
           p.souls += 40;
-          const ov = document.getElementById('last-stand-overlay');
+          // Queue last stand event for P2 so it can fire overlay + SFX locally
           const _isSuddenLS = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
+          if (typeof NET !== 'undefined' && NET.isOnline && NET.isOnline()) {
+            NET.queueLastStandForP2(p.id, _isSuddenLS);
+          }
+          const ov = document.getElementById('last-stand-overlay');
           if (_isSuddenLS && !G._suddenDeathAnnounced) {
             G._suddenDeathAnnounced = true;
             document.getElementById('ls-title').textContent = '⚡ SUDDEN DEATH';
@@ -14007,6 +14093,10 @@
       sel = Math.max(0, Math.min(max, sel + dir));
       if (pid === 1) P1_SEL = sel; else P2_SEL = sel;
       refreshSel(pid);
+      // Broadcast cursor movement to opponent
+      if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
+        NET.sendAction({ type: 'hoverCard', pid, cardIdx: sel, mode });
+      }
     }
 
     function activate(pid) {
