@@ -392,6 +392,17 @@
       width: clamp(34px, 9vw, 52px);
     }
 
+    /* On large screens hide the ◀ ▶ nav arrows — keyboard handles navigation */
+    @media (min-width: 901px) and (min-height: 601px) {
+
+      #tb-p1-left,
+      #tb-p1-right,
+      #tb-p2-left,
+      #tb-p2-right {
+        display: none;
+      }
+    }
+
     /* On portrait phones, stack the two player touch zones vertically */
     @media (max-width: 600px) and (orientation: portrait),
     (max-width: 480px) {
@@ -6335,8 +6346,7 @@
             } else {
               if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
             }
-            updateStatPanel(pid);
-            updateHUD(); // force card highlight refresh so remote selection is visible
+            refreshSel(pid); // applies .sel highlight to the correct card
             document.querySelector(`#p${pid}-hud .unit-stat-panel`)?.classList.add('visible');
             break;
           }
@@ -15512,7 +15522,8 @@
     // ── TOUCH DEVICE DETECTION ────────────────────────────────────────────────
     (function _initTouchControls() {
       const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      if (!isTouchDevice) return;
+      const isSmallScreen = window.innerWidth <= 900 || window.innerHeight <= 600;
+      if (!isTouchDevice && !isSmallScreen) return;
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
