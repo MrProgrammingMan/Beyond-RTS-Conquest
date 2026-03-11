@@ -324,80 +324,73 @@
     }
 
     /* ── TOUCH CONTROLS ────────────────────────────────────────────────────────── */
+    /* ── TOUCH CONTROLS — compact single-row bar ───────────────────────────── */
     #touch-controls {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 106px;
+      height: 62px;
       display: flex;
       z-index: 200;
-      background: rgba(0, 0, 0, .88);
-      border-top: 2px solid rgba(255, 255, 255, .15);
+      background: rgba(8, 10, 16, .93);
+      border-top: 1px solid rgba(255, 255, 255, .1);
       pointer-events: all;
     }
 
     .touch-half {
       flex: 1;
       display: flex;
-      flex-direction: column;
-      gap: 0;
-      padding: 0;
-      align-items: stretch;
-      justify-content: stretch;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 0 8px;
     }
 
-    .touch-player-label {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: .6rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-align: center;
-      padding: 3px 0 1px;
-      opacity: .55;
-      text-transform: uppercase;
-    }
-
-    #touch-p1 .touch-player-label {
-      color: #5dade2;
+    /* Thin colour stripe on left edge of each half */
+    #touch-p1 {
       border-right: 1px solid rgba(255, 255, 255, .08);
     }
 
-    #touch-p2 .touch-player-label {
-      color: #e74c3c;
+    #touch-p1::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 36px;
+      background: #2471a3;
+      border-radius: 2px;
+      margin-right: 6px;
+      flex-shrink: 0;
     }
 
-    .touch-btn-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 5px 6px 8px;
-      align-items: center;
-      justify-content: center;
+    #touch-p2::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 36px;
+      background: #c0392b;
+      border-radius: 2px;
+      margin-right: 6px;
+      flex-shrink: 0;
     }
 
-    #touch-p1 .touch-btn-area {
-      border-right: 1px solid rgba(255, 255, 255, .1);
-    }
-
-    .touch-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
+    /* Hide the old text label — colour stripe replaces it */
+    .touch-player-label {
+      display: none;
     }
 
     .touch-btn {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.75rem, 3vw, .95rem);
+      font-size: .78rem;
       font-weight: 700;
-      letter-spacing: .04em;
-      background: rgba(255, 255, 255, .1);
-      border: 1.5px solid rgba(255, 255, 255, .25);
-      color: #ddd;
-      border-radius: 7px;
+      letter-spacing: .03em;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .18);
+      color: #bbb;
+      border-radius: 6px;
       padding: 0;
-      width: clamp(48px, 12vw, 70px);
+      width: 44px;
       height: 38px;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
@@ -407,112 +400,71 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .touch-btn:active {
-      background: rgba(255, 255, 255, .32);
-      border-color: rgba(255, 255, 255, .65);
-      transform: scale(.94);
+      background: rgba(255, 255, 255, .28);
+      border-color: rgba(255, 255, 255, .55);
+      transform: scale(.92);
     }
 
-    /* SPAWN button — big, coloured, unmissable */
+    /* SPAWN — prominent, colour-coded per player */
     .touch-btn.touch-act {
-      background: rgba(192, 57, 43, .28);
-      border-color: rgba(192, 57, 43, .75);
-      border-width: 2px;
-      color: #ff8a80;
-      min-width: clamp(64px, 16vw, 96px);
-      font-size: clamp(.88rem, 3.8vw, 1.1rem);
-      box-shadow: 0 0 12px rgba(192, 57, 43, .35);
+      background: rgba(192, 57, 43, .22);
+      border-color: rgba(192, 57, 43, .6);
+      border-width: 1.5px;
+      color: #f08070;
+      width: 68px;
+      font-size: .88rem;
+      box-shadow: 0 0 8px rgba(192, 57, 43, .25);
     }
 
     .touch-btn.touch-act:active {
-      background: rgba(192, 57, 43, .65);
-      box-shadow: 0 0 20px rgba(192, 57, 43, .6);
+      background: rgba(192, 57, 43, .55);
+      box-shadow: 0 0 14px rgba(192, 57, 43, .5);
     }
 
-    /* P1 side — blue tint for SPAWN */
     #touch-p1 .touch-btn.touch-act {
-      background: rgba(36, 113, 163, .28);
-      border-color: rgba(36, 113, 163, .75);
-      color: #7ec8f0;
-      box-shadow: 0 0 12px rgba(36, 113, 163, .35);
+      background: rgba(36, 113, 163, .22);
+      border-color: rgba(36, 113, 163, .6);
+      color: #70b8e8;
+      box-shadow: 0 0 8px rgba(36, 113, 163, .25);
     }
 
     #touch-p1 .touch-btn.touch-act:active {
-      background: rgba(36, 113, 163, .65);
-      box-shadow: 0 0 20px rgba(36, 113, 163, .6);
+      background: rgba(36, 113, 163, .55);
+      box-shadow: 0 0 14px rgba(36, 113, 163, .5);
     }
 
+    /* Small utility buttons */
     .touch-btn.touch-sm {
-      font-size: clamp(.65rem, 2.5vw, .8rem);
-      height: 30px;
-      width: clamp(44px, 11vw, 62px);
+      font-size: .68rem;
+      width: 38px;
+      height: 34px;
     }
 
-    /* On large desktop — hide arrow nav buttons (keyboard handles it) */
-    @media (min-width: 1400px) and (min-height: 800px) and (hover: hover) and (pointer: fine) {
-
-      #tb-p1-left,
-      #tb-p1-right,
-      #tb-p2-left,
-      #tb-p2-right {
-        display: none;
-      }
-    }
-
-    /* Portrait phones — stack players top/bottom */
-    @media (max-width: 600px) and (orientation: portrait),
-    (max-width: 480px) {
-      #touch-controls {
-        height: 130px;
-        flex-direction: column;
-      }
-
-      .touch-half {
-        flex-direction: row;
-        align-items: stretch;
-      }
-
-      .touch-player-label {
-        writing-mode: vertical-rl;
-        padding: 0 3px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .55rem;
-        border: none !important;
-        border-right: 1px solid rgba(255, 255, 255, .08) !important;
-        min-width: 20px;
-      }
-
-      #touch-p1 {
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, .12);
-      }
-
-      .touch-btn-area {
-        flex-direction: row;
-        flex: 1;
-        padding: 4px 8px;
-        gap: 4px;
-        border: none !important;
-      }
-
+    /* On narrow screens keep buttons slightly smaller */
+    @media (max-width: 480px) {
       .touch-btn {
-        height: 34px;
-        width: clamp(44px, 13vw, 66px);
-        font-size: clamp(.72rem, 3.5vw, .9rem);
+        width: 40px;
+        height: 36px;
+        font-size: .72rem;
       }
 
       .touch-btn.touch-act {
-        min-width: clamp(56px, 16vw, 80px);
+        width: 60px;
       }
 
       .touch-btn.touch-sm {
-        height: 28px;
-        width: clamp(40px, 11vw, 58px);
-        font-size: clamp(.6rem, 2.8vw, .75rem);
+        width: 34px;
+        height: 32px;
+        font-size: .62rem;
+      }
+
+      .touch-half {
+        gap: 4px;
+        padding: 0 5px;
       }
     }
 
@@ -5539,37 +5491,25 @@
       </div>
     </div>
   </div>
-  <!-- TOUCH CONTROLS (mobile only — hidden on desktop) -->
+  <!-- TOUCH CONTROLS (compact single-row, genuine touch screens only) -->
   <div id="touch-controls" style="display:none">
     <div class="touch-half" id="touch-p1">
-      <div class="touch-player-label">🔵 PLAYER 1</div>
-      <div class="touch-btn-area">
-        <div class="touch-row">
-          <button class="touch-btn" id="tb-p1-left">◀</button>
-          <button class="touch-btn touch-act" id="tb-p1-spawn">SPAWN</button>
-          <button class="touch-btn" id="tb-p1-right">▶</button>
-        </div>
-        <div class="touch-row">
-          <button class="touch-btn touch-sm" id="tb-p1-tabup">↑TAB</button>
-          <button class="touch-btn touch-sm" id="tb-p1-tabdn">↓TAB</button>
-          <button class="touch-btn touch-sm" id="tb-p1-mid">⛏ MID</button>
-        </div>
-      </div>
+      <div class="touch-player-label">P1</div>
+      <button class="touch-btn" id="tb-p1-left">◀</button>
+      <button class="touch-btn touch-act" id="tb-p1-spawn">SPAWN</button>
+      <button class="touch-btn" id="tb-p1-right">▶</button>
+      <button class="touch-btn touch-sm" id="tb-p1-tabup">↑TAB</button>
+      <button class="touch-btn touch-sm" id="tb-p1-tabdn">↓TAB</button>
+      <button class="touch-btn touch-sm" id="tb-p1-mid">MID</button>
     </div>
     <div class="touch-half" id="touch-p2">
-      <div class="touch-player-label">🔴 PLAYER 2</div>
-      <div class="touch-btn-area">
-        <div class="touch-row">
-          <button class="touch-btn" id="tb-p2-left">◀</button>
-          <button class="touch-btn touch-act" id="tb-p2-spawn">SPAWN</button>
-          <button class="touch-btn" id="tb-p2-right">▶</button>
-        </div>
-        <div class="touch-row">
-          <button class="touch-btn touch-sm" id="tb-p2-tabup">↑TAB</button>
-          <button class="touch-btn touch-sm" id="tb-p2-tabdn">↓TAB</button>
-          <button class="touch-btn touch-sm" id="tb-p2-mid">⛏ MID</button>
-        </div>
-      </div>
+      <div class="touch-player-label">P2</div>
+      <button class="touch-btn" id="tb-p2-left">◀</button>
+      <button class="touch-btn touch-act" id="tb-p2-spawn">SPAWN</button>
+      <button class="touch-btn" id="tb-p2-right">▶</button>
+      <button class="touch-btn touch-sm" id="tb-p2-tabup">↑TAB</button>
+      <button class="touch-btn touch-sm" id="tb-p2-tabdn">↓TAB</button>
+      <button class="touch-btn touch-sm" id="tb-p2-mid">MID</button>
     </div>
   </div>
   <div id="sc-tournament-setup" class="screen">
@@ -15865,12 +15805,16 @@
 
     // ── TOUCH DEVICE DETECTION ────────────────────────────────────────────────
     (function _initTouchControls() {
-      const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
-      const isLargeDesktop = window.innerWidth >= 1400 && window.innerHeight >= 800 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-      if (!isTouchDevice && isLargeDesktop) return;
+      // Only show on genuine touch screens (pointer: coarse) that are small enough
+      // to need on-screen controls. Large screens always use keyboard.
+      const isCoarseTouch = window.matchMedia('(pointer: coarse)').matches;
+      const isSmallEnough = window.innerWidth <= 1100;
+      if (!isCoarseTouch || !isSmallEnough) return;
+
       document.body.classList.add('touch-mode');
       const tc = document.getElementById('touch-controls');
       if (!tc) return;
+
       // Wire using pointerdown — works in itch.io iframes unlike ontouchstart
       function _tb(id, fn) {
         const el = document.getElementById(id);
@@ -15889,22 +15833,23 @@
       _tb('tb-p2-tabup', () => cycleMode(2, -1));
       _tb('tb-p2-tabdn', () => cycleMode(2, 1));
       _tb('tb-p2-mid', () => toggleWorkerMid(2));
-      // Hook into showScreen to toggle visibility and handle online pid
+
       const _origShow = showScreen;
       showScreen = function (id) {
         _origShow(id);
         if (id === 'sc-game') {
           tc.style.display = 'flex';
           if (typeof NET !== 'undefined' && NET.isOnline()) {
+            // Online: only show your own side
             const _tPid = NET.getPid();
             document.getElementById('touch-p1').style.display = _tPid === 1 ? '' : 'none';
             document.getElementById('touch-p2').style.display = _tPid === 2 ? '' : 'none';
           } else {
-            // Local / AI / solo: show both halves
+            // Local / AI: only show P1 — P2 uses keyboard.
+            // This keeps the bar narrow and uncluttered.
             document.getElementById('touch-p1').style.display = '';
-            document.getElementById('touch-p2').style.display = '';
+            document.getElementById('touch-p2').style.display = 'none';
           }
-          // Recalculate canvas size now that touch bar is visible
           requestAnimationFrame(() => { if (typeof resizeGameCanvas === 'function') resizeGameCanvas(); });
         } else {
           tc.style.display = 'none';

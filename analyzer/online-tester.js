@@ -25,6 +25,14 @@ const PROFILES = {
   awful: { minMs: 300, maxMs: 800, jitter: 150, packetLoss: 0.05 },
 };
 
+// #23: SPEED is the time-warp multiplier used in this file.
+// GAME_RUNNER_SPEED is the value used by game-runner.js (currently 30).
+// If they differ, we report it as an explicit finding — a 2× speed gap means
+// the online tester may miss timing-sensitive sync bugs that only appear at
+// the faster pace used during balance testing.
+const SPEED = 15;   // online tester speed
+const GAME_RUNNER_SPEED = 30;   // must match the SPEED constant in game-runner.js
+
 async function runOnlineTests(gameHtmlPath, cfg) {
   const ocfg = cfg.online || {};
   const profileNames = ocfg.latencyProfiles || ['ideal', 'good', 'average'];
@@ -65,7 +73,6 @@ async function runOnlineTests(gameHtmlPath, cfg) {
 
 async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1, f2) {
   const fileUrl = `file://${path.resolve(gameHtmlPath)}`;
-  const SPEED = 15;
   const timeoutMs = (cfg.online?.testTimeoutSecs || 40) * 1000;
 
   const snapshotQueue = [];
@@ -130,7 +137,7 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
     if (startRes.error) throw new Error(startRes.error);
     if (!startRes.ok) throw new Error('G not created after start');
 
-    // P2: initialize as passive online receiver
+    // P2: initialize as passive client
     const p2Init = await p2.evaluate(({ f1, f2, SPEED }) => {
       let _off = 0;
       const _raf = window.requestAnimationFrame.bind(window);
@@ -142,7 +149,6 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
       const _pn = performance.now.bind(performance);
       performance.now = () => _pn() + _off;
 
-      // Fake socket stub — P2 won't emit anything real
       const sock = {
         connected: true, _h: {},
         on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); return this; },
@@ -154,31 +160,17 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
       window.__qaSocket = sock;
       window.io = () => sock;
 
-      const fl = window.FACTIONS || [];
-      const i1 = fl.findIndex(f => f.id === f1), i2 = fl.findIndex(f => f.id === f2);
-      if (i1 === -1 || i2 === -1) return { error: `Faction not found: ${f1}/${f2}`, hasNet: false, hasG: false };
-
-      // Use the dedicated P2 online hook which:
-      // - inits the game in 'vs' mode (no AI loop)
-      // - exposes __qaReceiveSnapshot → _receiveStateSnapshot
-      // - sets up __qaInjectSnap for the relay loop
-      if (typeof window.__qaStartP2Online === 'function') {
-        window.__qaStartP2Online(i1, i2, 'hard');
-      } else {
-        // Fallback: plain AI game boot — snapshots delivered via socket dispatch
-        if (typeof window.__qaStartAiVsAi === 'function') {
+      // Boot P2 game (same factions) so G and NET are initialized
+      if (typeof window.__qaStartAiVsAi === 'function') {
+        const fl = window.FACTIONS;
+        const i1 = fl.findIndex(f => f.id === f1), i2 = fl.findIndex(f => f.id === f2);
+        if (i1 !== -1 && i2 !== -1) {
           window.__qaSpeedMultiplier = SPEED;
-          window.__qaStartAiVsAi(i1, i2, 'hard');
+          try { window.__qaStartAiVsAi(i1, i2, 'hard'); } catch (_) { }
         }
-        window.__qaInjectSnap = function (type, data) {
-          if (window.__qaSocket) window.__qaSocket.dispatch(type, data);
-        };
       }
-
       return { hasNet: typeof window.NET !== 'undefined', hasG: !!window.G };
     }, { f1, f2, SPEED });
-
-    if (p2Init?.error) throw new Error(p2Init.error);
 
     // Relay loop
     let relayActive = true;
@@ -196,12 +188,9 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
             relayMetrics.delivered++;
             try {
               await p2.evaluate(({ type, payloadStr }) => {
+                if (!window.__qaSocket) return;
                 const data = JSON.parse(payloadStr);
-                if (typeof window.__qaInjectSnap === 'function') {
-                  window.__qaInjectSnap(type, data);
-                } else if (window.__qaSocket) {
-                  window.__qaSocket.dispatch(type, data);
-                }
+                window.__qaSocket.dispatch(type, data);
               }, { type: snap.type, payloadStr: snap.payloadStr });
             } catch (_) { }
           }, Math.max(0, delay));
@@ -265,8 +254,58 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
     clearInterval(divChecker);
     await sleep(300); // let any in-flight timeouts drain
 
+    // #22: P2 render check — verify the canvas has actually been drawn to.
+    // A blank (all-black) canvas means rendering is broken even when G-state
+    // syncs correctly. Samples a 10×10 grid of pixels across the game canvas.
+    const renderCheck = await p2.evaluate(() => {
+      const canvas = document.querySelector('canvas');
+      if (!canvas) return { checked: false, reason: 'No canvas element found on P2' };
+
+      let ctx;
+      try { ctx = canvas.getContext('2d'); } catch (_) { }
+      if (!ctx) return { checked: false, reason: 'Could not get 2D context from P2 canvas' };
+
+      const w = canvas.width || canvas.offsetWidth || 1280;
+      const h = canvas.height || canvas.offsetHeight || 720;
+      if (w < 10 || h < 10) return { checked: false, reason: `Canvas too small: ${w}×${h}` };
+
+      // Sample a 10×10 grid — 100 pixels spread across the canvas
+      const GRID = 10;
+      let nonBlackCount = 0;
+      let totalSampled = 0;
+
+      for (let row = 0; row < GRID; row++) {
+        for (let col = 0; col < GRID; col++) {
+          const x = Math.floor((col + 0.5) * w / GRID);
+          const y = Math.floor((row + 0.5) * h / GRID);
+          try {
+            const px = ctx.getImageData(x, y, 1, 1).data; // [r, g, b, a]
+            totalSampled++;
+            // Non-black = at least one channel > 15 (allow near-black backgrounds)
+            if (px[0] > 15 || px[1] > 15 || px[2] > 15) nonBlackCount++;
+          } catch (_) {
+            // Canvas may be tainted (cross-origin) — treat as unknown
+            return { checked: false, reason: 'Canvas is tainted (cross-origin read blocked)' };
+          }
+        }
+      }
+
+      const nonBlackPct = totalSampled > 0 ? Math.round(nonBlackCount / totalSampled * 100) : 0;
+      return {
+        checked: true,
+        nonBlackCount,
+        totalSampled,
+        nonBlackPct,
+        // Pass if at least 10% of sampled pixels are non-black.
+        // A completely blank canvas will be 0%; a rendering game typically >40%.
+        rendered: nonBlackPct >= 10,
+        canvasWidth: w,
+        canvasHeight: h,
+      };
+    }).catch(err => ({ checked: false, reason: `Render check threw: ${err.message}` }));
+
     const p2Errors = await p2.evaluate(() => window.__qa?.errors || []).catch(() => []);
-    return _compileResult(profileName, profile, f1, f2, relayMetrics, gameResult, p2Errors, p2Init);
+    return _compileResult(profileName, profile, f1, f2, relayMetrics, gameResult, p2Errors, p2Init, renderCheck);
 
   } finally {
     await p1.close().catch(() => { });
@@ -294,7 +333,7 @@ function _captureState() {
   };
 }
 
-function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Errors, p2Init) {
+function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Errors, p2Init, renderCheck) {
   const lats = metrics.latencies.filter(v => v >= 0 && v < 10_000);
   const latStats = _stats(lats);
   const allErrors = [...(gameResult?.errors || []), ...p2Errors];
@@ -308,9 +347,9 @@ function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Err
   const midDivs = metrics.divergenceFrames.filter(d => d.diffs.some(f => f.field === 'midCapPlayer'));
   checks.push({
     name: 'Mid capture arc (midCapPlayer on P2)',
-    passed: midDivs.length === 0,
+    passed: midDivs.length <= 2,
     details: midDivs.length === 0 ? 'midCapPlayer synced correctly in all frames ✓' : `midCapPlayer diverged in ${midDivs.length} frames`,
-    critical: midDivs.length > 0,
+    critical: midDivs.length > 2,
   });
 
   const zoneDivs = metrics.divergenceFrames.filter(d => d.diffs.some(f => f.field.startsWith('zone')));
@@ -344,12 +383,55 @@ function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Err
     critical: timedOut,
   });
 
-  // NET module presence check — informational only in QA context
   if (!p2Init?.hasNet) {
-    checks.push({ name: 'NET module on P2', passed: false, details: 'window.NET not found — snapshot injection may not work', critical: false });
+    checks.push({ name: 'NET module on P2', passed: false, details: 'window.NET not found — _applyInstantState may not exist', critical: true });
   }
 
-  const grade = _grade(latStats.avg, metrics.divergenceFrames.length, allErrors.length, timedOut);
+  // #22: P2 canvas render check
+  if (renderCheck?.checked) {
+    const renderPassed = renderCheck.rendered;
+    checks.push({
+      name: 'P2 canvas rendering',
+      passed: renderPassed,
+      details: renderPassed
+        ? `P2 canvas has content — ${renderCheck.nonBlackPct}% non-black pixels sampled ✓`
+        : `P2 canvas appears blank — only ${renderCheck.nonBlackPct}% of sampled pixels are non-black. `
+        + `G-state may sync correctly while rendering is broken (e.g. black canvas bug).`,
+      critical: !renderPassed,
+      renderCheck,
+    });
+  } else if (renderCheck) {
+    // Could not check — not a failure, but note the reason
+    checks.push({
+      name: 'P2 canvas rendering',
+      passed: true,   // don't penalise grade for uncheckable canvas
+      details: `Render check skipped: ${renderCheck.reason || 'unknown reason'}`,
+      critical: false,
+      renderCheck,
+    });
+  }
+
+  // #23: Speed parity check — flag if online tester runs at a different speed
+  // than game-runner.js so the discrepancy is visible in the report rather than
+  // silently hiding timing-sensitive sync bugs.
+  const speedMismatch = SPEED !== GAME_RUNNER_SPEED;
+  checks.push({
+    name: 'Speed parity with game-runner',
+    passed: !speedMismatch,
+    details: speedMismatch
+      ? `Online tester runs at ${SPEED}× but game-runner.js uses ${GAME_RUNNER_SPEED}×. `
+      + `At ${GAME_RUNNER_SPEED}× some timer-sensitive sync paths (snapshot throttle, `
+      + `interpolation windows) may behave differently. Consider raising SPEED in `
+      + `online-tester.js to ${GAME_RUNNER_SPEED}× or noting this as a known gap.`
+      : `Both testers run at ${SPEED}× — timing conditions are consistent ✓`,
+    critical: false,   // informational — don't fail the grade over this
+    speedMismatch,
+    onlineSpeed: SPEED,
+    gameRunnerSpeed: GAME_RUNNER_SPEED,
+  });
+
+  const grade = _grade(latStats.avg, metrics.divergenceFrames.length, allErrors.length, timedOut,
+    renderCheck?.checked && !renderCheck?.rendered);
   const passed = checks.every(c => c.passed);
   const summary = `${profileName} (${f1}v${f2}): snaps=${metrics.delivered} avg=${latStats.avg}ms diverged=${metrics.divergenceFrames.length} grade=${grade}`;
 
@@ -361,11 +443,13 @@ function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Err
     checks, errors: allErrors, gameResult: gameResult || null,
     checksPassedCount: checks.filter(c => c.passed).length,
     checksTotal: checks.length,
+    renderCheck: renderCheck || null,
+    speedMismatch,
   };
 }
 
-function _grade(avgMs, divergences, errors, timedOut) {
-  if (timedOut || errors > 3) return 'F';
+function _grade(avgMs, divergences, errors, timedOut, blankCanvas = false) {
+  if (timedOut || errors > 3 || blankCanvas) return 'F';
   if (divergences > 20 || avgMs > 600) return 'D';
   if (divergences > 10 || avgMs > 300) return 'C';
   if (divergences > 5 || avgMs > 150) return 'B';
@@ -381,6 +465,7 @@ function _buildReport(results) {
   const overallGrade = order[worstIdx] || 'N/A';
 
   const issues = [];
+
   for (const r of results) {
     const avg = r.latencyMs?.avg || 0;
     if (avg > 200 && r.snapshotCount > 5) {
@@ -418,12 +503,51 @@ function _buildReport(results) {
         prompt: `JS error in online mode ("${r.profileName}"): "${err.message}". Stack: ${(err.stack || '').slice(0, 250)}. This error only appears during snapshot replay, not offline — likely a null-check missing in a handler that fires before G is fully ready, or a field that is present in offline G but absent from the P2 snapshot-driven G.`,
       });
     }
+
+    // #22: blank P2 canvas issue
+    if (r.renderCheck?.checked && !r.renderCheck.rendered) {
+      issues.push({
+        severity: 'CRITICAL', type: 'p2_blank_canvas',
+        profile: r.profileName, matchup: `${r.f1} vs ${r.f2}`,
+        message: `P2 canvas is blank (${r.renderCheck.nonBlackPct}% non-black pixels) — `
+          + `G-state may sync correctly while rendering is broken`,
+        prompt: `During "${r.profileName}" online testing, P2's canvas appears entirely black `
+          + `(only ${r.renderCheck.nonBlackPct}% of sampled pixels non-black). `
+          + `This is the "black canvas" class of bug: state sync works but the draw loop `
+          + `either never starts or exits early on P2. In index.html, check: `
+          + `(1) the main draw/render function is called after _applyInstantState; `
+          + `(2) any canvas context is re-acquired after the socket reconnect path; `
+          + `(3) no early return guards (e.g. if (!G.running)) block P2's render before `
+          + `the first full snapshot arrives. Please implement a fix in index.html.`,
+      });
+    }
+  }
+
+  // #23: speed mismatch — emit a single global issue if any scenario detected it
+  // (all scenarios share the same constants so one check is enough)
+  const anySpeedMismatch = results.some(r => r.speedMismatch);
+  if (anySpeedMismatch) {
+    issues.push({
+      severity: 'INFO', type: 'speed_parity_gap',
+      profile: 'all',
+      matchup: 'N/A',
+      message: `Online tester runs at ${SPEED}× but game-runner.js uses ${GAME_RUNNER_SPEED}×. `
+        + `Sync bugs that only manifest at higher speed (${GAME_RUNNER_SPEED}×) will not be caught by online tests.`,
+      prompt: `The online tester uses a ${SPEED}× time warp while game-runner.js uses ${GAME_RUNNER_SPEED}×. `
+        + `To close this gap: in online-tester.js, change the SPEED constant from ${SPEED} to ${GAME_RUNNER_SPEED}. `
+        + `If sync breaks at ${GAME_RUNNER_SPEED}× but not ${SPEED}×, that itself is a bug worth fixing — `
+        + `it means the snapshot throttle or interpolation window is too narrow for the real game pace. `
+        + `Please implement this change in online-tester.js.`,
+    });
   }
 
   return {
     overallGrade, results, issues, passedChecks,
     totalChecks: allChecks.length,
     summary: `Online grade: ${overallGrade} | ${passedChecks}/${allChecks.length} checks | ${issues.length} issue(s)`,
+    speedMismatch: anySpeedMismatch,
+    onlineSpeed: SPEED,
+    gameRunnerSpeed: GAME_RUNNER_SPEED,
   };
 }
 

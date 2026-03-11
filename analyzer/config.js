@@ -77,6 +77,23 @@ module.exports = {
     checkOffscreen: true,   // detect elements clipped outside viewport
     checkContrast: true,   // basic text contrast check
     checkTouchTargets: true,   // flag buttons smaller than 44×44px on mobile
+
+    // Contrast threshold — WCAG AA is 4.5 but game UIs are intentionally
+    // dark-on-dark. 2.5 is a more realistic floor for game UI. Raise to 4.5
+    // to restore strict WCAG AA checking.
+    contrastThreshold: 2.5,
+
+    // Selectors to skip across ALL checks (offscreen, overlap, contrast, touch).
+    // Add intentionally layered, hidden, or aesthetic-only elements here.
+    ignoreSelectors: [
+      '#hud',           // HUD overlay is intentionally layered over canvas
+      '#hud *',
+      '.tooltip',       // off-screen until triggered
+      '.popup',
+      '.modal',
+      'canvas',         // not a DOM interactive element
+      '[data-qa-ignore]', // explicit opt-out marker
+    ],
   },
 
   // ── MECHANICS TRACKING ────────────────────────────────────────────────────
@@ -98,8 +115,10 @@ module.exports = {
 
   // ── DISCORD ────────────────────────────────────────────────────────────────
   discord: {
-    webhookUrl: 'https://discord.com/api/webhooks/1480926658474016871/93fkVlEzGSf7xCSkloCvztmJg-K4XlnX2BXn0-5F12Tq2-iETwUl3_hvz2q9ILF7U3ft' || null,
-    pingUserId: '739519255946461396' || null,
+    // Set DISCORD_WEBHOOK_URL in your environment or a .env file.
+    // Never commit a real webhook URL — rotate it immediately if exposed.
+    webhookUrl: process.env.DISCORD_WEBHOOK_URL || null,
+    pingUserId: process.env.DISCORD_PING_USER_ID || null,
     pingOn: {
       jsErrors: true,
       softlocks: true,

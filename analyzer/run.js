@@ -11,6 +11,10 @@
  *   node run.js --factions=a,b,c         only test these factions
  *   node run.js --games=N                override gamesPerMatchup
  *   node run.js --quick                  5 factions × 2 games (fast sanity check)
+ *   node run.js --resume                 skip phases that already have saved data
+ *   node run.js --focus=TYPE             only show/diagnose bugs matching TYPE substring
+ *   node run.js --auto-fix               apply all HIGH/CRITICAL fixes non-interactively after run
+ *   node run.js --no-server              skip starting the local fix server (for CI)
  */
 
 require('dotenv').config();
@@ -30,6 +34,9 @@ const { chromium, executablePath } = require('playwright');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
+const { buildSnapshot, saveToHistory, computeDiff, formatDiffSummary } = require('./run-history');
+const { generateFix, applyDiff } = require('./auto-fixer');
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -38,8 +45,13 @@ const skipBalance = args.includes('--skip-balance');
 const skipUi = args.includes('--skip-ui');
 const skipOnline = args.includes('--skip-online');
 const quickMode = args.includes('--quick');
+const resumeMode = args.includes('--resume');
+const autoFix = args.includes('--auto-fix');   // #11: batch-apply HIGH/CRITICAL fixes
+const noServer = args.includes('--no-server');  // #11: skip local fix server (CI)
+const FIX_PORT = 3742;                          // port for the local fix server
 const factionsArg = args.find(a => a.startsWith('--factions='));
 const gamesArg = args.find(a => a.startsWith('--games='));
+const focusArg = args.find(a => a.startsWith('--focus='));
 
 if (quickMode) {
   cfg.balance.factionFilter = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal'];
@@ -87,6 +99,43 @@ async function main() {
     process.exit(1);
   }
 
+  // ── Dependency check ──────────────────────────────────────────────────────
+  // Warn early so you don't wait 20 min for games then hit a crash on report.
+  {
+    const REQUIRED_FILES = [
+      'config.js', 'matchup-runner.js', 'ui-auditor.js', 'bug-analyzer.js',
+      'balance-analyzer.js', 'reporter.js', 'anomaly-detector.js', 'feature-advisor.js',
+    ];
+    const missing = REQUIRED_FILES.filter(f => !fs.existsSync(path.join(__dirname, f)));
+    if (missing.length > 0) {
+      log(`  ⚠️  Missing required files: ${missing.join(', ')}`);
+      log('     Some phases may be skipped or fail.');
+      log('');
+    }
+    const REQUIRED_PKGS = ['playwright', 'dotenv'];
+    const missingPkgs = REQUIRED_PKGS.filter(pkg => {
+      try { require.resolve(pkg); return false; } catch { return true; }
+    });
+    if (missingPkgs.length > 0) {
+      log(`  ❌  Missing npm packages: ${missingPkgs.join(', ')}`);
+      log(`      Run: npm install ${missingPkgs.join(' ')}`);
+      process.exit(1);
+    }
+  }
+
+  // ── Resume: detect what's already done ───────────────────────────────────
+  const rawDataPath = path.resolve(cfg.output?.rawDataPath || './qa-data.json');
+  const hasRawData = fs.existsSync(rawDataPath);
+  const uiCachePath = path.resolve('./qa-ui-cache.json');
+  const hasUiCache = fs.existsSync(uiCachePath);
+
+  if (resumeMode) {
+    log(`  ♻️  Resume mode:`);
+    log(`     Games data: ${hasRawData ? '✅ found — will skip' : '❌ not found — will run'}`);
+    log(`     UI cache:   ${hasUiCache ? '✅ found — will skip' : '❌ not found — will run'}`);
+    log('');
+  }
+
   const factions = cfg.balance.factionFilter || require('./matchup-runner').ALL_FACTIONS;
   const numMatchups = factions.length * (factions.length - 1) * (cfg.balance.mirrorMatchups ? 1 : 0.5);
   const numGames = Math.round(numMatchups * cfg.balance.gamesPerMatchup);
@@ -115,7 +164,8 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   // PHASE 2: BALANCE + BUG GAMES
   // ════════════════════════════════════════════════════════════════════════════
-  if (!analyzeOnly && !skipBalance && cfg.run.balance) {
+  const skipGamesResume = resumeMode && hasRawData;
+  if (!analyzeOnly && !skipBalance && cfg.run.balance && !skipGamesResume) {
     log('  ── Phase 1: Running AI vs AI games ────────────────────────────');
     log('');
 
@@ -176,8 +226,11 @@ async function main() {
       log(`  💾 Raw data saved`);
     }
 
+  } else if (skipGamesResume) {
+    rawData = JSON.parse(fs.readFileSync(rawDataPath, 'utf8'));
+    log(`  ♻️  Loaded saved games data (${rawData.qa?.totalGamesRun} games) — skipping re-run`);
   } else if (analyzeOnly) {
-    const p = path.resolve(cfg.output.rawDataPath || './qa-data.json');
+    const p = path.resolve(cfg.output?.rawDataPath || './qa-data.json');
     if (!fs.existsSync(p)) { log(`  ❌  No data at ${p} — run without --analyze-only first`); process.exit(1); }
     rawData = JSON.parse(fs.readFileSync(p, 'utf8'));
     log(`  📂 Loaded saved data (${rawData.qa?.totalGamesRun} games)`);
@@ -188,17 +241,25 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   // PHASE 3: UI AUDIT
   // ════════════════════════════════════════════════════════════════════════════
-  if (!analyzeOnly && !skipUi && cfg.run.ui) {
+  const skipUiResume = resumeMode && hasUiCache;
+  if (!analyzeOnly && !skipUi && cfg.run.ui && !skipUiResume) {
     log('  ── Phase 2: UI audit ──────────────────────────────────────────');
     const browser = await chromium.launch({ headless: true });
     try {
       uiAuditResult = await runUiAudit(gamePath, cfg, browser);
       log(`  ✅ UI audit: ${uiAuditResult.screenshots.length} screenshots · ${uiAuditResult.issues.length} issues`);
+      // Cache for --resume
+      if (cfg.output?.saveRawData !== false) {
+        fs.writeFileSync(uiCachePath, JSON.stringify(uiAuditResult, null, 2));
+      }
     } catch (err) {
       log(`  ⚠️  UI audit failed: ${err.message}`);
     } finally {
       await browser.close();
     }
+  } else if (skipUiResume) {
+    uiAuditResult = JSON.parse(fs.readFileSync(uiCachePath, 'utf8'));
+    log(`  ♻️  Loaded UI cache (${uiAuditResult.issues.length} issues) — skipping re-audit`);
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -221,6 +282,16 @@ async function main() {
       const t1 = Date.now();
       diagnosedBugs = await analyzeBugs(allErrors || [], allNaNs || [], allTimedOut || [], cfg);
       log(`  ✅ ${diagnosedBugs.length} unique bugs diagnosed in ${((Date.now() - t1) / 1000).toFixed(1)}s`);
+      // #run-focus: narrow to matching bug types so you can iterate on one class at a time
+      if (focusArg) {
+        const focusStr = focusArg.replace('--focus=', '').toLowerCase();
+        const before = diagnosedBugs.length;
+        diagnosedBugs = diagnosedBugs.filter(b =>
+          (b.type || '').toLowerCase().includes(focusStr) ||
+          (b.message || '').toLowerCase().includes(focusStr)
+        );
+        log(`  🔎 --focus=${focusStr} → ${diagnosedBugs.length} of ${before} bugs kept`);
+      }
 
       // Discord pings for critical bugs
       const critical = diagnosedBugs.filter(b => b.diagnosis?.severity === 'CRITICAL');
@@ -337,7 +408,23 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   log('  ── Phase 5: Building report ───────────────────────────────────');
 
-  const html = buildReport({ balanceData: rawData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, cfg, runMeta: { startTime, endTime: Date.now() } });
+  // ── Save this run to history and compute diff vs previous run ────────────
+  let runDiff = null;
+  try {
+    const snapshot = buildSnapshot(rawData, aggStats, diagnosedBugs, cfg);
+    const history = saveToHistory(snapshot);
+    const previous = history[1]; // history[0] = this run, history[1] = last run
+    runDiff = computeDiff(snapshot, previous);
+    if (history.length > 1) {
+      log(`  📚 Run history: ${history.length} run(s) saved → qa-history.json`);
+    } else {
+      log(`  📚 First run saved to history — future runs will show a diff`);
+    }
+  } catch (err) {
+    log(`  ⚠️  History save failed: ${err.message}`);
+  }
+
+  const html = buildReport({ balanceData: rawData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta: { startTime, endTime: Date.now() } });
   const reportPath = path.resolve(cfg.output.reportPath || './qa-report.html');
   fs.writeFileSync(reportPath, html);
   log(`  ✅ Report saved → ${reportPath}`);
@@ -372,8 +459,60 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   const totalSecs = Math.round((Date.now() - startTime) / 1000);
   log('');
-  log(`  ✨ Done in ${Math.floor(totalSecs / 60)}m${totalSecs % 60}s  →  open ${path.basename(reportPath)} in browser`);
-  log('');
+  // ── Terminal summary table ──────────────────────────────────────────────
+  {
+    const critCount = diagnosedBugs.filter(b => (b.diagnosis?.severity || '').toUpperCase() === 'CRITICAL').length;
+    const highCount = diagnosedBugs.filter(b => (b.diagnosis?.severity || '').toUpperCase() === 'HIGH').length;
+    const medCount = diagnosedBugs.filter(b => (b.diagnosis?.severity || '').toUpperCase() === 'MEDIUM').length;
+    const lowCount = diagnosedBugs.filter(b => (b.diagnosis?.severity || '').toUpperCase() === 'LOW').length;
+    const uiErrCount = (uiAuditResult.issues || []).filter(i => i.severity === 'error').length;
+    const uiWrnCount = (uiAuditResult.issues || []).filter(i => i.severity === 'warning').length;
+
+    // Top and bottom faction by overall win rate
+    const sortedFacStats = Object.entries(aggStats).sort((a, b) => b[1].overallWinRate - a[1].overallWinRate);
+    const topFac = sortedFacStats[0];
+    const botFac = sortedFacStats[sortedFacStats.length - 1];
+
+    // Most error-prone matchup
+    const matchupErrorMap = {};
+    for (const e of rawData.qa?.allErrors || []) {
+      const k = e.matchup || 'unknown';
+      matchupErrorMap[k] = (matchupErrorMap[k] || 0) + 1;
+    }
+    const topMatchup = Object.entries(matchupErrorMap).sort((a, b) => b[1] - a[1])[0];
+
+    const T = totalSecs;
+    log('');
+    log('  ╔══════════════════════════════════════════════════════╗');
+    log(`  ║  ✨ QA COMPLETE  ${String(Math.floor(T / 60) + 'm' + T % 60 + 's').padEnd(8)}                        ║`);
+    log('  ╠══════════════════════════════════════════════════════╣');
+    log(`  ║  🎮 Games       ${String(rawData.qa?.totalGamesRun || 0).padEnd(6)}  🐛 Bugs total  ${String(diagnosedBugs.length).padEnd(6)}║`);
+    log(`  ║  🔴 Critical    ${String(critCount).padEnd(6)}  🟠 High        ${String(highCount).padEnd(6)}║`);
+    log(`  ║  🟡 Medium      ${String(medCount).padEnd(6)}  🔵 Low         ${String(lowCount).padEnd(6)}║`);
+    log(`  ║  🖼  UI errors   ${String(uiErrCount).padEnd(6)}  ⚠️  UI warnings ${String(uiWrnCount).padEnd(5)} ║`);
+    if (topFac && botFac) {
+      log('  ╠══════════════════════════════════════════════════════╣');
+      log(`  ║  👑 Strongest   ${topFac[0].padEnd(12)} ${String(topFac[1].overallWinRate) + '%'.padEnd(8)}           ║`);
+      log(`  ║  💀 Weakest     ${botFac[0].padEnd(12)} ${String(botFac[1].overallWinRate) + '%'.padEnd(8)}           ║`);
+    }
+    if (topMatchup) {
+      log('  ╠══════════════════════════════════════════════════════╣');
+      log(`  ║  🔥 Most errors ${topMatchup[0].slice(0, 20).padEnd(20)} ×${topMatchup[1]}  ║`);
+    }
+    log('  ╠══════════════════════════════════════════════════════╣');
+    log(`  ║  📄 Report → ${path.basename(reportPath).padEnd(41)}║`);
+    if (!noServer && process.stdout.isTTY && hasApiKey && diagnosedBugs.length > 0) {
+      log(`  ║  🔧 Fix server → http://localhost:${FIX_PORT}${''.padEnd(17)}║`);
+    }
+    log('  ╚══════════════════════════════════════════════════════╝');
+    log('');
+  }
+
+  // Print delta/diff vs last run
+  const diffSummary = formatDiffSummary(runDiff);
+  if (diffSummary) {
+    log(diffSummary);
+  }
 
   // Print critical prompts to terminal
   const critBugs = diagnosedBugs.filter(b => b.diagnosis?.pasteToClaudePrompt && b.diagnosis?.severity === 'CRITICAL');
@@ -400,6 +539,180 @@ async function main() {
       log('');
     }
   }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 8 (optional): AUTO-FIX  —  --auto-fix flag
+  // Applies all HIGH + CRITICAL bug fixes non-interactively, with a backup first.
+  // ════════════════════════════════════════════════════════════════════════════
+  if (autoFix && hasApiKey && diagnosedBugs.length > 0) {
+    const fixTargets = diagnosedBugs.filter(b => {
+      const sev = (b.diagnosis?.severity || '').toUpperCase();
+      return (sev === 'CRITICAL' || sev === 'HIGH') && b.diagnosis?.pasteToClaudePrompt;
+    });
+
+    if (fixTargets.length === 0) {
+      log('  ℹ️  --auto-fix: no HIGH/CRITICAL bugs with prompts to fix');
+    } else {
+      log('');
+      log(`  ── Auto-fix: applying ${fixTargets.length} HIGH/CRITICAL fix(es) ───────────`);
+      log('');
+      let applied = 0, skipped = 0, failed = 0;
+
+      for (let i = 0; i < fixTargets.length; i++) {
+        const bug = fixTargets[i];
+        const sev = (bug.diagnosis?.severity || '').toUpperCase();
+        process.stdout.write(`  [${i + 1}/${fixTargets.length}] ${sev} ${bug.type} — generating fix...`);
+
+        const fixResult = await generateFix(bug, cfg.gamePath, cfg).catch(e => ({ ok: false, summary: e.message }));
+
+        if (!fixResult.ok) {
+          process.stdout.write(` ❌ skipped (${fixResult.summary})\n`);
+          skipped++;
+          continue;
+        }
+
+        process.stdout.write(` ${fixResult.confidence} confidence (${fixResult.linesChanged} lines) — applying...`);
+
+        const applyResult = await applyDiff(fixResult.diff, cfg.gamePath).catch(e => ({ success: false, error: e.message }));
+
+        if (!applyResult.success) {
+          process.stdout.write(` ❌ failed: ${applyResult.error}\n`);
+          failed++;
+          continue;
+        }
+
+        process.stdout.write(` ✅ done\n`);
+        log(`     Summary : ${fixResult.summary}`);
+        log(`     Backup  : ${path.basename(applyResult.backupPath)}`);
+        applied++;
+      }
+
+      log('');
+      log(`  Auto-fix complete: ${applied} applied · ${skipped} skipped (low confidence) · ${failed} failed`);
+      if (applied > 0) {
+        log(`  ⚠️  Backups created alongside index.html — run QA again to verify fixes`);
+      }
+      log('');
+    }
+  } else if (autoFix && !hasApiKey) {
+    log('  ⚠️  --auto-fix requires ANTHROPIC_API_KEY — skipped');
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 9 (optional): LOCAL FIX SERVER
+  // Keeps process alive on port 3742 so the HTML report's "Apply Fix" buttons
+  // can call back to Node to generate and apply diffs without a separate step.
+  // Skip with --no-server or when running in CI (no TTY).
+  // ════════════════════════════════════════════════════════════════════════════
+  const isTTY = process.stdout.isTTY;
+  if (!noServer && isTTY && hasApiKey && diagnosedBugs.length > 0) {
+    log(`  🔧 Fix server starting on http://localhost:${FIX_PORT}`);
+    log(`     Open the report, click "Apply Fix" on any bug card.`);
+    log(`     Press Ctrl+C to exit.\n`);
+
+    _startFixServer(diagnosedBugs, cfg, FIX_PORT);
+  } else if (!noServer && !isTTY) {
+    // Non-interactive (CI/pipe) — silently skip the server
+  } else if (noServer) {
+    log('  ℹ️  Fix server skipped (--no-server)');
+  }
+}
+
+// ── Local fix server ──────────────────────────────────────────────────────────
+
+function _startFixServer(diagnosedBugs, cfg, port) {
+  const server = http.createServer(async (req, res) => {
+    // CORS so the local file:// report page can POST to localhost
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
+
+    // ── GET /ping ──────────────────────────────────────────────────────────
+    if (req.method === 'GET' && req.url === '/ping') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ alive: true, bugs: diagnosedBugs.length }));
+      return;
+    }
+
+    // ── POST /fix  { bugIndex: number } ───────────────────────────────────
+    if (req.method === 'POST' && req.url === '/fix') {
+      let body = '';
+      req.on('data', c => body += c);
+      req.on('end', async () => {
+        let bugIndex;
+        try { bugIndex = JSON.parse(body).bugIndex; } catch (_) { bugIndex = -1; }
+
+        const bug = diagnosedBugs[bugIndex];
+        if (!bug) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: false, summary: `Bug index ${bugIndex} not found` }));
+          return;
+        }
+
+        console.log(`  🔧 Generating fix for bug ${bugIndex}: ${bug.type}`);
+        try {
+          const fixResult = await generateFix(bug, cfg.gamePath, cfg);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(fixResult));
+          if (fixResult.ok) {
+            console.log(`     ✅ Fix ready (${fixResult.confidence}, ${fixResult.linesChanged} lines)`);
+          } else {
+            console.log(`     ⚠️  No fix: ${fixResult.summary}`);
+          }
+        } catch (err) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: false, summary: err.message }));
+        }
+      });
+      return;
+    }
+
+    // ── POST /apply  { diff: string } ─────────────────────────────────────
+    if (req.method === 'POST' && req.url === '/apply') {
+      let body = '';
+      req.on('data', c => body += c);
+      req.on('end', async () => {
+        let diff = '';
+        try { diff = JSON.parse(body).diff || ''; } catch (_) { }
+
+        if (!diff) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: 'No diff provided' }));
+          return;
+        }
+
+        console.log(`  🔧 Applying fix to ${cfg.gamePath}...`);
+        try {
+          const applyResult = await applyDiff(diff, cfg.gamePath);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(applyResult));
+          if (applyResult.success) {
+            console.log(`     ✅ Applied (backup: ${path.basename(applyResult.backupPath)})`);
+          } else {
+            console.log(`     ❌ Apply failed: ${applyResult.error}`);
+          }
+        } catch (err) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+      });
+      return;
+    }
+
+    res.writeHead(404); res.end();
+  });
+
+  server.listen(port, '127.0.0.1', () => { });
+  server.on('error', err => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`  ⚠️  Port ${port} already in use — fix server not started`);
+      console.log(`     Another run.js instance may already be serving fixes.`);
+    } else {
+      console.log(`  ⚠️  Fix server error: ${err.message}`);
+    }
+  });
 }
 
 main().catch(err => {

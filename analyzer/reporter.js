@@ -15,13 +15,31 @@
 const fs = require('fs');
 const path = require('path');
 
+// #26: render code snippets inline in bug cards.
+// Standalone to avoid nested template-literal issues inside the big HTML builder.
+function renderSnippets(snippets, bugIdx) {
+  if (!snippets || snippets.length === 0) return '';
+  const blocks = snippets.map(function (s, si) {
+    const lbl = escHtml(s.label || ('Snippet ' + (si + 1)));
+    const code = escHtml(s.code || '');
+    return '<div class="snip-block">'
+      + '<div class="snip-label">&#x1F4C4; ' + lbl + '</div>'
+      + '<pre class="snip-code">' + code + '</pre>'
+      + '</div>';
+  }).join('');
+  return '<details class="snip-details" id="snip-' + bugIdx + '">'
+    + '<summary class="snip-summary">&#x1F50E; Code Snippets (' + snippets.length + ')</summary>'
+    + blocks
+    + '</details>';
+}
+
 const FACTION_ICONS = {
   warriors: '⚔️', summoners: '💀', brutes: '🪨', spirits: '✨',
   verdant: '🌿', infernal: '🔥', glacial: '❄️', voltborn: '⚡',
   bloodpact: '🩸', menders: '💚',
 };
 
-function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, cfg, runMeta }) {
+function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta }) {
   const { results, factions, qa } = balanceData;
   const uiIssues = uiAuditResult?.issues || [];
   const screenshots = uiAuditResult?.screenshots || [];
@@ -45,7 +63,15 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
       const games = r.p1Wins + r.p2Wins + r.draws + r.timeouts;
       const rate = games > 0 ? Math.round(r.p1Wins / games * 100) : 50;
       const cls = rate >= 65 ? 'hot' : rate >= 55 ? 'warm' : rate <= 35 ? 'cold' : rate <= 45 ? 'cool' : 'neutral';
-      matrixHtml += `<td class="${cls}" title="${f1} vs ${f2}: ${rate}% win rate (${games} games)\n${r.p1Wins}W ${r.p2Wins}L ${r.draws}D ${r.timeouts}T">${rate}%</td>`;
+      // #27: confidence indicator — opacity scales with sample size so low-data
+      // cells are visually dimmer. n= superscript shown when games < 10.
+      const confidence = Math.min(1, 0.35 + (games / 10) * 0.65);
+      const confCls = games < 5 ? ' conf-low' : games < 10 ? ' conf-med' : '';
+      const nTag = games < 10 ? '<sup class="mat-n">n=' + games + '</sup>' : '';
+      const confTip = games < 5 ? '\nLOW CONFIDENCE — only ' + games + ' games'
+        : games < 10 ? '\nMEDIUM CONFIDENCE (' + games + ' games)'
+          : '';
+      matrixHtml += `<td class="${cls}${confCls}" style="opacity:${confidence.toFixed(2)}" title="${f1} vs ${f2}: ${rate}% win rate (${games} games)\n${r.p1Wins}W ${r.p2Wins}L ${r.draws}D ${r.timeouts}T${confTip}">${rate}%${nTag}</td>`;
     }
     matrixHtml += `</tr>`;
   }
@@ -111,10 +137,12 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
           ${bug.diagnosis?.reproSteps ? `<div class="diag-row"><span class="diag-lbl">🔁 Repro</span><span class="diag-val">${escHtml(bug.diagnosis.reproSteps).replace(/\\n/g, '<br>')}</span></div>` : ''}
           ${bug.diagnosis?.whereToLook ? `<div class="diag-row"><span class="diag-lbl">📂 Where</span><span class="diag-val"><code>${escHtml(bug.diagnosis.whereToLook)}</code></span></div>` : ''}
           ${bug.diagnosis?.suggestedFix ? `<div class="diag-row"><span class="diag-lbl">🔧 Fix</span><span class="diag-val">${escHtml(bug.diagnosis.suggestedFix)}</span></div>` : ''}
+          ${renderSnippets(bug.diagnosis?.codeSnippets || bug._codeSnippets, bi)}
           ${hasPrompt ? `<div class="prompt-box">
             <div class="prompt-label">📋 Paste to Claude</div>
             <pre class="prompt-text" id="bugprompt-${bi}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
             <button class="copy-btn" onclick="copyById('bugprompt-${bi}',this)">Copy</button>
+            <button class="fix-btn" id="fixbtn-${bi}" onclick="applyFixForBug(${bi},this)" title="Generate a diff and apply it directly to index.html">🔧 Apply Fix</button>
           </div>` : ''}
           ${bug.screenshotPath ? `<div class="diag-row"><span class="diag-lbl">📸 Screenshot</span><span class="diag-val"><code>${escHtml(bug.screenshotPath)}</code></span></div>` : ''}
         </div>
@@ -125,51 +153,180 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
 
   // ── Prompts tab ────────────────────────────────────────────────────────────
   const allPrompts = diagnosedBugs.filter(b => b.diagnosis?.pasteToClaudePrompt);
+
+  // #9: structured mega-prompt — separate each bug with severity + matchup context
+  // so Claude can keep track of which fix is which.
+  const megaPrompt = allPrompts.length > 0
+    ? allPrompts.map((b, i) => {
+      const sev = (b.diagnosis?.severity || 'MEDIUM').toUpperCase();
+      const type = b.type || 'error';
+      const occ = b.occurrences > 1 ? ` (×${b.occurrences})` : '';
+      const mu = (b.matchups || [b.matchup]).filter(Boolean).join(', ') || 'unknown';
+      return [
+        `${'─'.repeat(60)}`,
+        `BUG ${i + 1} of ${allPrompts.length} | ${sev} | ${type}${occ}`,
+        `Matchups: ${mu}`,
+        `${'─'.repeat(60)}`,
+        b.diagnosis.pasteToClaudePrompt,
+      ].join('\n');
+    }).join('\n\n')
+    : '';
+
+  // #6: UI Copy All prompt — bundles all UI issues into a single Claude-ready prompt
+  const uiPromptText = uiIssues.length > 0
+    ? [
+      'You are fixing UI issues in index.html, a single-file browser RTS (~15k lines, vanilla JS + Canvas).',
+      `${uiIssues.length} UI issue(s) were detected across ${(cfg.ui?.screens || []).join(', ')} screens.`,
+      '',
+      ...uiIssues.map((iss, i) => [
+        `--- UI ISSUE ${i + 1} ---`,
+        `Type: ${iss.type}`,
+        `Severity: ${iss.severity}`,
+        `Screen: ${iss.screen || 'unknown'}  Viewport: ${iss.viewportSize || 'unknown'}`,
+        `Message: ${iss.message || ''}`,
+        iss.element ? `Element: ${iss.element}` : '',
+        iss.size ? `Size: ${iss.size.width}×${iss.size.height}px` : '',
+      ].filter(Boolean).join('\n')),
+      '',
+      'Please fix each issue in index.html. Preserve all existing functionality.',
+    ].join('\n')
+    : null;
+
+  // #8: combined feature suggestions prompt
+  const allFeatureSuggestions = featureAdvice?.suggestions || [];
+  const featuresWithPrompts = allFeatureSuggestions.filter(s => s.pasteToClaudePrompt);
+  const featureMegaPrompt = featuresWithPrompts.length > 0
+    ? featuresWithPrompts.map((s, i) => [
+      `${'─'.repeat(60)}`,
+      `FEATURE ${i + 1} of ${featuresWithPrompts.length} | ${(s.impact || '').toUpperCase()} IMPACT | effort: ${s.effort}`,
+      `Category: ${s.category} | ${s.title}`,
+      `${'─'.repeat(60)}`,
+      s.pasteToClaudePrompt,
+    ].join('\n')).join('\n\n')
+    : null;
+
+  // Anomaly prompts for inclusion in the Prompts tab (#7)
+  const anomalyPrompts = (anomalyReport?.anomalies || []).filter(a => a.prompt);
+
   let promptsHtml = '';
-  if (allPrompts.length === 0) {
+  const totalPromptCount = allPrompts.length + anomalyPrompts.length + (uiPromptText ? 1 : 0) + (featureMegaPrompt ? 1 : 0);
+
+  if (totalPromptCount === 0) {
     promptsHtml = `<div class="empty-state">No paste-to-Claude prompts generated (no bugs diagnosed, or no API key).</div>`;
   } else {
-    const megaPrompt = allPrompts.map((b, i) =>
-      `=== BUG ${i + 1}: ${b.type} [${(b.diagnosis?.severity || '').toUpperCase()}] ===\n${b.diagnosis.pasteToClaudePrompt}`
-    ).join('\n\n');
 
-    promptsHtml += `<div class="prompt-mega-box">
-      <div class="prompt-mega-header">
-        <div>
-          <strong>All ${allPrompts.length} prompt(s) combined</strong>
-          <span style="color:var(--dim);font-size:12px;margin-left:8px;">Paste everything at once, or copy individual prompts below</span>
+    // ── Section: Bug prompts ──────────────────────────────────────────────────
+    if (allPrompts.length > 0) {
+      promptsHtml += `<h3 class="prompts-section-title">🐛 Bug Fixes (${allPrompts.length})</h3>`;
+      promptsHtml += `<div class="prompt-mega-box">
+        <div class="prompt-mega-header">
+          <div>
+            <strong>All ${allPrompts.length} bug prompt(s) combined</strong>
+            <span style="color:var(--dim);font-size:12px;margin-left:8px">Includes severity, matchup context, and separators so Claude can track each fix</span>
+          </div>
+          <button class="copy-btn copy-big" onclick="copyById('mega-prompt',this)">📋 Copy All Bugs (${allPrompts.length})</button>
         </div>
-        <button class="copy-btn copy-big" onclick="copyById('mega-prompt',this)">📋 Copy All (${allPrompts.length})</button>
-      </div>
-      <pre class="prompt-text" id="mega-prompt" style="max-height:200px">${escHtml(megaPrompt)}</pre>
-    </div>`;
-
-    for (let i = 0; i < allPrompts.length; i++) {
-      const bug = allPrompts[i];
-      const sev = (bug.diagnosis?.severity || '').toUpperCase();
-      const sevCls = sev === 'CRITICAL' ? 'sev-critical' : sev === 'HIGH' ? 'sev-high' : sev === 'MEDIUM' ? 'sev-medium' : 'sev-low';
-      promptsHtml += `<div class="prompt-card ${sevCls}">
-        <div class="prompt-card-header">
-          <span class="bug-sev-badge ${sevCls}">${sev}</span>
-          <span class="prompt-bug-type">${escHtml(bug.type || 'error')}</span>
-          <span style="color:var(--dim);font-size:12px">${escHtml((bug.matchups || [bug.matchup]).filter(Boolean).join(', '))}</span>
-        </div>
-        <pre class="prompt-text" id="prompt-${i}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
-        <button class="copy-btn" onclick="copyById('prompt-${i}',this)">Copy</button>
+        <pre class="prompt-text" id="mega-prompt" style="max-height:200px">${escHtml(megaPrompt)}</pre>
       </div>`;
+
+      for (let i = 0; i < allPrompts.length; i++) {
+        const bug = allPrompts[i];
+        const sev = (bug.diagnosis?.severity || '').toUpperCase();
+        const sevCls = sev === 'CRITICAL' ? 'sev-critical' : sev === 'HIGH' ? 'sev-high' : sev === 'MEDIUM' ? 'sev-medium' : 'sev-low';
+        const mu = escHtml((bug.matchups || [bug.matchup]).filter(Boolean).join(', '));
+        const pid = `prompt-bug-${i}`;
+        // #10: done/fixed checkbox — state persisted in localStorage
+        promptsHtml += `<div class="prompt-card ${sevCls}" id="pcard-bug-${i}">
+          <div class="prompt-card-header">
+            <label class="done-label" title="Mark as fixed">
+              <input type="checkbox" class="done-cb" data-done-type="bug" data-done-idx="${i}" onchange="markDone('bug',${i},this.checked)">
+              <span class="done-txt">Done</span>
+            </label>
+            <span class="bug-sev-badge ${sevCls}">${sev}</span>
+            <span class="prompt-bug-type">${escHtml(bug.type || 'error')}</span>
+            <span style="color:var(--dim);font-size:12px">${mu}</span>
+          </div>
+          <pre class="prompt-text" id="${pid}">${escHtml(bug.diagnosis.pasteToClaudePrompt)}</pre>
+          <button class="copy-btn" onclick="copyById('${pid}',this)">Copy</button>
+        </div>`;
+      }
     }
 
-    // Balance prompt
+    // ── Section: Balance prompt ───────────────────────────────────────────────
     if (balanceAnalysis) {
       const bm = balanceAnalysis.match(/===BALANCE PROMPT START===([\s\S]+?)===BALANCE PROMPT END===/);
       if (bm) {
+        promptsHtml += `<h3 class="prompts-section-title">⚖️ Balance Patch</h3>`;
         promptsHtml += `<div class="prompt-card" style="border-color:var(--gold)">
           <div class="prompt-card-header">
+            <label class="done-label"><input type="checkbox" class="done-cb" data-done-type="balance" data-done-idx="0" onchange="markDone('balance',0,this.checked)"><span class="done-txt">Done</span></label>
             <span class="bug-sev-badge" style="background:rgba(240,165,0,.2);color:var(--gold)">BALANCE</span>
             <span class="prompt-bug-type">Balance Patch Prompt</span>
           </div>
           <pre class="prompt-text" id="balance-prompt">${escHtml(bm[1].trim())}</pre>
           <button class="copy-btn" onclick="copyById('balance-prompt',this)">Copy</button>
+        </div>`;
+      }
+    }
+
+    // ── Section: Anomaly prompts (#7) ─────────────────────────────────────────
+    if (anomalyPrompts.length > 0) {
+      promptsHtml += `<h3 class="prompts-section-title">🔍 Anomaly Fixes (${anomalyPrompts.length})</h3>`;
+      for (let i = 0; i < anomalyPrompts.length; i++) {
+        const a = anomalyPrompts[i];
+        const sevCls = a.severity === 'HIGH' ? 'sev-high' : a.severity === 'MEDIUM' ? 'sev-medium' : 'sev-low';
+        const pid = `prompt-anom-${i}`;
+        promptsHtml += `<div class="prompt-card ${sevCls}" id="pcard-anom-${i}">
+          <div class="prompt-card-header">
+            <label class="done-label"><input type="checkbox" class="done-cb" data-done-type="anom" data-done-idx="${i}" onchange="markDone('anom',${i},this.checked)"><span class="done-txt">Done</span></label>
+            <span class="bug-sev-badge ${sevCls}">${escHtml(a.severity)}</span>
+            <span class="prompt-bug-type">${escHtml(a.title)}</span>
+          </div>
+          <pre class="prompt-text" id="${pid}">${escHtml(a.prompt)}</pre>
+          <button class="copy-btn" onclick="copyById('${pid}',this)">Copy</button>
+        </div>`;
+      }
+    }
+
+    // ── Section: UI issues prompt (#6) ────────────────────────────────────────
+    if (uiPromptText) {
+      promptsHtml += `<h3 class="prompts-section-title">🖼 UI Issues (${uiIssues.length} issues, 1 combined prompt)</h3>`;
+      promptsHtml += `<div class="prompt-card" style="border-color:var(--blue)" id="pcard-ui-0">
+        <div class="prompt-card-header">
+          <label class="done-label"><input type="checkbox" class="done-cb" data-done-type="ui" data-done-idx="0" onchange="markDone('ui',0,this.checked)"><span class="done-txt">Done</span></label>
+          <span class="bug-sev-badge" style="background:rgba(52,152,219,.2);color:var(--blue)">UI</span>
+          <span class="prompt-bug-type">All ${uiIssues.length} UI issues bundled</span>
+        </div>
+        <pre class="prompt-text" id="prompt-ui-all">${escHtml(uiPromptText)}</pre>
+        <button class="copy-btn" onclick="copyById('prompt-ui-all',this)">📋 Copy All UI Issues</button>
+      </div>`;
+    }
+
+    // ── Section: Feature suggestions prompt (#8) ──────────────────────────────
+    if (featureMegaPrompt) {
+      promptsHtml += `<h3 class="prompts-section-title">💡 Feature Implementations (${featuresWithPrompts.length})</h3>`;
+      promptsHtml += `<div class="prompt-mega-box">
+        <div class="prompt-mega-header">
+          <div>
+            <strong>${featuresWithPrompts.length} feature prompt(s) combined</strong>
+          </div>
+          <button class="copy-btn copy-big" onclick="copyById('mega-features',this)">📋 Copy All Features (${featuresWithPrompts.length})</button>
+        </div>
+        <pre class="prompt-text" id="mega-features" style="max-height:200px">${escHtml(featureMegaPrompt)}</pre>
+      </div>`;
+      for (let i = 0; i < featuresWithPrompts.length; i++) {
+        const s = featuresWithPrompts[i];
+        const pid = `prompt-feat-${i}`;
+        const impactCls = s.impact === 'high' ? 'sev-high' : s.impact === 'medium' ? 'sev-medium' : 'sev-low';
+        promptsHtml += `<div class="prompt-card ${impactCls}" id="pcard-feat-${i}">
+          <div class="prompt-card-header">
+            <label class="done-label"><input type="checkbox" class="done-cb" data-done-type="feat" data-done-idx="${i}" onchange="markDone('feat',${i},this.checked)"><span class="done-txt">Done</span></label>
+            <span class="bug-sev-badge ${impactCls}">${(s.impact || 'med').toUpperCase()}</span>
+            <span class="prompt-bug-type">${escHtml(s.title)}</span>
+            <span style="color:var(--dim);font-size:12px">effort: ${escHtml(s.effort)}</span>
+          </div>
+          <pre class="prompt-text" id="${pid}">${escHtml(s.pasteToClaudePrompt)}</pre>
+          <button class="copy-btn" onclick="copyById('${pid}',this)">Copy</button>
         </div>`;
       }
     }
@@ -392,7 +549,7 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     const cleaned = balanceAnalysis
       .replace(/===BALANCE PROMPT START===([\s\S]+?)===BALANCE PROMPT END===/g,
         (_, p) => `<div class="prompt-box"><div class="prompt-label">📋 Balance Patch Prompt</div><pre class="prompt-text" id="bal-main-prompt">${escHtml(p.trim())}</pre><button class="copy-btn" onclick="copyById('bal-main-prompt',this)">Copy</button></div>`);
-    balHtml = mdToHtml(cleaned);
+    balHtml = sanitiseForInlineHtml(mdToHtml(cleaned));
   } else {
     balHtml = `<div class="empty-state">Balance analysis unavailable (no Anthropic API key set)</div>`;
   }
@@ -426,6 +583,151 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     </div>
   </div>` : '';
 
+  // ── Delta / diff tab ───────────────────────────────────────────────────────
+  let deltaTabHtml = '';
+  let deltaBadge = '';
+  if (runDiff) {
+    const prevDate = new Date(runDiff.previousTimestamp).toLocaleString();
+    const { newBugs, resolvedBugs, persistingBugs, winRateDeltas, bugCountDelta,
+      softlockDelta, nanDelta, gameCountDelta } = runDiff;
+
+    // ── Bug diff cards ───────────────────────────────────────────────────────
+    const SEV_COLOR = { CRITICAL: 'var(--red)', HIGH: 'var(--orange)', MEDIUM: '#f1c40f', LOW: 'var(--blue)' };
+
+    const bugDiffRows = (bugs, icon, emptyMsg) => {
+      if (!bugs.length) return `<div style="color:var(--dim);font-size:13px;padding:8px 0">${emptyMsg}</div>`;
+      return bugs.map(b => {
+        const col = SEV_COLOR[b.severity] || 'var(--dim)';
+        const matchupStr = b.matchups?.length ? `<span style="color:var(--dim);font-size:11px;margin-left:8px">${escHtml(b.matchups.slice(0, 3).join(', '))}</span>` : '';
+        return `<div style="display:flex;align-items:baseline;gap:8px;padding:7px 10px;border-bottom:1px solid var(--border);font-size:13px;">
+          <span style="font-size:16px">${icon}</span>
+          <span style="color:${col};font-weight:700;font-size:11px;padding:1px 6px;border-radius:10px;background:${col}22;white-space:nowrap">${escHtml(b.severity)}</span>
+          <span style="flex:1"><code style="font-size:11px">${escHtml(b.type)}</code> ${escHtml(b.message)}</span>
+          ${matchupStr}
+        </div>`;
+      }).join('');
+    };
+
+    // ── Win rate delta table ─────────────────────────────────────────────────
+    const significantMoves = winRateDeltas.filter(d => d.delta !== null && Math.abs(d.delta) >= 1);
+    const stableFactions = winRateDeltas.filter(d => d.delta !== null && Math.abs(d.delta) < 1);
+
+    const deltaRows = significantMoves.map(d => {
+      const arrow = d.delta > 0 ? '↑' : '↓';
+      const arrowColor = d.delta > 0 ? 'var(--orange)' : '#74b9ff';
+      const absDelta = Math.abs(d.delta);
+      const barW = Math.min(absDelta * 8, 100);
+      const barColor = d.delta > 0 ? 'rgba(231,76,60,.5)' : 'rgba(52,152,219,.5)';
+      return `<tr>
+        <td style="padding:6px 10px;font-weight:600">${FACTION_ICONS[d.faction] || ''} ${escHtml(d.faction)}</td>
+        <td style="padding:6px 10px;text-align:right;color:var(--dim)">${d.prev}%</td>
+        <td style="padding:6px 10px;text-align:center">→</td>
+        <td style="padding:6px 10px;font-weight:700">${d.curr}%</td>
+        <td style="padding:6px 10px;text-align:right">
+          <span style="color:${arrowColor};font-weight:700">${arrow} ${Math.abs(d.delta)}%</span>
+          <div style="width:${barW}px;height:4px;background:${barColor};border-radius:2px;margin-top:3px;margin-left:auto"></div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    const stableRow = stableFactions.length
+      ? `<tr><td colspan="5" style="padding:8px 10px;color:var(--dimmer);font-size:12px">
+          ${stableFactions.map(d => `${escHtml(d.faction)} (±${Math.abs(d.delta || 0)}%)`).join(' · ')} — no significant change
+        </td></tr>` : '';
+
+    // ── Metric delta cards ───────────────────────────────────────────────────
+    const metricCard = (label, val, prev, delta, unit = '') => {
+      const sign = delta > 0 ? '+' : '';
+      const col = delta === 0 ? 'var(--dim)' : label.includes('bug') || label.includes('softlock') || label.includes('NaN')
+        ? (delta > 0 ? 'var(--red)' : 'var(--green)')
+        : (delta > 0 ? 'var(--green)' : 'var(--dim)');
+      return `<div class="stat-card">
+        <div class="stat-num" style="font-size:1.3rem">${val}${unit}</div>
+        <div class="stat-lbl">${label}<small style="color:${col}">${sign}${delta}${unit} vs last run</small></div>
+      </div>`;
+    };
+
+    deltaBadge = newBugs.length > 0
+      ? ` <span class="nav-badge badge-red">+${newBugs.length}</span>`
+      : resolvedBugs.length > 0
+        ? ` <span class="nav-badge badge-green">-${resolvedBugs.length}</span>`
+        : ` <span class="nav-badge badge-gold">↔</span>`;
+
+    deltaTabHtml = `
+<div id="tab-delta" class="tab">
+  <div class="section">
+    <h2>📊 Delta vs Previous Run</h2>
+    <div style="color:var(--dim);font-size:13px;margin-bottom:16px">
+      Comparing this run against: <strong style="color:var(--text)">${escHtml(prevDate)}</strong>
+    </div>
+    <div class="stats-grid">
+      ${metricCard('Bugs', runDiff.bugCountDelta >= 0 ? '+' + runDiff.bugCountDelta : runDiff.bugCountDelta, null, runDiff.bugCountDelta)}
+      ${metricCard('New bugs', newBugs.length, null, newBugs.length)}
+      ${metricCard('Resolved bugs', resolvedBugs.length, null, -resolvedBugs.length)}
+      ${metricCard('Softlocks', softlockDelta >= 0 ? '+' + softlockDelta : softlockDelta, null, softlockDelta)}
+      ${metricCard('NaN events', nanDelta >= 0 ? '+' + nanDelta : nanDelta, null, nanDelta)}
+      ${metricCard('Games run', gameCountDelta >= 0 ? '+' + gameCountDelta : gameCountDelta, null, gameCountDelta)}
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px" class="delta-grid">
+    <!-- New bugs -->
+    <div class="section" style="margin:0">
+      <h2>🆕 New Bugs (${newBugs.length})</h2>
+      ${bugDiffRows(newBugs, '🆕', '✅ No new bugs — nothing appeared this run that wasn\'t in the last run')}
+    </div>
+    <!-- Resolved bugs -->
+    <div class="section" style="margin:0">
+      <h2>✅ Resolved Bugs (${resolvedBugs.length})</h2>
+      ${bugDiffRows(resolvedBugs, '✅', resolvedBugs.length === 0 && persistingBugs.length > 0 ? '⚠️ No bugs resolved — all previous bugs still present' : 'No previous bugs to compare against')}
+    </div>
+  </div>
+
+  ${persistingBugs.length > 0 ? `<div class="section">
+    <h2>🔁 Persisting Bugs (${persistingBugs.length})</h2>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:12px">These bugs were present in the last run and are still present now.</p>
+    ${bugDiffRows(persistingBugs, '🔁', '')}
+  </div>` : ''}
+
+  ${winRateDeltas.length > 0 ? `<div class="section">
+    <h2>⚖️ Win Rate Changes</h2>
+    ${significantMoves.length === 0 ? '<p style="color:var(--dim)">No faction moved by ≥1% — balance is stable.</p>' : ''}
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:6px 10px;color:var(--dim);font-size:12px">Faction</th>
+          <th style="text-align:right;padding:6px 10px;color:var(--dim);font-size:12px">Previous</th>
+          <th style="text-align:center;padding:6px 10px;color:var(--dim);font-size:12px"></th>
+          <th style="text-align:left;padding:6px 10px;color:var(--dim);font-size:12px">Current</th>
+          <th style="text-align:right;padding:6px 10px;color:var(--dim);font-size:12px">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${deltaRows}
+        ${stableRow}
+      </tbody>
+    </table>
+  </div>` : ''}
+</div>`;
+  } else {
+    // No previous run
+    deltaBadge = '';
+    deltaTabHtml = `
+<div id="tab-delta" class="tab">
+  <div class="section" style="text-align:center;padding:60px 20px">
+    <div style="font-size:3rem;margin-bottom:16px">📊</div>
+    <h2 style="border:none;text-align:center;margin-bottom:12px">No Previous Run to Compare</h2>
+    <p style="color:var(--dim);max-width:500px;margin:0 auto">
+      This is the first run saved to history. After your next QA run, this tab will show
+      which bugs are new, which were resolved, and how win rates changed.
+    </p>
+    <p style="color:var(--dimmer);font-size:12px;margin-top:16px">
+      History is saved to <code>qa-history.json</code> — keep this file between runs.
+    </p>
+  </div>
+</div>`;
+  }
+
   // ── Nav badge helper ───────────────────────────────────────────────────────
   const bugBadge = totalBugs > 0 ? ` <span class="nav-badge ${criticalBugs.length ? 'badge-red' : 'badge-orange'}">${totalBugs}</span>` : ' <span class="nav-badge badge-green">✓</span>';
   const uiBadge = uiErrors.length > 0 ? ` <span class="nav-badge badge-red">${uiIssues.length}</span>` : uiIssues.length > 0 ? ` <span class="nav-badge badge-orange">${uiIssues.length}</span>` : ' <span class="nav-badge badge-green">✓</span>';
@@ -438,6 +740,9 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   const featureBadge = featureCount > 0 ? ` <span class="nav-badge badge-gold">${featureCount}</span>` : '';
 
   // ── Full HTML ──────────────────────────────────────────────────────────────
+  // NOTE: sanitiseForInlineHtml is applied to individual dynamic variables
+  // (e.g. balHtml) before interpolation — NOT to the whole output, because
+  // that would replace the legitimate </script> closing tag and break all JS.
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -472,6 +777,8 @@ p{margin-bottom:8px;color:var(--text);}
 .nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;position:sticky;top:0;z-index:100;}
 .nav a{padding:13px 18px;color:var(--dim);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;font-size:13px;font-weight:600;letter-spacing:.4px;display:flex;align-items:center;gap:4px;transition:color .15s;}
 .nav a:hover{color:var(--text);}
+.nav-kb-hint{margin-left:auto;padding:0 16px;color:var(--dimmer);font-size:11px;align-self:center;white-space:nowrap;cursor:pointer;}
+.nav-kb-hint:hover{color:var(--dim);}
 .nav a.active{color:var(--gold);border-bottom-color:var(--gold);}
 .nav-badge{font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;line-height:1.4;}
 .badge-red{background:rgba(231,76,60,.25);color:#ff8080;}
@@ -527,6 +834,18 @@ p{margin-bottom:8px;color:var(--text);}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;font-size:12px;}
 .legend span{display:flex;align-items:center;gap:5px;}
 .ld{width:10px;height:10px;border-radius:2px;display:inline-block;}
+/* ── Code snippets in bug cards (#26) ── */
+.snip-details{margin:10px 0 4px;}
+.snip-summary{cursor:pointer;color:var(--blue);font-size:12px;font-weight:600;padding:4px 0;list-style:none;display:flex;align-items:center;gap:6px;}
+.snip-summary::-webkit-details-marker{display:none;}
+.snip-summary::before{content:'▶';font-size:10px;transition:transform .15s;}
+details[open] .snip-summary::before{transform:rotate(90deg);}
+.snip-block{margin:8px 0;}
+.snip-label{font-size:11px;color:var(--dim);font-weight:600;margin-bottom:4px;font-family:monospace;}
+.snip-code{font-size:11px;line-height:1.5;max-height:300px;overflow-y:auto;background:#060810;border:1px solid var(--border);border-radius:4px;padding:10px;color:#a8d8ea;white-space:pre;}
+/* ── Matrix confidence indicator (#27) ── */
+.mat-n{font-size:9px;color:var(--dimmer);margin-left:2px;font-weight:400;vertical-align:super;}
+.matrix td.conf-low{font-style:italic;}
 /* ── Bug cards ── */
 .filter-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:8px;}
 .search-input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--text);font:13px/1 inherit;flex:1;min-width:200px;outline:none;}
@@ -554,6 +873,7 @@ p{margin-bottom:8px;color:var(--text);}
 .bug-occ{color:var(--dim);font-size:12px;background:var(--bg);padding:1px 6px;border-radius:3px;}
 .bug-matchup-label{color:var(--dim);font-size:12px;margin-left:auto;}
 .bug-chevron{color:var(--dim);font-size:11px;transition:transform .2s;margin-left:4px;}
+.bug-card.kb-focus{outline:2px solid var(--gold);outline-offset:1px;}
 .bug-message{padding:8px 14px 8px;font-size:12px;border-bottom:1px solid var(--border);}
 .bug-body{padding:14px;background:var(--bg);border-top:1px solid var(--border);}
 .diag-row{display:grid;grid-template-columns:90px 1fr;gap:10px;margin-bottom:10px;font-size:13px;}
@@ -629,9 +949,51 @@ p{margin-bottom:8px;color:var(--text);}
 /* ── Analysis ── */
 .analysis h2{color:var(--gold);font-size:.95rem;}
 .analysis h3{color:var(--text);font-size:.9rem;margin:14px 0 6px;}
+/* ── Prompts tab enhancements ── */
+.prompts-section-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.done-label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;user-select:none;margin-right:4px;}
+.done-cb{accent-color:var(--green);cursor:pointer;width:14px;height:14px;}
+.done-txt{font-size:11px;color:var(--dim);}
+.prompt-card.is-done{opacity:.4;transition:opacity .2s;}
+.prompt-card.is-done .prompt-card-header::after{content:' ✅ Fixed';color:var(--green);font-size:11px;margin-left:auto;}
 /* ── Empty state ── */
 .empty-state{padding:24px;text-align:center;color:var(--green);font-weight:600;font-size:14px;}
+/* ── Apply Fix button + diff modal (#11) ── */
+.fix-btn{margin-top:8px;background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.4);color:var(--green);padding:6px 14px;border-radius:5px;cursor:pointer;font:12px/1 inherit;font-weight:600;transition:all .15s;margin-left:8px;}
+.fix-btn:hover{background:var(--green);color:#000;}
+.fix-btn:disabled{opacity:.4;cursor:not-allowed;}
+.fix-btn.loading{opacity:.6;}
+#diff-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;align-items:center;justify-content:center;}
+#diff-modal.open{display:flex;}
+.diff-modal-box{background:var(--surface);border:2px solid var(--green);border-radius:12px;width:min(860px,96vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.8);}
+.diff-modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.diff-modal-title{font-size:1rem;font-weight:700;color:var(--green);}
+.diff-confidence{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.conf-HIGH{background:rgba(46,204,113,.2);color:var(--green);}
+.conf-MEDIUM{background:rgba(241,196,15,.15);color:#f1c40f;}
+.conf-LOW{background:rgba(231,76,60,.15);color:var(--red);}
+.diff-modal-summary{font-size:13px;color:var(--text);flex:1;min-width:200px;}
+.diff-modal-close{margin-left:auto;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:4px;}
+.diff-modal-close:hover{color:#fff;}
+.diff-modal-body{flex:1;overflow-y:auto;padding:16px 20px;}
+.diff-viewer{font:12px/1.6 'JetBrains Mono','Consolas',monospace;background:#060810;border:1px solid var(--border);border-radius:6px;padding:12px;overflow-x:auto;white-space:pre;}
+.diff-line-add{color:#5af78e;background:rgba(46,204,113,.07);}
+.diff-line-del{color:#ff5c57;background:rgba(231,76,60,.07);}
+.diff-line-hunk{color:#57c7ff;font-weight:600;}
+.diff-line-ctx{color:#636d83;}
+.diff-modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.diff-modal-footer p{font-size:12px;color:var(--dim);flex:1;}
+.diff-apply-btn{background:var(--green);border:none;color:#000;padding:9px 22px;border-radius:6px;cursor:pointer;font:13px/1 inherit;font-weight:700;transition:all .15s;}
+.diff-apply-btn:hover{background:#00d68f;}
+.diff-apply-btn:disabled{opacity:.5;cursor:not-allowed;}
+.diff-cancel-btn{background:none;border:1px solid var(--border);color:var(--dim);padding:8px 18px;border-radius:6px;cursor:pointer;font:13px/1 inherit;}
+.diff-cancel-btn:hover{border-color:var(--text);color:var(--text);}
+.diff-server-offline{padding:40px;text-align:center;color:var(--dim);}
+.diff-server-offline h3{color:var(--orange);margin-bottom:12px;}
+/* ── Delta tab ── */
+.delta-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
 /* ── Responsive ── */
+@media(max-width:900px){.delta-grid{grid-template-columns:1fr;}}
 @media(max-width:700px){
   .bar-row{grid-template-columns:24px 1fr 60px;}.bar-detail,.bar-track{display:none;}
   .mech-row{grid-template-columns:1fr 50px auto;}
@@ -646,6 +1008,26 @@ p{margin-bottom:8px;color:var(--text);}
   <button id="lb-close" onclick="closeLightbox()">✕</button>
   <img id="lb-img" src="" alt="">
   <div id="lb-label"></div>
+</div>
+
+<!-- DIFF MODAL (#11) -->
+<div id="diff-modal" onclick="if(event.target===this)closeDiffModal()">
+  <div class="diff-modal-box">
+    <div class="diff-modal-header">
+      <span class="diff-modal-title">🔧 Proposed Fix</span>
+      <span class="diff-confidence" id="diff-conf-badge"></span>
+      <span class="diff-modal-summary" id="diff-summary-text"></span>
+      <button class="diff-modal-close" onclick="closeDiffModal()">✕</button>
+    </div>
+    <div class="diff-modal-body">
+      <div id="diff-modal-content"></div>
+    </div>
+    <div class="diff-modal-footer">
+      <p id="diff-footer-note">Review the diff above carefully before applying. A timestamped backup of index.html will be created automatically.</p>
+      <button class="diff-cancel-btn" onclick="closeDiffModal()">Cancel</button>
+      <button class="diff-apply-btn" id="diff-apply-btn" onclick="confirmFix()">✅ Apply Fix</button>
+    </div>
+  </div>
 </div>
 
 <!-- HEADER -->
@@ -673,10 +1055,12 @@ p{margin-bottom:8px;color:var(--text);}
   <a href="#" onclick="return showTab('online',this)">🌐 Online${onlineBadge}</a>
   <a href="#" onclick="return showTab('anomalies',this)">🔍 Anomalies${anomalyBadge}</a>
   <a href="#" onclick="return showTab('features',this)">💡 Features${featureBadge}</a>
+  <a href="#" onclick="return showTab('delta',this)">📊 Delta${deltaBadge}</a>
   <a href="#" onclick="return showTab('ui',this)">🖼 UI${uiBadge}</a>
   <a href="#" onclick="return showTab('mechanics',this)">⚙️ Mechanics</a>
   <a href="#" onclick="return showTab('performance',this)">📈 Performance</a>
   <a href="#" onclick="return showTab('balance',this)">⚔️ Balance</a>
+  <span class="nav-kb-hint" onclick="_toggleKbHelp()" title="Keyboard shortcuts">&#x2328; ?</span>
 </nav>
 
 <div class="container">
@@ -753,6 +1137,9 @@ p{margin-bottom:8px;color:var(--text);}
     ${featureHtml}
   </div>
 </div>
+
+<!-- ═══ DELTA ═══ -->
+${deltaTabHtml}
 
 <!-- ═══ UI ═══ -->
 <div id="tab-ui" class="tab">
@@ -863,6 +1250,33 @@ function copyById(id, btn) {
   });
 }
 
+// ── Done / fixed checkboxes (#10) ─────────────────────────────────────────
+// Persists "done" state in localStorage so checked items survive page reload.
+function _doneKey(type, idx) { return 'qa_done_' + type + '_' + idx; }
+
+function markDone(type, idx, done) {
+  try { localStorage.setItem(_doneKey(type, idx), done ? '1' : '0'); } catch(_) {}
+  const card = document.getElementById('pcard-' + type + '-' + idx);
+  if (card) card.classList.toggle('is-done', done);
+}
+
+// Restore checkbox state on load
+(function restoreDoneState() {
+  document.querySelectorAll('.done-cb[data-done-type]').forEach(cb => {
+    const type = cb.getAttribute('data-done-type');
+    const idx  = cb.getAttribute('data-done-idx');
+    if (!type || idx == null) return;
+    try {
+      const saved = localStorage.getItem(_doneKey(type, idx));
+      if (saved === '1') {
+        cb.checked = true;
+        const card = document.getElementById('pcard-' + type + '-' + idx);
+        if (card) card.classList.add('is-done');
+      }
+    } catch(_) {}
+  });
+})();
+
 // ── Lightbox ───────────────────────────────────────────────────────────────
 function openLightbox(src, label) {
   document.getElementById('lb-img').src = src;
@@ -874,7 +1288,290 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+// ── Keyboard navigation (#25) ────────────────────────────────────────────
+// 1–9, 0 : switch tabs (order matches the nav bar left-to-right)
+// j / k   : move to next / prev visible bug card (on the Bugs tab)
+// c       : copy the paste-to-Claude prompt of the focused bug card
+// Escape  : close lightbox or dismiss focus ring
+// ?       : show/hide keyboard shortcut help
+const _TAB_ORDER = ['overview','bugs','prompts','online','anomalies','features','delta','ui','mechanics','performance','balance'];
+
+function _switchTabByIndex(n) {
+  const id = _TAB_ORDER[n];
+  if (!id) return;
+  const link = document.querySelector('.nav a[onclick*="showTab(\\'' + id + '\\')"]');
+  if (link) { link.click(); link.focus(); }
+}
+
+// Bug card keyboard focus
+let _focusedBugIdx = -1;
+
+function _visibleBugCards() {
+  return Array.from(document.querySelectorAll('#bug-list .bug-card'))
+    .filter(c => c.style.display !== 'none');
+}
+
+function _focusBugCard(idx) {
+  const cards = _visibleBugCards();
+  if (!cards.length) return;
+  idx = ((idx % cards.length) + cards.length) % cards.length;
+  _focusedBugIdx = idx;
+  // Remove old focus ring
+  document.querySelectorAll('.bug-card.kb-focus').forEach(c => c.classList.remove('kb-focus'));
+  const card = cards[idx];
+  card.classList.add('kb-focus');
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function _copyFocusedBugPrompt() {
+  const cards = _visibleBugCards();
+  if (_focusedBugIdx < 0 || _focusedBugIdx >= cards.length) return;
+  const card  = cards[_focusedBugIdx];
+  // Find the prompt pre inside the focused card
+  const pre = card.querySelector('.prompt-text');
+  if (!pre) { _showKbToast('No prompt in this bug card'); return; }
+  const btn = card.querySelector('.copy-btn');
+  if (btn) copyById(pre.id, btn);
+  else {
+    navigator.clipboard.writeText(pre.textContent)
+      .then(() => _showKbToast('Copied!'))
+      .catch(() => _showKbToast('Copy failed'));
+  }
+}
+
+function _showKbToast(msg) {
+  let t = document.getElementById('kb-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'kb-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1d24;border:1px solid var(--gold);color:var(--gold);padding:8px 18px;border-radius:20px;font-size:13px;font-weight:600;z-index:9998;pointer-events:none;transition:opacity .3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 1800);
+}
+
+// Help overlay
+function _toggleKbHelp() {
+  let h = document.getElementById('kb-help');
+  if (h) { h.remove(); return; }
+  h = document.createElement('div');
+  h.id = 'kb-help';
+  h.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#13151a;border:2px solid var(--gold);border-radius:12px;padding:28px 36px;z-index:9999;min-width:320px;box-shadow:0 0 60px rgba(0,0,0,.8);';
+  h.innerHTML = '<h3 style="color:var(--gold);margin-bottom:16px;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;">⌨️ Keyboard Shortcuts</h3>'
+    + '<table style="border-collapse:collapse;font-size:13px;width:100%">'
+    + ['1–9, 0|Switch tabs (Overview → Balance)',
+       'j|Next visible bug card',
+       'k|Previous visible bug card',
+       'c|Copy prompt of focused bug',
+       'Escape|Close overlay / clear focus',
+       '?|Toggle this help'].map(row => {
+         const [key, desc] = row.split('|');
+         return '<tr><td style="padding:5px 16px 5px 0;color:var(--gold);font-family:monospace;font-weight:700;white-space:nowrap">' + key + '</td>'
+              + '<td style="padding:5px 0;color:var(--text)">' + desc + '</td></tr>';
+       }).join('')
+    + '</table>'
+    + '<p style="color:var(--dim);font-size:11px;margin-top:14px;text-align:center">Press ? or Escape to close</p>';
+  h.onclick = e => { if (e.target === h) h.remove(); };
+  document.body.appendChild(h);
+}
+
+document.addEventListener('keydown', e => {
+  // Never fire when typing in an input/textarea
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
+
+  // Escape — close lightbox or help overlay or clear bug focus
+  if (e.key === 'Escape') {
+    if (document.getElementById('kb-help')) { document.getElementById('kb-help').remove(); return; }
+    if (document.getElementById('lightbox')?.classList.contains('open')) { closeLightbox(); return; }
+    document.querySelectorAll('.bug-card.kb-focus').forEach(c => c.classList.remove('kb-focus'));
+    _focusedBugIdx = -1;
+    return;
+  }
+
+  // ? — help overlay
+  if (e.key === '?') { e.preventDefault(); _toggleKbHelp(); return; }
+
+  // 1–9 → tabs 0–8, 0 → tab 9 (balance)
+  if (/^[0-9]$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    const n = e.key === '0' ? 9 : parseInt(e.key) - 1;
+    _switchTabByIndex(n);
+    return;
+  }
+
+  // j / k — bug navigation (only meaningful on the bugs tab)
+  if (e.key === 'j' || e.key === 'k') {
+    const activeBugTab = document.getElementById('tab-bugs')?.classList.contains('active');
+    if (!activeBugTab) {
+      // Switch to bugs tab first
+      _switchTabByIndex(1);
+    }
+    const delta = e.key === 'j' ? 1 : -1;
+    const cards = _visibleBugCards();
+    if (!cards.length) { _showKbToast('No bugs to navigate'); return; }
+    _focusBugCard(_focusedBugIdx < 0 ? (delta > 0 ? 0 : cards.length - 1) : _focusedBugIdx + delta);
+    return;
+  }
+
+  // c — copy focused bug prompt
+  if (e.key === 'c' && !e.ctrlKey && !e.metaKey) {
+    if (_focusedBugIdx >= 0) { _copyFocusedBugPrompt(); return; }
+  }
+});
+// ── Auto-fix (#11) ────────────────────────────────────────────────────────────
+const FIX_SERVER = 'http://localhost:3742';
+let _pendingDiff = null;   // diff string waiting for user confirmation
+
+async function _serverAlive() {
+  try {
+    const r = await fetch(FIX_SERVER + '/ping', { signal: AbortSignal.timeout(1200) });
+    return r.ok;
+  } catch (_) { return false; }
+}
+
+async function applyFixForBug(bugIdx, btn) {
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Generating…';
+
+  // Check server first
+  const alive = await _serverAlive();
+  if (!alive) {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '🔧 Apply Fix';
+    _showDiffOffline();
+    return;
+  }
+
+  try {
+    const resp = await fetch(FIX_SERVER + '/fix', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ bugIndex: bugIdx }),
+    });
+    const fixResult = await resp.json();
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '🔧 Apply Fix';
+
+    if (!fixResult.ok) {
+      _showDiffModal({ ok: false, summary: fixResult.summary || 'No fix available', diff: '', confidence: 'LOW' });
+    } else {
+      _showDiffModal(fixResult);
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '🔧 Apply Fix';
+    _showDiffModal({ ok: false, summary: 'Request failed: ' + err.message, diff: '', confidence: 'LOW' });
+  }
+}
+
+function _showDiffOffline() {
+  document.getElementById('diff-conf-badge').textContent = '';
+  document.getElementById('diff-conf-badge').className = 'diff-confidence';
+  document.getElementById('diff-summary-text').textContent = '';
+  document.getElementById('diff-modal-content').innerHTML = \`
+    <div class="diff-server-offline">
+      <h3>🔌 Fix server not running</h3>
+      <p>The local fix server wasn't detected at <code>http://localhost:3742</code>.</p>
+      <p style="margin-top:10px">To enable Apply Fix buttons, run QA with the server active:</p>
+      <pre style="margin:12px auto;max-width:340px;text-align:left">node run.js --analyze-only</pre>
+      <p style="font-size:12px;color:var(--dimmer);margin-top:10px">The server starts automatically after any run.js execution<br>unless <code>--no-server</code> is passed.</p>
+    </div>\`;
+  document.getElementById('diff-apply-btn').style.display = 'none';
+  document.getElementById('diff-modal').classList.add('open');
+}
+
+function _showDiffModal(fixResult) {
+  _pendingDiff = fixResult.ok ? fixResult.diff : null;
+
+  const confBadge = document.getElementById('diff-conf-badge');
+  const conf = (fixResult.confidence || 'LOW').toUpperCase();
+  confBadge.textContent = conf;
+  confBadge.className = 'diff-confidence conf-' + conf;
+
+  document.getElementById('diff-summary-text').textContent = fixResult.summary || '';
+
+  const applyBtn = document.getElementById('diff-apply-btn');
+  applyBtn.style.display = '';
+
+  if (!fixResult.ok || !fixResult.diff) {
+    document.getElementById('diff-modal-content').innerHTML =
+      \`<div style="padding:24px;color:var(--orange);font-size:13px">
+        ⚠️ \${escHtmlJs(fixResult.summary || 'Claude could not produce a confident fix for this bug.')}
+        <p style="margin-top:12px;color:var(--dim)">You can still copy the prompt above and apply the fix manually in Claude.</p>
+       </div>\`;
+    applyBtn.disabled = true;
+  } else {
+    document.getElementById('diff-modal-content').innerHTML =
+      \`<div class="diff-viewer">\${_renderDiff(fixResult.diff)}</div>\`;
+    applyBtn.disabled = conf === 'LOW';
+    if (conf === 'LOW') {
+      document.getElementById('diff-footer-note').textContent =
+        '⚠️ Low confidence — Claude is unsure about this fix. Review carefully before applying.';
+    }
+  }
+
+  document.getElementById('diff-modal').classList.add('open');
+}
+
+async function confirmFix() {
+  if (!_pendingDiff) return;
+  const btn = document.getElementById('diff-apply-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Applying…';
+
+  try {
+    const resp = await fetch(FIX_SERVER + '/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ diff: _pendingDiff }),
+    });
+    const result = await resp.json();
+    closeDiffModal();
+    if (result.success) {
+      _showKbToast(\`✅ Fix applied! Backup: \${result.backupPath?.split(/[\\/\\\\]/).pop() || 'created'}\`);
+    } else {
+      _showKbToast('❌ Apply failed: ' + (result.error || 'unknown error'));
+    }
+  } catch (err) {
+    closeDiffModal();
+    _showKbToast('❌ Apply failed: ' + err.message);
+  }
+}
+
+function closeDiffModal() {
+  document.getElementById('diff-modal').classList.remove('open');
+  _pendingDiff = null;
+  const applyBtn = document.getElementById('diff-apply-btn');
+  applyBtn.disabled = false;
+  applyBtn.textContent = '✅ Apply Fix';
+  document.getElementById('diff-footer-note').textContent =
+    'Review the diff above carefully before applying. A timestamped backup of index.html will be created automatically.';
+}
+
+function _renderDiff(diff) {
+  return diff.split('\\n').map(line => {
+    const e = escHtmlJs(line);
+    if (line.startsWith('+++') || line.startsWith('---')) return \`<span class="diff-line-hunk">\${e}</span>\\n\`;
+    if (line.startsWith('+'))  return \`<span class="diff-line-add">\${e}</span>\\n\`;
+    if (line.startsWith('-'))  return \`<span class="diff-line-del">\${e}</span>\\n\`;
+    if (line.startsWith('@@')) return \`<span class="diff-line-hunk">\${e}</span>\\n\`;
+    return \`<span class="diff-line-ctx">\${e}</span>\\n\`;
+  }).join('');
+}
+
+// Minimal in-JS HTML escaper (can't call Node's escHtml from browser)
+function escHtmlJs(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
 </body>
 </html>`;
@@ -904,6 +1601,14 @@ function escHtml(s) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+// Prevent Claude-generated HTML content from breaking the page's <script> block.
+// Any </script> tag inside rendered HTML would prematurely close the script
+// and make every JS function (showTab, toggleBug, etc.) undefined.
+// We replace the closing tag with a visually identical but inert version.
+function sanitiseForInlineHtml(s) {
+  return String(s).replace(/<\/script>/gi, '<\\/script>');
 }
 
 function escAttr(s) {

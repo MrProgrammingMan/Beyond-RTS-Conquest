@@ -126,7 +126,17 @@ function detectAnomalies(rawData, aggStats, cfg) {
   }
 
   // ── 4. P1/P2 position bias ────────────────────────────────────────────────
+  // FIX #21: also compute per-faction P1/P2 split to identify which factions
+  // specifically drive the global bias (e.g. Warriors 80% P1 vs 20% P2).
   let totalP1Wins = 0, totalP2Wins = 0, totalGamesAll = 0;
+
+  // Per-faction: wins when playing as P1, wins when playing as P2
+  const factionP1Wins = {}, factionP2Wins = {}, factionP1Games = {}, factionP2Games = {};
+  for (const f of factions) {
+    factionP1Wins[f] = 0; factionP2Wins[f] = 0;
+    factionP1Games[f] = 0; factionP2Games[f] = 0;
+  }
+
   for (const f1 of factions) {
     for (const f2 of factions) {
       if (f1 === f2) continue;
@@ -136,44 +146,103 @@ function detectAnomalies(rawData, aggStats, cfg) {
       totalP1Wins += r.p1Wins;
       totalP2Wins += r.p2Wins;
       totalGamesAll += games;
+      // f1 is always P1, f2 is always P2 in results[f1][f2]
+      factionP1Wins[f1]  += r.p1Wins;
+      factionP1Games[f1] += r.p1Wins + r.p2Wins;
+      factionP2Wins[f2]  += r.p2Wins;
+      factionP2Games[f2] += r.p1Wins + r.p2Wins;
     }
   }
+
   if (totalGamesAll > 20) {
     const p1Bias = totalP1Wins / (totalP1Wins + totalP2Wins);
     if (p1Bias > 0.55 || p1Bias < 0.45) {
+      // Find factions with the most extreme per-position splits (>20% gap)
+      const biasedFactions = factions
+        .filter(f => factionP1Games[f] >= 3 && factionP2Games[f] >= 3)
+        .map(f => {
+          const asP1 = factionP1Games[f] > 0 ? factionP1Wins[f] / factionP1Games[f] : 0.5;
+          const asP2 = factionP2Games[f] > 0 ? factionP2Wins[f] / factionP2Games[f] : 0.5;
+          return { f, asP1, asP2, gap: Math.abs(asP1 - asP2) };
+        })
+        .filter(x => x.gap > 0.20)
+        .sort((a, b) => b.gap - a.gap)
+        .slice(0, 4);
+
+      const biasDetail = biasedFactions.length > 0
+        ? ' Faction-level drivers: ' + biasedFactions.map(x =>
+            `${x.f} (${Math.round(x.asP1*100)}% as P1, ${Math.round(x.asP2*100)}% as P2)`
+          ).join('; ') + '.'
+        : '';
+
+      const biasPromptExtra = biasedFactions.length > 0
+        ? ` Faction-specific bias detected — ${biasedFactions[0].f} wins ${Math.round(biasedFactions[0].asP1*100)}% as P1 but only ${Math.round(biasedFactions[0].asP2*100)}% as P2 (${Math.round(biasedFactions[0].gap*100)}% gap). Check whether this faction's starting position, spawn point, or first-move AI logic gives a structural advantage when on the left/top side.`
+        : '';
+
       anomalies.push({
         severity: 'MEDIUM',
         type: 'position_bias',
         title: `${p1Bias > 0.55 ? 'P1 first-player advantage' : 'P2 second-player advantage'}: ${Math.round(p1Bias * 100)}% P1 wins`,
-        detail: `Across ${totalP1Wins + totalP2Wins} decisive games: P1 wins ${Math.round(p1Bias*100)}%, P2 wins ${Math.round((1-p1Bias)*100)}%. Expected: ~50%.`,
+        detail: `Across ${totalP1Wins + totalP2Wins} decisive games: P1 wins ${Math.round(p1Bias*100)}%, P2 wins ${Math.round((1-p1Bias)*100)}%. Expected: ~50%.${biasDetail}`,
         suggestion: `A structural position bias this large (>5%) usually means one side has a positional advantage in map layout, soul income timing, or mid capture proximity. Check map symmetry and starting soul amounts.`,
-        prompt: `Overall P1 win rate is ${Math.round(p1Bias*100)}% across ${totalP1Wins+totalP2Wins} decisive games — a ${Math.abs(50 - Math.round(p1Bias*100))}% position bias. In index.html, check: (1) whether the map canvas is perfectly symmetric (base positions, mid-point, lane layout), (2) P1 and P2 starting soul amounts are identical, (3) mid capture zone is equidistant from both bases, (4) any time-based advantage (e.g. P1 gets the first AI tick).`,
+        factionBiasBreakdown: biasedFactions,
+        prompt: `Overall P1 win rate is ${Math.round(p1Bias*100)}% across ${totalP1Wins+totalP2Wins} decisive games — a ${Math.abs(50 - Math.round(p1Bias*100))}% position bias. In index.html, check: (1) whether the map canvas is perfectly symmetric (base positions, mid-point, lane layout), (2) P1 and P2 starting soul amounts are identical, (3) mid capture zone is equidistant from both bases, (4) any time-based advantage (e.g. P1 gets the first AI tick).${biasPromptExtra}`,
       });
+    }
+
+    // Per-faction bias: flag any faction with a severe position-specific split
+    // even if the global bias is within acceptable range.
+    for (const f of factions) {
+      if (factionP1Games[f] < 3 || factionP2Games[f] < 3) continue;
+      const asP1 = factionP1Wins[f] / factionP1Games[f];
+      const asP2 = factionP2Wins[f] / factionP2Games[f];
+      const gap  = Math.abs(asP1 - asP2);
+      if (gap > 0.35) { // >35% gap is faction-specific structural problem
+        anomalies.push({
+          severity: 'HIGH',
+          type: 'faction_position_bias',
+          title: `${f} has severe P1/P2 split: ${Math.round(asP1*100)}% as P1 vs ${Math.round(asP2*100)}% as P2`,
+          detail: `${f} wins ${Math.round(asP1*100)}% of games as P1 (${factionP1Games[f]} games) but only ${Math.round(asP2*100)}% as P2 (${factionP2Games[f]} games). A ${Math.round(gap*100)}% gap strongly suggests a positional bug specific to this faction.`,
+          suggestion: `Check ${f}'s spawn point, starting resources, or AI first-move logic for anything that differs based on player index. Also check if any faction passive interacts with map-side positioning.`,
+          prompt: `${f} has a ${Math.round(gap*100)}% P1/P2 win rate gap (${Math.round(asP1*100)}% as P1, ${Math.round(asP2*100)}% as P2 across ${factionP1Games[f] + factionP2Games[f]} total games). This is a faction-specific positional bug. In index.html, search for "${f}" and check: (1) spawn coordinates or base position that reference player index, (2) starting soul/body amounts that differ between P1/P2 for this faction, (3) any faction passive or special mechanic that checks player.id or player index, (4) AI decision logic that behaves differently based on which side the faction is on. Please implement a fix in index.html.`,
+        });
+      }
     }
   }
 
   // ── 5. Last Stand never triggering despite close games ────────────────────
+  // FIX #15: Only flag if games were actually close enough for Last Stand to
+  // be reachable. We use avg winner HP at game end as the proxy: if winners
+  // routinely end at high HP (>70) games were lopsided and Last Stand was
+  // never reachable by design — no false positive. Only flag when avg winner
+  // HP ≤70 AND zero activations were recorded.
   let closeGamesCount = 0, lastStandCount = 0;
+  let winnerHpSum = 0, winnerHpSamples = 0;
   for (const f1 of factions) {
     for (const f2 of factions) {
       if (f1 === f2) continue;
       const r = results[f1]?.[f2];
       if (!r) continue;
-      // Close games: loser ended at > 20 base HP (i.e., wasn't close) — actually,
-      // close game = winner had a close call. We'll use lastStands tracked.
       lastStandCount += (r.lastStands?.p1 || 0) + (r.lastStands?.p2 || 0);
       closeGamesCount += r.p1Wins + r.p2Wins;
+      for (const hp of (r.p1FinalHps || [])) { winnerHpSum += hp; winnerHpSamples++; }
+      for (const hp of (r.p2FinalHps || [])) { winnerHpSum += hp; winnerHpSamples++; }
     }
   }
-  const lastStandPct = closeGamesCount > 0 ? lastStandCount / closeGamesCount * 100 : 0;
-  if (lastStandPct < 5 && closeGamesCount > 20 && (qa.mechanicUsage?.last_stand_triggered || 0) === 0) {
+  const avgWinnerHp = winnerHpSamples > 0 ? winnerHpSum / winnerHpSamples : 100;
+  const lastStandShouldBeReachable = avgWinnerHp <= 70;
+  if (
+    (qa.mechanicUsage?.last_stand_triggered || 0) === 0 &&
+    closeGamesCount > 20 &&
+    lastStandShouldBeReachable
+  ) {
     anomalies.push({
       severity: 'MEDIUM',
       type: 'last_stand_never_fires',
       title: 'Last Stand mechanic never triggered',
-      detail: `0 Last Stand activations across ${closeGamesCount} finished games. The mechanic should fire when base HP drops to ≤30.`,
-      suggestion: `Last Stand may be broken: its HP trigger threshold may not be reached due to games ending too quickly, or the trigger condition (checking baseHp ≤ 30) may have a bug.`,
-      prompt: `The Last Stand mechanic fired 0 times across ${closeGamesCount} games. In index.html, search for 'last_stand' or 'lastStand' and verify: (1) the trigger condition checks baseHp <= 30 (not some other threshold), (2) the trigger fires at the right point in the game loop (after damage is applied, before checkWin), (3) the AI difficulty being tested doesn't prevent games from reaching the Last Stand threshold by ending them too decisively.`,
+      detail: `0 Last Stand activations across ${closeGamesCount} finished games. Avg winner HP at end: ${Math.round(avgWinnerHp)} — games were close enough that Last Stand should have fired.`,
+      suggestion: `Last Stand trigger (baseHp ≤ 30) is reachable given game closeness but never fired. Likely a broken trigger, not just lopsided games.`,
+      prompt: `The Last Stand mechanic fired 0 times across ${closeGamesCount} games (avg winner HP at end: ${Math.round(avgWinnerHp)}, indicating competitive games). In index.html, search for 'last_stand' or 'lastStand' and verify: (1) the trigger condition checks baseHp <= 30 (not some other threshold), (2) the trigger fires after damage is applied but before checkWin, (3) the mechanic is accessible to AI players and not gated behind a human-only input path.`,
     });
   }
 

@@ -81,8 +81,8 @@ const INSTRUMENTATION_SCRIPT = `
   };
 
   // ── NaN / INFINITY SCANNER ────────────────────────────────────────────────
-  function _scanForNaN(obj, path, depth) {
-    if (depth > 4) return [];
+  function _scanForNaN(obj, path, depth, maxDepth) {
+    if (depth > maxDepth) return [];
     const found = [];
     if (!obj || typeof obj !== 'object') return found;
     for (const key of Object.keys(obj)) {
@@ -93,7 +93,7 @@ const INSTRUMENTATION_SCRIPT = `
           if (isNaN(val))       found.push({ path: fullPath, value: 'NaN' });
           else if (!isFinite(val)) found.push({ path: fullPath, value: val > 0 ? 'Infinity' : '-Infinity' });
         } else if (val && typeof val === 'object' && !Array.isArray(val)) {
-          found.push(..._scanForNaN(val, fullPath, depth + 1));
+          found.push(..._scanForNaN(val, fullPath, depth + 1, maxDepth));
         }
       } catch (_) {}
     }
@@ -108,17 +108,16 @@ const INSTRUMENTATION_SCRIPT = `
       if (!G || !G.running) return;
       // Scan player resources and unit positions
       const checks = [
-        { obj: G.players?.[0], path: 'G.players[0]' },
-        { obj: G.players?.[1], path: 'G.players[1]' },
+        { obj: G.players?.[0], path: 'G.players[0]', maxDepth: 4 },
+        { obj: G.players?.[1], path: 'G.players[1]', maxDepth: 4 },
       ];
-      // Sample 5 random units
+      // Scan ALL units at shallow depth (2) to catch NaNs without perf hit
       const units = G.units || [];
-      for (let i = 0; i < Math.min(5, units.length); i++) {
-        const u = units[Math.floor(Math.random() * units.length)];
-        if (u) checks.push({ obj: u, path: 'G.units[sample]' });
+      for (let i = 0; i < units.length; i++) {
+        if (units[i]) checks.push({ obj: units[i], path: \`G.units[\${i}]\`, maxDepth: 2 });
       }
-      for (const { obj, path } of checks) {
-        const found = _scanForNaN(obj, path, 0);
+      for (const { obj, path, maxDepth } of checks) {
+        const found = _scanForNaN(obj, path, 0, maxDepth);
         for (const f of found) {
           window.__qa.nanEvents.push({ ...f, time: Date.now(), gameState: _safeSnapshotState() });
         }
@@ -161,16 +160,29 @@ const INSTRUMENTATION_SCRIPT = `
     const G = window.G;
     if (!G) return;
 
-    // Track spy deployment: look for spy unit spawns
-    // Track mid capture: monitor midOwner changes
-    // Track upgrades: look for upgrade cost deductions
-    // Track last stand: monitor baseHp threshold crossings
+    let _prevMidOwner    = G.midOwner;
+    let _upgradesBought  = [0, 0];
+    let _lastStandFired  = [false, false];
 
-    let _prevMidOwner = G.midOwner;
-    let _prevP1Souls = G.players?.[0]?.souls;
-    let _prevP2Souls = G.players?.[1]?.souls;
-    let _lastStandFired = [false, false];
-    let _upgradesBought = [0, 0];
+    // FIX #12: track per-buff previous state so we count activations (0→>0),
+    // not presence (which was incrementing every 2s while the buff ran).
+    const BUFF_NAMES = ['warcry', 'ironwall', 'blitz', 'soul_tide'];
+    let _prevBuffState = [
+      { warcry: 0, ironwall: 0, blitz: 0, soul_tide: 0 },
+      { warcry: 0, ironwall: 0, blitz: 0, soul_tide: 0 },
+    ];
+
+    // FIX #13: track spy identity so we count cumulative deployments, not peak
+    // concurrent. Assign a __qaId to each spy object on first sight.
+    let _spyQaCounter = 0;
+    const _seenSpyIds = new Set();
+
+    // FIX #14: same approach for aerial units.
+    let _aerialQaCounter = 0;
+    const _seenAerialIds = new Set();
+
+    // FIX (worker_sent_to_mid): same presence-vs-transition issue as buffs.
+    let _prevWorkerMidMode = [false, false];
 
     const _mechTimer = setInterval(() => {
       if (!window.G || !window.G.running) {
@@ -185,15 +197,27 @@ const INSTRUMENTATION_SCRIPT = `
         _prevMidOwner = G.midOwner;
       }
 
-      // Spy detection: spies live in G.spies[], not G.units[]
-      const spies = (G.spies || []).filter(s => s.phase !== 'done');
-      if (spies.length > 0) window.__qa.mechanics.spy_deployed = Math.max(window.__qa.mechanics.spy_deployed, spies.length);
+      // FIX #13 — Spy: count each unique spy object ever seen as active.
+      for (const s of (G.spies || [])) {
+        if (s.phase === 'done') continue;     // already resolved, skip
+        if (s.__qaId === undefined) s.__qaId = ++_spyQaCounter;
+        if (!_seenSpyIds.has(s.__qaId)) {
+          _seenSpyIds.add(s.__qaId);
+          window.__qa.mechanics.spy_deployed++;
+        }
+      }
 
-      // Aerial spawned: count distinct aerial units ever seen
-      const aerials = (G.units || []).filter(u => !u.dead && u.def && u.def.aerial);
-      if (aerials.length > 0) window.__qa.mechanics.aerial_unit_spawned = Math.max(window.__qa.mechanics.aerial_unit_spawned, aerials.length);
+      // FIX #14 — Aerial: count each unique aerial unit ever seen (dead or alive).
+      for (const u of (G.units || [])) {
+        if (!u.def?.aerial) continue;
+        if (u.__qaId === undefined) u.__qaId = ++_aerialQaCounter;
+        if (!_seenAerialIds.has(u.__qaId)) {
+          _seenAerialIds.add(u.__qaId);
+          window.__qa.mechanics.aerial_unit_spawned++;
+        }
+      }
 
-      // Last Stand
+      // Last Stand — unchanged (already transition-based via _lastStandFired)
       for (let i = 0; i < 2; i++) {
         const p = G.players?.[i];
         if (p && p.baseHp <= 30 && p.baseHp > 0 && !_lastStandFired[i]) {
@@ -202,7 +226,7 @@ const INSTRUMENTATION_SCRIPT = `
         }
       }
 
-      // Upgrades: game uses p.ownedUpgrades (a Set), not u.purchased
+      // Upgrades
       for (let i = 0; i < 2; i++) {
         const p = G.players?.[i];
         if (!p || !p.ownedUpgrades) continue;
@@ -213,20 +237,30 @@ const INSTRUMENTATION_SCRIPT = `
         }
       }
 
-      // Buff activation: game uses p.activeBuffs.warcry / .ironwall / .blitz / .soul_tide (countdown timers)
+      // FIX #12 — Buff activation: count per-buff transitions from 0 → >0.
       for (let i = 0; i < 2; i++) {
         const p = G.players?.[i];
         if (!p || !p.activeBuffs) continue;
-        const anyActive = p.activeBuffs.warcry > 0 || p.activeBuffs.ironwall > 0
-          || (p.activeBuffs.blitz || 0) > 0 || (p.activeBuffs.soul_tide || 0) > 0;
-        if (anyActive) window.__qa.mechanics.buff_activated++;
+        for (const bn of BUFF_NAMES) {
+          const prev = _prevBuffState[i][bn];
+          const curr = p.activeBuffs[bn] || 0;
+          if (prev === 0 && curr > 0) {
+            window.__qa.mechanics.buff_activated++;
+          }
+          _prevBuffState[i][bn] = curr;
+        }
       }
 
-      // Worker to mid: game uses G.workerMidMode[pid-1] boolean
-      const midModeOn = (G.workerMidMode || []).some(v => v === true);
-      if (midModeOn) window.__qa.mechanics.worker_sent_to_mid++;
+      // FIX (worker_sent_to_mid): count transitions into mid-mode, not presence.
+      for (let i = 0; i < 2; i++) {
+        const curr = (G.workerMidMode || [])[i] === true;
+        if (curr && !_prevWorkerMidMode[i]) {
+          window.__qa.mechanics.worker_sent_to_mid++;
+        }
+        _prevWorkerMidMode[i] = curr;
+      }
 
-    }, 2000); // check every 2s
+    }, 2000);
   }
 
   // ── SCREEN TRACKING ───────────────────────────────────────────────────────

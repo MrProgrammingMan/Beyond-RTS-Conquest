@@ -1,0 +1,542 @@
+[
+  {
+    "timestamp": 1773258610731,
+    "date": "2026-03-11T19:50:10.731Z",
+    "totalGames": 40,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "infernal"
+    ],
+    "winRates": {
+      "warriors": 25,
+      "summoners": 50,
+      "brutes": 87.5,
+      "spirits": 75,
+      "infernal": 50
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 25,
+        "asP2": 12.5
+      },
+      "summoners": {
+        "asP1": 50,
+        "asP2": 62.5
+      },
+      "brutes": {
+        "asP1": 87.5,
+        "asP2": 62.5
+      },
+      "spirits": {
+        "asP1": 75,
+        "asP2": 0
+      },
+      "infernal": {
+        "asP1": 50,
+        "asP2": 62.5
+      }
+    },
+    "bugCount": 1,
+    "bugs": [
+      {
+        "sig": "1 game(s) never ended (timed out)||0",
+        "type": "softlock",
+        "message": "1 game(s) never ended (timed out)",
+        "severity": "CRITICAL",
+        "matchups": [
+          "warriors vs spirits"
+        ]
+      }
+    ],
+    "softlockCount": 1,
+    "nanCount": 0,
+    "gamesPerMatchup": 3,
+    "aiDifficulty": "hard"
+  },
+  {
+    "timestamp": 1773258345341,
+    "date": "2026-03-11T19:45:45.341Z",
+    "totalGames": 40,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "infernal"
+    ],
+    "winRates": {
+      "warriors": 25,
+      "summoners": 50,
+      "brutes": 87.5,
+      "spirits": 75,
+      "infernal": 50
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 25,
+        "asP2": 12.5
+      },
+      "summoners": {
+        "asP1": 50,
+        "asP2": 62.5
+      },
+      "brutes": {
+        "asP1": 87.5,
+        "asP2": 62.5
+      },
+      "spirits": {
+        "asP1": 75,
+        "asP2": 0
+      },
+      "infernal": {
+        "asP1": 50,
+        "asP2": 62.5
+      }
+    },
+    "bugCount": 1,
+    "bugs": [
+      {
+        "sig": "1 game(s) never ended (timed out)||0",
+        "type": "softlock",
+        "message": "1 game(s) never ended (timed out)",
+        "severity": "CRITICAL",
+        "matchups": [
+          "warriors vs spirits"
+        ]
+      }
+    ],
+    "softlockCount": 1,
+    "nanCount": 0,
+    "gamesPerMatchup": 3,
+    "aiDifficulty": "hard"
+  },
+  {
+    "timestamp": 1773257130775,
+    "date": "2026-03-11T19:25:30.775Z",
+    "totalGames": 40,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "infernal"
+    ],
+    "winRates": {
+      "warriors": 25,
+      "summoners": 50,
+      "brutes": 87.5,
+      "spirits": 75,
+      "infernal": 50
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 25,
+        "asP2": 12.5
+      },
+      "summoners": {
+        "asP1": 50,
+        "asP2": 62.5
+      },
+      "brutes": {
+        "asP1": 87.5,
+        "asP2": 62.5
+      },
+      "spirits": {
+        "asP1": 75,
+        "asP2": 0
+      },
+      "infernal": {
+        "asP1": 50,
+        "asP2": 62.5
+      }
+    },
+    "bugCount": 1,
+    "bugs": [
+      {
+        "sig": "1 game(s) never ended (timed out)||0",
+        "type": "softlock",
+        "message": "1 game(s) never ended (timed out)",
+        "severity": "HIGH",
+        "matchups": [
+          "warriors vs spirits"
+        ]
+      }
+    ],
+    "softlockCount": 1,
+    "nanCount": 0,
+    "gamesPerMatchup": 2,
+    "aiDifficulty": "hard"
+  },
+  {
+    "timestamp": 1773255679556,
+    "date": "2026-03-11T19:01:19.556Z",
+    "totalGames": 40,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "infernal"
+    ],
+    "winRates": {
+      "warriors": 0,
+      "summoners": 50,
+      "brutes": 25,
+      "spirits": 62.5,
+      "infernal": 75
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 0,
+        "asP2": 12.5
+      },
+      "summoners": {
+        "asP1": 50,
+        "asP2": 62.5
+      },
+      "brutes": {
+        "asP1": 25,
+        "asP2": 50
+      },
+      "spirits": {
+        "asP1": 62.5,
+        "asP2": 75
+      },
+      "infernal": {
+        "asP1": 75,
+        "asP2": 75
+      }
+    },
+    "bugCount": 2,
+    "bugs": [
+      {
+        "sig": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"file:///C:/Users/sande/OneDrive/%D0%94%D0%BE%D0%BA||0",
+        "type": "runner_error",
+        "message": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"file:///C:/Users/sande/OneDrive/%D0%94%D0%BE%D0%BA",
+        "severity": "CRITICAL",
+        "matchups": [
+          "infernal vs spirits"
+        ]
+      },
+      {
+        "sig": "1 game(s) never ended (timed out)||0",
+        "type": "softlock",
+        "message": "1 game(s) never ended (timed out)",
+        "severity": "CRITICAL",
+        "matchups": [
+          "infernal vs spirits"
+        ]
+      }
+    ],
+    "softlockCount": 1,
+    "nanCount": 0,
+    "gamesPerMatchup": 2,
+    "aiDifficulty": "hard"
+  },
+  {
+    "timestamp": 1773254854017,
+    "date": "2026-03-11T18:47:34.017Z",
+    "totalGames": 270,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "verdant",
+      "infernal",
+      "glacial",
+      "voltborn",
+      "bloodpact",
+      "menders"
+    ],
+    "winRates": {
+      "warriors": 11.1,
+      "summoners": 63,
+      "brutes": 22.2,
+      "spirits": 44.4,
+      "verdant": 33.3,
+      "infernal": 55.6,
+      "glacial": 37,
+      "voltborn": 59.3,
+      "bloodpact": 85.2,
+      "menders": 37
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 11.1,
+        "asP2": 22.2
+      },
+      "summoners": {
+        "asP1": 63,
+        "asP2": 70.4
+      },
+      "brutes": {
+        "asP1": 22.2,
+        "asP2": 33.3
+      },
+      "spirits": {
+        "asP1": 44.4,
+        "asP2": 70.4
+      },
+      "verdant": {
+        "asP1": 33.3,
+        "asP2": 55.6
+      },
+      "infernal": {
+        "asP1": 55.6,
+        "asP2": 55.6
+      },
+      "glacial": {
+        "asP1": 37,
+        "asP2": 37
+      },
+      "voltborn": {
+        "asP1": 59.3,
+        "asP2": 70.4
+      },
+      "bloodpact": {
+        "asP1": 85.2,
+        "asP2": 88.9
+      },
+      "menders": {
+        "asP1": 37,
+        "asP2": 44.4
+      }
+    },
+    "bugCount": 3,
+    "bugs": [
+      {
+        "sig": "Uncaught RangeError: Maximum call stack size exceeded|file:///C:/Users/sande/OneDrive/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B/Beyond%20RTS%20Conquest/public/index.html|5611",
+        "type": "uncaught_error",
+        "message": "Uncaught RangeError: Maximum call stack size exceeded",
+        "severity": "CRITICAL",
+        "matchups": [
+          "infernal vs voltborn"
+        ]
+      },
+      {
+        "sig": "Maximum call stack size exceeded||0",
+        "type": "pageerror",
+        "message": "Maximum call stack size exceeded",
+        "severity": "CRITICAL",
+        "matchups": [
+          "infernal vs voltborn"
+        ]
+      },
+      {
+        "sig": "1 game(s) never ended (timed out)||0",
+        "type": "softlock",
+        "message": "1 game(s) never ended (timed out)",
+        "severity": "HIGH",
+        "matchups": [
+          "infernal vs voltborn"
+        ]
+      }
+    ],
+    "softlockCount": 1,
+    "nanCount": 0,
+    "gamesPerMatchup": 3,
+    "aiDifficulty": "hard"
+  },
+  {
+    "timestamp": 1773253036607,
+    "date": "2026-03-11T18:17:16.607Z",
+    "totalGames": 270,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "verdant",
+      "infernal",
+      "glacial",
+      "voltborn",
+      "bloodpact",
+      "menders"
+    ],
+    "winRates": {
+      "warriors": 11.1,
+      "summoners": 63,
+      "brutes": 48.1,
+      "spirits": 55.6,
+      "verdant": 51.9,
+      "infernal": 51.9,
+      "glacial": 44.4,
+      "voltborn": 40.7,
+      "bloodpact": 81.5,
+      "menders": 40.7
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 11.1,
+        "asP2": 22.2
+      },
+      "summoners": {
+        "asP1": 63,
+        "asP2": 74.1
+      },
+      "brutes": {
+        "asP1": 48.1,
+        "asP2": 37
+      },
+      "spirits": {
+        "asP1": 55.6,
+        "asP2": 55.6
+      },
+      "verdant": {
+        "asP1": 51.9,
+        "asP2": 44.4
+      },
+      "infernal": {
+        "asP1": 51.9,
+        "asP2": 55.6
+      },
+      "glacial": {
+        "asP1": 44.4,
+        "asP2": 37
+      },
+      "voltborn": {
+        "asP1": 40.7,
+        "asP2": 63
+      },
+      "bloodpact": {
+        "asP1": 81.5,
+        "asP2": 70.4
+      },
+      "menders": {
+        "asP1": 40.7,
+        "asP2": 51.9
+      }
+    },
+    "bugCount": 0,
+    "bugs": [],
+    "softlockCount": 0,
+    "nanCount": 0,
+    "gamesPerMatchup": 3,
+    "aiDifficulty": "hard"
+  },
+  {
+    "timestamp": 1773252553332,
+    "date": "2026-03-11T18:09:13.332Z",
+    "totalGames": 270,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "verdant",
+      "infernal",
+      "glacial",
+      "voltborn",
+      "bloodpact",
+      "menders"
+    ],
+    "winRates": {
+      "warriors": 3.7,
+      "summoners": 55.6,
+      "brutes": 37,
+      "spirits": 66.7,
+      "verdant": 33.3,
+      "infernal": 51.9,
+      "glacial": 44.4,
+      "voltborn": 74.1,
+      "bloodpact": 77.8,
+      "menders": 25.9
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 3.7,
+        "asP2": 14.8
+      },
+      "summoners": {
+        "asP1": 55.6,
+        "asP2": 70.4
+      },
+      "brutes": {
+        "asP1": 37,
+        "asP2": 37
+      },
+      "spirits": {
+        "asP1": 66.7,
+        "asP2": 55.6
+      },
+      "verdant": {
+        "asP1": 33.3,
+        "asP2": 63
+      },
+      "infernal": {
+        "asP1": 51.9,
+        "asP2": 55.6
+      },
+      "glacial": {
+        "asP1": 44.4,
+        "asP2": 48.1
+      },
+      "voltborn": {
+        "asP1": 74.1,
+        "asP2": 55.6
+      },
+      "bloodpact": {
+        "asP1": 77.8,
+        "asP2": 70.4
+      },
+      "menders": {
+        "asP1": 25.9,
+        "asP2": 40.7
+      }
+    },
+    "bugCount": 4,
+    "bugs": [
+      {
+        "sig": "Uncaught RangeError: Maximum call stack size exceeded|file:///C:/Users/sande/OneDrive/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B/Beyond%20RTS%20Conquest/public/index.html|5611",
+        "type": "uncaught_error",
+        "message": "Uncaught RangeError: Maximum call stack size exceeded",
+        "severity": "CRITICAL",
+        "matchups": [
+          "infernal vs bloodpact"
+        ]
+      },
+      {
+        "sig": "Maximum call stack size exceeded||0",
+        "type": "pageerror",
+        "message": "Maximum call stack size exceeded",
+        "severity": "CRITICAL",
+        "matchups": [
+          "infernal vs bloodpact"
+        ]
+      },
+      {
+        "sig": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"file:///C:/Users/sande/OneDrive/%D0%94%D0%BE%D0%BA||0",
+        "type": "runner_error",
+        "message": "page.goto: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"file:///C:/Users/sande/OneDrive/%D0%94%D0%BE%D0%BA",
+        "severity": "HIGH",
+        "matchups": [
+          "bloodpact vs brutes",
+          "bloodpact vs verdant",
+          "menders vs glacial",
+          "menders vs voltborn"
+        ]
+      },
+      {
+        "sig": "5 game(s) never ended (timed out)||0",
+        "type": "softlock",
+        "message": "5 game(s) never ended (timed out)",
+        "severity": "HIGH",
+        "matchups": [
+          "infernal vs bloodpact",
+          "bloodpact vs brutes",
+          "bloodpact vs verdant",
+          "menders vs glacial",
+          "menders vs voltborn"
+        ]
+      }
+    ],
+    "softlockCount": 5,
+    "nanCount": 0,
+    "gamesPerMatchup": 3,
+    "aiDifficulty": "hard"
+  }
+]

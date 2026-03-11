@@ -11,12 +11,12 @@
  */
 
 const path = require('path');
-const fs   = require('fs');
+const fs = require('fs');
 const { INSTRUMENTATION_SCRIPT } = require('./instrumentation');
 
 async function runUiAudit(gameHtmlPath, cfg, browser) {
   const fileUrl = `file://${path.resolve(gameHtmlPath)}`;
-  const issues  = [];
+  const issues = [];
   const screenshots = [];
 
   const viewports = [
@@ -27,10 +27,10 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
   for (const vp of viewports) {
     const isMobile = vp.width <= 768;
     const ctx = await browser.newContext({
-      viewport:  { width: vp.width, height: vp.height },
+      viewport: { width: vp.width, height: vp.height },
       deviceScaleFactor: isMobile ? 2 : 1,
       isMobile,
-      hasTouch:  isMobile,
+      hasTouch: isMobile,
     });
     await ctx.addInitScript(INSTRUMENTATION_SCRIPT);
     const page = await ctx.newPage();
@@ -40,7 +40,7 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
       await page.waitForFunction(
         () => typeof window.FACTIONS !== 'undefined',
         { timeout: 10_000 }
-      ).catch(() => {});
+      ).catch(() => { });
 
       // ── Screenshot + audit each screen ────────────────────────────────────
       for (const screenId of (cfg.ui.screens || [])) {
@@ -77,19 +77,37 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           if (!screen) return [{ type: 'missing_screen_element', severity: 'error', message: `#${screenId} not found in DOM` }];
 
           const interactives = Array.from(screen.querySelectorAll('button, a, input, select, [onclick], [tabindex]'));
-          const allText      = Array.from(screen.querySelectorAll('p, span, div, h1, h2, h3, h4, label, .btn'));
+          const allText = Array.from(screen.querySelectorAll('p, span, div, h1, h2, h3, h4, label, .btn'));
+
+          // Build a Set of elements to ignore across all checks.
+          // We test each candidate element against every ignoreSelector and
+          // skip it if it matches any of them.
+          const ignoreSelectors = cfg.ui.ignoreSelectors || [];
+          function _isIgnored(el) {
+            for (const sel of ignoreSelectors) {
+              try { if (el.matches(sel)) return true; } catch (_) { }
+            }
+            return false;
+          }
+          const filteredInteractives = interactives.filter(el => !_isIgnored(el));
+          const filteredText = allText.filter(el => !_isIgnored(el));
+
+          const contrastThreshold = cfg.ui.contrastThreshold ?? 2.5;
 
           // ── Off-screen check ──────────────────────────────────────────────
           if (cfg.ui.checkOffscreen) {
-            for (const el of interactives) {
+            for (const el of filteredInteractives) {
               const r = el.getBoundingClientRect();
               if (r.width === 0 && r.height === 0) continue; // hidden element, skip
+              // Also skip elements with display:none or visibility:hidden
+              const st = window.getComputedStyle(el);
+              if (st.display === 'none' || st.visibility === 'hidden') continue;
               if (r.right < 0 || r.bottom < 0 || r.left > vpW || r.top > vpH) {
                 found.push({
                   type: 'element_offscreen',
                   severity: 'error',
                   screen: screenId,
-                  element: el.tagName + (el.id ? '#'+el.id : '') + (el.className ? '.'+el.className.split(' ')[0] : ''),
+                  element: el.tagName + (el.id ? '#' + el.id : '') + (el.className ? '.' + el.className.split(' ')[0] : ''),
                   bounds: { left: Math.round(r.left), top: Math.round(r.top), right: Math.round(r.right), bottom: Math.round(r.bottom) },
                   viewport: { width: vpW, height: vpH },
                   message: `Interactive element is outside viewport`,
@@ -100,7 +118,7 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
 
           // ── Touch target size check ───────────────────────────────────────
           if (isMobile && cfg.ui.checkTouchTargets) {
-            for (const el of interactives) {
+            for (const el of filteredInteractives) {
               const r = el.getBoundingClientRect();
               if (r.width === 0 && r.height === 0) continue;
               if (r.width < 44 || r.height < 44) {
@@ -108,7 +126,7 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
                   type: 'small_touch_target',
                   severity: 'warning',
                   screen: screenId,
-                  element: el.tagName + (el.id ? '#'+el.id : '') + (el.textContent?.trim().slice(0,30) || ''),
+                  element: el.tagName + (el.id ? '#' + el.id : '') + (el.textContent?.trim().slice(0, 30) || ''),
                   size: { width: Math.round(r.width), height: Math.round(r.height) },
                   message: `Touch target is ${Math.round(r.width)}×${Math.round(r.height)}px — minimum recommended is 44×44px`,
                 });
@@ -118,11 +136,10 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
 
           // ── Overlap check ─────────────────────────────────────────────────
           if (cfg.ui.checkOverlaps) {
-            // Check interactive elements against each other
-            for (let i = 0; i < interactives.length; i++) {
-              for (let j = i + 1; j < interactives.length; j++) {
-                const a = interactives[i].getBoundingClientRect();
-                const b = interactives[j].getBoundingClientRect();
+            for (let i = 0; i < filteredInteractives.length; i++) {
+              for (let j = i + 1; j < filteredInteractives.length; j++) {
+                const a = filteredInteractives[i].getBoundingClientRect();
+                const b = filteredInteractives[j].getBoundingClientRect();
                 if (a.width === 0 || b.width === 0) continue;
                 // Check overlap
                 if (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top) {
@@ -137,8 +154,8 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
                       type: 'element_overlap',
                       severity: 'warning',
                       screen: screenId,
-                      elementA: interactives[i].tagName + (interactives[i].id ? '#'+interactives[i].id : ''),
-                      elementB: interactives[j].tagName + (interactives[j].id ? '#'+interactives[j].id : ''),
+                      elementA: filteredInteractives[i].tagName + (filteredInteractives[i].id ? '#' + filteredInteractives[i].id : ''),
+                      elementB: filteredInteractives[j].tagName + (filteredInteractives[j].id ? '#' + filteredInteractives[j].id : ''),
                       overlapPx: Math.round(overlapArea),
                       message: `Two interactive elements overlap by ${Math.round(overlapArea)}px²`,
                     });
@@ -149,7 +166,7 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           }
 
           // ── Empty/missing text check ──────────────────────────────────────
-          for (const el of interactives) {
+          for (const el of filteredInteractives) {
             const text = el.textContent?.trim();
             const aria = el.getAttribute('aria-label');
             const title = el.getAttribute('title');
@@ -158,7 +175,7 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
                 type: 'empty_button',
                 severity: 'warning',
                 screen: screenId,
-                element: el.tagName + (el.id ? '#'+el.id : ''),
+                element: el.tagName + (el.id ? '#' + el.id : ''),
                 message: `Button has no visible text, aria-label, or title`,
               });
             }
@@ -177,10 +194,10 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
 
           // ── Basic contrast check (text vs background) ─────────────────────
           if (cfg.ui.checkContrast) {
-            for (const el of allText.slice(0, 20)) { // check first 20 to avoid perf issues
+            for (const el of filteredText.slice(0, 40)) { // check first 40 (was 20, safe now that we pre-filter)
               const style = window.getComputedStyle(el);
               const color = style.color;
-              const bg    = style.backgroundColor;
+              const bg = style.backgroundColor;
               // Parse rgb values
               const parseRgb = s => {
                 const m = s.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
@@ -192,24 +209,24 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
               if (b[3] === 0) continue; // transparent bg
               // Relative luminance
               const lum = rgb => {
-                const [r,g,bl] = rgb.map(v => {
+                const [r, g, bl] = rgb.map(v => {
                   v = v / 255;
                   return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
                 });
-                return 0.2126*r + 0.7152*g + 0.0722*bl;
+                return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
               };
               const l1 = lum(c), l2 = lum(b);
-              const contrast = (Math.max(l1,l2) + 0.05) / (Math.min(l1,l2) + 0.05);
+              const contrast = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
               const text = el.textContent?.trim();
-              if (contrast < 3.0 && text && text.length > 2) { // WCAG AA minimum ~4.5
+              if (contrast < contrastThreshold && text && text.length > 2) {
                 found.push({
                   type: 'low_contrast',
                   severity: 'info',
                   screen: screenId,
-                  element: el.tagName + (el.id ? '#'+el.id : ''),
+                  element: el.tagName + (el.id ? '#' + el.id : ''),
                   contrast: Math.round(contrast * 10) / 10,
                   color, bg,
-                  message: `Text contrast ratio ${Math.round(contrast*10)/10}:1 may be too low (WCAG AA: 4.5:1)`,
+                  message: `Text contrast ratio ${Math.round(contrast * 10) / 10}:1 is below threshold of ${contrastThreshold}:1`,
                 });
               }
             }
@@ -232,8 +249,8 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
         message: `UI audit failed for viewport ${vp.label}: ${err.message}`,
       });
     } finally {
-      await page.close().catch(() => {});
-      await ctx.close().catch(() => {});
+      await page.close().catch(() => { });
+      await ctx.close().catch(() => { });
     }
   }
 
@@ -245,7 +262,7 @@ async function _navigateToScreen(page, screenId) {
   return await page.evaluate((id) => {
     // Method 1: use showScreen if it exists
     if (typeof window.showScreen === 'function') {
-      try { window.showScreen(id); return true; } catch (_) {}
+      try { window.showScreen(id); return true; } catch (_) { }
     }
     // Method 2: direct DOM manipulation
     const target = document.getElementById(id);
@@ -264,7 +281,7 @@ async function _navigateToScreen(page, screenId) {
           window.GAME_MODE = 'aivsai';
           window.AI_DIFFICULTY = 'easy';
           window._pendingPlayerSetup = 'aivsai';
-          try { window.initGame(); } catch (_) {}
+          try { window.initGame(); } catch (_) { }
         }
       }
     }
@@ -274,7 +291,7 @@ async function _navigateToScreen(page, screenId) {
         try {
           window.G.players[1].baseHp = 0;
           if (typeof window.checkWin === 'function') window.checkWin();
-        } catch (_) {}
+        } catch (_) { }
       }
     }
     return !!document.getElementById(id);

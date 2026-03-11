@@ -1,0 +1,2577 @@
+{
+  "issues": [
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls.btn",
+      "bounds": {
+        "left": 483,
+        "top": 777,
+        "right": 883,
+        "bottom": 825
+      },
+      "viewport": "laptop",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "element_overlap",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "elementA": "BUTTON#btn-tutorial",
+      "elementB": "BUTTON",
+      "overlapPx": 1492,
+      "message": "Two interactive elements overlap by 1492px²",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "element_overlap",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "elementA": "BUTTON#btn-tutorial",
+      "elementB": "BUTTON#btn-fullscreen-menu",
+      "overlapPx": 3414,
+      "message": "Two interactive elements overlap by 3414px²",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "element_overlap",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "elementA": "BUTTON#btn-controls",
+      "elementB": "BUTTON",
+      "overlapPx": 1060,
+      "message": "Two interactive elements overlap by 1060px²",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "element_overlap",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "elementA": "BUTTON#btn-controls",
+      "elementB": "BUTTON#btn-fullscreen-menu",
+      "overlapPx": 2437,
+      "message": "Two interactive elements overlap by 2437px²",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "tablet-landscape",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON🔊\n        MUTE",
+      "size": {
+        "width": 59,
+        "height": 20
+      },
+      "message": "Touch target is 59×20px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-fullscreen-menu⛶\n        FULLSCREEN",
+      "size": {
+        "width": 118,
+        "height": 25
+      },
+      "message": "Touch target is 118×25px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-faction-back← BACK",
+      "size": {
+        "width": 96,
+        "height": 39
+      },
+      "message": "Touch target is 96×39px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-startSTART BATTLE →",
+      "size": {
+        "width": 154,
+        "height": 39
+      },
+      "message": "Touch target is 154×39px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON🔊 MUTE",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON#btn-ingame-full⛶ FULL",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON☰ MENU",
+      "size": {
+        "width": 60,
+        "height": 23
+      },
+      "message": "Touch target is 60×23px — minimum recommended is 44×44px",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-14",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON🔊\n        MUTE",
+      "size": {
+        "width": 59,
+        "height": 20
+      },
+      "message": "Touch target is 59×20px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-fullscreen-menu⛶\n        FULLSCREEN",
+      "size": {
+        "width": 118,
+        "height": 25
+      },
+      "message": "Touch target is 118×25px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-faction-back← BACK",
+      "size": {
+        "width": 96,
+        "height": 41
+      },
+      "message": "Touch target is 96×41px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-startSTART BATTLE →",
+      "size": {
+        "width": 154,
+        "height": 41
+      },
+      "message": "Touch target is 154×41px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON🔊 MUTE",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON#btn-ingame-full⛶ FULL",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON☰ MENU",
+      "size": {
+        "width": 60,
+        "height": 23
+      },
+      "message": "Touch target is 60×23px — minimum recommended is 44×44px",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "android-xl",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls.btn",
+      "bounds": {
+        "left": 57,
+        "top": 668,
+        "right": 317,
+        "bottom": 710
+      },
+      "viewport": "iphone-se",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play⚔ MULTIPLAYER",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play🌐 ONLINE\n              PLAY",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-sudden-death⚡ SUDDEN DEATH",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-conquest🏴 CONQUEST",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft🃏 DRAFT MODE",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo🤖 SINGLEPLAYER",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament🏆 TOURNAMENT",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai👁 AI VS AI",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial📖 TUTORIAL",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls🎮 CONTROLS & KEY BINDS",
+      "size": {
+        "width": 260,
+        "height": 42
+      },
+      "message": "Touch target is 260×42px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON🔊\n        MUTE",
+      "size": {
+        "width": 59,
+        "height": 20
+      },
+      "message": "Touch target is 59×20px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-fullscreen-menu⛶\n        FULLSCREEN",
+      "size": {
+        "width": 118,
+        "height": 25
+      },
+      "message": "Touch target is 118×25px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "element_overlap",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "elementA": "BUTTON#btn-tutorial",
+      "elementB": "BUTTON",
+      "overlapPx": 443,
+      "message": "Two interactive elements overlap by 443px²",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "element_overlap",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "elementA": "BUTTON#btn-tutorial",
+      "elementB": "BUTTON#btn-fullscreen-menu",
+      "overlapPx": 1471,
+      "message": "Two interactive elements overlap by 1471px²",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-faction-back← BACK",
+      "size": {
+        "width": 96,
+        "height": 35
+      },
+      "message": "Touch target is 96×35px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-startSTART BATTLE →",
+      "size": {
+        "width": 154,
+        "height": 35
+      },
+      "message": "Touch target is 154×35px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON🔊 MUTE",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON#btn-ingame-full⛶ FULL",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON☰ MENU",
+      "size": {
+        "width": 60,
+        "height": 23
+      },
+      "message": "Touch target is 60×23px — minimum recommended is 44×44px",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "iphone-se",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON🔊\n        MUTE",
+      "size": {
+        "width": 59,
+        "height": 20
+      },
+      "message": "Touch target is 59×20px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-fullscreen-menu⛶\n        FULLSCREEN",
+      "size": {
+        "width": 118,
+        "height": 25
+      },
+      "message": "Touch target is 118×25px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-vs",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#mode-solo",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "empty_button",
+      "severity": "warning",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-rebind",
+      "message": "Button has no visible text, aria-label, or title",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-play",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-online-play",
+      "contrast": 2.1,
+      "color": "rgb(116, 185, 255)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 2.1:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-draft",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-solo",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tournament",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-aivsai",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-tutorial",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-faction-back← BACK",
+      "size": {
+        "width": 102,
+        "height": 44
+      },
+      "message": "Touch target is 102×44px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-faction",
+      "element": "BUTTON#btn-startSTART BATTLE →",
+      "size": {
+        "width": 160,
+        "height": 44
+      },
+      "message": "Touch target is 160×44px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV#faction-hint-p1",
+      "contrast": 1,
+      "color": "rgb(36, 113, 163)",
+      "bg": "rgba(36, 113, 163, 0.08)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1.9,
+      "color": "rgb(162, 155, 254)",
+      "bg": "rgba(155, 89, 182, 0.1)",
+      "message": "Text contrast ratio 1.9:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.2,
+      "color": "rgb(243, 156, 18)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.2:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "SPAN",
+      "contrast": 2.4,
+      "color": "rgb(26, 188, 156)",
+      "bg": "rgba(255, 255, 255, 0.06)",
+      "message": "Text contrast ratio 2.4:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON🔊 MUTE",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON#btn-ingame-full⛶ FULL",
+      "size": {
+        "width": 60,
+        "height": 19
+      },
+      "message": "Touch target is 60×19px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "small_touch_target",
+      "severity": "warning",
+      "screen": "sc-game",
+      "element": "BUTTON☰ MENU",
+      "size": {
+        "width": 60,
+        "height": 23
+      },
+      "message": "Touch target is 60×23px — minimum recommended is 44×44px",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.1)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    },
+    {
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu",
+      "contrast": 1.3,
+      "color": "rgb(232, 224, 208)",
+      "bg": "rgba(255, 255, 255, 0.04)",
+      "message": "Text contrast ratio 1.3:1 is below threshold of 2.5:1",
+      "viewport": "ipad-portrait",
+      "viewportSize": "768×1024"
+    }
+  ],
+  "screenshots": [
+    {
+      "screen": "sc-menu",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-1080p.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-1080p.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-1080p.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-1080p.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "screen": "sc-menu",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-laptop.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-laptop.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-laptop.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-laptop.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "screen": "sc-menu",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-tablet-landscape.png",
+      "width": 1024,
+      "height": 768
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-tablet-landscape.png",
+      "width": 1024,
+      "height": 768
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-tablet-landscape.png",
+      "width": 1024,
+      "height": 768
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-tablet-landscape.png",
+      "width": 1024,
+      "height": 768
+    },
+    {
+      "screen": "sc-menu",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-iphone-14.png",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-iphone-14.png",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-iphone-14.png",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-iphone-14.png",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "screen": "sc-menu",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-android-xl.png",
+      "width": 412,
+      "height": 915
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-android-xl.png",
+      "width": 412,
+      "height": 915
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-android-xl.png",
+      "width": 412,
+      "height": 915
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-android-xl.png",
+      "width": 412,
+      "height": 915
+    },
+    {
+      "screen": "sc-menu",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-iphone-se.png",
+      "width": 375,
+      "height": 667
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-iphone-se.png",
+      "width": 375,
+      "height": 667
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-iphone-se.png",
+      "width": 375,
+      "height": 667
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-iphone-se.png",
+      "width": 375,
+      "height": 667
+    },
+    {
+      "screen": "sc-menu",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-menu-ipad-portrait.png",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "screen": "sc-faction",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-faction-ipad-portrait.png",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "screen": "sc-game",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-ipad-portrait.png",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "screen": "sc-gameover",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-ipad-portrait.png",
+      "width": 768,
+      "height": 1024
+    }
+  ]
+}
