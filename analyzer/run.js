@@ -36,6 +36,7 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { buildSnapshot, saveToHistory, computeDiff, formatDiffSummary } = require('./run-history');
+const { buildGameContext } = require('./game-context');
 const { generateFix, applyDiff } = require('./auto-fixer');
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
@@ -147,6 +148,20 @@ async function main() {
   log(`  Discord:  ${cfg.discord.webhookUrl ? '✅' : '❌ not configured'}`);
   log(`  Claude:   ${hasApiKey ? '✅ API key set' : '❌ no API key (analysis skipped)'}`);
   log('');
+
+  // ── Phase 0: Game context — extracted ONCE, injected into all Claude calls ─
+  // Reads live FACTIONS array + key mechanic code from index.html so every
+  // analyzer has complete knowledge of the game, not just summary statistics.
+  let gameContext = null;
+  if (hasApiKey) {
+    log('  ── Phase 0: Building game context ─────────────────────────────');
+    try {
+      gameContext = await buildGameContext(cfg);
+    } catch (err) {
+      log(`  ⚠️  Game context build failed (analysis will use reduced context): ${err.message}`);
+    }
+    log('');
+  }
 
   if (cfg.output.saveScreenshots) {
     fs.mkdirSync(path.resolve(cfg.output.screenshotsDir || './screenshots'), { recursive: true });
@@ -280,7 +295,7 @@ async function main() {
     } else {
       log(`  🤖 Diagnosing bugs with Claude (single batch call)...`);
       const t1 = Date.now();
-      diagnosedBugs = await analyzeBugs(allErrors || [], allNaNs || [], allTimedOut || [], cfg);
+      diagnosedBugs = await analyzeBugs(allErrors || [], allNaNs || [], allTimedOut || [], cfg, gameContext);
       log(`  ✅ ${diagnosedBugs.length} unique bugs diagnosed in ${((Date.now() - t1) / 1000).toFixed(1)}s`);
       // #run-focus: narrow to matching bug types so you can iterate on one class at a time
       if (focusArg) {
@@ -326,7 +341,7 @@ async function main() {
     if (hasApiKey && cfg.run.balance) {
       log('  🤖 Generating balance analysis...');
       try {
-        balanceAnalysis = await analyzeBalance(rawData, aggStats, rawData.qa?.mechanicUsage, cfg);
+        balanceAnalysis = await analyzeBalance(rawData, aggStats, rawData.qa?.mechanicUsage, cfg, gameContext);
         log('  ✅ Balance analysis done');
       } catch (err) {
         log(`  ⚠️  Balance analysis failed: ${err.message}`);
@@ -393,7 +408,7 @@ async function main() {
       log('  🤖 Generating feature suggestions with Claude...');
     }
     try {
-      featureAdvice = await generateFeatureAdvice(rawData, aggStats, anomalyReport, onlineReport, uiAuditResult, diagnosedBugs, cfg);
+      featureAdvice = await generateFeatureAdvice(rawData, aggStats, anomalyReport, onlineReport, uiAuditResult, diagnosedBugs, cfg, gameContext);
       log(`  ✅ ${featureAdvice.summary}`);
     } catch (err) {
       log(`  ⚠️  Feature advisor failed: ${err.message}`);

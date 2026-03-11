@@ -503,7 +503,7 @@
       font-size: var(--fs-md);
       letter-spacing: .12em;
       padding: clamp(8px, 1.2vh, 16px) clamp(20px, 3vw, 48px);
-      background: rgba(255, 255, 255, .04);
+      background: #0e0e1b;
       border: 1.5px solid var(--border);
       color: var(--text);
       cursor: pointer;
@@ -525,7 +525,7 @@
     .btn.primary {
       border-color: var(--gold);
       color: var(--gold);
-      background: rgba(212, 168, 67, .1);
+      background: #13120a;
     }
 
     .btn.primary:hover {
@@ -674,13 +674,13 @@
     .p1l {
       color: var(--p1);
       border: 1px solid var(--p1d);
-      background: rgba(36, 113, 163, .08);
+      background: #090d14;
     }
 
     .p2l {
       color: var(--p2);
       border: 1px solid var(--p2d);
-      background: rgba(192, 57, 43, .08);
+      background: #110a09;
     }
 
     .faction-scroll-wrap {
@@ -832,15 +832,14 @@
 
     .fcard-tag {
       font-size: var(--fs-sm);
-      color: var(--text);
-      opacity: .75;
+      color: rgba(232, 224, 208, 0.78);
     }
 
     .fcard-passive {
       font-size: var(--fs-sm);
       color: #a29bfe;
       border: 1px solid #6c3483;
-      background: rgba(155, 89, 182, .1);
+      background: #0e0b16;
       border-radius: 3px;
       padding: 4px 8px;
       line-height: 1.5;
@@ -856,7 +855,7 @@
       font-size: var(--fs-xs);
       padding: 2px 5px;
       border-radius: 2px;
-      background: rgba(255, 255, 255, .06);
+      background: #0f0f1c;
       border: 1px solid var(--border);
       font-family: 'Rajdhani', sans-serif;
     }
@@ -898,8 +897,7 @@
 
     .fcard-matchup {
       font-size: var(--fs-xs);
-      color: var(--gold);
-      opacity: .75;
+      color: rgba(212, 168, 67, 0.78);
       margin-top: 2px;
     }
 
@@ -4813,6 +4811,55 @@
       text-align: center;
       margin-bottom: 6px;
     }
+
+    /* ── UI audit fixes ──────────────────────────────────────────────────────
+     * 1. Menu overlap + offscreen: increase bottom padding so abs-positioned
+     *    footer never covers the last menu buttons. Use a taller value on
+     *    short viewports where the menu button list approaches the footer.
+     * 2. Mobile touch targets: ingame util buttons, menu footer buttons, and
+     *    faction nav buttons are smaller than 44×44px on mobile. Min-height
+     *    fixes them without changing desktop layout.
+     * ─────────────────────────────────────────────────────────────────────── */
+
+    /* Extra bottom padding on viewports where footer would overlap buttons */
+    @media (max-height: 820px) {
+      .menu-content {
+        padding-bottom: clamp(72px, 11vh, 100px);
+      }
+    }
+
+    /* Mobile touch targets — ingame HUD util buttons */
+    @media (max-width: 768px) {
+      .ingame-util-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Menu footer buttons (MUTE, FULLSCREEN) */
+      #menu-footer .btn,
+      #menu-footer button {
+        min-height: 44px;
+        padding: 10px 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Faction nav buttons (← BACK, START BATTLE →) */
+      #btn-faction-back,
+      #btn-start {
+        min-height: 44px;
+      }
+
+      /* Main menu buttons — ensure 44px height on small phone (375×667) */
+      .menu-btns .btn {
+        min-height: 44px;
+      }
+    }
   </style>
 </head>
 
@@ -4862,17 +4909,15 @@
           </div>
         </div>
 
-        <div style="display:none">
-          <button id="mode-vs"></button><button id="mode-solo"></button>
-          <button id="btn-rebind"></button>
+        <div style="display:none" aria-hidden="true">
+          <button id="mode-vs" aria-hidden="true" tabindex="-1"></button><button id="mode-solo" aria-hidden="true"
+            tabindex="-1"></button>
+          <button id="btn-rebind" aria-hidden="true" tabindex="-1"></button>
         </div>
       </div>
-      <div
-        style="margin-top:14px;font-family:Rajdhani,sans-serif;font-size:.65rem;color:rgba(212,168,67,.55);letter-spacing:.08em;text-align:center;line-height:1.8;">
-        P1: WASD + Q TO SPAWN &nbsp;·&nbsp; P2: ↑↓←→ + ENTER &nbsp;·&nbsp; KEYBOARD ONLY</div>
     </div>
     <div id="menu-footer"
-      style="position:absolute;bottom:clamp(6px,1.2vh,14px);left:0;right:0;display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.6vw,18px);z-index:3;flex-wrap:wrap;pointer-events:auto;">
+      style="position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.6vw,18px);z-index:3;flex-wrap:wrap;pointer-events:auto;padding:clamp(8px,1.2vh,14px) 12px;background:linear-gradient(transparent,rgba(7,7,15,.92) 40%);backdrop-filter:blur(2px);">
       <button class="btn mute-btn" onclick="toggleMute()"
         style="font-size:clamp(.52rem,.78vw,.68rem);padding:3px 10px;letter-spacing:.1em;background:transparent;">🔊
         MUTE</button>
@@ -6740,6 +6785,7 @@
         queuePopupForP2, queueLastStandForP2,
       };
     })();
+    window.NET = NET; // expose for QA tester and debug console
 
     // Wire online lobby buttons + mode selectors
     document.addEventListener('DOMContentLoaded', () => {
@@ -7415,17 +7461,18 @@
     const FACTIONS = [
       {
         id: 'warriors', name: 'Warriors', icon: '⚔️', tagline: 'Balanced veterans. Strong melee, capable archers, deadly aerial.',
-        passive: 'Veterans: melee units gain +8% DMG per 5 seconds alive (max 2 stacks). Soldiers have Charge Strike — +80% damage on first hit after 1.5s of marching.',
-        pros: ['Well-rounded roster with no hard weaknesses — good for beginners', 'Gryphon Rider excels at shredding aerial and high-HP targets', 'Shieldwall Knight has the highest base HP of any standard melee unit'],
+        passive: 'Veterans: melee units gain +8% DMG per 5 seconds alive (max 2 stacks). Charge Strike: +80% DMG on first hit after 1.5s marching. Iron Resolve: units below 30% HP gain 15% damage resistance.',
+        pros: ['Well-rounded roster with no hard weaknesses — good for beginners', 'Gryphon Rider excels at shredding aerial and high-HP targets', 'Iron Resolve passive keeps wounded units alive longer, rewarding sustained pressure'],
         cons: ['No special economy mechanics — relies on pure army efficiency', 'Gryphon is expensive and a priority target — losing it hurts badly', 'No healing or revival — fallen units stay dead'],
         matchup: 'Best against: most factions | Weak to: Summoner shade swarms',
+        ironResolve: true,
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
-          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 4, bodies: 1, hp: 88, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true, armor: 2 },
+          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 4, bodies: 1, hp: 100, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true, armor: 2 },
           { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 5, bodies: 1, hp: 50, speed: 65, dmg: 17, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.', armor: 2 },
-          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 10, bodies: 2, hp: 175, speed: 50, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage.', armor: 2 },
-          { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 10, bodies: 3, hp: 113, speed: 85, dmg: 26, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3, armor: 2 },
+          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 9, bodies: 2, hp: 175, speed: 50, dmg: 30, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 30% HP.', armor: 2 },
+          { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 9, bodies: 3, hp: 113, speed: 85, dmg: 29, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3, armor: 2 },
         ],
         extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 200, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
         guardUnit: 'w_guard',
@@ -7544,7 +7591,7 @@
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 2, hp: 50, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
           { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 3, hp: 34, speed: 62, dmg: 18, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
           { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 11, bodies: 3, hp: 54, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 60 },
-          { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 6, hp: 117, speed: 44, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 8 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 8 },
+          { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 6, hp: 117, speed: 44, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 5 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 5 },
         ],
         extraUnits: [{ id: 'if_guard', name: 'Inferno Lord', icon: '🔥', souls: 0, bodies: 0, hp: 210, speed: 55, dmg: 40, range: 34, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#ff4500', type: 'mel', desc: 'Royal Guard. Hellfire on every spawn while active. Despawns 30s.', isSpawned: true, _hellfire: true }],
         guardUnit: 'if_guard',
@@ -7603,8 +7650,8 @@
 
       {
         id: 'bloodpact', name: 'Bloodpact', icon: '🩸', tagline: 'Blood sacrifice. Spend HP to grow stronger. Kill or be killed.',
-        passive: 'Blood Tithe: each unit spawned refunds 2 souls. Blood Pool: unit deaths leave slowing puddles for 8 seconds.',
-        pros: ['Blood Tithe passive refunds 2 souls per spawn — effective 2 soul discount on everything', 'Dire Wolf grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 30% HP, doubling attack rate when near death'],
+        passive: 'Blood Tithe: each unit spawned refunds 1 soul. Blood Pool: unit deaths leave slowing puddles for 8 seconds.',
+        pros: ['Blood Tithe passive refunds 1 soul per spawn — effective discount on everything', 'Dire Wolf grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 30% HP, doubling attack rate when near death'],
         cons: ['Wolfborn melee unit must kill to "grow" — weak until it has kills', 'No ranged options beyond the Plague Archer — limited damage at range', 'Army power depends heavily on kills — losing fights means losing your edge'],
         matchup: 'Best against: equal or smaller armies | Weak to: mass ranged (Warriors, Spirits)',
         startSouls: 20, startBodies: 10,
@@ -7618,7 +7665,7 @@
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
         guardUnit: 'bp_guard',
         upgrades: [
-          { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 33, bodies: 5 }, desc: 'Blood Tithe refund increases to 5 souls per spawn. Also refunds 1 body.', effect: 'blood_tithe', value: 5 },
+          { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 33, bodies: 5 }, desc: 'Blood Tithe refund increases to 4 souls per spawn. Also refunds 1 body.', effect: 'blood_tithe', value: 4 },
           { id: 'pack_alpha', name: 'Pack Alpha', cost: { souls: 39, bodies: 6 }, desc: 'Wolfborn grow-on-kill becomes +4 DMG per kill and max stacks increase from 4 to 6.', effect: 'wolf_grow', value: 6, newMax: 7 },
           { id: 'death_rage', name: 'Death Rage', cost: { souls: 45, bodies: 6 }, desc: 'Berserk threshold raises to 60% HP and Berserk now also grants +20% DMG.', effect: 'berserk_thresh', value: 0.6 },
         ]
@@ -9187,7 +9234,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.55,
-            bloodTitheRefund: 2, skyBountyAmt: 6,
+            bloodTitheRefund: 1, skyBountyAmt: 6,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -9208,7 +9255,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.55,
-            bloodTitheRefund: 2, skyBountyAmt: 6,
+            bloodTitheRefund: 1, skyBountyAmt: 6,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -9893,7 +9940,7 @@
       if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
       // Blood Tithe refund
       if (G.factions[pid - 1].id === 'bloodpact') {
-        const refund = p.bloodTitheRefund || 2;
+        const refund = p.bloodTitheRefund || 1;
         p.souls += refund;
         showPopup(p.baseX, G.groundY - 85, `🩸 +${refund}💀 TITHE`, '#c0392b', pid);
       }
@@ -10444,8 +10491,8 @@
 
       // aerialBonus on an aerial attacker already accounts for the aerial-vs-aerial baseline
       if (attacker.def.aerialBonus && target.def.aerial && attacker.def.aerial) {
-        // Already got 1.4x above; replace it with aerialBonus (divide out, multiply in)
-        dmg = dmg / 1.4 * attacker.def.aerialBonus;
+        // Already got 1.3x above; replace it with aerialBonus (divide out, multiply in)
+        dmg = dmg / 1.3 * attacker.def.aerialBonus;
       } else if (attacker.def.aerialBonus && target.def.aerial) {
         dmg *= attacker.def.aerialBonus;
       }
@@ -10520,6 +10567,10 @@
         if (attacker.def.type === 'mel' && G.factions[target.player - 1] && G.factions[target.player - 1].id === 'spirits') {
           dmg *= 0.85;
         }
+        // Warriors Iron Resolve — 15% resistance when below 30% HP
+        if (G.factions[target.player - 1] && G.factions[target.player - 1].ironResolve && target.hp < target.maxHp * 0.30) {
+          dmg *= 0.85;
+        }
         // Melee direct
         let actualDmg = dmg;
         if (target._ironwalled > 0) actualDmg *= 0.6;
@@ -10585,8 +10636,9 @@
     }
 
     function handleDeath(u, killer) {
-      if (u.hp > 0) return;
+      if (u.hp > 0 || u._dying) return;
       if (u.spawnProtectionTimer > 0) { u.hp = 1; return; } // spawn protect
+      u._dying = true;
       u.hp = 0; SFX.death();
       // ── Rogue unit special death ──
       if (u.isRogue) {
@@ -10715,7 +10767,12 @@
         if (_pollenAllies.length > 0) showPopup(u.x, u.y - 50, '🌸 POLLEN BURST!', '#a8ff78', u.player);
       }
       // Bloodpact grow on kill
-      if (killer && killer.def.growOnKill) killer.def.dmg += killer.def.growOnKill;
+      if (killer && killer.def.growOnKill) {
+        killer._growStacks = (killer._growStacks || 0) + 1;
+        if (!killer.def.growMaxStacks || killer._growStacks <= killer.def.growMaxStacks) {
+          killer.def.dmg += killer.def.growOnKill;
+        }
+      }
       if (killer) killer.killCount = (killer.killCount || 0) + 1;
       // Veteran milestone: 5 kills earns a permanent dmg bonus + star marker
       if (killer && killer.killCount === 5 && !killer.def.isSpawned) {
@@ -11561,6 +11618,8 @@
         if (Math.sqrt(dx * dx + dy * dy) < (t.def.radius || 10) + 6) {
           let dmg = p.dmg;
           if (t._ironwalled > 0) dmg *= 0.6;
+          // Warriors Iron Resolve — 15% resistance when below 30% HP
+          if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * 0.30) dmg *= 0.85;
           if (t.spawnProtectionTimer > 0) dmg = 0;
           else { dmg = Math.max(1, dmg - (t.def.armor || 0)); t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg; }
           t.hitFlash = 1; SFX.hit();
@@ -12134,7 +12193,7 @@
     }
 
     function updateSiege(dt) {
-      const sec = (Date.now() - G.gameStart) / 1000;
+      const sec = G.elapsed;
       const siEl = document.getElementById('siege-indicator');
       const _isTourney = GAME_MODE === 'tournament';
       const _decayStart = _isTourney ? 180 : 240;  // tournament: 3min, normal: 4min
@@ -12159,7 +12218,12 @@
           } else {
             rate = elapsed > 90 ? 0.05 : 0.025;
           }
-          G.players.forEach(p => { if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt); });
+          G.players.forEach(p => {
+            if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt);
+            // After 15 minutes, lift the floor entirely so decay can terminate the game.
+            // This prevents the rare infinite-game case where both bases stall at 1 HP.
+            else if (sec > 900) p.baseHp = Math.max(0, p.baseHp - rate * dt * 4);
+          });
           siEl.style.opacity = '1';
           const urgency = elapsed > 120 ? '🔥 TOURNAMENT PRESSURE — ACCELERATING' : elapsed > 60 ? '⏳ TOURNAMENT PRESSURE — ESCALATING' : '⏳ STALEMATE — BASES DECAYING';
           siEl.textContent = _isTourney ? urgency : (elapsed > 90 ? '⏳ STALEMATE — DECAY ACCELERATING' : '⏳ STALEMATE — BASES DECAYING');
@@ -15510,17 +15574,18 @@
       const yes = document.getElementById('btn-newplayer-yes');
       const no = document.getElementById('btn-newplayer-no');
       if (!overlay || !yes || !no) return;
-      const seen = localStorage.getItem('brc_seen_welcome');
+      let seen = false;
+      try { seen = !!localStorage.getItem('brc_seen_welcome'); } catch (_) { seen = false; }
       if (!seen) {
         setTimeout(() => overlay.classList.add('show'), 800); // slight delay so menu renders first
       }
       yes.addEventListener('click', () => {
-        localStorage.setItem('brc_seen_welcome', '1');
+        try { localStorage.setItem('brc_seen_welcome', '1'); } catch (_) { }
         overlay.classList.remove('show');
         document.getElementById('btn-tutorial') && document.getElementById('btn-tutorial').click();
       });
       no.addEventListener('click', () => {
-        localStorage.setItem('brc_seen_welcome', '1');
+        try { localStorage.setItem('brc_seen_welcome', '1'); } catch (_) { }
         overlay.classList.remove('show');
       });
     })();
