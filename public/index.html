@@ -329,11 +329,11 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 80px;
+      height: 106px;
       display: flex;
       z-index: 200;
-      background: rgba(0, 0, 0, .75);
-      border-top: 1px solid rgba(255, 255, 255, .12);
+      background: rgba(0, 0, 0, .88);
+      border-top: 2px solid rgba(255, 255, 255, .15);
       pointer-events: all;
     }
 
@@ -341,58 +341,116 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      padding: 5px;
+      gap: 0;
+      padding: 0;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .touch-player-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-align: center;
+      padding: 3px 0 1px;
+      opacity: .55;
+      text-transform: uppercase;
+    }
+
+    #touch-p1 .touch-player-label {
+      color: #5dade2;
+      border-right: 1px solid rgba(255, 255, 255, .08);
+    }
+
+    #touch-p2 .touch-player-label {
+      color: #e74c3c;
+    }
+
+    .touch-btn-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 5px 6px 8px;
       align-items: center;
       justify-content: center;
     }
 
-    #touch-p1 {
+    #touch-p1 .touch-btn-area {
       border-right: 1px solid rgba(255, 255, 255, .1);
     }
 
     .touch-row {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       align-items: center;
     }
 
     .touch-btn {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.65rem, 2.8vw, .9rem);
+      font-size: clamp(.75rem, 3vw, .95rem);
       font-weight: 700;
       letter-spacing: .04em;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid rgba(255, 255, 255, .2);
-      color: var(--text);
-      border-radius: 5px;
+      background: rgba(255, 255, 255, .1);
+      border: 1.5px solid rgba(255, 255, 255, .25);
+      color: #ddd;
+      border-radius: 7px;
       padding: 0;
-      width: clamp(40px, 10vw, 60px);
-      height: 26px;
+      width: clamp(48px, 12vw, 70px);
+      height: 38px;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
       user-select: none;
+      transition: background .07s, border-color .07s, transform .07s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .touch-btn:active {
-      background: rgba(255, 255, 255, .22);
+      background: rgba(255, 255, 255, .32);
+      border-color: rgba(255, 255, 255, .65);
+      transform: scale(.94);
     }
 
+    /* SPAWN button — big, coloured, unmissable */
     .touch-btn.touch-act {
-      background: rgba(231, 76, 60, .25);
-      border-color: rgba(231, 76, 60, .5);
+      background: rgba(192, 57, 43, .28);
+      border-color: rgba(192, 57, 43, .75);
+      border-width: 2px;
       color: #ff8a80;
-      min-width: clamp(50px, 13vw, 75px);
+      min-width: clamp(64px, 16vw, 96px);
+      font-size: clamp(.88rem, 3.8vw, 1.1rem);
+      box-shadow: 0 0 12px rgba(192, 57, 43, .35);
+    }
+
+    .touch-btn.touch-act:active {
+      background: rgba(192, 57, 43, .65);
+      box-shadow: 0 0 20px rgba(192, 57, 43, .6);
+    }
+
+    /* P1 side — blue tint for SPAWN */
+    #touch-p1 .touch-btn.touch-act {
+      background: rgba(36, 113, 163, .28);
+      border-color: rgba(36, 113, 163, .75);
+      color: #7ec8f0;
+      box-shadow: 0 0 12px rgba(36, 113, 163, .35);
+    }
+
+    #touch-p1 .touch-btn.touch-act:active {
+      background: rgba(36, 113, 163, .65);
+      box-shadow: 0 0 20px rgba(36, 113, 163, .6);
     }
 
     .touch-btn.touch-sm {
-      font-size: clamp(.5rem, 2vw, .68rem);
-      height: 20px;
-      width: clamp(34px, 9vw, 52px);
+      font-size: clamp(.65rem, 2.5vw, .8rem);
+      height: 30px;
+      width: clamp(44px, 11vw, 62px);
     }
 
-    /* On large screens hide the ◀ ▶ nav arrows — keyboard handles navigation */
+    /* On large desktop — hide arrow nav buttons (keyboard handles it) */
     @media (min-width: 1400px) and (min-height: 800px) and (hover: hover) and (pointer: fine) {
 
       #tb-p1-left,
@@ -403,36 +461,60 @@
       }
     }
 
-    /* On portrait phones, stack the two player touch zones vertically */
+    /* Portrait phones — stack players top/bottom */
     @media (max-width: 600px) and (orientation: portrait),
     (max-width: 480px) {
       #touch-controls {
-        height: 100px;
+        height: 130px;
         flex-direction: column;
       }
 
       .touch-half {
         flex-direction: row;
-        gap: 6px;
-        padding: 4px 8px;
+        align-items: stretch;
+      }
+
+      .touch-player-label {
+        writing-mode: vertical-rl;
+        padding: 0 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .55rem;
+        border: none !important;
+        border-right: 1px solid rgba(255, 255, 255, .08) !important;
+        min-width: 20px;
       }
 
       #touch-p1 {
         border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, .1);
+        border-bottom: 1px solid rgba(255, 255, 255, .12);
+      }
+
+      .touch-btn-area {
+        flex-direction: row;
+        flex: 1;
+        padding: 4px 8px;
+        gap: 4px;
+        border: none !important;
       }
 
       .touch-btn {
-        height: 30px;
+        height: 34px;
+        width: clamp(44px, 13vw, 66px);
+        font-size: clamp(.72rem, 3.5vw, .9rem);
+      }
+
+      .touch-btn.touch-act {
+        min-width: clamp(56px, 16vw, 80px);
       }
 
       .touch-btn.touch-sm {
-        height: 24px;
+        height: 28px;
+        width: clamp(40px, 11vw, 58px);
+        font-size: clamp(.6rem, 2.8vw, .75rem);
       }
     }
-
-    /* When touch controls are showing, the HUD needs to shrink to fit above them */
-    /* touch controls are fixed-position, no layout shift needed for sc-game */
 
     * {
       margin: 0;
@@ -2651,36 +2733,51 @@
     }
 
     .ucard.sel {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
 
     #p1-hud .ucard.sel {
       border-color: var(--p1);
-      background: rgba(36, 113, 163, .18);
-      box-shadow: 0 0 16px var(--p1g);
+      border-width: 2.5px;
+      background: rgba(36, 113, 163, .25);
+      box-shadow: 0 0 18px var(--p1g), inset 0 0 8px rgba(36, 113, 163, .15);
     }
 
     #p2-hud .ucard.sel {
       border-color: var(--p2);
-      background: rgba(192, 57, 43, .18);
-      box-shadow: 0 0 16px var(--p2g);
+      border-width: 2.5px;
+      background: rgba(192, 57, 43, .25);
+      box-shadow: 0 0 18px var(--p2g), inset 0 0 8px rgba(192, 57, 43, .15);
     }
 
+    /* Top + bottom colour bar so selection is visible even when card is small */
     .ucard.sel::after {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 3px;
       border-radius: 5px 5px 0 0;
     }
 
-    #p1-hud .ucard.sel::after {
+    .ucard.sel::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 0 0 5px 5px;
+    }
+
+    #p1-hud .ucard.sel::after,
+    #p1-hud .ucard.sel::before {
       background: var(--p1);
     }
 
-    #p2-hud .ucard.sel::after {
+    #p2-hud .ucard.sel::after,
+    #p2-hud .ucard.sel::before {
       background: var(--p2);
     }
 
@@ -3815,6 +3912,7 @@
       border-color: rgba(255, 255, 255, .25) !important;
       padding: 4px 10px !important;
     }
+
     .ingame-menu-btn:hover {
       color: var(--gold) !important;
       border-color: var(--gold) !important;
@@ -5313,13 +5411,16 @@
         title="Toggle Fullscreen (` — rebindable in Controls)">⛶ FULL</button><button
         class="ingame-util-btn ingame-menu-btn" onclick="_openIngameMenu()" title="Menu">☰ MENU</button></div>
     <!-- In-game menu overlay (no pause) -->
-    <div id="ingame-menu-overlay" onclick="if(event.target===this)_closeIngameMenu()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;">
-      <div style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
+    <div id="ingame-menu-overlay" onclick="if(event.target===this)_closeIngameMenu()"
+      style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;">
+      <div
+        style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
         <div style="font-size:1.1rem;letter-spacing:.12em;color:#e8e0d0;margin-bottom:4px;">MENU</div>
         <button class="btn mute-btn" onclick="toggleMute()" style="width:100%">🔊 MUTE</button>
         <button class="btn" onclick="_goFullscreen();_closeIngameMenu()" style="width:100%">⛶ FULLSCREEN</button>
         <button class="btn" id="ingame-menu-ragequit" onclick="_closeIngameMenu();triggerRagequit()"
-          style="width:100%;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border-color:#8B0000;">☠ QUIT MATCH</button>
+          style="width:100%;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border-color:#8B0000;">☠
+          QUIT MATCH</button>
         <button class="btn" onclick="_closeIngameMenu()" style="width:100%;margin-top:4px;">✕ CLOSE</button>
       </div>
     </div>
@@ -5441,27 +5542,33 @@
   <!-- TOUCH CONTROLS (mobile only — hidden on desktop) -->
   <div id="touch-controls" style="display:none">
     <div class="touch-half" id="touch-p1">
-      <div class="touch-row">
-        <button class="touch-btn" id="tb-p1-left">◀</button>
-        <button class="touch-btn touch-act" id="tb-p1-spawn">SPAWN</button>
-        <button class="touch-btn" id="tb-p1-right">▶</button>
-      </div>
-      <div class="touch-row">
-        <button class="touch-btn touch-sm" id="tb-p1-tabup">↑TAB</button>
-        <button class="touch-btn touch-sm" id="tb-p1-tabdn">↓TAB</button>
-        <button class="touch-btn touch-sm" id="tb-p1-mid">⛏MID</button>
+      <div class="touch-player-label">🔵 PLAYER 1</div>
+      <div class="touch-btn-area">
+        <div class="touch-row">
+          <button class="touch-btn" id="tb-p1-left">◀</button>
+          <button class="touch-btn touch-act" id="tb-p1-spawn">SPAWN</button>
+          <button class="touch-btn" id="tb-p1-right">▶</button>
+        </div>
+        <div class="touch-row">
+          <button class="touch-btn touch-sm" id="tb-p1-tabup">↑TAB</button>
+          <button class="touch-btn touch-sm" id="tb-p1-tabdn">↓TAB</button>
+          <button class="touch-btn touch-sm" id="tb-p1-mid">⛏ MID</button>
+        </div>
       </div>
     </div>
     <div class="touch-half" id="touch-p2">
-      <div class="touch-row">
-        <button class="touch-btn" id="tb-p2-left">◀</button>
-        <button class="touch-btn touch-act" id="tb-p2-spawn">SPAWN</button>
-        <button class="touch-btn" id="tb-p2-right">▶</button>
-      </div>
-      <div class="touch-row">
-        <button class="touch-btn touch-sm" id="tb-p2-tabup">↑TAB</button>
-        <button class="touch-btn touch-sm" id="tb-p2-tabdn">↓TAB</button>
-        <button class="touch-btn touch-sm" id="tb-p2-mid">⛏MID</button>
+      <div class="touch-player-label">🔴 PLAYER 2</div>
+      <div class="touch-btn-area">
+        <div class="touch-row">
+          <button class="touch-btn" id="tb-p2-left">◀</button>
+          <button class="touch-btn touch-act" id="tb-p2-spawn">SPAWN</button>
+          <button class="touch-btn" id="tb-p2-right">▶</button>
+        </div>
+        <div class="touch-row">
+          <button class="touch-btn touch-sm" id="tb-p2-tabup">↑TAB</button>
+          <button class="touch-btn touch-sm" id="tb-p2-tabdn">↓TAB</button>
+          <button class="touch-btn touch-sm" id="tb-p2-mid">⛏ MID</button>
+        </div>
       </div>
     </div>
   </div>
@@ -5814,6 +5921,7 @@
         socket.on('voteResolved', ({ winner }) => {
           if (!G_eventVote) return;
           G_eventVote = null;
+          _p2VoteShowing = false;
           document.getElementById('vote-overlay').classList.remove('show');
           if (typeof G !== 'undefined' && G) G.paused = false;
           G.activeEvent = { type: winner, timer: 0 };
@@ -6113,8 +6221,30 @@
             mf: Math.round((G.midCapFrac || 0) * 100),
             mh: G.midHolder || null,          // mid holder (who's standing in mid)
             mct: Math.round((G.midCapTimer || 0) * 100), // cap timer ×100
+            mcp: G.midCapPlayer || null,       // who is currently capturing mid (for arc colour)
+            // Conquest zone state: [owner,capTimer×100,capPlayer] per zone
+            zn: (GAME_MODE === 'conquest' && G.zones) ? G.zones.map(z => [z.owner || 0, Math.round((z.capTimer || 0) * 100), z.capPlayer || 0]) : null,
             pops: _p1PopQueue.splice(0),       // popup events queued this frame
             lsTriggered: _p1LastStandQueue.splice(0), // last stand events
+            // Active event state so P2 draw functions (blood moon tint, eclipse, soul cache arc) work
+            ae: G.activeEvent ? {
+              type: G.activeEvent.type,
+              timer: Math.round((G.activeEvent.timer || 0) * 100),
+              duration: Math.round((G.activeEvent.duration || 0) * 100),
+              cp: Math.round((G.activeEvent.cacheProgress || 0) * 100),
+              ec: G.activeEvent._eclipseActive ? 1 : 0,
+              tw: G.activeEvent._timeWarpActive ? 1 : 0,
+            } : null,
+            // Vote state so P2 sees the vote UI and can participate
+            pa: G.paused ? 1 : 0,
+            vt: G_eventVote ? {
+              ca: G_eventVote.candidates[0],
+              cb: G_eventVote.candidates[1],
+              timer: Math.round(G_eventVote.timer * 100),
+              votes: G_eventVote.votes,
+              voted: G_eventVote.voted,
+              cursors: G_eventVote.cursors,
+            } : null,
             sd: G.siegeDecay ? 1 : 0,
             wm: (G.workerMidMode || [false, false]).map(b => b ? 1 : 0),
             sh: Math.round((G.shake || 0) * 100),
@@ -6147,6 +6277,9 @@
 
       // ── P2 receives snapshot: buffer it for interpolation ──────────────────
       function _receiveStateSnapshot(snap) {
+        // Expose for QA online tester so it can inject snapshots without needing
+        // a real socket connection or matchmaking flow
+        window.__qaReceiveSnapshot = _receiveStateSnapshot;
         _p2SnapPrev = _p2SnapNext;
         _p2SnapPrevTime = _p2SnapNextTime;
         _p2SnapNext = snap;
@@ -6196,11 +6329,40 @@
           G.midCapFrac = (snap.mf || 0) / 100;
           G.midHolder = snap.mh || null;        // who's standing in mid
           G.midCapTimer = (snap.mct || 0) / 100; // capture progress timer
+          G.midCapPlayer = snap.mcp || null;    // who is capturing (for arc colour + indicator)
+          // Sync conquest zone state authoritatively from P1
+          if (snap.zn && G.zones) {
+            snap.zn.forEach((zd, i) => {
+              if (!G.zones[i]) return;
+              G.zones[i].owner = zd[0] || null;
+              G.zones[i].capTimer = (zd[1] || 0) / 100;
+              G.zones[i].capPlayer = zd[2] || null;
+            });
+          }
           G.elapsed = snap.e;
           G.siegeDecay = snap.sd === 1;
           G.workerMidMode = (snap.wm || [0, 0]).map(v => v === 1);
           G.shake = (snap.sh || 0) / 100;
           G.spies = snap.sp || [];
+          // Sync activeEvent so P2 draw functions show blood moon tint, eclipse, soul cache arc etc.
+          if (snap.ae) {
+            if (!G.activeEvent || G.activeEvent.type !== snap.ae.type) {
+              G.activeEvent = { type: snap.ae.type };
+            }
+            G.activeEvent.timer = (snap.ae.timer || 0) / 100;
+            G.activeEvent.duration = (snap.ae.duration || 0) / 100;
+            G.activeEvent.cacheProgress = (snap.ae.cp || 0) / 100;
+            G.activeEvent._eclipseActive = snap.ae.ec === 1;
+            G.activeEvent._timeWarpActive = snap.ae.tw === 1;
+          } else {
+            G.activeEvent = null;
+          }
+          // Sync pause state (P1 pauses during event vote)
+          G.paused = snap.pa === 1;
+          // Sync event vote: show/update/hide vote UI on P2
+          _p2SyncVote(snap.vt);
+          // Keep mid indicator in sync for P2 (updateMid not called on P2)
+          if (typeof updateMidIndicator === 'function') updateMidIndicator();
           // Replay popups queued by P1 this frame
           if (snap.pops && snap.pops.length) {
             snap.pops.forEach(({ x, y, txt, col }) => showPopup(x, y, txt, col, null));
@@ -6233,7 +6395,72 @@
         } catch (e) { /* ignore */ }
       }
 
-      // ── P2 interpolates/extrapolates unit positions in its render loop ──────
+      // ── P2 syncs event vote UI from P1's snapshot ────────────────────────────
+      // P1 is authoritative for the vote. P2 sees the overlay, watches the timer,
+      // and can cast its own vote (sent as a gameAction to P1).
+      let _p2VoteShowing = false;
+      function _p2SyncVote(vt) {
+        try {
+          const ov = document.getElementById('vote-overlay');
+          if (!ov) return;
+
+          if (!vt) {
+            // Vote ended — hide overlay if we were showing it
+            if (_p2VoteShowing) {
+              ov.classList.remove('show');
+              _p2VoteShowing = false;
+              G_eventVote = null;
+            }
+            return;
+          }
+
+          // Vote is active — show overlay and sync state
+          if (!_p2VoteShowing) {
+            // First time seeing this vote: populate candidate names
+            const EVENT_META_LOCAL = typeof EVENT_META !== 'undefined' ? EVENT_META : {};
+            const metaA = EVENT_META_LOCAL[vt.ca] || { name: vt.ca, sub: '' };
+            const metaB = EVENT_META_LOCAL[vt.cb] || { name: vt.cb, sub: '' };
+            document.getElementById('vote-name-a').textContent = metaA.name;
+            document.getElementById('vote-sub-a').textContent = metaA.sub || '';
+            document.getElementById('vote-name-b').textContent = metaB.name;
+            document.getElementById('vote-sub-b').textContent = metaB.sub || '';
+            document.getElementById('vote-card-a').className = 'vote-card';
+            document.getElementById('vote-card-b').className = 'vote-card';
+            // P2-specific instructions
+            const p2L = typeof formatKey !== 'undefined' && typeof KEYS !== 'undefined' ? formatKey(KEYS.p2Left) : '←';
+            const p2R = typeof formatKey !== 'undefined' && typeof KEYS !== 'undefined' ? formatKey(KEYS.p2Right) : '→';
+            const p2A = typeof formatKey !== 'undefined' && typeof KEYS !== 'undefined' ? formatKey(KEYS.p2Act) : 'ENTER';
+            document.getElementById('vote-instructions').textContent =
+              `P1: ← → to choose · vote key to vote   |   P2 (YOU): ${p2L}/${p2R} to choose · ${p2A} to vote`;
+            ov.classList.add('show');
+            _p2VoteShowing = true;
+          }
+
+          // Keep G_eventVote in sync so voteMoveCursor / voteForEvent work on P2
+          if (!G_eventVote) {
+            G_eventVote = { candidates: [vt.ca, vt.cb], votes: [0, 0], voted: [false, false], cursors: [0, 0], timer: 10 };
+          }
+          G_eventVote.candidates = [vt.ca, vt.cb];
+          G_eventVote.timer = (vt.timer || 0) / 100;
+          G_eventVote.votes = vt.votes || [0, 0];
+          // Only update voted/cursors from snapshot for P1 (index 0); keep P2's local state
+          G_eventVote.voted[0] = vt.voted ? vt.voted[0] : false;
+          G_eventVote.cursors[0] = vt.cursors ? vt.cursors[0] : 0;
+
+          // Update timer display
+          const secs = Math.ceil(Math.max(0, G_eventVote.timer));
+          const timerEl = document.getElementById('vote-timer-display');
+          if (timerEl) timerEl.textContent = secs;
+
+          // Update tally
+          const ta = `${G_eventVote.votes[0]}`, tb = `${G_eventVote.votes[1]}`;
+          const tallyEl = document.getElementById('vote-tally');
+          if (tallyEl) tallyEl.textContent = `Left: ${ta} vote${ta !== '1' ? 's' : ''}  ·  Right: ${tb} vote${tb !== '1' ? 's' : ''}`;
+
+          // Update card highlights and badges (shared _updateVoteDisplay logic)
+          if (typeof _updateVoteDisplay === 'function') _updateVoteDisplay();
+        } catch (e) { /* ignore */ }
+      }
       // Dead reckoning: instead of interpolating between two stale snapshots,
       // we take the latest snapshot position and extrapolate forward using the
       // unit's known velocity. Since units mostly march in one direction this is
@@ -6267,6 +6494,8 @@
             if (!u) {
               // New unit confirmed by P1 — evict matching ghost if present
               const ghostIdx = G.units.findIndex(gu => gu._ghost && gu.defId === defId && gu.player === player);
+              // Save ghost's rendered position so the real unit starts there (no teleport)
+              const ghostX = ghostIdx !== -1 ? G.units[ghostIdx].x : null;
               if (ghostIdx !== -1) G.units.splice(ghostIdx, 1);
 
               const faction = G.factions[player - 1];
@@ -6275,7 +6504,8 @@
               const def = allDefs.find(d => d.id === defId);
               if (!def) return;
               u = {
-                id, x: nx, y: ny, hp: nhp, maxHp: nhp,
+                // Start at ghost's position if we had one, lerp will smoothly correct to P1's true position
+                id, x: ghostX !== null ? ghostX : nx, y: ny, hp: nhp, maxHp: nhp,
                 player, def, defId, dead: false,
                 target: null, attackTimer: 0, radius: def.radius || 12,
                 color: def.color, slowTimer: 0, _speedMult: 1,
@@ -6710,10 +6940,13 @@
       // Scale to fill full available width; height follows proportionally
       const hudEl = document.getElementById('hud');
       const mbEl = document.getElementById('momentum-bar-wrap');
+      const tcEl = document.getElementById('touch-controls');
       const hudH = hudEl ? hudEl.offsetHeight : 0;
       const mbH = mbEl ? mbEl.offsetHeight : 0;
+      // Subtract touch bar if visible so canvas never goes behind it
+      const tcH = (tcEl && tcEl.style.display !== 'none') ? tcEl.offsetHeight : 0;
       const availW = window.innerWidth;
-      const availH = Math.max(100, window.innerHeight - hudH - mbH);
+      const availH = Math.max(80, window.innerHeight - hudH - mbH - tcH);
       // Fill width first; if that would overflow height, clamp to height instead
       const scaleByW = availW / VIRTUAL_W;
       const scaleByH = availH / VIRTUAL_H;
@@ -7505,6 +7738,46 @@
       } catch (e) {
         window.__qaInitError = e.message + '\n' + (e.stack || '');
       }
+    };
+
+    // QA hook: start game as P2 online receiver (no matchmaking needed).
+    // The online tester calls this so _receiveStateSnapshot is wired up
+    // and G is initialised — snapshots from P1 are then injected via __qaInjectSnap.
+    window.__qaStartP2Online = function (p1Idx, p2Idx, diff) {
+      window.__qaSpeedMultiplier = 30;
+      let _fakeTs = performance.now();
+      window.requestAnimationFrame = (cb) => {
+        const ch = new MessageChannel();
+        _fakeTs += 16.667 * 30;
+        const ts = _fakeTs;
+        ch.port1.onmessage = () => cb(ts);
+        ch.port2.postMessage(0);
+      };
+      AI1_FACTION_IDX = p1Idx;
+      AI_FACTION_IDX = p2Idx;
+      AI_DIFFICULTY = diff;
+      AI1_DIFFICULTY = diff;
+      GAME_MODE = 'vs';
+      P1_FACTION = FACTIONS[p1Idx];
+      P2_FACTION = FACTIONS[p2Idx];
+      window._soloAiActive = false;
+      try {
+        initGame();
+        window.G = G;
+        G._speedMult = 40;
+        window.__qaInitError = null;
+      } catch (e) {
+        window.__qaInitError = e.message + '\n' + (e.stack || '');
+      }
+      // __qaReceiveSnapshot is exposed by _receiveStateSnapshot when it first runs.
+      // Wire __qaInjectSnap so the relay loop can call it directly.
+      window.__qaInjectSnap = function (type, data) {
+        if (type === 'stateUpdate' && typeof window.__qaReceiveSnapshot === 'function') {
+          window.__qaReceiveSnapshot(data);
+        } else if (window.__qaSocket) {
+          window.__qaSocket.dispatch(type, data);
+        }
+      };
     };
 
     // ── RALLY BUFFS ──
@@ -13236,7 +13509,15 @@
       if (!G.lastTime) G.lastTime = ts;
       G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
       G.lastTime = ts;
-      if (G.paused) { if (G_eventVote) _tickEventVote(G.dt); requestAnimationFrame(gameLoop); return; }
+      if (G.paused) {
+        // P1 ticks the vote; P2 just renders and keeps the display updated from snapshots
+        const _isP2Online = typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2;
+        if (G_eventVote && !_isP2Online) _tickEventVote(G.dt);
+        // P2 still needs to render (drawGame) so the vote overlay looks right on screen
+        if (_isP2Online) { NET.interpolateUnits(); drawGame(); updateHUD(); }
+        requestAnimationFrame(gameLoop);
+        return;
+      }
 
       // ── P2 render-only mode ───────────────────────────────────────────────
       // P1 is the authority. P2 skips ALL physics, interpolates unit positions
@@ -14067,15 +14348,21 @@
       }
 
       // Event vote — intercept BEFORE pause check (game is paused during vote)
-      if (G_eventVote && (GAME_MODE === 'vs' || GAME_MODE === 'draft')) {
-        // P1 moves cursor with their left/right, confirms with act key
-        if (e.code === KEYS.p1Left) { e.preventDefault(); voteMoveCursor(1, -1); return; }
-        if (e.code === KEYS.p1Right) { e.preventDefault(); voteMoveCursor(1, 1); return; }
-        if (e.code === KEYS.p1Act) { e.preventDefault(); voteForEvent(1); return; }
-        // P2 same with their keys
-        if (e.code === KEYS.p2Left) { e.preventDefault(); voteMoveCursor(2, -1); return; }
-        if (e.code === KEYS.p2Right) { e.preventDefault(); voteMoveCursor(2, 1); return; }
-        if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); voteForEvent(2); return; }
+      if (G_eventVote && (GAME_MODE === 'vs' || GAME_MODE === 'draft' || NET.isOnline())) {
+        const _voteOnline = typeof NET !== 'undefined' && NET.isOnline();
+        const _votePid = _voteOnline ? NET.getPid() : null;
+        // P1 cursor/vote
+        if (!_votePid || _votePid === 1) {
+          if (e.code === KEYS.p1Left) { e.preventDefault(); voteMoveCursor(1, -1); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 1, dir: -1 }); return; }
+          if (e.code === KEYS.p1Right) { e.preventDefault(); voteMoveCursor(1, 1); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 1, dir: 1 }); return; }
+          if (e.code === KEYS.p1Act) { e.preventDefault(); voteForEvent(1); if (_voteOnline) NET.sendAction({ type: 'voteForEvent', pid: 1 }); return; }
+        }
+        // P2 cursor/vote — in online mode send action to P1, in local run directly
+        if (!_votePid || _votePid === 2) {
+          if (e.code === KEYS.p2Left) { e.preventDefault(); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 2, dir: -1 }); else voteMoveCursor(2, -1); return; }
+          if (e.code === KEYS.p2Right) { e.preventDefault(); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 2, dir: 1 }); else voteMoveCursor(2, 1); return; }
+          if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); if (_voteOnline) NET.sendAction({ type: 'voteForEvent', pid: 2 }); else voteForEvent(2); return; }
+        }
       }
 
       // P1/P2 controls — online: each player only controls their own side
@@ -15612,7 +15899,13 @@
             const _tPid = NET.getPid();
             document.getElementById('touch-p1').style.display = _tPid === 1 ? '' : 'none';
             document.getElementById('touch-p2').style.display = _tPid === 2 ? '' : 'none';
+          } else {
+            // Local / AI / solo: show both halves
+            document.getElementById('touch-p1').style.display = '';
+            document.getElementById('touch-p2').style.display = '';
           }
+          // Recalculate canvas size now that touch bar is visible
+          requestAnimationFrame(() => { if (typeof resizeGameCanvas === 'function') resizeGameCanvas(); });
         } else {
           tc.style.display = 'none';
         }

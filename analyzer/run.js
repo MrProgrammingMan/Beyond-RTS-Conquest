@@ -232,6 +232,40 @@ async function main() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 4: BALANCE ANALYSIS  (must run before anomaly/feature — they need aggStats)
+  // ════════════════════════════════════════════════════════════════════════════
+  log('  ── Phase 4: Balance analysis ──────────────────────────────────');
+  let balanceAnalysis = '';
+  let aggStats = {};
+
+  if (rawData.factions?.length > 0) {
+    aggStats = aggregateStats(rawData);
+
+    // Quick terminal table
+    log('\n  FACTION WIN RATES:');
+    const sorted = [...rawData.factions].sort((a, b) => (aggStats[b]?.overallWinRate || 50) - (aggStats[a]?.overallWinRate || 50));
+    for (const f of sorted) {
+      const s = aggStats[f]; if (!s) continue;
+      const flag = s.overallWinRate >= 55 ? '🔴' : s.overallWinRate <= 45 ? '🔵' : '⚪';
+      const bar2 = '█'.repeat(Math.round(s.overallWinRate / 5)) + '░'.repeat(20 - Math.round(s.overallWinRate / 5));
+      log(`  ${flag} ${f.padEnd(12)} ${String(s.overallWinRate).padStart(5)}%  ${bar2}`);
+    }
+    log('');
+
+    if (hasApiKey && cfg.run.balance) {
+      log('  🤖 Generating balance analysis...');
+      try {
+        balanceAnalysis = await analyzeBalance(rawData, aggStats, rawData.qa?.mechanicUsage, cfg);
+        log('  ✅ Balance analysis done');
+      } catch (err) {
+        log(`  ⚠️  Balance analysis failed: ${err.message}`);
+      }
+    }
+  } else {
+    log('  ℹ️  No balance data');
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
   // PHASE 5.5: ONLINE SYNC TEST
   // ════════════════════════════════════════════════════════════════════════════
   let onlineReport = null;
@@ -277,7 +311,7 @@ async function main() {
   log('');
 
   // ════════════════════════════════════════════════════════════════════════════
-  // PHASE 5.7: FEATURE ADVISOR
+  // PHASE 4.7: FEATURE ADVISOR
   // ════════════════════════════════════════════════════════════════════════════
   log('  ── Phase 4.7: Feature advisor ─────────────────────────────────');
   let featureAdvice = null;
@@ -297,40 +331,6 @@ async function main() {
     log('  ℹ️  Feature advisor disabled in config');
   }
   log('');
-
-  // ════════════════════════════════════════════════════════════════════════════
-  // PHASE 5: BALANCE ANALYSIS
-  // ════════════════════════════════════════════════════════════════════════════
-  log('  ── Phase 4: Balance analysis ──────────────────────────────────');
-  let balanceAnalysis = '';
-  let aggStats = {};
-
-  if (rawData.factions?.length > 0) {
-    aggStats = aggregateStats(rawData);
-
-    // Quick terminal table
-    log('\n  FACTION WIN RATES:');
-    const sorted = [...rawData.factions].sort((a, b) => (aggStats[b]?.overallWinRate || 50) - (aggStats[a]?.overallWinRate || 50));
-    for (const f of sorted) {
-      const s = aggStats[f]; if (!s) continue;
-      const flag = s.overallWinRate >= 55 ? '🔴' : s.overallWinRate <= 45 ? '🔵' : '⚪';
-      const bar2 = '█'.repeat(Math.round(s.overallWinRate / 5)) + '░'.repeat(20 - Math.round(s.overallWinRate / 5));
-      log(`  ${flag} ${f.padEnd(12)} ${String(s.overallWinRate).padStart(5)}%  ${bar2}`);
-    }
-    log('');
-
-    if (hasApiKey && cfg.run.balance) {
-      log('  🤖 Generating balance analysis...');
-      try {
-        balanceAnalysis = await analyzeBalance(rawData, aggStats, rawData.qa?.mechanicUsage, cfg);
-        log('  ✅ Balance analysis done');
-      } catch (err) {
-        log(`  ⚠️  Balance analysis failed: ${err.message}`);
-      }
-    }
-  } else {
-    log('  ℹ️  No balance data');
-  }
 
   // ════════════════════════════════════════════════════════════════════════════
   // PHASE 6: BUILD REPORT

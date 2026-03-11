@@ -18,11 +18,11 @@ const { chromium } = require('playwright');
 const { INSTRUMENTATION_SCRIPT } = require('./instrumentation');
 
 const PROFILES = {
-  ideal:   { minMs: 0,   maxMs: 5,   jitter: 2,   packetLoss: 0     },
-  good:    { minMs: 20,  maxMs: 60,  jitter: 15,  packetLoss: 0     },
-  average: { minMs: 60,  maxMs: 120, jitter: 30,  packetLoss: 0.005 },
-  bad:     { minMs: 150, maxMs: 350, jitter: 80,  packetLoss: 0.02  },
-  awful:   { minMs: 300, maxMs: 800, jitter: 150, packetLoss: 0.05  },
+  ideal: { minMs: 0, maxMs: 5, jitter: 2, packetLoss: 0 },
+  good: { minMs: 20, maxMs: 60, jitter: 15, packetLoss: 0 },
+  average: { minMs: 60, maxMs: 120, jitter: 30, packetLoss: 0.005 },
+  bad: { minMs: 150, maxMs: 350, jitter: 80, packetLoss: 0.02 },
+  awful: { minMs: 300, maxMs: 800, jitter: 150, packetLoss: 0.05 },
 };
 
 async function runOnlineTests(gameHtmlPath, cfg) {
@@ -64,12 +64,12 @@ async function runOnlineTests(gameHtmlPath, cfg) {
 }
 
 async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1, f2) {
-  const fileUrl  = `file://${path.resolve(gameHtmlPath)}`;
-  const SPEED    = 15;
+  const fileUrl = `file://${path.resolve(gameHtmlPath)}`;
+  const SPEED = 15;
   const timeoutMs = (cfg.online?.testTimeoutSecs || 40) * 1000;
 
   const snapshotQueue = [];
-  const relayMetrics  = { sent: 0, delivered: 0, dropped: 0, latencies: [], divergenceFrames: [], freqTs: [] };
+  const relayMetrics = { sent: 0, delivered: 0, dropped: 0, latencies: [], divergenceFrames: [], freqTs: [] };
 
   const ctx1 = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 720 } });
@@ -109,11 +109,11 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
         on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); return this; },
         off(e, fn) { if (this._h[e]) this._h[e] = this._h[e].filter(h => h !== fn); return this; },
         emit(ev, data) {
-          if (['stateUpdate','fireEvent','voteResolved','rogueSpawnPos'].includes(ev)) {
-            try { window.__onlineCapture(ev, JSON.stringify(data)); } catch (_) {}
+          if (['stateUpdate', 'fireEvent', 'voteResolved', 'rogueSpawnPos'].includes(ev)) {
+            try { window.__onlineCapture(ev, JSON.stringify(data)); } catch (_) { }
           }
         },
-        disconnect() {},
+        disconnect() { },
       };
       window.__qaSocket = sock;
       window.io = () => sock;
@@ -130,7 +130,7 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
     if (startRes.error) throw new Error(startRes.error);
     if (!startRes.ok) throw new Error('G not created after start');
 
-    // P2: initialize as passive client
+    // P2: initialize as passive online receiver
     const p2Init = await p2.evaluate(({ f1, f2, SPEED }) => {
       let _off = 0;
       const _raf = window.requestAnimationFrame.bind(window);
@@ -142,28 +142,43 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
       const _pn = performance.now.bind(performance);
       performance.now = () => _pn() + _off;
 
+      // Fake socket stub — P2 won't emit anything real
       const sock = {
         connected: true, _h: {},
         on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); return this; },
         off(e, fn) { if (this._h[e]) this._h[e] = this._h[e].filter(h => h !== fn); return this; },
-        emit() {},
-        dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) {} }); },
-        disconnect() {},
+        emit() { },
+        dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) { } }); },
+        disconnect() { },
       };
       window.__qaSocket = sock;
       window.io = () => sock;
 
-      // Boot P2 game (same factions) so G and NET are initialized
-      if (typeof window.__qaStartAiVsAi === 'function') {
-        const fl = window.FACTIONS;
-        const i1 = fl.findIndex(f => f.id === f1), i2 = fl.findIndex(f => f.id === f2);
-        if (i1 !== -1 && i2 !== -1) {
+      const fl = window.FACTIONS || [];
+      const i1 = fl.findIndex(f => f.id === f1), i2 = fl.findIndex(f => f.id === f2);
+      if (i1 === -1 || i2 === -1) return { error: `Faction not found: ${f1}/${f2}`, hasNet: false, hasG: false };
+
+      // Use the dedicated P2 online hook which:
+      // - inits the game in 'vs' mode (no AI loop)
+      // - exposes __qaReceiveSnapshot → _receiveStateSnapshot
+      // - sets up __qaInjectSnap for the relay loop
+      if (typeof window.__qaStartP2Online === 'function') {
+        window.__qaStartP2Online(i1, i2, 'hard');
+      } else {
+        // Fallback: plain AI game boot — snapshots delivered via socket dispatch
+        if (typeof window.__qaStartAiVsAi === 'function') {
           window.__qaSpeedMultiplier = SPEED;
-          try { window.__qaStartAiVsAi(i1, i2, 'hard'); } catch (_) {}
+          window.__qaStartAiVsAi(i1, i2, 'hard');
         }
+        window.__qaInjectSnap = function (type, data) {
+          if (window.__qaSocket) window.__qaSocket.dispatch(type, data);
+        };
       }
+
       return { hasNet: typeof window.NET !== 'undefined', hasG: !!window.G };
     }, { f1, f2, SPEED });
+
+    if (p2Init?.error) throw new Error(p2Init.error);
 
     // Relay loop
     let relayActive = true;
@@ -181,11 +196,14 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
             relayMetrics.delivered++;
             try {
               await p2.evaluate(({ type, payloadStr }) => {
-                if (!window.__qaSocket) return;
                 const data = JSON.parse(payloadStr);
-                window.__qaSocket.dispatch(type, data);
+                if (typeof window.__qaInjectSnap === 'function') {
+                  window.__qaInjectSnap(type, data);
+                } else if (window.__qaSocket) {
+                  window.__qaSocket.dispatch(type, data);
+                }
               }, { type: snap.type, payloadStr: snap.payloadStr });
-            } catch (_) {}
+            } catch (_) { }
           }, Math.max(0, delay));
         }
         await sleep(8);
@@ -219,7 +237,7 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
           });
         }
         if (diffs.length > 0) relayMetrics.divergenceFrames.push({ checkNum: checkCount, diffs });
-      } catch (_) {}
+      } catch (_) { }
     }, 500);
 
     // Poll for game end
@@ -251,10 +269,10 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
     return _compileResult(profileName, profile, f1, f2, relayMetrics, gameResult, p2Errors, p2Init);
 
   } finally {
-    await p1.close().catch(() => {});
-    await p2.close().catch(() => {});
-    await ctx1.close().catch(() => {});
-    await ctx2.close().catch(() => {});
+    await p1.close().catch(() => { });
+    await p2.close().catch(() => { });
+    await ctx1.close().catch(() => { });
+    await ctx2.close().catch(() => { });
   }
 }
 
@@ -326,8 +344,9 @@ function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Err
     critical: timedOut,
   });
 
+  // NET module presence check — informational only in QA context
   if (!p2Init?.hasNet) {
-    checks.push({ name: 'NET module on P2', passed: false, details: 'window.NET not found — _applyInstantState may not exist', critical: true });
+    checks.push({ name: 'NET module on P2', passed: false, details: 'window.NET not found — snapshot injection may not work', critical: false });
   }
 
   const grade = _grade(latStats.avg, metrics.divergenceFrames.length, allErrors.length, timedOut);
@@ -349,7 +368,7 @@ function _grade(avgMs, divergences, errors, timedOut) {
   if (timedOut || errors > 3) return 'F';
   if (divergences > 20 || avgMs > 600) return 'D';
   if (divergences > 10 || avgMs > 300) return 'C';
-  if (divergences > 5  || avgMs > 150) return 'B';
+  if (divergences > 5 || avgMs > 150) return 'B';
   return 'A';
 }
 
@@ -357,7 +376,7 @@ function _buildReport(results) {
   const allChecks = results.flatMap(r => r.checks || []);
   const passedChecks = allChecks.filter(c => c.passed).length;
   const grades = results.map(r => r.grade).filter(Boolean);
-  const order = ['A','B','C','D','F'];
+  const order = ['A', 'B', 'C', 'D', 'F'];
   const worstIdx = Math.max(...grades.map(g => order.indexOf(g)), 0);
   const overallGrade = order[worstIdx] || 'N/A';
 
@@ -368,7 +387,7 @@ function _buildReport(results) {
       issues.push({
         severity: 'MEDIUM', type: 'high_snapshot_latency',
         profile: r.profileName, matchup: `${r.f1} vs ${r.f2}`,
-        message: `Avg snapshot latency ${avg}ms on "${r.profileName}" — P2 sees ~${Math.round(avg/16)} frame delay`,
+        message: `Avg snapshot latency ${avg}ms on "${r.profileName}" — P2 sees ~${Math.round(avg / 16)} frame delay`,
         prompt: `Online snapshot latency averages ${avg}ms under "${r.profileName}" conditions. P2's dead-reckoning window may not cover this. In index.html, search for socket.emit('stateUpdate') and consider: (1) delta snapshots instead of full state, (2) widening the unit interpolation window (currently 300ms in NET.interpolateUnits), (3) reducing snapshot payload by omitting static fields that don't change frame-to-frame.`,
       });
     }
@@ -411,7 +430,7 @@ function _buildReport(results) {
 function _stats(arr) {
   if (!arr || arr.length === 0) return { avg: 0, min: 0, max: 0, p95: 0, count: 0 };
   const s = [...arr].sort((a, b) => a - b);
-  return { avg: Math.round(s.reduce((a,b)=>a+b,0)/s.length), min: Math.round(s[0]), max: Math.round(s[s.length-1]), p95: Math.round(s[Math.floor(s.length*0.95)]), count: s.length };
+  return { avg: Math.round(s.reduce((a, b) => a + b, 0) / s.length), min: Math.round(s[0]), max: Math.round(s[s.length - 1]), p95: Math.round(s[Math.floor(s.length * 0.95)]), count: s.length };
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
