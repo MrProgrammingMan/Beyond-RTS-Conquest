@@ -5999,10 +5999,11 @@
       // ══════════════════════════════════════════════════════════════════════
       // P1-AUTHORITATIVE SYNC WITH P2 INTERPOLATION
       // ──────────────────────────────────────────────────────────────────────
-      // P1 runs the full simulation and sends state snapshots every 33ms (~30fps).
-      // P2 stores the last TWO snapshots and interpolates unit positions between
-      // them each animation frame — giving smooth 60fps visuals even over latency.
-      // Non-unit state (resources, buffs etc.) is applied immediately on receipt.
+      // P1 runs the full simulation and sends state snapshots every 16ms (~60fps).
+      // P2 dead-reckons unit positions from the latest snapshot each animation frame.
+      // Resource spends are applied locally immediately and protected for 300ms so
+      // stale P1 snapshots can't cause the "jump back" visual glitch.
+      // Non-positional state (base HP, mid, game flags) is applied immediately on receipt.
       // ══════════════════════════════════════════════════════════════════════
 
       let _syncInterval = null;
@@ -6012,7 +6013,7 @@
       let _p2SnapPrevTime = 0; // performance.now() when _p2SnapPrev was received
       let _p2SnapNextTime = 0; // performance.now() when _p2SnapNext was received
 
-      // ── P2 client-side prediction ──────────────────────────────────────────
+      // ── P2 client-side prediction ───────────────────────────────────────────
       // When P2 spends resources or spawns a unit, we apply it locally immediately
       // and protect those values from being overwritten by P1 snapshots for 300ms.
       // By then P1 will have processed the action and the snapshot will be correct.
@@ -6051,6 +6052,7 @@
             Math.round((u._warcryed || 0) * 10),   // ×10 to preserve 1dp in integer
             Math.round((u._ironwalled || 0) * 10),
             u.goToMid ? 1 : 0,
+            Math.round((u.vx || 0) * 10),          // velocity ×10 for dead reckoning
           ]);
           const projSnaps = G.projectiles.filter(p => !p.dead).map(p => [
             p.id, Math.round(p.x), Math.round(p.y),
@@ -6113,11 +6115,9 @@
           const _protecting = myPid === 2 && performance.now() < _p2ActionProtectUntil;
           snap.p.forEach((ps, i) => {
             const p = G.players[i]; if (!p) return;
-            // If P2 just spent resources, don't overwrite them — P1's snapshot was
-            // computed before it processed our action, so it shows pre-spend values.
-            // After the 300ms window, P1 will have confirmed and we sync normally.
             if (_protecting && i === 1) {
-              // Keep local souls/bodies/workers — only update everything else
+              // P2 just spent resources — don't let stale P1 snapshot overwrite them.
+              // Only update everything else (baseHp, caps, buffs, cooldowns).
               p.baseHp = ps[2] / 10;
               p.unitCap = ps[3]; p.workerCap = ps[4];
               p.despStacks = ps[5];
@@ -6126,7 +6126,9 @@
               if (!p.activeBuffs) p.activeBuffs = {};
               p.activeBuffs.warcry = ps[9] / 10;
               p.activeBuffs.ironwall = ps[10] / 10;
-              p.buffCooldowns = [ps[11] / 10, ps[12] / 10, ps[13] / 10];
+              // Protect buff cooldowns too — don't let snapshot reset them
+              const snapCDs = [ps[11] / 10, ps[12] / 10, ps[13] / 10];
+              p.buffCooldowns = p.buffCooldowns.map((local, idx) => Math.max(local, snapCDs[idx]));
             } else {
               p.souls = ps[0]; p.bodies = ps[1];
               p.baseHp = ps[2] / 10;
@@ -6153,50 +6155,42 @@
         } catch (e) { /* ignore */ }
       }
 
-      // ── P2 interpolates unit positions in its render loop ──────────────────
-      // Called every animation frame by P2's game loop.
+      // ── P2 interpolates/extrapolates unit positions in its render loop ──────
+      // Dead reckoning: instead of interpolating between two stale snapshots,
+      // we take the latest snapshot position and extrapolate forward using the
+      // unit's known velocity. Since units mostly march in one direction this is
+      // nearly always correct and makes movement look perfectly smooth.
+      // A small lerp correction blends out the rare cases where direction changes.
       function _interpolateUnits() {
-        if (!_p2SnapPrev || !_p2SnapNext || typeof G === 'undefined' || !G) {
-          // No previous snap yet — just apply latest positions directly
-          if (_p2SnapNext) _applyUnitPositions(_p2SnapNext, 1.0);
-          return;
-        }
+        if (!_p2SnapNext || typeof G === 'undefined' || !G) return;
         const now = performance.now();
-        const snapDt = _p2SnapNextTime - _p2SnapPrevTime;  // time between the two snaps
-        if (snapDt < 1) { _applyUnitPositions(_p2SnapNext, 1.0); return; }
-        // How far we are between prev and next snap (0=at prev, 1=at next, can overshoot slightly)
-        const t = Math.min(1.4, (now - _p2SnapNextTime) / snapDt + 1.0);
-        _applyUnitPositions(_p2SnapPrev, 0, _p2SnapNext, t);
+        // How many seconds have passed since the last snapshot arrived
+        const elapsed = Math.min((now - _p2SnapNextTime) / 1000, 0.15); // cap at 150ms
+        _applyUnitPositions(_p2SnapNext, elapsed);
       }
-
-      // Map from unit id → last known position (for when a unit first appears)
+      // Map from unit id → last rendered position (for lerp correction)
       const _p2UnitMap = new Map();
 
-      function _applyUnitPositions(snapA, tA, snapB, tB) {
+      function _applyUnitPositions(snap, elapsed) {
         if (typeof G === 'undefined' || !G) return;
         try {
-          // Build maps for quick lookup
-          const aMap = new Map(); const bMap = snapB ? new Map() : null;
-          if (snapA) snapA.u.forEach(u => aMap.set(u[0], u));
-          if (snapB) snapB.u.forEach(u => bMap.set(u[0], u));
-          const useSnap = snapB || snapA;
-          const currentIds = new Set(useSnap.u.map(u => u[0]));
+          const currentIds = new Set(snap.u.map(u => u[0]));
 
-          // Remove units gone from authoritative snapshot — but keep P2 ghost predictions
-          // for up to 350ms so spawns feel instant. When the real unit arrives from P1,
-          // the ghost is replaced.
+          // Remove units gone from snapshot — keep P2 ghost predictions briefly
           const now = performance.now();
           G.units = G.units.filter(u => currentIds.has(u.id) || (u._ghost && now - u._ghostTime < 350));
 
-          useSnap.u.forEach(snap => {
+          snap.u.forEach(snapData => {
             const [id, nx, ny, nhp, player, defId, isAerial, isWorker,
-              warcryT10, ironwallT10, goToMid] = snap;
+              warcryT10, ironwallT10, goToMid, vxT10] = snapData;
+            const vx = (vxT10 || 0) / 10;
+
             let u = G.units.find(uu => uu.id === id);
             if (!u) {
-              // New unit from P1 — evict matching ghost if one exists (our prediction)
+              // New unit confirmed by P1 — evict matching ghost if present
               const ghostIdx = G.units.findIndex(gu => gu._ghost && gu.defId === defId && gu.player === player);
               if (ghostIdx !== -1) G.units.splice(ghostIdx, 1);
-              // Reconstruct from snapshot
+
               const faction = G.factions[player - 1];
               if (!faction) return;
               const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
@@ -6212,40 +6206,40 @@
                 passiveSummonTimer: 0, aerial: isAerial === 1,
                 isWorker: isWorker === 1, goToMid: goToMid === 1,
                 isGuard: def.isSpawned || false, aliveSecs: 0,
+                vx: 0,
               };
               G.units.push(u);
             }
 
-            // Interpolate position
-            if (tB !== undefined && snapB) {
-              const aSnap = aMap.get(id);
-              const bSnap = bMap.get(id);
-              if (aSnap && bSnap) {
-                const ax = aSnap[1], ay = aSnap[2];
-                u.x = ax + (bSnap[1] - ax) * tB;
-                u.y = ay + (bSnap[2] - ay) * tB;
-              } else {
-                u.x = nx; u.y = ny;
-              }
-            } else {
-              u.x = nx; u.y = ny;
-            }
+            // ── Dead reckoning ────────────────────────────────────────────────
+            // Project snapshot position forward by time elapsed since snapshot
+            // arrived, using known velocity. For marching units this is exact.
+            const predictedX = nx + vx * elapsed;
+
+            // Lerp correction: smoothly blend rendered pos toward predicted pos.
+            // Corrects rare direction-change drift without any visible snap.
+            u.x = u.x + (predictedX - u.x) * 0.35;
+            u.y = ny;
+            u.vx = vx;
             u.hp = nhp;
             u._warcryed = warcryT10 / 10;
             u._ironwalled = ironwallT10 / 10;
             u.goToMid = goToMid === 1;
           });
 
-          // Projectiles: just position, no interpolation needed (they move fast)
-          const projIds = new Set(useSnap.pr.map(p => p[0]));
+          // Projectiles: lerp toward latest position (they move fast and erratically)
+          const projIds = new Set(snap.pr.map(p => p[0]));
           G.projectiles = G.projectiles.filter(p => projIds.has(p.id));
-          useSnap.pr.forEach(snap => {
-            const [id, x, y, player, defId, isHeal] = snap;
+          snap.pr.forEach(snapData => {
+            const [id, x, y, player, defId, isHeal] = snapData;
             let p = G.projectiles.find(pp => pp.id === id);
             if (!p) {
               p = { id, x, y, tx: x, ty: y, player, defId, isHeal: isHeal === 1, dead: false };
               G.projectiles.push(p);
-            } else { p.x = x; p.y = y; }
+            } else {
+              p.x = p.x + (x - p.x) * 0.5;
+              p.y = p.y + (y - p.y) * 0.5;
+            }
           });
         } catch (e) { /* ignore */ }
       }
@@ -9570,10 +9564,11 @@
         showPopup(p.baseX, G.groundY - 85, `🩸 +${refund}💀 TITHE`, '#c0392b', pid);
       }
       spawnUnit(pid, unitId, false);
-      // P2 client-side prediction: tag unit as ghost so it survives until P1 confirms it
+      // P2 client-side prediction: tag the just-spawned unit as a ghost so it
+      // survives snapshot reconciliation until P1 confirms it (~150-250ms later).
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) {
         const newUnit = G.units[G.units.length - 1];
-        if (newUnit) { newUnit._ghost = true; newUnit._ghostTime = performance.now(); }
+        if (newUnit && !newUnit.def.isSpawned) { newUnit._ghost = true; newUnit._ghostTime = performance.now(); }
         NET.recordLocalAction();
       }
       if (cardEl) { cardEl.classList.remove('spawn-flash'); void cardEl.offsetWidth; cardEl.classList.add('spawn-flash'); }
@@ -13115,13 +13110,15 @@
       if (G.paused) { if (G_eventVote) _tickEventVote(G.dt); requestAnimationFrame(gameLoop); return; }
 
       // ── P2 render-only mode ───────────────────────────────────────────────
-      // P1 is the authority. P2 skips physics but runs economy locally so
-      // soul income and buff cooldowns feel instant rather than snapping on
-      // P1 snapshots. P1's snapshots correct any tiny drift every 16ms.
+      // P1 is the authority. P2 skips ALL physics, interpolates unit positions
+      // between the two most recently received snapshots, then just renders.
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
-        NET.interpolateUnits();  // smooth 60fps positions between snapshots
-        updateEconomy(G.dt);     // local economy tick — makes soul income feel live
-        // Tick buff cooldowns locally so they don't feel delayed
+        NET.interpolateUnits();  // smooth 60fps positions between 60fps snapshots
+        // Run economy locally so soul income ticks every frame instead of
+        // snapping on each P1 snapshot. P1's authoritative values correct drift.
+        updateEconomy(G.dt);
+        // Drain buff cooldowns locally for smooth 60fps bar animations.
+        // The protection window keeps these from being overwritten after a spend.
         if (G.players) G.players.forEach(p => {
           if (p.buffCooldowns) p.buffCooldowns = p.buffCooldowns.map(c => Math.max(0, c - G.dt));
         });
