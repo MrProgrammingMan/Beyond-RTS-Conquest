@@ -406,3 +406,6 @@ qa-report.html
 screenshots/
 .browser-installed
 analyzer/.env.txt
+analyzer/qa-data.json
+analyzer/qa-history.json
+analyzer/qa-ui-cache.json

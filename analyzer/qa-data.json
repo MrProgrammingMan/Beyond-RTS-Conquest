@@ -7,19 +7,19 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          160,
-          180,
-          186
+          76,
+          126,
+          808
         ],
         "p1FinalHps": [
           0,
-          12,
-          0
+          0,
+          15
         ],
         "p2FinalHps": [
           100,
-          0,
-          6
+          30,
+          0
         ],
         "lastStands": {
           "p1": 3,
@@ -27,24 +27,24 @@
         }
       },
       "brutes": {
-        "p1Wins": 1,
-        "p2Wins": 2,
+        "p1Wins": 0,
+        "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          176,
-          336,
-          384
+          90,
+          138,
+          408
         ],
         "p1FinalHps": [
-          30,
+          0,
           0,
           0
         ],
         "p2FinalHps": [
-          0,
-          99,
-          27
+          100,
+          100,
+          95
         ],
         "lastStands": {
           "p1": 3,
@@ -52,24 +52,24 @@
         }
       },
       "spirits": {
-        "p1Wins": 2,
-        "p2Wins": 1,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          72,
-          178,
-          270
+          110,
+          152,
+          128
         ],
         "p1FinalHps": [
-          72,
+          30,
           0,
-          99
+          0
         ],
         "p2FinalHps": [
           0,
-          6,
-          0
+          52,
+          100
         ],
         "lastStands": {
           "p1": 3,
@@ -77,49 +77,49 @@
         }
       },
       "verdant": {
-        "p1Wins": 0,
-        "p2Wins": 3,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          222,
-          112,
-          160
+          128,
+          184,
+          222
         ],
         "p1FinalHps": [
           0,
           0,
-          0
-        ],
-        "p2FinalHps": [
-          30,
-          71,
           100
         ],
+        "p2FinalHps": [
+          100,
+          30,
+          0
+        ],
         "lastStands": {
-          "p1": 3,
+          "p1": 2,
           "p2": 0
         }
       },
       "infernal": {
-        "p1Wins": 0,
-        "p2Wins": 3,
+        "p1Wins": 2,
+        "p2Wins": 1,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          160,
-          136,
-          152
+          182,
+          146,
+          204
         ],
         "p1FinalHps": [
+          58,
           0,
-          0,
-          0
+          100
         ],
         "p2FinalHps": [
-          100,
-          68,
-          100
+          0,
+          30,
+          0
         ],
         "lastStands": {
           "p1": 3,
@@ -127,24 +127,24 @@
         }
       },
       "glacial": {
-        "p1Wins": 0,
-        "p2Wins": 3,
+        "p1Wins": 2,
+        "p2Wins": 1,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          128,
-          190,
-          170
+          114,
+          242,
+          184
         ],
         "p1FinalHps": [
           0,
-          0,
-          0
+          87,
+          30
         ],
         "p2FinalHps": [
-          40,
           100,
-          100
+          0,
+          0
         ],
         "lastStands": {
           "p1": 3,
@@ -157,9 +157,9 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          94,
-          112,
-          126
+          226,
+          264,
+          292
         ],
         "p1FinalHps": [
           0,
@@ -167,9 +167,9 @@
           0
         ],
         "p2FinalHps": [
+          30,
           100,
-          100,
-          76
+          99
         ],
         "lastStands": {
           "p1": 3,
@@ -182,9 +182,9 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          138,
-          150,
-          156
+          128,
+          232,
+          220
         ],
         "p1FinalHps": [
           0,
@@ -192,9 +192,9 @@
           0
         ],
         "p2FinalHps": [
-          30,
           100,
-          30
+          30,
+          40
         ],
         "lastStands": {
           "p1": 3,
@@ -202,24 +202,24 @@
         }
       },
       "menders": {
-        "p1Wins": 0,
-        "p2Wins": 3,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          172,
-          182,
-          210
+          92,
+          174,
+          456
         ],
         "p1FinalHps": [
-          0,
+          100,
           0,
           0
         ],
         "p2FinalHps": [
-          30,
-          30,
-          1
+          0,
+          100,
+          23
         ],
         "lastStands": {
           "p1": 3,
@@ -229,14 +229,189 @@
     },
     "summoners": {
       "warriors": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          104,
+          164,
+          108
+        ],
+        "p1FinalHps": [
+          70,
+          30,
+          100
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "brutes": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          92,
+          116,
+          138
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "spirits": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          116,
+          112,
+          248
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          100
+        ],
+        "p2FinalHps": [
+          30,
+          100,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "verdant": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          112,
+          120,
+          504
+        ],
+        "p1FinalHps": [
+          0,
+          30,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          1
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "infernal": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          126,
+          116,
+          122
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "glacial": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          142,
+          144,
+          142
+        ],
+        "p1FinalHps": [
+          100,
+          100,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "voltborn": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          144,
+          132,
+          188
+        ],
+        "p1FinalHps": [
+          76,
+          0,
+          100
+        ],
+        "p2FinalHps": [
+          0,
+          65,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "bloodpact": {
         "p1Wins": 0,
         "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          112,
-          96,
-          118
+          116,
+          106,
+          206
         ],
         "p1FinalHps": [
           0,
@@ -253,198 +428,23 @@
           "p2": 0
         }
       },
-      "brutes": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          104,
-          104,
-          170
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "spirits": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          98,
-          184,
-          202
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          40
-        ],
-        "p2FinalHps": [
-          100,
-          56,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "verdant": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          118,
-          140,
-          264
-        ],
-        "p1FinalHps": [
-          100,
-          74,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "infernal": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          90,
-          108,
-          100
-        ],
-        "p1FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          100,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "glacial": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          142,
-          104,
-          82
-        ],
-        "p1FinalHps": [
-          0,
-          100,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "voltborn": {
+      "menders": {
         "p1Wins": 2,
         "p2Wins": 1,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          100,
-          146,
-          126
+          82,
+          128,
+          112
         ],
         "p1FinalHps": [
-          52,
+          0,
           100,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
           100
         ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "bloodpact": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          78,
-          92,
-          134
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
         "p2FinalHps": [
-          91,
           100,
-          76
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "menders": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          156,
-          142,
-          180
-        ],
-        "p1FinalHps": [
-          100,
-          30,
-          72
-        ],
-        "p2FinalHps": [
-          0,
           0,
           0
         ],
@@ -456,23 +456,23 @@
     },
     "brutes": {
       "warriors": {
-        "p1Wins": 3,
-        "p2Wins": 0,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          146,
-          102,
-          102
+          188,
+          264,
+          302
         ],
         "p1FinalHps": [
-          100,
-          88,
+          0,
+          0,
           100
         ],
         "p2FinalHps": [
-          0,
-          0,
+          76,
+          30,
           0
         ],
         "lastStands": {
@@ -486,19 +486,19 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          148,
-          132,
-          150
+          140,
+          100,
+          142
         ],
         "p1FinalHps": [
           0,
-          0,
-          100
+          100,
+          0
         ],
         "p2FinalHps": [
-          100,
-          64,
-          0
+          30,
+          0,
+          100
         ],
         "lastStands": {
           "p1": 3,
@@ -506,503 +506,49 @@
         }
       },
       "spirits": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          100,
-          94,
-          102
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "verdant": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          90,
-          94,
-          126
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "infernal": {
-        "p1Wins": 1,
-        "p2Wins": 2,
+        "p1Wins": 2,
+        "p2Wins": 1,
         "draws": 0,
         "timeouts": 0,
         "durations": [
           144,
-          148,
-          172
-        ],
-        "p1FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          100,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "glacial": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          138,
-          88,
-          144
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "voltborn": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          126,
-          108,
-          278
-        ],
-        "p1FinalHps": [
-          0,
-          100,
-          30
-        ],
-        "p2FinalHps": [
-          84,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "bloodpact": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          158,
-          210,
-          216
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "menders": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          262,
-          216,
-          268
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          30
-        ],
-        "p2FinalHps": [
-          30,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      }
-    },
-    "spirits": {
-      "warriors": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          140,
-          78,
-          130
-        ],
-        "p1FinalHps": [
-          64,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "summoners": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          158,
-          78,
-          172
-        ],
-        "p1FinalHps": [
-          0,
-          100,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "brutes": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          72,
-          158,
-          240
-        ],
-        "p1FinalHps": [
-          0,
-          100,
-          1
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "verdant": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          146,
-          146,
-          268
-        ],
-        "p1FinalHps": [
-          1,
-          1,
-          30
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "infernal": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          140,
-          150,
-          174
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          13
-        ],
-        "p2FinalHps": [
-          8,
-          30,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "glacial": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          162,
-          190,
-          200
-        ],
-        "p1FinalHps": [
-          30,
-          0,
-          17
-        ],
-        "p2FinalHps": [
-          0,
-          1,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "voltborn": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          122,
-          88,
-          118
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          30,
-          100,
-          1
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "bloodpact": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          142,
-          76,
-          126
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          2,
-          100,
-          2
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "menders": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
           124,
-          208,
-          224
+          102
         ],
         "p1FinalHps": [
-          30,
           0,
-          30
-        ],
-        "p2FinalHps": [
-          0,
-          30,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      }
-    },
-    "verdant": {
-      "warriors": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          172,
-          272,
-          180
-        ],
-        "p1FinalHps": [
-          100,
-          100,
+          78,
           100
         ],
         "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "summoners": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          96,
-          176,
-          136
-        ],
-        "p1FinalHps": [
           100,
           0,
           0
-        ],
-        "p2FinalHps": [
-          0,
-          100,
-          74
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "brutes": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          128,
-          132,
-          220
-        ],
-        "p1FinalHps": [
-          100,
-          64,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          30
         ],
         "lastStands": {
           "p1": 2,
           "p2": 0
         }
       },
-      "spirits": {
-        "p1Wins": 2,
-        "p2Wins": 1,
+      "verdant": {
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
           108,
-          94,
-          172
+          150,
+          178
         ],
         "p1FinalHps": [
           100,
-          100,
+          0,
           0
         ],
         "p2FinalHps": [
           0,
-          0,
-          1
+          100,
+          30
         ],
         "lastStands": {
           "p1": 3,
@@ -1015,9 +561,9 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          108,
-          148,
-          158
+          158,
+          234,
+          162
         ],
         "p1FinalHps": [
           0,
@@ -1026,33 +572,33 @@
         ],
         "p2FinalHps": [
           100,
-          100,
-          100
+          62,
+          68
         ],
         "lastStands": {
-          "p1": 3,
+          "p1": 2,
           "p2": 0
         }
       },
       "glacial": {
-        "p1Wins": 2,
-        "p2Wins": 1,
+        "p1Wins": 0,
+        "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          92,
-          108,
-          160
+          126,
+          130,
+          164
         ],
         "p1FinalHps": [
           0,
-          100,
-          100
+          0,
+          0
         ],
         "p2FinalHps": [
           100,
-          0,
-          0
+          100,
+          30
         ],
         "lastStands": {
           "p1": 3,
@@ -1060,39 +606,14 @@
         }
       },
       "voltborn": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          134,
-          154,
-          164
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          88
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "bloodpact": {
         "p1Wins": 0,
         "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          126,
-          148,
-          170
+          140,
+          134,
+          148
         ],
         "p1FinalHps": [
           0,
@@ -1103,6 +624,31 @@
           100,
           30,
           100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "bloodpact": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          136,
+          158,
+          208
+        ],
+        "p1FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          100,
+          64
         ],
         "lastStands": {
           "p1": 3,
@@ -1116,60 +662,8 @@
         "timeouts": 0,
         "durations": [
           196,
-          178,
-          292
-        ],
-        "p1FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          30,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      }
-    },
-    "infernal": {
-      "warriors": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          140,
-          176,
-          192
-        ],
-        "p1FinalHps": [
-          0,
-          30,
-          52
-        ],
-        "p2FinalHps": [
-          30,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "summoners": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          134,
-          138,
-          150
+          96,
+          168
         ],
         "p1FinalHps": [
           0,
@@ -1185,50 +679,27 @@
           "p1": 3,
           "p2": 0
         }
-      },
-      "brutes": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          134,
-          124,
-          180
-        ],
-        "p1FinalHps": [
-          0,
-          100,
-          30
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "spirits": {
+      }
+    },
+    "spirits": {
+      "warriors": {
         "p1Wins": 1,
         "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          116,
-          152,
-          180
+          92,
+          72,
+          230
         ],
         "p1FinalHps": [
           0,
           0,
-          30
+          68
         ],
         "p2FinalHps": [
-          30,
-          30,
+          100,
+          100,
           0
         ],
         "lastStands": {
@@ -1236,20 +707,20 @@
           "p2": 0
         }
       },
-      "verdant": {
+      "summoners": {
         "p1Wins": 3,
         "p2Wins": 0,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          126,
-          160,
-          198
+          106,
+          138,
+          122
         ],
         "p1FinalHps": [
-          100,
-          100,
-          61
+          82,
+          13,
+          100
         ],
         "p2FinalHps": [
           0,
@@ -1261,40 +732,15 @@
           "p2": 0
         }
       },
-      "glacial": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          126,
-          130,
-          356
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          28
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "voltborn": {
+      "brutes": {
         "p1Wins": 0,
         "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          100,
-          136,
-          162
+          82,
+          68,
+          70
         ],
         "p1FinalHps": [
           0,
@@ -1303,31 +749,6 @@
         ],
         "p2FinalHps": [
           100,
-          100,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "bloodpact": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          112,
-          112,
-          212
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          72,
           100,
           100
         ],
@@ -1336,378 +757,24 @@
           "p2": 0
         }
       },
-      "menders": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          140,
-          184,
-          120
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          100,
-          58,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      }
-    },
-    "glacial": {
-      "warriors": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          118,
-          168,
-          134
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "summoners": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          88,
-          214,
-          194
-        ],
-        "p1FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          1,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "brutes": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          184,
-          138,
-          184
-        ],
-        "p1FinalHps": [
-          100,
-          84,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "spirits": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          212,
-          212,
-          234
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          61,
-          87,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
       "verdant": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          136,
-          144,
-          206
-        ],
-        "p1FinalHps": [
-          31,
-          100,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "infernal": {
         "p1Wins": 3,
         "p2Wins": 0,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          106,
           96,
-          148
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          69
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "voltborn": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          80,
-          134,
-          254
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "bloodpact": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          102,
-          146,
-          106
-        ],
-        "p1FinalHps": [
-          100,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "menders": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          132,
           172,
-          230
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          6
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      }
-    },
-    "voltborn": {
-      "warriors": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          142,
-          182,
-          172
-        ],
-        "p1FinalHps": [
-          30,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          30,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "summoners": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          140,
-          132,
-          190
-        ],
-        "p1FinalHps": [
-          100,
-          30,
-          65
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "brutes": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          116,
-          138,
-          170
-        ],
-        "p1FinalHps": [
-          0,
-          30,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "spirits": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          142,
-          120,
           164
         ],
         "p1FinalHps": [
           100,
           30,
-          0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "verdant": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          86,
-          148,
-          132
-        ],
-        "p1FinalHps": [
-          100,
-          0,
           100
         ],
         "p2FinalHps": [
           0,
-          100,
+          0,
           0
         ],
         "lastStands": {
@@ -1721,18 +788,18 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          100,
-          134,
-          144
+          96,
+          124,
+          124
         ],
         "p1FinalHps": [
+          72,
           0,
-          100,
-          100
+          30
         ],
         "p2FinalHps": [
-          100,
           0,
+          30,
           0
         ],
         "lastStands": {
@@ -1741,24 +808,49 @@
         }
       },
       "glacial": {
-        "p1Wins": 3,
-        "p2Wins": 0,
+        "p1Wins": 0,
+        "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          82,
-          120,
-          178
+          74,
+          72,
+          144
         ],
         "p1FinalHps": [
-          100,
-          100,
-          30
-        ],
-        "p2FinalHps": [
           0,
           0,
           0
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "voltborn": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          122,
+          126,
+          196
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          30,
+          45,
+          100
         ],
         "lastStands": {
           "p1": 3,
@@ -1771,19 +863,19 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          92,
-          122,
-          142
+          198,
+          152,
+          156
         ],
         "p1FinalHps": [
           0,
-          100,
-          0
+          0,
+          10
         ],
         "p2FinalHps": [
           100,
-          0,
-          100
+          32,
+          0
         ],
         "lastStands": {
           "p1": 3,
@@ -1791,24 +883,24 @@
         }
       },
       "menders": {
-        "p1Wins": 1,
-        "p2Wins": 2,
+        "p1Wins": 3,
+        "p2Wins": 0,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          108,
-          140,
-          162
+          152,
+          156,
+          136
         ],
         "p1FinalHps": [
+          4,
           100,
-          0,
-          0
+          87
         ],
         "p2FinalHps": [
           0,
-          100,
-          100
+          0,
+          0
         ],
         "lastStands": {
           "p1": 3,
@@ -1816,24 +908,24 @@
         }
       }
     },
-    "bloodpact": {
+    "verdant": {
       "warriors": {
-        "p1Wins": 3,
-        "p2Wins": 0,
+        "p1Wins": 2,
+        "p2Wins": 1,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          156,
-          150,
-          254
+          88,
+          180,
+          286
         ],
         "p1FinalHps": [
+          0,
           100,
-          70,
-          100
+          30
         ],
         "p2FinalHps": [
-          0,
+          100,
           0,
           0
         ],
@@ -1843,24 +935,24 @@
         }
       },
       "summoners": {
-        "p1Wins": 0,
-        "p2Wins": 3,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          128,
-          188,
-          144
+          156,
+          166,
+          164
         ],
         "p1FinalHps": [
           0,
-          0,
+          30,
           0
         ],
         "p2FinalHps": [
-          30,
-          30,
-          100
+          35,
+          0,
+          30
         ],
         "lastStands": {
           "p1": 3,
@@ -1868,27 +960,27 @@
         }
       },
       "brutes": {
-        "p1Wins": 3,
-        "p2Wins": 0,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          116,
-          148,
-          174
+          120,
+          90,
+          182
         ],
         "p1FinalHps": [
-          30,
-          100,
-          30
+          0,
+          0,
+          48
         ],
         "p2FinalHps": [
-          0,
-          0,
+          100,
+          100,
           0
         ],
         "lastStands": {
-          "p1": 2,
+          "p1": 3,
           "p2": 0
         }
       },
@@ -1898,34 +990,9 @@
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          82,
-          142,
-          144
-        ],
-        "p1FinalHps": [
-          0,
-          78,
-          2
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "verdant": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          154,
-          110,
-          172
+          132,
+          212,
+          120
         ],
         "p1FinalHps": [
           0,
@@ -1933,7 +1000,7 @@
           100
         ],
         "p2FinalHps": [
-          100,
+          61,
           0,
           0
         ],
@@ -1943,24 +1010,24 @@
         }
       },
       "infernal": {
-        "p1Wins": 2,
-        "p2Wins": 1,
+        "p1Wins": 1,
+        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          110,
-          128,
-          326
+          102,
+          120,
+          266
         ],
         "p1FinalHps": [
+          0,
+          0,
+          30
+        ],
+        "p2FinalHps": [
           100,
           100,
           0
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          80
         ],
         "lastStands": {
           "p1": 3,
@@ -1968,23 +1035,23 @@
         }
       },
       "glacial": {
-        "p1Wins": 3,
-        "p2Wins": 0,
+        "p1Wins": 2,
+        "p2Wins": 1,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          136,
-          122,
-          98
+          112,
+          110,
+          228
         ],
         "p1FinalHps": [
           100,
-          100,
+          0,
           100
         ],
         "p2FinalHps": [
           0,
-          0,
+          100,
           0
         ],
         "lastStands": {
@@ -1993,141 +1060,14 @@
         }
       },
       "voltborn": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          92,
-          136,
-          176
-        ],
-        "p1FinalHps": [
-          100,
-          76,
-          30
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "menders": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          126,
-          74,
-          138
-        ],
-        "p1FinalHps": [
-          100,
-          100,
-          100
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 2,
-          "p2": 0
-        }
-      }
-    },
-    "menders": {
-      "warriors": {
-        "p1Wins": 3,
-        "p2Wins": 0,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          184,
-          224,
-          266
-        ],
-        "p1FinalHps": [
-          100,
-          18,
-          30
-        ],
-        "p2FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "summoners": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          192,
-          150,
-          156
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          100
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "brutes": {
-        "p1Wins": 1,
-        "p2Wins": 2,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          106,
-          160,
-          156
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          30
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "spirits": {
         "p1Wins": 0,
         "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          154,
-          148,
-          194
+          114,
+          124,
+          88
         ],
         "p1FinalHps": [
           0,
@@ -2135,8 +1075,8 @@
           0
         ],
         "p2FinalHps": [
-          4,
-          30,
+          100,
+          100,
           100
         ],
         "lastStands": {
@@ -2144,89 +1084,14 @@
           "p2": 0
         }
       },
-      "verdant": {
+      "bloodpact": {
         "p1Wins": 0,
         "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          142,
-          110,
-          114
-        ],
-        "p1FinalHps": [
-          0,
-          0,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          100,
-          100
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "infernal": {
-        "p1Wins": 1,
-        "p2Wins": 2,
         "draws": 0,
         "timeouts": 0,
         "durations": [
           130,
-          156,
-          198
-        ],
-        "p1FinalHps": [
-          0,
-          100,
-          0
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          30
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "glacial": {
-        "p1Wins": 2,
-        "p2Wins": 1,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          164,
-          174,
-          204
-        ],
-        "p1FinalHps": [
-          0,
-          30,
-          32
-        ],
-        "p2FinalHps": [
-          100,
-          0,
-          0
-        ],
-        "lastStands": {
-          "p1": 3,
-          "p2": 0
-        }
-      },
-      "voltborn": {
-        "p1Wins": 0,
-        "p2Wins": 3,
-        "draws": 0,
-        "timeouts": 0,
-        "durations": [
-          100,
-          102,
+          186,
           116
         ],
         "p1FinalHps": [
@@ -2244,15 +1109,1150 @@
           "p2": 0
         }
       },
+      "menders": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          96,
+          140,
+          198
+        ],
+        "p1FinalHps": [
+          100,
+          100,
+          30
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      }
+    },
+    "infernal": {
+      "warriors": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          98,
+          160,
+          240
+        ],
+        "p1FinalHps": [
+          1,
+          100,
+          30
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "summoners": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          76,
+          114,
+          112
+        ],
+        "p1FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          30,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "brutes": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          148,
+          120,
+          170
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "spirits": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          176,
+          116,
+          154
+        ],
+        "p1FinalHps": [
+          78,
+          1,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "verdant": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          156,
+          126,
+          182
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "glacial": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          122,
+          92,
+          138
+        ],
+        "p1FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          100,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "voltborn": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          144,
+          136,
+          166
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "bloodpact": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          90,
+          98,
+          116
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          44
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "menders": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          130,
+          146,
+          238
+        ],
+        "p1FinalHps": [
+          100,
+          100,
+          4
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      }
+    },
+    "glacial": {
+      "warriors": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          138,
+          210,
+          294
+        ],
+        "p1FinalHps": [
+          0,
+          1,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "summoners": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          122,
+          112,
+          148
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          100
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "brutes": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          120,
+          166,
+          244
+        ],
+        "p1FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          100,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "spirits": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          102,
+          132,
+          104
+        ],
+        "p1FinalHps": [
+          100,
+          2,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "verdant": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          132,
+          122,
+          186
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          30
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "infernal": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          148,
+          160,
+          326
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          29
+        ],
+        "p2FinalHps": [
+          100,
+          61,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "voltborn": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          138,
+          90,
+          150
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          0
+        ],
+        "p2FinalHps": [
+          30,
+          0,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
       "bloodpact": {
         "p1Wins": 0,
         "p2Wins": 3,
         "draws": 0,
         "timeouts": 0,
         "durations": [
-          142,
+          134,
+          122,
+          146
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
           100,
-          106
+          100,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "menders": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          76,
+          90,
+          104
+        ],
+        "p1FinalHps": [
+          100,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      }
+    },
+    "voltborn": {
+      "warriors": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          128,
+          130,
+          134
+        ],
+        "p1FinalHps": [
+          58,
+          40,
+          70
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "summoners": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          116,
+          100,
+          146
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          100
+        ],
+        "lastStands": {
+          "p1": 2,
+          "p2": 0
+        }
+      },
+      "brutes": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          128,
+          162,
+          148
+        ],
+        "p1FinalHps": [
+          100,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "spirits": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          78,
+          142,
+          146
+        ],
+        "p1FinalHps": [
+          100,
+          30,
+          53
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "verdant": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          156,
+          172,
+          240
+        ],
+        "p1FinalHps": [
+          0,
+          30,
+          0
+        ],
+        "p2FinalHps": [
+          30,
+          0,
+          34
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "infernal": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          192,
+          130,
+          158
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          30,
+          100,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "glacial": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          178,
+          128,
+          216
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "bloodpact": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          96,
+          100,
+          120
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          88,
+          100,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "menders": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          120,
+          130,
+          120
+        ],
+        "p1FinalHps": [
+          100,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      }
+    },
+    "bloodpact": {
+      "warriors": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          174,
+          130,
+          220
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          47
+        ],
+        "p2FinalHps": [
+          13,
+          100,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "summoners": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          120,
+          112,
+          110
+        ],
+        "p1FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          100,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "brutes": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          132,
+          142,
+          174
+        ],
+        "p1FinalHps": [
+          100,
+          30,
+          30
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "spirits": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          146,
+          160,
+          112
+        ],
+        "p1FinalHps": [
+          30,
+          61,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          10
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "verdant": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          118,
+          126,
+          142
+        ],
+        "p1FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          67,
+          30
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "infernal": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          136,
+          112,
+          126
+        ],
+        "p1FinalHps": [
+          60,
+          100,
+          100
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 2,
+          "p2": 0
+        }
+      },
+      "glacial": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          114,
+          134,
+          132
+        ],
+        "p1FinalHps": [
+          100,
+          30,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "voltborn": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          130,
+          88,
+          116
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          76
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "menders": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          136,
+          144,
+          184
+        ],
+        "p1FinalHps": [
+          0,
+          30,
+          87
+        ],
+        "p2FinalHps": [
+          60,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      }
+    },
+    "menders": {
+      "warriors": {
+        "p1Wins": 3,
+        "p2Wins": 0,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          176,
+          358,
+          364
+        ],
+        "p1FinalHps": [
+          100,
+          98,
+          28
+        ],
+        "p2FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "summoners": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          144,
+          176,
+          74
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "brutes": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          96,
+          172,
+          214
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          84
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "spirits": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          108,
+          150,
+          212
+        ],
+        "p1FinalHps": [
+          30,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          0,
+          48,
+          74
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "verdant": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          122,
+          148,
+          274
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          48
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "infernal": {
+        "p1Wins": 2,
+        "p2Wins": 1,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          136,
+          150,
+          200
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          3
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "glacial": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          112,
+          126,
+          150
+        ],
+        "p1FinalHps": [
+          0,
+          100,
+          0
+        ],
+        "p2FinalHps": [
+          100,
+          0,
+          100
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "voltborn": {
+        "p1Wins": 1,
+        "p2Wins": 2,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          112,
+          194,
+          138
+        ],
+        "p1FinalHps": [
+          0,
+          0,
+          100
+        ],
+        "p2FinalHps": [
+          100,
+          100,
+          0
+        ],
+        "lastStands": {
+          "p1": 3,
+          "p2": 0
+        }
+      },
+      "bloodpact": {
+        "p1Wins": 0,
+        "p2Wins": 3,
+        "draws": 0,
+        "timeouts": 0,
+        "durations": [
+          110,
+          124,
+          116
         ],
         "p1FinalHps": [
           0,
@@ -2288,1295 +2288,1179 @@
     "allNaNs": [],
     "allTimedOut": [],
     "mechanicUsage": {
-      "spy_deployed": 1423,
-      "mid_captured": 547,
-      "upgrade_purchased": 612,
-      "buff_activated": 946,
-      "last_stand_triggered": 337,
-      "aerial_unit_spawned": 2093,
-      "worker_sent_to_mid": 931
+      "spy_deployed": 1426,
+      "mid_captured": 526,
+      "upgrade_purchased": 631,
+      "buff_activated": 994,
+      "last_stand_triggered": 325,
+      "aerial_unit_spawned": 2268,
+      "worker_sent_to_mid": 827
     },
     "mechanicByMatchup": {
       "warriors_vs_summoners": {
-        "spy_deployed": 6,
-        "mid_captured": 2,
-        "upgrade_purchased": 4,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 10,
-        "worker_sent_to_mid": 4
-      },
-      "warriors_vs_brutes": {
-        "spy_deployed": 7,
-        "mid_captured": 3,
-        "upgrade_purchased": 4,
-        "buff_activated": 6,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 3
-      },
-      "warriors_vs_spirits": {
-        "spy_deployed": 3,
+        "spy_deployed": 0,
         "mid_captured": 1,
         "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 1
+      },
+      "warriors_vs_brutes": {
+        "spy_deployed": 1,
+        "mid_captured": 2,
+        "upgrade_purchased": 1,
         "buff_activated": 0,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 2
+      },
+      "warriors_vs_spirits": {
+        "spy_deployed": 4,
+        "mid_captured": 3,
+        "upgrade_purchased": 2,
+        "buff_activated": 3,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 8,
         "worker_sent_to_mid": 2
       },
       "warriors_vs_verdant": {
-        "spy_deployed": 13,
-        "mid_captured": 3,
+        "spy_deployed": 5,
+        "mid_captured": 1,
         "upgrade_purchased": 4,
-        "buff_activated": 7,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 4
+        "buff_activated": 3,
+        "last_stand_triggered": 0,
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 3
       },
       "warriors_vs_infernal": {
         "spy_deployed": 8,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 4
-      },
-      "warriors_vs_voltborn": {
-        "spy_deployed": 3,
         "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
+        "upgrade_purchased": 3,
+        "buff_activated": 9,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 6,
         "worker_sent_to_mid": 2
       },
       "warriors_vs_glacial": {
-        "spy_deployed": 1,
+        "spy_deployed": 3,
+        "mid_captured": 2,
+        "upgrade_purchased": 3,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 2
+      },
+      "warriors_vs_voltborn": {
+        "spy_deployed": 8,
+        "mid_captured": 6,
+        "upgrade_purchased": 6,
+        "buff_activated": 7,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 22,
+        "worker_sent_to_mid": 7
+      },
+      "warriors_vs_bloodpact": {
+        "spy_deployed": 4,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 15,
+        "worker_sent_to_mid": 1
+      },
+      "warriors_vs_menders": {
+        "spy_deployed": 0,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 0,
+        "worker_sent_to_mid": 1
+      },
+      "summoners_vs_warriors": {
+        "spy_deployed": 2,
         "mid_captured": 3,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 2
+      },
+      "summoners_vs_brutes": {
+        "spy_deployed": 2,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 1
+      },
+      "summoners_vs_spirits": {
+        "spy_deployed": 5,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 3,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 10,
+        "worker_sent_to_mid": 3
+      },
+      "summoners_vs_verdant": {
+        "spy_deployed": 3,
+        "mid_captured": 2,
         "upgrade_purchased": 1,
-        "buff_activated": 4,
+        "buff_activated": 2,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 6,
         "worker_sent_to_mid": 3
       },
-      "warriors_vs_bloodpact": {
-        "spy_deployed": 6,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 3,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 1
-      },
-      "warriors_vs_menders": {
-        "spy_deployed": 8,
-        "mid_captured": 4,
-        "upgrade_purchased": 4,
-        "buff_activated": 6,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 9,
-        "worker_sent_to_mid": 9
-      },
-      "summoners_vs_warriors": {
+      "summoners_vs_infernal": {
         "spy_deployed": 3,
         "mid_captured": 1,
         "upgrade_purchased": 1,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 3
-      },
-      "summoners_vs_brutes": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 3
-      },
-      "summoners_vs_spirits": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
         "buff_activated": 2,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 4,
         "worker_sent_to_mid": 1
-      },
-      "summoners_vs_verdant": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 1
-      },
-      "summoners_vs_infernal": {
-        "spy_deployed": 1,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 2
       },
       "summoners_vs_glacial": {
-        "spy_deployed": 6,
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 2
+      },
+      "summoners_vs_voltborn": {
+        "spy_deployed": 7,
+        "mid_captured": 2,
+        "upgrade_purchased": 3,
+        "buff_activated": 5,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 3
+      },
+      "summoners_vs_bloodpact": {
+        "spy_deployed": 4,
         "mid_captured": 1,
         "upgrade_purchased": 3,
         "buff_activated": 2,
         "last_stand_triggered": 1,
+        "aerial_unit_spawned": 3,
+        "worker_sent_to_mid": 3
+      },
+      "summoners_vs_menders": {
+        "spy_deployed": 3,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
         "aerial_unit_spawned": 4,
         "worker_sent_to_mid": 1
       },
-      "summoners_vs_voltborn": {
-        "spy_deployed": 3,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 2
-      },
-      "summoners_vs_bloodpact": {
-        "spy_deployed": 1,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 2
-      },
-      "summoners_vs_menders": {
-        "spy_deployed": 7,
-        "mid_captured": 2,
-        "upgrade_purchased": 1,
-        "buff_activated": 3,
+      "brutes_vs_warriors": {
+        "spy_deployed": 10,
+        "mid_captured": 3,
+        "upgrade_purchased": 3,
+        "buff_activated": 5,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 10,
         "worker_sent_to_mid": 3
-      },
-      "brutes_vs_warriors": {
-        "spy_deployed": 5,
-        "mid_captured": 3,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 5
       },
       "brutes_vs_summoners": {
         "spy_deployed": 5,
         "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 2
+        "upgrade_purchased": 3,
+        "buff_activated": 3,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 1
       },
       "brutes_vs_spirits": {
-        "spy_deployed": 1,
-        "mid_captured": 2,
-        "upgrade_purchased": 1,
-        "buff_activated": 0,
+        "spy_deployed": 4,
+        "mid_captured": 1,
+        "upgrade_purchased": 3,
+        "buff_activated": 2,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 10,
-        "worker_sent_to_mid": 4
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 3
       },
       "brutes_vs_verdant": {
-        "spy_deployed": 1,
-        "mid_captured": 1,
-        "upgrade_purchased": 1,
-        "buff_activated": 1,
+        "spy_deployed": 0,
+        "mid_captured": 2,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 2,
-        "worker_sent_to_mid": 2
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 3
       },
       "brutes_vs_infernal": {
-        "spy_deployed": 3,
-        "mid_captured": 2,
+        "spy_deployed": 5,
+        "mid_captured": 1,
         "upgrade_purchased": 2,
-        "buff_activated": 3,
+        "buff_activated": 2,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 3
+        "aerial_unit_spawned": 3,
+        "worker_sent_to_mid": 4
       },
       "brutes_vs_glacial": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 2
-      },
-      "brutes_vs_voltborn": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 2
-      },
-      "brutes_vs_bloodpact": {
-        "spy_deployed": 5,
+        "spy_deployed": 0,
         "mid_captured": 3,
-        "upgrade_purchased": 3,
+        "upgrade_purchased": 1,
         "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 8,
-        "worker_sent_to_mid": 8
-      },
-      "spirits_vs_warriors": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 4,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 4
-      },
-      "brutes_vs_menders": {
-        "spy_deployed": 12,
-        "mid_captured": 6,
-        "upgrade_purchased": 4,
-        "buff_activated": 9,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 8
-      },
-      "spirits_vs_summoners": {
-        "spy_deployed": 8,
-        "mid_captured": 1,
-        "upgrade_purchased": 4,
-        "buff_activated": 4,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 16,
-        "worker_sent_to_mid": 2
-      },
-      "spirits_vs_brutes": {
-        "spy_deployed": 1,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 0,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 10,
-        "worker_sent_to_mid": 2
-      },
-      "spirits_vs_verdant": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 3,
-        "buff_activated": 4,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 12,
-        "worker_sent_to_mid": 3
-      },
-      "spirits_vs_infernal": {
-        "spy_deployed": 8,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 4,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 15,
-        "worker_sent_to_mid": 2
-      },
-      "spirits_vs_glacial": {
-        "spy_deployed": 7,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 7,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 17,
-        "worker_sent_to_mid": 4
-      },
-      "spirits_vs_voltborn": {
-        "spy_deployed": 4,
-        "mid_captured": 2,
-        "upgrade_purchased": 3,
-        "buff_activated": 3,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 12,
-        "worker_sent_to_mid": 2
-      },
-      "spirits_vs_bloodpact": {
-        "spy_deployed": 6,
-        "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 5,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 15,
-        "worker_sent_to_mid": 4
-      },
-      "spirits_vs_menders": {
-        "spy_deployed": 3,
-        "mid_captured": 2,
-        "upgrade_purchased": 3,
-        "buff_activated": 3,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 15,
-        "worker_sent_to_mid": 3
-      },
-      "verdant_vs_warriors": {
-        "spy_deployed": 6,
-        "mid_captured": 2,
-        "upgrade_purchased": 4,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 9,
-        "worker_sent_to_mid": 3
-      },
-      "verdant_vs_summoners": {
-        "spy_deployed": 3,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 1
-      },
-      "verdant_vs_brutes": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 1,
-        "last_stand_triggered": 0,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 2
-      },
-      "verdant_vs_spirits": {
-        "spy_deployed": 2,
-        "mid_captured": 0,
-        "upgrade_purchased": 0,
-        "buff_activated": 0,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 0
+        "worker_sent_to_mid": 3
       },
-      "verdant_vs_glacial": {
-        "spy_deployed": 2,
+      "brutes_vs_voltborn": {
+        "spy_deployed": 4,
         "mid_captured": 1,
         "upgrade_purchased": 0,
         "buff_activated": 2,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
+        "aerial_unit_spawned": 8,
         "worker_sent_to_mid": 1
       },
-      "verdant_vs_infernal": {
-        "spy_deployed": 3,
-        "mid_captured": 2,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 2
-      },
-      "verdant_vs_voltborn": {
+      "brutes_vs_bloodpact": {
         "spy_deployed": 4,
         "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 11,
-        "worker_sent_to_mid": 4
-      },
-      "verdant_vs_bloodpact": {
-        "spy_deployed": 5,
-        "mid_captured": 1,
         "upgrade_purchased": 2,
         "buff_activated": 2,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
+        "aerial_unit_spawned": 6,
         "worker_sent_to_mid": 2
       },
-      "verdant_vs_menders": {
-        "spy_deployed": 7,
-        "mid_captured": 2,
-        "upgrade_purchased": 3,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 8,
-        "worker_sent_to_mid": 3
-      },
-      "infernal_vs_warriors": {
-        "spy_deployed": 6,
-        "mid_captured": 5,
-        "upgrade_purchased": 1,
-        "buff_activated": 5,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 8,
-        "worker_sent_to_mid": 5
-      },
-      "infernal_vs_summoners": {
-        "spy_deployed": 4,
-        "mid_captured": 0,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 0
-      },
-      "infernal_vs_brutes": {
-        "spy_deployed": 2,
-        "mid_captured": 5,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 6
-      },
-      "infernal_vs_spirits": {
-        "spy_deployed": 3,
-        "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 8,
-        "worker_sent_to_mid": 2
-      },
-      "infernal_vs_verdant": {
-        "spy_deployed": 3,
-        "mid_captured": 1,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 2
-      },
-      "infernal_vs_glacial": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 2
-      },
-      "infernal_vs_voltborn": {
-        "spy_deployed": 3,
-        "mid_captured": 2,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 2
-      },
-      "infernal_vs_bloodpact": {
-        "spy_deployed": 4,
-        "mid_captured": 3,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 3
-      },
-      "infernal_vs_menders": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 3
-      },
-      "glacial_vs_warriors": {
-        "spy_deployed": 4,
-        "mid_captured": 4,
-        "upgrade_purchased": 3,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 4
-      },
-      "glacial_vs_summoners": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 1
-      },
-      "glacial_vs_brutes": {
+      "brutes_vs_menders": {
         "spy_deployed": 7,
         "mid_captured": 3,
         "upgrade_purchased": 5,
         "buff_activated": 4,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 8,
+        "aerial_unit_spawned": 5,
         "worker_sent_to_mid": 6
       },
-      "glacial_vs_spirits": {
-        "spy_deployed": 7,
+      "spirits_vs_warriors": {
+        "spy_deployed": 3,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 0
+      },
+      "spirits_vs_summoners": {
+        "spy_deployed": 2,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 3
+      },
+      "spirits_vs_brutes": {
+        "spy_deployed": 1,
+        "mid_captured": 0,
+        "upgrade_purchased": 0,
+        "buff_activated": 0,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 0
+      },
+      "spirits_vs_verdant": {
+        "spy_deployed": 3,
+        "mid_captured": 2,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 2
+      },
+      "spirits_vs_infernal": {
+        "spy_deployed": 3,
+        "mid_captured": 2,
+        "upgrade_purchased": 0,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 2
+      },
+      "spirits_vs_glacial": {
+        "spy_deployed": 2,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 0,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 1
+      },
+      "spirits_vs_voltborn": {
+        "spy_deployed": 2,
+        "mid_captured": 3,
+        "upgrade_purchased": 1,
+        "buff_activated": 4,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 12,
+        "worker_sent_to_mid": 3
+      },
+      "spirits_vs_bloodpact": {
+        "spy_deployed": 11,
         "mid_captured": 1,
         "upgrade_purchased": 6,
-        "buff_activated": 7,
+        "buff_activated": 4,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 14,
-        "worker_sent_to_mid": 8
+        "aerial_unit_spawned": 27,
+        "worker_sent_to_mid": 4
+      },
+      "spirits_vs_menders": {
+        "spy_deployed": 8,
+        "mid_captured": 1,
+        "upgrade_purchased": 4,
+        "buff_activated": 5,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 13,
+        "worker_sent_to_mid": 5
+      },
+      "verdant_vs_warriors": {
+        "spy_deployed": 2,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 2,
+        "worker_sent_to_mid": 2
+      },
+      "verdant_vs_summoners": {
+        "spy_deployed": 6,
+        "mid_captured": 3,
+        "upgrade_purchased": 3,
+        "buff_activated": 4,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 5
+      },
+      "verdant_vs_brutes": {
+        "spy_deployed": 3,
+        "mid_captured": 3,
+        "upgrade_purchased": 4,
+        "buff_activated": 0,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 3
+      },
+      "verdant_vs_spirits": {
+        "spy_deployed": 5,
+        "mid_captured": 3,
+        "upgrade_purchased": 1,
+        "buff_activated": 4,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 11,
+        "worker_sent_to_mid": 3
+      },
+      "verdant_vs_infernal": {
+        "spy_deployed": 1,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 1
+      },
+      "verdant_vs_glacial": {
+        "spy_deployed": 3,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 3
+      },
+      "verdant_vs_voltborn": {
+        "spy_deployed": 2,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 10,
+        "worker_sent_to_mid": 3
+      },
+      "verdant_vs_bloodpact": {
+        "spy_deployed": 4,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 1
+      },
+      "verdant_vs_menders": {
+        "spy_deployed": 1,
+        "mid_captured": 0,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 1
+      },
+      "infernal_vs_warriors": {
+        "spy_deployed": 2,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 1
+      },
+      "infernal_vs_summoners": {
+        "spy_deployed": 2,
+        "mid_captured": 0,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 2,
+        "worker_sent_to_mid": 0
+      },
+      "infernal_vs_brutes": {
+        "spy_deployed": 4,
+        "mid_captured": 2,
+        "upgrade_purchased": 1,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 2
+      },
+      "infernal_vs_spirits": {
+        "spy_deployed": 6,
+        "mid_captured": 3,
+        "upgrade_purchased": 4,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 25,
+        "worker_sent_to_mid": 6
+      },
+      "infernal_vs_verdant": {
+        "spy_deployed": 7,
+        "mid_captured": 2,
+        "upgrade_purchased": 3,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 3
+      },
+      "infernal_vs_glacial": {
+        "spy_deployed": 3,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 3,
+        "worker_sent_to_mid": 4
+      },
+      "infernal_vs_voltborn": {
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 3
+      },
+      "infernal_vs_bloodpact": {
+        "spy_deployed": 1,
+        "mid_captured": 0,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 3,
+        "worker_sent_to_mid": 0
+      },
+      "infernal_vs_menders": {
+        "spy_deployed": 4,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 4
+      },
+      "glacial_vs_warriors": {
+        "spy_deployed": 4,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 1
+      },
+      "glacial_vs_summoners": {
+        "spy_deployed": 1,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 2
+      },
+      "glacial_vs_brutes": {
+        "spy_deployed": 6,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 1
+      },
+      "glacial_vs_spirits": {
+        "spy_deployed": 2,
+        "mid_captured": 1,
+        "upgrade_purchased": 1,
+        "buff_activated": 0,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 1
       },
       "glacial_vs_verdant": {
+        "spy_deployed": 4,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 2
+      },
+      "glacial_vs_infernal": {
+        "spy_deployed": 5,
+        "mid_captured": 3,
+        "upgrade_purchased": 4,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 4
+      },
+      "glacial_vs_voltborn": {
+        "spy_deployed": 2,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 4,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 3
+      },
+      "glacial_vs_bloodpact": {
+        "spy_deployed": 5,
+        "mid_captured": 3,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 5
+      },
+      "glacial_vs_menders": {
+        "spy_deployed": 1,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 1
+      },
+      "voltborn_vs_warriors": {
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 3,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 4
+      },
+      "voltborn_vs_summoners": {
+        "spy_deployed": 3,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 4
+      },
+      "voltborn_vs_brutes": {
+        "spy_deployed": 6,
+        "mid_captured": 1,
+        "upgrade_purchased": 1,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 3
+      },
+      "voltborn_vs_spirits": {
+        "spy_deployed": 0,
+        "mid_captured": 2,
+        "upgrade_purchased": 1,
+        "buff_activated": 0,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 11,
+        "worker_sent_to_mid": 3
+      },
+      "voltborn_vs_verdant": {
+        "spy_deployed": 6,
+        "mid_captured": 2,
+        "upgrade_purchased": 3,
+        "buff_activated": 8,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 4
+      },
+      "voltborn_vs_infernal": {
+        "spy_deployed": 7,
+        "mid_captured": 3,
+        "upgrade_purchased": 4,
+        "buff_activated": 6,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 12,
+        "worker_sent_to_mid": 3
+      },
+      "voltborn_vs_glacial": {
+        "spy_deployed": 4,
+        "mid_captured": 2,
+        "upgrade_purchased": 1,
+        "buff_activated": 4,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 3
+      },
+      "voltborn_vs_bloodpact": {
+        "spy_deployed": 2,
+        "mid_captured": 2,
+        "upgrade_purchased": 1,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 4
+      },
+      "voltborn_vs_menders": {
+        "spy_deployed": 3,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 5,
+        "worker_sent_to_mid": 2
+      },
+      "bloodpact_vs_warriors": {
+        "spy_deployed": 5,
+        "mid_captured": 2,
+        "upgrade_purchased": 3,
+        "buff_activated": 7,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 11,
+        "worker_sent_to_mid": 5
+      },
+      "bloodpact_vs_summoners": {
+        "spy_deployed": 3,
+        "mid_captured": 0,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 0
+      },
+      "bloodpact_vs_brutes": {
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 9,
+        "worker_sent_to_mid": 2
+      },
+      "bloodpact_vs_spirits": {
+        "spy_deployed": 3,
+        "mid_captured": 4,
+        "upgrade_purchased": 4,
+        "buff_activated": 4,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 13,
+        "worker_sent_to_mid": 3
+      },
+      "bloodpact_vs_verdant": {
+        "spy_deployed": 3,
+        "mid_captured": 1,
+        "upgrade_purchased": 2,
+        "buff_activated": 1,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 4,
+        "worker_sent_to_mid": 1
+      },
+      "bloodpact_vs_infernal": {
+        "spy_deployed": 3,
+        "mid_captured": 3,
+        "upgrade_purchased": 2,
+        "buff_activated": 3,
+        "last_stand_triggered": 0,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 4
+      },
+      "bloodpact_vs_glacial": {
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 1,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 2
+      },
+      "bloodpact_vs_voltborn": {
+        "spy_deployed": 3,
+        "mid_captured": 3,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 3
+      },
+      "bloodpact_vs_menders": {
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 3,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 8,
+        "worker_sent_to_mid": 3
+      },
+      "menders_vs_warriors": {
+        "spy_deployed": 2,
+        "mid_captured": 3,
+        "upgrade_purchased": 3,
+        "buff_activated": 4,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 11,
+        "worker_sent_to_mid": 3
+      },
+      "menders_vs_summoners": {
         "spy_deployed": 6,
         "mid_captured": 2,
         "upgrade_purchased": 2,
         "buff_activated": 3,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 3
-      },
-      "glacial_vs_infernal": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 2
-      },
-      "glacial_vs_voltborn": {
-        "spy_deployed": 1,
-        "mid_captured": 3,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 3
-      },
-      "glacial_vs_bloodpact": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 12,
-        "worker_sent_to_mid": 2
-      },
-      "glacial_vs_menders": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 1
-      },
-      "voltborn_vs_warriors": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 4,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 4
-      },
-      "voltborn_vs_summoners": {
-        "spy_deployed": 5,
-        "mid_captured": 2,
-        "upgrade_purchased": 3,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 3
-      },
-      "voltborn_vs_brutes": {
-        "spy_deployed": 2,
-        "mid_captured": 2,
-        "upgrade_purchased": 3,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 2
-      },
-      "voltborn_vs_spirits": {
-        "spy_deployed": 4,
-        "mid_captured": 3,
-        "upgrade_purchased": 1,
-        "buff_activated": 4,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 16,
-        "worker_sent_to_mid": 4
-      },
-      "voltborn_vs_verdant": {
-        "spy_deployed": 3,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 1
-      },
-      "voltborn_vs_infernal": {
-        "spy_deployed": 2,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 2
-      },
-      "voltborn_vs_glacial": {
-        "spy_deployed": 1,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 2
-      },
-      "voltborn_vs_bloodpact": {
-        "spy_deployed": 1,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 1
-      },
-      "voltborn_vs_menders": {
-        "spy_deployed": 3,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 8,
-        "worker_sent_to_mid": 3
-      },
-      "bloodpact_vs_warriors": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
         "aerial_unit_spawned": 7,
         "worker_sent_to_mid": 3
-      },
-      "bloodpact_vs_summoners": {
-        "spy_deployed": 3,
-        "mid_captured": 3,
-        "upgrade_purchased": 1,
-        "buff_activated": 3,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 5,
-        "worker_sent_to_mid": 4
-      },
-      "bloodpact_vs_brutes": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 1
-      },
-      "bloodpact_vs_spirits": {
-        "spy_deployed": 1,
-        "mid_captured": 1,
-        "upgrade_purchased": 1,
-        "buff_activated": 0,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 12,
-        "worker_sent_to_mid": 1
-      },
-      "bloodpact_vs_verdant": {
-        "spy_deployed": 8,
-        "mid_captured": 2,
-        "upgrade_purchased": 1,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 3
-      },
-      "bloodpact_vs_infernal": {
-        "spy_deployed": 4,
-        "mid_captured": 2,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 2
-      },
-      "bloodpact_vs_glacial": {
-        "spy_deployed": 4,
-        "mid_captured": 2,
-        "upgrade_purchased": 1,
-        "buff_activated": 4,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 5
-      },
-      "bloodpact_vs_voltborn": {
-        "spy_deployed": 3,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 3,
-        "worker_sent_to_mid": 1
-      },
-      "bloodpact_vs_menders": {
-        "spy_deployed": 3,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 1
-      },
-      "menders_vs_warriors": {
-        "spy_deployed": 2,
-        "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 7,
-        "worker_sent_to_mid": 2
-      },
-      "menders_vs_summoners": {
-        "spy_deployed": 9,
-        "mid_captured": 3,
-        "upgrade_purchased": 3,
-        "buff_activated": 4,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 6,
-        "worker_sent_to_mid": 6
       },
       "menders_vs_brutes": {
-        "spy_deployed": 2,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 2,
+        "spy_deployed": 1,
+        "mid_captured": 2,
+        "upgrade_purchased": 1,
+        "buff_activated": 1,
         "last_stand_triggered": 1,
-        "aerial_unit_spawned": 1,
-        "worker_sent_to_mid": 1
-      },
-      "menders_vs_verdant": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 2,
-        "buff_activated": 2,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 6,
+        "aerial_unit_spawned": 3,
         "worker_sent_to_mid": 2
       },
       "menders_vs_spirits": {
-        "spy_deployed": 3,
-        "mid_captured": 3,
-        "upgrade_purchased": 1,
-        "buff_activated": 5,
-        "last_stand_triggered": 2,
-        "aerial_unit_spawned": 14,
-        "worker_sent_to_mid": 5
-      },
-      "menders_vs_infernal": {
-        "spy_deployed": 4,
-        "mid_captured": 1,
-        "upgrade_purchased": 0,
-        "buff_activated": 1,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 4,
-        "worker_sent_to_mid": 2
-      },
-      "menders_vs_glacial": {
-        "spy_deployed": 10,
+        "spy_deployed": 0,
         "mid_captured": 2,
-        "upgrade_purchased": 2,
-        "buff_activated": 3,
-        "last_stand_triggered": 1,
-        "aerial_unit_spawned": 6,
+        "upgrade_purchased": 1,
+        "buff_activated": 2,
+        "last_stand_triggered": 2,
+        "aerial_unit_spawned": 9,
         "worker_sent_to_mid": 3
       },
-      "menders_vs_voltborn": {
-        "spy_deployed": 2,
+      "menders_vs_verdant": {
+        "spy_deployed": 1,
+        "mid_captured": 2,
+        "upgrade_purchased": 2,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 7,
+        "worker_sent_to_mid": 1
+      },
+      "menders_vs_glacial": {
+        "spy_deployed": 1,
         "mid_captured": 1,
         "upgrade_purchased": 1,
         "buff_activated": 2,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 1
+      },
+      "menders_vs_infernal": {
+        "spy_deployed": 5,
+        "mid_captured": 1,
+        "upgrade_purchased": 4,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 6,
+        "worker_sent_to_mid": 1
+      },
+      "menders_vs_voltborn": {
+        "spy_deployed": 6,
+        "mid_captured": 1,
+        "upgrade_purchased": 0,
+        "buff_activated": 2,
+        "last_stand_triggered": 1,
+        "aerial_unit_spawned": 12,
         "worker_sent_to_mid": 1
       },
       "menders_vs_bloodpact": {
         "spy_deployed": 2,
         "mid_captured": 4,
-        "upgrade_purchased": 3,
+        "upgrade_purchased": 0,
         "buff_activated": 2,
         "last_stand_triggered": 1,
         "aerial_unit_spawned": 9,
-        "worker_sent_to_mid": 5
+        "worker_sent_to_mid": 3
       }
     },
     "mechanicByFaction": {
       "warriors": {
-        "spy_deployed": 337,
-        "mid_captured": 112,
-        "upgrade_purchased": 156,
-        "buff_activated": 232,
-        "last_stand_triggered": 72,
-        "aerial_unit_spawned": 457,
-        "worker_sent_to_mid": 197
+        "spy_deployed": 421,
+        "mid_captured": 120,
+        "upgrade_purchased": 168,
+        "buff_activated": 334,
+        "last_stand_triggered": 70,
+        "aerial_unit_spawned": 598,
+        "worker_sent_to_mid": 187
       },
       "summoners": {
-        "spy_deployed": 268,
-        "mid_captured": 104,
-        "upgrade_purchased": 112,
-        "buff_activated": 171,
-        "last_stand_triggered": 63,
-        "aerial_unit_spawned": 407,
-        "worker_sent_to_mid": 178
+        "spy_deployed": 263,
+        "mid_captured": 90,
+        "upgrade_purchased": 115,
+        "buff_activated": 197,
+        "last_stand_triggered": 65,
+        "aerial_unit_spawned": 475,
+        "worker_sent_to_mid": 155
       },
       "brutes": {
-        "spy_deployed": 277,
-        "mid_captured": 127,
-        "upgrade_purchased": 123,
-        "buff_activated": 201,
-        "last_stand_triggered": 65,
-        "aerial_unit_spawned": 325,
-        "worker_sent_to_mid": 220
+        "spy_deployed": 261,
+        "mid_captured": 103,
+        "upgrade_purchased": 121,
+        "buff_activated": 183,
+        "last_stand_triggered": 59,
+        "aerial_unit_spawned": 339,
+        "worker_sent_to_mid": 155
       },
       "spirits": {
-        "spy_deployed": 285,
-        "mid_captured": 109,
-        "upgrade_purchased": 136,
-        "buff_activated": 214,
-        "last_stand_triggered": 82,
-        "aerial_unit_spawned": 626,
-        "worker_sent_to_mid": 180
+        "spy_deployed": 241,
+        "mid_captured": 108,
+        "upgrade_purchased": 112,
+        "buff_activated": 157,
+        "last_stand_triggered": 68,
+        "aerial_unit_spawned": 580,
+        "worker_sent_to_mid": 152
       },
       "verdant": {
-        "spy_deployed": 282,
-        "mid_captured": 98,
-        "upgrade_purchased": 125,
-        "buff_activated": 170,
-        "last_stand_triggered": 62,
-        "aerial_unit_spawned": 357,
-        "worker_sent_to_mid": 160
+        "spy_deployed": 305,
+        "mid_captured": 110,
+        "upgrade_purchased": 143,
+        "buff_activated": 209,
+        "last_stand_triggered": 67,
+        "aerial_unit_spawned": 424,
+        "worker_sent_to_mid": 170
       },
       "infernal": {
-        "spy_deployed": 287,
+        "spy_deployed": 288,
         "mid_captured": 109,
-        "upgrade_purchased": 112,
-        "buff_activated": 186,
-        "last_stand_triggered": 66,
-        "aerial_unit_spawned": 393,
-        "worker_sent_to_mid": 204
+        "upgrade_purchased": 127,
+        "buff_activated": 199,
+        "last_stand_triggered": 67,
+        "aerial_unit_spawned": 409,
+        "worker_sent_to_mid": 182
       },
       "glacial": {
-        "spy_deployed": 284,
-        "mid_captured": 112,
+        "spy_deployed": 275,
+        "mid_captured": 103,
         "upgrade_purchased": 123,
-        "buff_activated": 192,
-        "last_stand_triggered": 64,
-        "aerial_unit_spawned": 401,
-        "worker_sent_to_mid": 179
+        "buff_activated": 187,
+        "last_stand_triggered": 65,
+        "aerial_unit_spawned": 392,
+        "worker_sent_to_mid": 159
       },
       "voltborn": {
-        "spy_deployed": 252,
+        "spy_deployed": 271,
         "mid_captured": 107,
-        "upgrade_purchased": 100,
-        "buff_activated": 162,
-        "last_stand_triggered": 67,
-        "aerial_unit_spawned": 378,
-        "worker_sent_to_mid": 164
+        "upgrade_purchased": 133,
+        "buff_activated": 170,
+        "last_stand_triggered": 63,
+        "aerial_unit_spawned": 441,
+        "worker_sent_to_mid": 157
       },
       "bloodpact": {
-        "spy_deployed": 261,
-        "mid_captured": 94,
-        "upgrade_purchased": 99,
-        "buff_activated": 148,
-        "last_stand_triggered": 61,
-        "aerial_unit_spawned": 407,
-        "worker_sent_to_mid": 175
+        "spy_deployed": 241,
+        "mid_captured": 96,
+        "upgrade_purchased": 103,
+        "buff_activated": 164,
+        "last_stand_triggered": 64,
+        "aerial_unit_spawned": 440,
+        "worker_sent_to_mid": 149
       },
       "menders": {
-        "spy_deployed": 313,
-        "mid_captured": 122,
-        "upgrade_purchased": 138,
-        "buff_activated": 216,
-        "last_stand_triggered": 72,
-        "aerial_unit_spawned": 435,
-        "worker_sent_to_mid": 205
+        "spy_deployed": 286,
+        "mid_captured": 106,
+        "upgrade_purchased": 117,
+        "buff_activated": 188,
+        "last_stand_triggered": 62,
+        "aerial_unit_spawned": 438,
+        "worker_sent_to_mid": 188
       }
     },
     "closestGames": [
       {
-        "matchup": "warriors vs menders",
-        "p1Faction": "warriors",
-        "p2Faction": "menders",
+        "matchup": "summoners vs verdant",
+        "p1Faction": "summoners",
+        "p2Faction": "verdant",
         "combinedHp": 1,
         "p1Hp": 0,
         "p2Hp": 1,
+        "elapsed": 504,
+        "winner": "verdant"
+      },
+      {
+        "matchup": "infernal vs warriors",
+        "p1Faction": "infernal",
+        "p2Faction": "warriors",
+        "combinedHp": 1,
+        "p1Hp": 1,
+        "p2Hp": 0,
+        "elapsed": 98,
+        "winner": "infernal"
+      },
+      {
+        "matchup": "infernal vs spirits",
+        "p1Faction": "infernal",
+        "p2Faction": "spirits",
+        "combinedHp": 1,
+        "p1Hp": 1,
+        "p2Hp": 0,
+        "elapsed": 116,
+        "winner": "infernal"
+      },
+      {
+        "matchup": "glacial vs warriors",
+        "p1Faction": "glacial",
+        "p2Faction": "warriors",
+        "combinedHp": 1,
+        "p1Hp": 1,
+        "p2Hp": 0,
         "elapsed": 210,
-        "winner": "menders"
-      },
-      {
-        "matchup": "spirits vs verdant",
-        "p1Faction": "spirits",
-        "p2Faction": "verdant",
-        "combinedHp": 1,
-        "p1Hp": 1,
-        "p2Hp": 0,
-        "elapsed": 146,
-        "winner": "spirits"
-      },
-      {
-        "matchup": "spirits vs verdant",
-        "p1Faction": "spirits",
-        "p2Faction": "verdant",
-        "combinedHp": 1,
-        "p1Hp": 1,
-        "p2Hp": 0,
-        "elapsed": 146,
-        "winner": "spirits"
-      },
-      {
-        "matchup": "spirits vs brutes",
-        "p1Faction": "spirits",
-        "p2Faction": "brutes",
-        "combinedHp": 1,
-        "p1Hp": 1,
-        "p2Hp": 0,
-        "elapsed": 240,
-        "winner": "spirits"
-      },
-      {
-        "matchup": "spirits vs glacial",
-        "p1Faction": "spirits",
-        "p2Faction": "glacial",
-        "combinedHp": 1,
-        "p1Hp": 0,
-        "p2Hp": 1,
-        "elapsed": 190,
         "winner": "glacial"
       },
       {
-        "matchup": "spirits vs voltborn",
-        "p1Faction": "spirits",
-        "p2Faction": "voltborn",
-        "combinedHp": 1,
-        "p1Hp": 0,
-        "p2Hp": 1,
-        "elapsed": 118,
-        "winner": "voltborn"
+        "matchup": "glacial vs spirits",
+        "p1Faction": "glacial",
+        "p2Faction": "spirits",
+        "combinedHp": 2,
+        "p1Hp": 2,
+        "p2Hp": 0,
+        "elapsed": 132,
+        "winner": "glacial"
       },
       {
-        "matchup": "verdant vs spirits",
-        "p1Faction": "verdant",
-        "p2Faction": "spirits",
-        "combinedHp": 1,
-        "p1Hp": 0,
-        "p2Hp": 1,
-        "elapsed": 172,
+        "matchup": "menders vs infernal",
+        "p1Faction": "menders",
+        "p2Faction": "infernal",
+        "combinedHp": 3,
+        "p1Hp": 3,
+        "p2Hp": 0,
+        "elapsed": 200,
+        "winner": "menders"
+      },
+      {
+        "matchup": "spirits vs menders",
+        "p1Faction": "spirits",
+        "p2Faction": "menders",
+        "combinedHp": 4,
+        "p1Hp": 4,
+        "p2Hp": 0,
+        "elapsed": 152,
         "winner": "spirits"
       },
       {
-        "matchup": "glacial vs summoners",
-        "p1Faction": "glacial",
-        "p2Faction": "summoners",
-        "combinedHp": 1,
-        "p1Hp": 0,
-        "p2Hp": 1,
-        "elapsed": 214,
-        "winner": "summoners"
+        "matchup": "infernal vs menders",
+        "p1Faction": "infernal",
+        "p2Faction": "menders",
+        "combinedHp": 4,
+        "p1Hp": 4,
+        "p2Hp": 0,
+        "elapsed": 238,
+        "winner": "infernal"
       },
       {
         "matchup": "spirits vs bloodpact",
         "p1Faction": "spirits",
         "p2Faction": "bloodpact",
-        "combinedHp": 2,
-        "p1Hp": 0,
-        "p2Hp": 2,
-        "elapsed": 142,
-        "winner": "bloodpact"
-      },
-      {
-        "matchup": "spirits vs bloodpact",
-        "p1Faction": "spirits",
-        "p2Faction": "bloodpact",
-        "combinedHp": 2,
-        "p1Hp": 0,
-        "p2Hp": 2,
-        "elapsed": 126,
-        "winner": "bloodpact"
+        "combinedHp": 10,
+        "p1Hp": 10,
+        "p2Hp": 0,
+        "elapsed": 156,
+        "winner": "spirits"
       },
       {
         "matchup": "bloodpact vs spirits",
         "p1Faction": "bloodpact",
         "p2Faction": "spirits",
-        "combinedHp": 2,
-        "p1Hp": 2,
-        "p2Hp": 0,
-        "elapsed": 144,
-        "winner": "bloodpact"
+        "combinedHp": 10,
+        "p1Hp": 0,
+        "p2Hp": 10,
+        "elapsed": 112,
+        "winner": "spirits"
       },
       {
-        "matchup": "menders vs spirits",
-        "p1Faction": "menders",
-        "p2Faction": "spirits",
-        "combinedHp": 4,
-        "p1Hp": 0,
-        "p2Hp": 4,
-        "elapsed": 154,
+        "matchup": "spirits vs summoners",
+        "p1Faction": "spirits",
+        "p2Faction": "summoners",
+        "combinedHp": 13,
+        "p1Hp": 13,
+        "p2Hp": 0,
+        "elapsed": 138,
         "winner": "spirits"
+      },
+      {
+        "matchup": "bloodpact vs warriors",
+        "p1Faction": "bloodpact",
+        "p2Faction": "warriors",
+        "combinedHp": 13,
+        "p1Hp": 0,
+        "p2Hp": 13,
+        "elapsed": 174,
+        "winner": "warriors"
       },
       {
         "matchup": "warriors vs summoners",
         "p1Faction": "warriors",
         "p2Faction": "summoners",
-        "combinedHp": 6,
+        "combinedHp": 15,
+        "p1Hp": 15,
+        "p2Hp": 0,
+        "elapsed": 808,
+        "winner": "warriors"
+      },
+      {
+        "matchup": "warriors vs menders",
+        "p1Faction": "warriors",
+        "p2Faction": "menders",
+        "combinedHp": 23,
         "p1Hp": 0,
-        "p2Hp": 6,
-        "elapsed": 186,
+        "p2Hp": 23,
+        "elapsed": 456,
+        "winner": "menders"
+      },
+      {
+        "matchup": "menders vs warriors",
+        "p1Faction": "menders",
+        "p2Faction": "warriors",
+        "combinedHp": 28,
+        "p1Hp": 28,
+        "p2Hp": 0,
+        "elapsed": 364,
+        "winner": "menders"
+      },
+      {
+        "matchup": "glacial vs infernal",
+        "p1Faction": "glacial",
+        "p2Faction": "infernal",
+        "combinedHp": 29,
+        "p1Hp": 29,
+        "p2Hp": 0,
+        "elapsed": 326,
+        "winner": "glacial"
+      },
+      {
+        "matchup": "warriors vs summoners",
+        "p1Faction": "warriors",
+        "p2Faction": "summoners",
+        "combinedHp": 30,
+        "p1Hp": 0,
+        "p2Hp": 30,
+        "elapsed": 126,
         "winner": "summoners"
       },
       {
         "matchup": "warriors vs spirits",
         "p1Faction": "warriors",
         "p2Faction": "spirits",
-        "combinedHp": 6,
-        "p1Hp": 0,
-        "p2Hp": 6,
-        "elapsed": 178,
-        "winner": "spirits"
-      },
-      {
-        "matchup": "glacial vs menders",
-        "p1Faction": "glacial",
-        "p2Faction": "menders",
-        "combinedHp": 6,
-        "p1Hp": 6,
+        "combinedHp": 30,
+        "p1Hp": 30,
         "p2Hp": 0,
-        "elapsed": 230,
-        "winner": "glacial"
-      },
-      {
-        "matchup": "spirits vs infernal",
-        "p1Faction": "spirits",
-        "p2Faction": "infernal",
-        "combinedHp": 8,
-        "p1Hp": 0,
-        "p2Hp": 8,
-        "elapsed": 140,
-        "winner": "infernal"
-      },
-      {
-        "matchup": "warriors vs summoners",
-        "p1Faction": "warriors",
-        "p2Faction": "summoners",
-        "combinedHp": 12,
-        "p1Hp": 12,
-        "p2Hp": 0,
-        "elapsed": 180,
+        "elapsed": 110,
         "winner": "warriors"
       },
       {
-        "matchup": "spirits vs infernal",
-        "p1Faction": "spirits",
+        "matchup": "warriors vs verdant",
+        "p1Faction": "warriors",
+        "p2Faction": "verdant",
+        "combinedHp": 30,
+        "p1Hp": 0,
+        "p2Hp": 30,
+        "elapsed": 184,
+        "winner": "verdant"
+      },
+      {
+        "matchup": "warriors vs infernal",
+        "p1Faction": "warriors",
         "p2Faction": "infernal",
-        "combinedHp": 13,
-        "p1Hp": 13,
-        "p2Hp": 0,
-        "elapsed": 174,
-        "winner": "spirits"
-      },
-      {
-        "matchup": "spirits vs glacial",
-        "p1Faction": "spirits",
-        "p2Faction": "glacial",
-        "combinedHp": 17,
-        "p1Hp": 17,
-        "p2Hp": 0,
-        "elapsed": 200,
-        "winner": "spirits"
-      },
-      {
-        "matchup": "menders vs warriors",
-        "p1Faction": "menders",
-        "p2Faction": "warriors",
-        "combinedHp": 18,
-        "p1Hp": 18,
-        "p2Hp": 0,
-        "elapsed": 224,
-        "winner": "menders"
+        "combinedHp": 30,
+        "p1Hp": 0,
+        "p2Hp": 30,
+        "elapsed": 146,
+        "winner": "infernal"
       }
     ],
     "performance": {
       "avgFrameMsAll": [
-        16.7,
-        16.7,
-        16.8,
-        16.8,
         16.6,
         16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.6,
-        16.6,
-        16.6,
-        16.7,
-        16.8,
-        33.4,
-        33.4,
-        16.6,
-        16.7,
-        16.7,
-        16.8,
-        16.7,
-        33.3,
-        16.7,
-        16.6,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        33.4,
-        16.7,
-        33.4,
-        83.3,
-        16.8,
-        16.7,
-        16.6,
-        16.6,
-        16.6,
-        16.6,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        33.3,
-        16.8,
-        16.7,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        100,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.8,
-        16.7,
-        16.6,
-        16.7,
-        16.6,
         16.7,
         16.5,
         16.6,
         16.7,
+        16.7,
+        16.6,
         16.6,
         16.7,
-        33.4,
-        33.3,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.8,
+        16.7,
         33.3,
         16.6,
         16.8,
         16.7,
-        16.6,
-        16.6,
-        16.6,
-        16.8,
-        16.6,
-        16.6,
         16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.6,
-        16.7,
-        50,
-        33.3,
-        16.6,
-        83.4,
-        16.7,
-        16.7,
-        16.8,
-        16.6,
-        50.1,
-        16.7,
-        33.3,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.6,
-        16.6,
-        33.3,
-        16.7,
-        16.6,
-        16.6,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.7,
-        99.9,
-        16.7,
-        33.3,
-        83.4,
-        50.1,
-        16.7,
-        16.6,
-        16.6,
-        50,
-        16.7,
-        16.7,
-        16.6,
-        33.3,
-        16.8,
-        66.7,
-        16.6,
-        16.8,
-        16.7,
-        33.4,
-        16.6,
-        83.3,
-        16.7,
-        16.6,
-        16.7,
-        83.3,
-        16.8,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        16.6,
-        16.6,
-        16.7,
-        16.7,
-        16.6,
-        66.7,
-        16.7,
-        33.3,
-        16.7,
-        33.4,
-        16.8,
         16.7,
         16.7,
         16.7,
@@ -3584,61 +3468,7 @@
         16.7,
         16.7,
         16.6,
-        16.7,
-        16.7,
-        50.1,
-        16.7,
         16.6,
-        16.7,
-        16.7,
-        33.4,
-        83.3,
-        16.7,
-        16.7,
-        16.6,
-        16.6,
-        16.6,
-        16.7,
-        16.6,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.6,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.7,
-        16.6,
-        16.7,
-        100,
-        16.6,
-        16.7,
-        16.7,
-        16.7,
-        16.6,
-        16.8,
-        16.6,
-        16.7,
-        16.6,
-        16.7,
-        16.6,
-        33.3,
-        16.7,
-        16.6,
-        16.6,
-        33.3,
-        33.4,
-        16.7,
-        16.6,
-        16.6,
-        16.7,
-        16.6,
-        16.7,
-        16.6,
-        16.7,
-        83.3,
         16.8,
         16.6,
         16.7,
@@ -3646,34 +3476,204 @@
         16.7,
         16.6,
         16.7,
-        16.5,
         16.7,
         16.7,
-        16.7,
-        16.6,
-        16.6,
-        16.7,
-        33.3,
-        16.6,
-        16.7,
-        50.1,
-        16.6,
         16.6,
         16.7,
         16.7,
         16.7,
         16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.8,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.8,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
         16.7,
         16.7,
         16.8,
-        33.3,
-        33.3,
+        16.7,
         16.6,
         16.7,
         16.7,
         16.7,
         16.7,
-        16.8
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.8,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.8,
+        16.6,
+        16.7,
+        16.8,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.7,
+        16.8,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.6,
+        16.6,
+        16.6,
+        16.7,
+        16.7,
+        16.6,
+        16.7,
+        16.7,
+        16.7,
+        16.7,
+        16.8,
+        16.6,
+        16.6,
+        16.6
       ],
       "maxFrameMsAll": [
         17,
@@ -3693,26 +3693,6 @@
         17,
         17,
         17,
-        33,
-        33,
-        17,
-        17,
-        17,
-        17,
-        17,
-        33,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        33,
-        17,
-        33,
-        83,
         17,
         17,
         17,
@@ -3725,19 +3705,6 @@
         17,
         17,
         17,
-        33,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        17,
-        100,
         17,
         17,
         17,
@@ -3762,8 +3729,6 @@
         17,
         17,
         33,
-        33,
-        33,
         17,
         17,
         17,
@@ -3779,17 +3744,12 @@
         17,
         17,
         17,
-        50,
-        33,
         17,
-        83,
         17,
         17,
         17,
         17,
-        50,
         17,
-        33,
         17,
         17,
         17,
@@ -3799,7 +3759,6 @@
         17,
         17,
         17,
-        33,
         17,
         17,
         17,
@@ -3808,31 +3767,21 @@
         17,
         17,
         17,
-        100,
         17,
-        33,
-        83,
-        50,
         17,
         17,
         17,
-        50,
         17,
         17,
         17,
-        33,
         17,
-        67,
         17,
         17,
         17,
-        33,
         17,
-        83,
         17,
         17,
         17,
-        83,
         17,
         17,
         17,
@@ -3843,11 +3792,8 @@
         17,
         17,
         17,
-        67,
         17,
-        33,
         17,
-        33,
         17,
         17,
         17,
@@ -3858,13 +3804,10 @@
         17,
         17,
         17,
-        50,
         17,
         17,
         17,
         17,
-        33,
-        83,
         17,
         17,
         17,
@@ -3884,7 +3827,6 @@
         17,
         17,
         17,
-        100,
         17,
         17,
         17,
@@ -3896,12 +3838,9 @@
         17,
         17,
         17,
-        33,
         17,
         17,
         17,
-        33,
-        33,
         17,
         17,
         17,
@@ -3910,7 +3849,6 @@
         17,
         17,
         17,
-        83,
         17,
         17,
         17,
@@ -3925,10 +3863,8 @@
         17,
         17,
         17,
-        33,
         17,
         17,
-        50,
         17,
         17,
         17,
@@ -3938,8 +3874,72 @@
         17,
         17,
         17,
-        33,
-        33,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
+        17,
         17,
         17,
         17,
@@ -3947,13 +3947,7 @@
         17,
         17
       ],
-      "longTasksAll": [
-        {
-          "dt": 100,
-          "time": 1773268332942,
-          "matchup": "brutes vs spirits"
-        }
-      ]
+      "longTasksAll": []
     },
     "totalGamesRun": 270
   }

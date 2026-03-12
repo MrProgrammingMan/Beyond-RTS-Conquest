@@ -1,5 +1,82 @@
 [
   {
+    "timestamp": 1773271269557,
+    "date": "2026-03-11T23:21:09.557Z",
+    "totalGames": 270,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "verdant",
+      "infernal",
+      "glacial",
+      "voltborn",
+      "bloodpact",
+      "menders"
+    ],
+    "winRates": {
+      "warriors": 29.6,
+      "summoners": 55.6,
+      "brutes": 25.9,
+      "spirits": 48.1,
+      "verdant": 44.4,
+      "infernal": 59.3,
+      "glacial": 44.4,
+      "voltborn": 51.9,
+      "bloodpact": 59.3,
+      "menders": 33.3
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 29.6,
+        "asP2": 33.3
+      },
+      "summoners": {
+        "asP1": 55.6,
+        "asP2": 63
+      },
+      "brutes": {
+        "asP1": 25.9,
+        "asP2": 51.9
+      },
+      "spirits": {
+        "asP1": 48.1,
+        "asP2": 40.7
+      },
+      "verdant": {
+        "asP1": 44.4,
+        "asP2": 55.6
+      },
+      "infernal": {
+        "asP1": 59.3,
+        "asP2": 51.9
+      },
+      "glacial": {
+        "asP1": 44.4,
+        "asP2": 63
+      },
+      "voltborn": {
+        "asP1": 51.9,
+        "asP2": 77.8
+      },
+      "bloodpact": {
+        "asP1": 59.3,
+        "asP2": 88.9
+      },
+      "menders": {
+        "asP1": 33.3,
+        "asP2": 22.2
+      }
+    },
+    "bugCount": 0,
+    "bugs": [],
+    "softlockCount": 0,
+    "nanCount": 0,
+    "gamesPerMatchup": 3,
+    "aiDifficulty": "hard"
+  },
+  {
     "timestamp": 1773268682330,
     "date": "2026-03-11T22:38:02.330Z",
     "totalGames": 270,

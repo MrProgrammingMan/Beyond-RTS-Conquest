@@ -260,9 +260,9 @@
       "screen": "sc-menu",
       "element": "BUTTON#btn-controls.btn",
       "bounds": {
-        "left": 57,
+        "left": 58,
         "top": 686,
-        "right": 317,
+        "right": 318,
         "bottom": 730
       },
       "viewport": "iphone-se",
@@ -275,8 +275,8 @@
       "screen": "sc-menu",
       "elementA": "BUTTON#btn-tutorial",
       "elementB": "BUTTON",
-      "overlapPx": 1721,
-      "message": "Two interactive elements overlap by 1721px²",
+      "overlapPx": 1720,
+      "message": "Two interactive elements overlap by 1720px²",
       "viewport": "iphone-se",
       "viewportSize": "375×667"
     },
