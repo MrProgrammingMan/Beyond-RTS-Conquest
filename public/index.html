@@ -589,7 +589,7 @@
       align-items: center;
       gap: clamp(8px, 1.5vh, 36px);
       padding-top: clamp(16px, 3vh, 40px);
-      padding-bottom: clamp(40px, 6vh, 80px);
+      padding-bottom: clamp(90px, 14vh, 130px);
       flex-shrink: 0;
       width: 100%;
     }
@@ -4902,7 +4902,7 @@
     /* Extra bottom padding on viewports where footer would overlap buttons */
     @media (max-height: 820px) {
       .menu-content {
-        padding-bottom: clamp(72px, 11vh, 100px);
+        padding-bottom: clamp(100px, 15vh, 140px);
       }
     }
 
@@ -4911,7 +4911,7 @@
       .menu-content {
         gap: clamp(4px, 1vh, 10px);
         padding-top: clamp(8px, 1.5vh, 16px);
-        padding-bottom: clamp(56px, 9vh, 80px);
+        padding-bottom: clamp(80px, 12vh, 110px);
       }
 
       .menu-title {
@@ -6237,9 +6237,9 @@
         </div>
 
         <div style="display:none" aria-hidden="true">
-          <button id="mode-vs" aria-hidden="true" tabindex="-1"></button><button id="mode-solo" aria-hidden="true"
-            tabindex="-1"></button>
-          <button id="btn-rebind" aria-hidden="true" tabindex="-1"></button>
+          <button id="mode-vs" aria-hidden="true" tabindex="-1" title="VS mode trigger"></button><button id="mode-solo"
+            aria-hidden="true" tabindex="-1" title="Solo mode trigger"></button>
+          <button id="btn-rebind" aria-hidden="true" tabindex="-1" title="Rebind keys trigger"></button>
         </div>
       </div>
     </div>
@@ -6374,7 +6374,7 @@
   <!-- FACTION -->
   <div id="sc-faction" class="screen">
     <div class="sc-title">CHOOSE YOUR FACTION</div>
-    <div class="sc-sub">10 factions — scroll each panel to see all</div>
+    <div class="sc-sub">24 factions — scroll each panel to see all</div>
     <div id="faction-mode-row">
       <span
         style="font-family:Rajdhani,sans-serif;font-size:.65rem;color:var(--dim);letter-spacing:.08em;">PLAYERS:</span>
@@ -6441,12 +6441,16 @@
     <!-- Online-only countdown overlay shown when both players have picked -->
     <div id="online-faction-countdown"
       style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.82);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-      <div style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;">BOTH PLAYERS
+      <div
+        style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;background:transparent;">
+        BOTH PLAYERS
         READY</div>
       <div id="online-faction-countdown-num"
-        style="font-family:Rajdhani,sans-serif;font-size:6rem;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(212,168,67,.6);">
+        style="font-family:Rajdhani,sans-serif;font-size:6rem;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(212,168,67,.6);min-height:1px;">
       </div>
-      <div style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;">BATTLE
+      <div
+        style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;background:transparent;">
+        BATTLE
         STARTING…</div>
     </div>
   </div>
@@ -8828,6 +8832,20 @@
       voltborn: { color: '#f9ca24', blur: 16 },  // electric yellow — chain lightning
       bloodpact: { color: '#c0392b', blur: 16 },  // dark crimson — blood sacrifice
       menders: { color: '#a8ff78', blur: 14 },  // pale green — healing light
+      weavers: { color: '#636e72', blur: 12 },  // dark grey — sticky silk
+      merchants: { color: '#fdcb6e', blur: 14 }, // gold — coin & trade
+      reavers: { color: '#8B4513', blur: 12 },   // bone brown — corpse harvesting
+      fortune: { color: '#f9ca24', blur: 16 },   // bright gold — luck
+      plagued: { color: '#7bed9f', blur: 14 },   // toxic green — disease
+      chrysalis: { color: '#00b894', blur: 14 }, // teal — metamorphosis
+      tideborn: { color: '#0984e3', blur: 16 },  // ocean blue — tidal surge
+      echoes: { color: '#a29bfe', blur: 16 },    // pale violet — temporal echo
+      veilborn: { color: '#6c5ce7', blur: 16 },  // deep purple — phasing
+      chronomancers: { color: '#74b9ff', blur: 16 }, // sky blue — time
+      illusionists: { color: '#fd79a8', blur: 14 }, // pink — illusion
+      pandemonium: { color: '#e17055', blur: 18 }, // orange-red — chaos
+      psionics: { color: '#9b59b6', blur: 16 },  // violet — mind
+      umbral: { color: '#2d3436', blur: 10 },    // near-black — shadow
     };
 
     // ── FACTIONS ──
@@ -9064,6 +9082,319 @@
           { id: 'rapid_recovery', name: 'Rapid Recovery', cost: { souls: 33, bodies: 5 }, desc: 'Retreat heal time reduced by 3s and retreating units gain +40% movement speed.', effect: 'heal_speed', value: 4 },
           { id: 'battle_hymn', name: 'Battle Hymn', cost: { souls: 36, bodies: 5 }, desc: 'Cleric heal increases to 28 HP per shot and fires at 2 targets simultaneously.', effect: 'cleric_heal', value: 26 },
           { id: 'iron_faith', name: 'Iron Faith', cost: { souls: 48, bodies: 6 }, desc: 'Veteran return DMG bonus increases to +25% per return and max stacks increase from 3 to 5.', effect: 'veteran_bonus', value: 0.24 },
+        ]
+      },
+
+      // ─── NEW FACTIONS ────────────────────────────────────────────────────────────
+      {
+        id: 'weavers', name: 'Weavers', icon: '🕸️', tagline: 'The battlefield is their trap',
+        passive: 'Silk Road: units leave web zones as they move. Enemy units in webs move at 55% speed and take +25% damage from Weavers. Own units immune to own webs.',
+        pros: ['Web zones persist 8s covering large sections', 'Tar Caster shots create sticky patches on impact', 'Silk Wyrm drops huge web zone on death'],
+        cons: ['Low base damage — relies on slow debuffs', 'Aerial units bypass ground zones', 'No healing mechanics'],
+        matchup: 'Best against: slow melee (Brutes, Glacial) | Weak to: aerial-heavy (Spirits)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'wv_worker', name: 'Spinner', icon: '🕷️', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'wv_spindler', name: 'Spindler', icon: '🕸️', souls: 5, bodies: 1, hp: 65, speed: 58, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Leaves web trail. Enemies in webs take +25% damage from Weavers.', webTrail: true },
+          { id: 'wv_tar', name: 'Tar Caster', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 58, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Shots create tar patches at impact — slow enemies on entry.', tarShot: true },
+          { id: 'wv_runner', name: 'Web Runner', icon: '🦋', souls: 9, bodies: 2, hp: 34, speed: 90, dmg: 14, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Fast aerial. Leaves wide web trail.', webTrail: true, webTrailRadius: 26 },
+          { id: 'wv_wyrm', name: 'Silk Wyrm', icon: '🐛', souls: 20, bodies: 5, hp: 155, speed: 38, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#4834d4', type: 'mel', desc: 'Massive melee. Aura slows nearby enemies. Drops huge web zone on death.', bearAura: true, cocoonsOnDeath: true },
+        ],
+        extraUnits: [{ id: 'wv_guard', name: 'Web Queen', icon: '🕸️', souls: 0, bodies: 0, hp: 200, speed: 45, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#6c5ce7', type: 'mel', desc: 'Royal Guard. Constant web aura. Despawns 30s.', isSpawned: true, bearAura: true }],
+        guardUnit: 'wv_guard',
+        upgrades: [
+          { id: 'toxic_silk', name: 'Toxic Silk', cost: { souls: 33, bodies: 5 }, desc: 'Web zones deal 4 DPS to all enemies inside them.', effect: 'web_toxic', value: 4 },
+          { id: 'entangle', name: 'Entangle', cost: { souls: 36, bodies: 5 }, desc: 'Web zones root enemies for 1.2s on first entry (once per unit per zone).', effect: 'web_root', value: 1 },
+          { id: 'spider_silk', name: 'Spider Silk', cost: { souls: 48, bodies: 6 }, desc: 'Web zone duration extended to 16s. Silk Wyrm gains +50 HP.', effect: 'web_dur', value: 16 },
+        ]
+      },
+      {
+        id: 'merchants', name: 'Merchants', icon: '💰', tagline: 'Every death is a transaction',
+        passive: 'Compound Interest: killing enemies refunds 100% of their soul cost (instead of ~50%). Souls above 30 passively earn +0.3/s. Soul cap raised to 1200.',
+        pros: ['100% kill refunds reward aggressive play', 'Passive income above 30 souls rewards banking', 'Higher soul cap allows saving for powerful units'],
+        cons: ['No special combat mechanics — pure soul efficiency', 'Passive income requires kills to pull ahead', 'No healing or defensive mechanics'],
+        matchup: 'Best against: expensive-unit factions | Weak to: swarm factions (Summoners, Pandemonium)',
+        startSouls: 22, startBodies: 10,
+        units: [
+          { id: 'mc_worker', name: 'Courier', icon: '💼', souls: 2, bodies: 1, hp: 25, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid (bonus).', merchantMidBonus: true },
+          { id: 'mc_coin', name: 'Coin Guard', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#fdcb6e', type: 'mel', desc: 'Melee. On kill: +3 extra souls.', soulsOnKill: 3 },
+          { id: 'mc_fiend', name: 'Market Fiend', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#e17055', type: 'rng', desc: 'Standard ranged unit with good stats.' },
+          { id: 'mc_hawk', name: 'Gold Hawk', icon: '🦅', souls: 10, bodies: 2, hp: 36, speed: 87, dmg: 19, range: 58, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial. On kill: +2 extra souls.', soulsOnKill: 2 },
+          { id: 'mc_banker', name: 'The Banker', icon: '💎', souls: 22, bodies: 5, hp: 130, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#f9ca24', type: 'mel', desc: 'Massive melee. Grants +1 soul/s to owner while alive.', merchantAura: true },
+        ],
+        extraUnits: [{ id: 'mc_mguard', name: 'The Broker', icon: '💰', souls: 0, bodies: 0, hp: 200, speed: 52, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Nearby allies deal +12% DMG. Despawns 30s.', isSpawned: true, allyAura: true, allyAuraDmg: 0.12, allyAuraRange: 100 }],
+        guardUnit: 'mc_mguard',
+        upgrades: [
+          { id: 'compound_rates', name: 'Compound Rates', cost: { souls: 33, bodies: 5 }, desc: 'Passive income threshold drops to 15 souls, rate doubles to +0.6/s.', effect: 'merchant_rate', value: 0.6 },
+          { id: 'bulk_discount', name: 'Bulk Discount', cost: { souls: 36, bodies: 5 }, desc: 'All units cost 2 fewer souls (min 1). Courier returns +1 extra body.', effect: 'merchant_discount', value: 2 },
+          { id: 'golden_fleet', name: 'Golden Fleet', cost: { souls: 48, bodies: 6 }, desc: 'Gold Hawk and Coin Guard on-kill bonus doubles. Banker aura: +2 souls/s.', effect: 'merchant_kill_bonus', value: 2 },
+        ]
+      },
+      {
+        id: 'reavers', name: 'Reavers', icon: '🦴', tagline: 'Strip the fallen for parts',
+        passive: 'Carrion Economy: any unit death adds a corpse to the field. Reaver workers auto-harvest nearby corpses for +5 bodies each. Corpse Golem grows stronger from nearby deaths.',
+        pros: ['Body income from ALL deaths on field — not just mid', 'Corpse Golem snowballs HP throughout the match', 'Strong in drawn-out fights where many units die'],
+        cons: ['Body-heavy — needs many bodies, low starting soul income', 'No aerial units — vulnerable to air superiority', 'Workers must be near corpses to benefit'],
+        matchup: 'Best against: high-volume factions (Summoners) | Weak to: ranged-heavy (Warriors, Spirits)',
+        startSouls: 18, startBodies: 14,
+        units: [
+          { id: 'rv_worker', name: 'Bone Picker', icon: '🦴', souls: 2, bodies: 1, hp: 25, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#922b21', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid. Harvests nearby corpses for +5 bodies.', reaverWorker: true },
+          { id: 'rv_digger', name: 'Grave Digger', icon: '⚰️', souls: 5, bodies: 1, hp: 70, speed: 58, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#922b21', type: 'mel', desc: 'Melee. Kills drop high-value corpse (+2 bonus bodies).', reaverKillBonus: 2 },
+          { id: 'rv_harvester', name: 'Harvester', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#c0392b', type: 'rng', desc: 'Ranged. Shots apply 4 DPS poison for 3s.', poisonOnHit: true, poisonDur: 3, poisonDmg: 4 },
+          { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 15, bodies: 4, hp: 130, speed: 44, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7d3c98', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 200) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 200 },
+          { id: 'rv_flenser', name: 'The Flenser', icon: '⚔️', souls: 20, bodies: 5, hp: 145, speed: 42, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#e74c3c', type: 'mel', desc: 'Titan. Immune to knockback. Each kill grants +3 bodies.', immuneKnockback: true, bodyOnKill: 3 },
+        ],
+        extraUnits: [{ id: 'rv_guard', name: 'Bone Titan', icon: '🦴', souls: 0, bodies: 0, hp: 240, speed: 44, dmg: 38, range: 34, aerial: false, isWorker: false, attackRate: 0.85, radius: 21, color: '#922b21', type: 'mel', desc: 'Royal Guard. Immune to knockback. Gains +8 HP per nearby death. Despawns 30s.', isSpawned: true, immuneKnockback: true, corpseFeed: true, corpseFeedRange: 120, corpseFeedCap: 350 }],
+        guardUnit: 'rv_guard',
+        upgrades: [
+          { id: 'mass_grave', name: 'Mass Grave', cost: { souls: 33, bodies: 6 }, desc: 'Corpse value increases to +8 bodies each.', effect: 'reaver_corpse', value: 8 },
+          { id: 'necro_feed', name: 'Necro-Feed', cost: { souls: 36, bodies: 5 }, desc: 'Corpse Golem gains +10 HP per death, range to 160px.', effect: 'golem_feed', value: 10 },
+          { id: 'body_trade', name: 'Body Trade', cost: { souls: 42, bodies: 7 }, desc: 'Flenser body-on-kill: +6. The Flenser gains +20 DMG.', effect: 'reaver_body', value: 6 },
+        ]
+      },
+      {
+        id: 'fortune', name: 'Fortune Seekers', icon: '🎲', tagline: 'High risk, enormous reward',
+        passive: 'Lady Luck: each non-worker spawn triggers a roll. 20% chance: double stats. 20% chance: refund half soul cost. 10% chance: second unit free. 3 lucky rolls in a row → 10s bonus period (all rolls lucky).',
+        pros: ['Double-stat rolls create instant powerhouse units', 'Free unit bonus can snowball quickly', 'Lucky Streak rewards aggressive spawning'],
+        cons: ['Highly random — bad streaks can leave you severely underpowered', 'Base stats slightly below average — gambling is required', 'No defensive mechanics whatsoever'],
+        matchup: 'Best against: balanced factions | Weak to: fast-snowball factions (Plagued, Bloodpact)',
+        startSouls: 22, startBodies: 10,
+        units: [
+          { id: 'fs_worker', name: 'Gambler', icon: '🎰', souls: 2, bodies: 1, hp: 23, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#f9ca24', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'fs_wild', name: 'Wildcard', icon: '🃏', souls: 5, bodies: 1, hp: 62, speed: 64, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee. Subject to Fortune rolls on spawn.' },
+          { id: 'fs_jinx', name: 'The Jinx', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 61, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e17055', type: 'rng', desc: 'Ranged. Subject to Fortune rolls on spawn.' },
+          { id: 'fs_drake', name: 'Jackpot Drake', icon: '🐉', souls: 10, bodies: 2, hp: 35, speed: 87, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#f9ca24', type: 'air', desc: 'Aerial. Subject to Fortune rolls on spawn.' },
+          { id: 'fs_fool', name: "Fortune's Fool", icon: '🃏', souls: 16, bodies: 4, hp: 120, speed: 52, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#e17055', type: 'mel', desc: 'Heavy melee. Double-stat lucky roll makes this unit unstoppable.' },
+        ],
+        extraUnits: [{ id: 'fs_guard', name: 'Jackpot', icon: '🎲', souls: 0, bodies: 0, hp: 200, speed: 58, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Always double stats. Despawns 30s.', isSpawned: true }],
+        guardUnit: 'fs_guard',
+        upgrades: [
+          { id: 'rigged_dice', name: 'Rigged Dice', cost: { souls: 33, bodies: 5 }, desc: 'Double-stat roll chance increases from 20% to 35%.', effect: 'fortune_double', value: 0.35 },
+          { id: 'house_edge', name: 'House Edge', cost: { souls: 36, bodies: 5 }, desc: 'Half-cost refund becomes 75%. Free unit chance: 18%.', effect: 'fortune_refund', value: 0.75 },
+          { id: 'hot_streak', name: 'Hot Streak', cost: { souls: 48, bodies: 6 }, desc: 'Lucky Streak bonus lasts 20s and grants +20% DMG to all units.', effect: 'fortune_streak', value: 20 },
+        ]
+      },
+      {
+        id: 'plagued', name: 'Plagued', icon: '🧫', tagline: 'Every kill makes them stronger',
+        passive: 'Adaptive Strain: each kill grants the killer a random mutation (8 possible: +HP, +speed, lifesteal, poison on hit, burn on hit, +range, +attack rate, +armor). On death, spreads 1 mutation to the nearest ally within 100px.',
+        pros: ['Veteran units accumulate devastating mutation combos', 'Death mutation spread — fallen units still empower the army', 'Impossible to predict — mutations create unique unit compositions'],
+        cons: ['Early game is weak before mutations build up', 'Losing fights permanently removes mutated veterans', 'Random mutations may be unhelpful combinations'],
+        matchup: 'Best against: equal-strength armies | Weak to: fast burst (Infernal, Bloodpact)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'pl_worker', name: 'Patient Zero', icon: '🦠', souls: 2, bodies: 1, hp: 25, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'pl_carrier', name: 'Carrier', icon: '🧫', souls: 5, bodies: 1, hp: 60, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#27ae60', type: 'mel', desc: 'Melee. Gains random mutation on kill. Spreads mutation to nearest ally on death.', plagued: true },
+          { id: 'pl_vector', name: 'Vector', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1abc9c', type: 'rng', desc: 'Ranged. Shots apply 3 DPS poison for 3s. Gains mutations on kill.', plagued: true, poisonOnHit: true, poisonDur: 3, poisonDmg: 3 },
+          { id: 'pl_spawn', name: 'Broodspawn', icon: '🦋', souls: 10, bodies: 2, hp: 33, speed: 86, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#2ecc71', type: 'air', desc: 'Aerial. Gains mutations on kill. Spreads all mutations on death.', plagued: true, aerialBonus: 1.3 },
+          { id: 'pl_host', name: 'Mutation Host', icon: '🦠', souls: 18, bodies: 4, hp: 125, speed: 46, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#16a085', type: 'mel', desc: 'Heavy melee. Can hold 6 mutations. Starts with 1 random mutation.', plagued: true, plagueMaxMutations: 6, plagueStartMutation: 1 },
+        ],
+        extraUnits: [{ id: 'pl_guard', name: 'The Progenitor', icon: '🧬', souls: 0, bodies: 0, hp: 210, speed: 50, dmg: 30, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#27ae60', type: 'mel', desc: 'Royal Guard. Starts with 3 mutations. Spreads all mutations in 150px on death. Despawns 30s.', isSpawned: true, plagued: true, plagueStartMutation: 3 }],
+        guardUnit: 'pl_guard',
+        upgrades: [
+          { id: 'accelerated_strain', name: 'Accelerated Strain', cost: { souls: 33, bodies: 5 }, desc: 'Kills grant 2 mutations instead of 1.', effect: 'plague_double', value: 2 },
+          { id: 'viral_spread', name: 'Viral Spread', cost: { souls: 36, bodies: 5 }, desc: 'On death, spreads ALL mutations to all allies within 100px.', effect: 'plague_spread', value: 1 },
+          { id: 'pandemic', name: 'Pandemic', cost: { souls: 48, bodies: 6 }, desc: 'Mutation spread radius doubles to 200px. Mutation Host max stacks: 8.', effect: 'plague_radius', value: 200 },
+        ]
+      },
+      {
+        id: 'chrysalis', name: 'Chrysalis', icon: '🐛', tagline: 'Weak early, unstoppable late',
+        passive: 'Emergence: units start as cheap fragile larvae. After 12 seconds alive → brief cocoon (2.5s, immobile, 60% less damage taken) → emerge as powerful adults with vastly increased stats.',
+        pros: ['Adults are extremely strong per cost once transformed', 'Cheap larvae are easy to mass spawn while waiting', 'Cocoon damage resistance makes transformation hard to interrupt'],
+        cons: ['Larvae are very weak — vulnerable to early rushes', 'Enemies can focus down larvae before transformation', '12s window means many initial spawns are lost before transforming'],
+        matchup: 'Best against: slow factions (Brutes, Glacial) | Weak to: fast rush factions (Infernal, Pandemonium)',
+        startSouls: 22, startBodies: 10,
+        units: [
+          { id: 'ch_worker', name: 'Gatherer Larva', icon: '🐛', souls: 2, bodies: 1, hp: 22, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a8ff78', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'ch_grub', name: 'Grub', icon: '🐛', souls: 3, bodies: 1, hp: 22, speed: 56, dmg: 7, range: 24, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#a8ff78', type: 'mel', desc: 'Larval melee. After 12s → 2.5s cocoon → adult Crawler (70 HP, 22 DMG, speed 65).', chrysalis: true, chrysAdultDmg: 22, chrysAdultHp: 70, chrysAdultSpeed: 65, chrysAdultName: 'Crawler', chrysAdultIcon: '🦎' },
+          { id: 'ch_scout', name: 'Larval Scout', icon: '🦟', souls: 5, bodies: 1, hp: 18, speed: 80, dmg: 9, range: 50, aerial: true, isWorker: false, attackRate: 1.2, radius: 12, color: '#a8ff78', type: 'air', desc: 'Larval aerial. After 12s → cocoon → adult Wing Scout (42 HP, 22 DMG, speed 98).', chrysalis: true, chrysAdultDmg: 22, chrysAdultHp: 42, chrysAdultSpeed: 98, chrysAdultName: 'Wing Scout', chrysAdultIcon: '🦅', chrysAdultAerial: true },
+          { id: 'ch_pupa', name: 'Pupa Shell', icon: '🥚', souls: 8, bodies: 2, hp: 38, speed: 38, dmg: 10, range: 24, aerial: false, isWorker: false, attackRate: 0.8, radius: 14, color: '#74b9ff', type: 'mel', desc: 'Heavy larva. After 12s → cocoon → adult Rock Shell (155 HP, 30 DMG, immune to knockback).', chrysalis: true, chrysAdultDmg: 30, chrysAdultHp: 155, chrysAdultSpeed: 44, chrysAdultName: 'Rock Shell', chrysAdultIcon: '🪨', chrysAdultImmune: true },
+          { id: 'ch_empress', name: 'Empress Egg', icon: '🫧', souls: 18, bodies: 5, hp: 50, speed: 42, dmg: 12, range: 26, aerial: false, isWorker: false, attackRate: 0.85, radius: 18, color: '#a8ff78', type: 'mel', desc: 'Rare larva. After 12s → cocoon → Empress Moth (aerial, 55 HP, 28 DMG, speed 92).', chrysalis: true, chrysAdultDmg: 28, chrysAdultHp: 55, chrysAdultSpeed: 92, chrysAdultName: 'Empress Moth', chrysAdultIcon: '🦋', chrysAdultAerial: true },
+        ],
+        extraUnits: [{ id: 'ch_guard', name: 'Ancient Hive', icon: '🐛', souls: 0, bodies: 0, hp: 200, speed: 40, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 21, color: '#a8ff78', type: 'mel', desc: 'Royal Guard. Adult form only. 60% dmg reduction. Despawns 30s.', isSpawned: true }],
+        guardUnit: 'ch_guard',
+        upgrades: [
+          { id: 'rapid_metamorph', name: 'Rapid Metamorphosis', cost: { souls: 33, bodies: 5 }, desc: 'Transform timer reduced 12s→8s. Cocoon phase shortened 2.5s→1.5s.', effect: 'chrysalis_speed', value: 8 },
+          { id: 'armored_shell', name: 'Armored Shell', cost: { souls: 36, bodies: 5 }, desc: 'Cocoon dmg reduction: 60%→80%. All larvae gain +10 HP.', effect: 'chrysalis_armor', value: 0.8 },
+          { id: 'evolved_form', name: 'Evolved Form', cost: { souls: 48, bodies: 6 }, desc: 'All adult forms gain +10 DMG and +20 HP.', effect: 'chrysalis_adult', value: 1 },
+        ]
+      },
+      {
+        id: 'tideborn', name: 'Tideborn', icon: '🌊', tagline: 'Merge. Split. Reform.',
+        passive: 'Coalescence: Tideborn units regen 3 HP/s when adjacent allies (within 50px) are nearby. Units below 20% HP auto-split into 2 smaller copies each with 50% of current HP.',
+        pros: ['HP regen rewards keeping units clustered', 'Split mechanic doubles your count under heavy pressure', 'Split units retain half their buffs'],
+        cons: ['Lower HP per unit than average to compensate for splits', 'Split units at 50% HP are easy clean-up targets', 'Regen requires clustering — spreading loses the passive'],
+        matchup: 'Best against: burst damage factions (Bloodpact, Infernal) | Weak to: AoE (Glacial, Voltborn)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'tb_worker', name: 'Droplet', icon: '💧', souls: 2, bodies: 1, hp: 22, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'tb_surge', name: 'Surge Guard', icon: '🌊', souls: 5, bodies: 1, hp: 55, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#0984e3', type: 'mel', desc: 'Melee. Regen 3 HP/s near allies. Below 20% HP: splits into 2 copies.', tideborn: true },
+          { id: 'tb_archer', name: 'Surge Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#74b9ff', type: 'rng', desc: 'Ranged. Regen 3 HP/s near allies.', tideborn: true },
+          { id: 'tb_deep', name: 'Deep Current', icon: '🐋', souls: 10, bodies: 2, hp: 36, speed: 85, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#0984e3', type: 'air', desc: 'Aerial. Regen 3 HP/s near allies.', tideborn: true },
+          { id: 'tb_brute', name: 'Tidal Brute', icon: '🌊', souls: 18, bodies: 4, hp: 110, speed: 46, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#2980b9', type: 'mel', desc: 'Heavy melee. Regen 3 HP/s near allies. Split spawns 2 Surge Guards.', tideborn: true, tideHighHP: true },
+        ],
+        extraUnits: [{ id: 'tb_guard', name: 'The Colossus', icon: '🌊', souls: 0, bodies: 0, hp: 220, speed: 48, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 21, color: '#0984e3', type: 'mel', desc: 'Royal Guard. Splits into 2 Tidal Brutes on death. Despawns 30s.', isSpawned: true }],
+        guardUnit: 'tb_guard',
+        upgrades: [
+          { id: 'rising_tide', name: 'Rising Tide', cost: { souls: 33, bodies: 5 }, desc: 'HP regen near allies: 3→6 HP/s.', effect: 'tide_regen', value: 6 },
+          { id: 'fluid_form', name: 'Fluid Form', cost: { souls: 36, bodies: 5 }, desc: 'Split threshold raises to 35% HP. Split copies retain 65% HP.', effect: 'tide_split', value: 0.35 },
+          { id: 'tidal_wave', name: 'Tidal Wave', cost: { souls: 48, bodies: 6 }, desc: 'Tidal Brute split creates 2 full-health Surge Guards.', effect: 'tide_brute', value: 1 },
+        ]
+      },
+      {
+        id: 'echoes', name: 'Echoes', icon: '👁️', tagline: 'The past attacks the present',
+        passive: 'Temporal Echo: 8 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 70% of the original\'s stats. Echoes cannot create further echoes.',
+        pros: ['Every spawn is effectively double with an 8s offset', 'Overwhelming double-push timing with carefully staggered spawns', 'Echoes appear automatically — no extra effort required'],
+        cons: ['Echoes at 70% stats will not match real units in direct fights', 'Works best if originals survive long enough to have value', 'Echoes always spawn even if original already died'],
+        matchup: 'Best against: sustained factions (Menders, Verdant) | Weak to: fast rush (Infernal, Pandemonium)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'ec_worker', name: 'Shadow Step', icon: '👣', souls: 2, bodies: 1, hp: 22, speed: 62, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#6c5ce7', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'ec_remnant', name: 'The Remnant', icon: '👁️', souls: 5, bodies: 1, hp: 55, speed: 62, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Spawns an echo copy 8 seconds after first spawn.' },
+          { id: 'ec_archer', name: 'Echo Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Spawns an echo copy 8 seconds after first spawn.' },
+          { id: 'ec_moment', name: 'Moment Reaver', icon: '⏳', souls: 10, bodies: 2, hp: 34, speed: 87, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Aerial. Spawns an echo copy 8 seconds after first spawn.' },
+          { id: 'ec_paradox', name: 'The Paradox', icon: '⏰', souls: 18, bodies: 4, hp: 130, speed: 48, dmg: 25, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#a29bfe', type: 'mel', desc: 'Heavy melee. Spawns echo 8s after spawn.' },
+        ],
+        extraUnits: [{ id: 'ec_guard', name: 'Echo Champion', icon: '👁️', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#6c5ce7', type: 'mel', desc: 'Royal Guard. Instantly creates 2 echoes on spawn. Despawns 30s.', isSpawned: true }],
+        guardUnit: 'ec_guard',
+        upgrades: [
+          { id: 'faster_echoes', name: 'Rapid Echoes', cost: { souls: 33, bodies: 5 }, desc: 'Echo spawn delay reduced from 8s to 5s.', effect: 'echo_delay', value: 5 },
+          { id: 'stronger_echoes', name: 'Phantom Power', cost: { souls: 36, bodies: 5 }, desc: 'Echo units gain 85% stats instead of 70%.', effect: 'echo_power', value: 0.85 },
+          { id: 'echo_chain', name: 'Echo Chain', cost: { souls: 48, bodies: 6 }, desc: 'Echoes also spawn their own echo once (at 50% stats).', effect: 'echo_chain', value: 1 },
+        ]
+      },
+      {
+        id: 'veilborn', name: 'Veilborn', icon: '👻', tagline: 'Attack from between moments',
+        passive: 'Veil Walk: when any non-worker unit drops below 40% HP (12s cooldown), it auto-phases for 2s — untargetable, regen 5 HP/s. Re-materializing adjacent to an enemy deals a free strike. Workers always phased while traveling.',
+        pros: ['Phase survival is extremely hard to play around', 'Worker phasing means workers are never blocked by enemies', 'Free re-materialization strike punishes crowded enemies'],
+        cons: ['Phase activates only when already below 40% HP — you still take initial damage', 'Phased units cannot attack — large phase wave leaves you defenseless briefly', '12s cooldown means each unit phases a few times per game only'],
+        matchup: 'Best against: burst damage (Infernal, Bloodpact) | Weak to: DoT poison/burn (Verdant, Plagued)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'vb2_worker', name: 'Phase Scout', icon: '🫥', souls: 2, bodies: 1, hp: 24, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#dfe6e9', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Always phased while traveling — immune to enemy targeting.' },
+          { id: 'vb2_flicker', name: 'Flicker', icon: '💨', souls: 5, bodies: 1, hp: 55, speed: 65, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#b2bec3', type: 'mel', desc: 'Melee. Below 40% HP: auto-phase 2s, regen 5 HP/s. Reappears with free strike.', veilborn: true },
+          { id: 'vb2_archer', name: 'Veilstep Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#dfe6e9', type: 'rng', desc: 'Ranged. Below 40% HP: auto-phase 2s.', veilborn: true },
+          { id: 'vb2_blade', name: 'Wraithblade', icon: '⚔️', souls: 13, bodies: 3, hp: 100, speed: 55, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#636e72', type: 'mel', desc: 'Heavy melee. Phase lasts 3s, +10 DMG on re-materialization.', veilborn: true, veilPhaseDur: 3, veilStrikeBonus: 10 },
+          { id: 'vb2_rift', name: 'The Rift', icon: '🌀', souls: 10, bodies: 2, hp: 35, speed: 88, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#b2bec3', type: 'air', desc: 'Aerial. Below 40% HP: auto-phase 2s.', veilborn: true },
+        ],
+        extraUnits: [{ id: 'vb2_guard', name: 'The Specter', icon: '👻', souls: 0, bodies: 0, hp: 190, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#dfe6e9', type: 'mel', desc: 'Royal Guard. Starts phased for 3s, materializes with a free double-strike. Despawns 30s.', isSpawned: true, veilborn: true, veilStartPhased: true }],
+        guardUnit: 'vb2_guard',
+        upgrades: [
+          { id: 'deep_veil', name: 'Deep Veil', cost: { souls: 33, bodies: 5 }, desc: 'Phase duration: 2s→3s. HP regen while phased: 5→8 HP/s.', effect: 'veil_dur', value: 3 },
+          { id: 'veil_mastery', name: 'Veil Mastery', cost: { souls: 36, bodies: 5 }, desc: 'Phase cooldown: 12s→7s. Phase triggers at 50% HP instead of 40%.', effect: 'veil_cd', value: 7 },
+          { id: 'rift_strike', name: 'Rift Strike', cost: { souls: 48, bodies: 6 }, desc: 'Re-materialization free strike deals 2× unit DMG instead of 1×.', effect: 'veil_strike', value: 2 },
+        ]
+      },
+      {
+        id: 'chronomancers', name: 'Chronomancers', icon: '⏳', tagline: 'Undo. Repeat. Win.',
+        passive: 'Temporal Mastery: auto-Rewind every 40s — restores all own units to at least 40% HP and grants +20% speed for 5s. Time Tax: enemy units near your base lose 1.5% max HP per second of proximity.',
+        pros: ['Auto-Rewind every 40s makes this faction the hardest to kill via attrition', 'Time Tax punishes enemies that push too deep', 'The Delay slows enemies on hit — combos with rewind cycles perfectly'],
+        cons: ['Rewind only helps existing units — losing all at once cannot be recovered', 'Time Tax is slow and passive — does not prevent instant kills', 'Base stats are average — not dominant before Rewind fires'],
+        matchup: 'Best against: sustained factions (Menders, Verdant) | Weak to: fast rush (Infernal, Pandemonium)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'cm_worker', name: 'Moment Guard', icon: '⌚', souls: 2, bodies: 1, hp: 24, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'cm_rewind', name: 'Rewinder', icon: '↩️', souls: 5, bodies: 1, hp: 57, speed: 65, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. First 5s after spawn: +35% speed (arrives faster). Benefits from Rewind.' },
+          { id: 'cm_delay', name: 'The Delay', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Shots slow targets by 35% for 2s (time dilation).', thornslow: true },
+          { id: 'cm_age', name: 'Age Caster', icon: '🦅', souls: 10, bodies: 2, hp: 35, speed: 85, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Aerial. Deals +25% bonus damage vs enemies that have been Time Taxed.', chronoBonus: true },
+          { id: 'cm_titan', name: 'Temporal Titan', icon: '⌛', souls: 20, bodies: 5, hp: 145, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#4834d4', type: 'mel', desc: 'Titan. Immune to slows/stuns. Rewind restores this unit to 80% HP.', immuneDebuff: true, chronoElite: true },
+        ],
+        extraUnits: [{ id: 'cm_guard', name: 'Paradox King', icon: '⏳', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#4834d4', type: 'mel', desc: 'Royal Guard. Triggers Rewind immediately on spawn. Despawns 30s.', isSpawned: true, chronoElite: true }],
+        guardUnit: 'cm_guard',
+        upgrades: [
+          { id: 'fast_rewind', name: 'Fast Rewind', cost: { souls: 33, bodies: 5 }, desc: 'Auto-Rewind cooldown: 40s→25s.', effect: 'chrono_cooldown', value: 25 },
+          { id: 'deep_time', name: 'Deep Time', cost: { souls: 36, bodies: 5 }, desc: 'Rewind restores units to 60% HP (was 40%). Speed boost: +30% for 8s.', effect: 'chrono_restore', value: 0.6 },
+          { id: 'temporal_collapse', name: 'Temporal Collapse', cost: { souls: 48, bodies: 6 }, desc: 'Time Tax rate doubles to 3% maxHP/s. Also slows enemies 25% near base.', effect: 'chrono_tax', value: 0.03 },
+        ]
+      },
+      {
+        id: 'illusionists', name: 'Illusionists', icon: '🪄', tagline: 'Half of your army is a lie',
+        passive: 'Mirage Mastery: every non-worker spawn also creates a 1-HP decoy at the same position. Decoys surviving 10s convert to real units at 50% stats. Killing a decoy costs the killer 1 soul.',
+        pros: ['Decoys force enemies to deal with twice as many targets', 'Surviving decoys becoming real is powerful passive growth', 'Soul drain on decoy kills adds up over extended fights'],
+        cons: ['Real units have 85% normal stats to compensate for doubling', 'Decoys die in one hit — sustained damage weeds them out quickly', 'Low HP overall — sustained melee brawls are punishing'],
+        matchup: 'Best against: single-target factions (Brutes, Warriors) | Weak to: AoE splash (Glacial, Voltborn)',
+        startSouls: 22, startBodies: 10,
+        units: [
+          { id: 'il_worker', name: 'Illusion Caster', icon: '🪄', souls: 2, bodies: 1, hp: 22, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fd79a8', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'il_mirror', name: 'Mirror Blade', icon: '🗡️', souls: 5, bodies: 1, hp: 54, speed: 62, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#fd79a8', type: 'mel', desc: 'Melee. Spawns a 1-HP decoy alongside it.' },
+          { id: 'il_trick', name: 'Trick Shot', icon: '🏹', souls: 6, bodies: 2, hp: 36, speed: 62, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Ranged. Spawns a 1-HP decoy alongside it.' },
+          { id: 'il_double', name: 'The Double', icon: '👥', souls: 13, bodies: 3, hp: 88, speed: 52, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#e84393', type: 'mel', desc: 'Heavy melee. Spawns a decoy with 20 HP instead of 1.', illuHeavyDecoy: true },
+          { id: 'il_deceiver', name: 'Grand Deceiver', icon: '🦅', souls: 10, bodies: 2, hp: 35, speed: 86, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#fd79a8', type: 'air', desc: 'Aerial. Spawns a 1-HP decoy.' },
+        ],
+        extraUnits: [{ id: 'il_guard', name: 'The Phantom', icon: '🪄', souls: 0, bodies: 0, hp: 190, speed: 58, dmg: 30, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#fd79a8', type: 'mel', desc: 'Royal Guard. Spawns 2 decoys (20 HP each). Despawns 30s.', isSpawned: true }],
+        guardUnit: 'il_guard',
+        upgrades: [
+          { id: 'perfect_copy', name: 'Perfect Copy', cost: { souls: 33, bodies: 5 }, desc: 'Decoys converting at 10s gain 65% stats instead of 50%.', effect: 'illusion_power', value: 0.65 },
+          { id: 'illu_soul_drain', name: 'Soul Drain', cost: { souls: 36, bodies: 5 }, desc: 'Killing a decoy costs 3 souls (up from 1). Double vs heavy units.', effect: 'illusion_drain', value: 3 },
+          { id: 'endless_mirage', name: 'Endless Mirage', cost: { souls: 48, bodies: 6 }, desc: 'Decoy convert time: 10s→15s. Heavy Decoys gain +40 HP.', effect: 'illusion_dur', value: 15 },
+        ]
+      },
+      {
+        id: 'pandemonium', name: 'Pandemonium', icon: '🌀', tagline: 'Neither player controls the game',
+        passive: 'Mayhem: Pandemonium units have 15% chance per attack to strike a random nearby unit (friend or foe). Enemy units within 70px of any Pandemonium unit have 15% chance to misfire, hitting a random ally instead.',
+        pros: ['Very cheap and fast — overwhelm through pure volume', 'Misfire effect forces enemies to damage themselves', 'Dense armies amplify chaos — more units = more random hits'],
+        cons: ['Friendly fire is real — own units damage themselves', 'Completely unpredictable — cannot be fully controlled', 'Very low HP per unit — individual units die quickly'],
+        matchup: 'Best against: tight clustered armies (Brutes, Summoners) | Weak to: spread aerial (Spirits)',
+        startSouls: 24, startBodies: 10,
+        units: [
+          { id: 'pd_worker', name: 'Frenzied', icon: '🤪', souls: 2, bodies: 1, hp: 20, speed: 65, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 10, color: '#e84393', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'pd_wild', name: 'Wildfire', icon: '🔥', souls: 4, bodies: 1, hp: 48, speed: 76, dmg: 11, range: 26, aerial: false, isWorker: false, attackRate: 1.3, radius: 12, color: '#e84393', type: 'mel', desc: 'Cheap fast melee. 15% misfire chance on attack.', pandemonium: true },
+          { id: 'pd_unhng', name: 'The Unhinged', icon: '😵', souls: 9, bodies: 2, hp: 78, speed: 68, dmg: 17, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 15, color: '#d63031', type: 'mel', desc: 'Heavy melee. Berserk at 50% HP (attack rate doubles).', pandemonium: true, berserkThreshold: 0.5 },
+          { id: 'pd_chaos', name: 'Chaos Drake', icon: '🐲', souls: 8, bodies: 2, hp: 30, speed: 95, dmg: 16, range: 52, aerial: true, isWorker: false, attackRate: 1.35, radius: 13, color: '#e84393', type: 'air', desc: 'Fast aerial. 15% misfire chance.', pandemonium: true },
+          { id: 'pd_maelstrom', name: 'The Maelstrom', icon: '🌀', souls: 5, bodies: 1, hp: 36, speed: 72, dmg: 14, range: 100, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#d63031', type: 'rng', desc: 'Cheap ranged. 15% chance per shot to ricochet to random unit.', pandemonium: true },
+        ],
+        extraUnits: [{ id: 'pd_guard', name: 'Chaos Lord', icon: '🌀', souls: 0, bodies: 0, hp: 190, speed: 65, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#d63031', type: 'mel', desc: 'Royal Guard. 25% misfire aura in 100px. Despawns 30s.', isSpawned: true, pandemonium: true }],
+        guardUnit: 'pd_guard',
+        upgrades: [
+          { id: 'total_chaos', name: 'Total Chaos', cost: { souls: 33, bodies: 5 }, desc: 'Misfire chance increases to 25% for own units and enemy units.', effect: 'pandemonium_chaos', value: 0.25 },
+          { id: 'frenzy_fuel', name: 'Frenzy Fuel', cost: { souls: 36, bodies: 5 }, desc: 'All melee gain +15% attack rate. Berserk also grants +25% DMG.', effect: 'pandemonium_frenzy', value: 1 },
+          { id: 'wildfire_spread', name: 'Wildfire Spread', cost: { souls: 48, bodies: 6 }, desc: 'Each unit death triggers a 8 DMG splash in 40px to nearby units.', effect: 'pandemonium_death', value: 8 },
+        ]
+      },
+      {
+        id: 'psionics', name: 'Psionics', icon: '🧠', tagline: 'Turn their army against them',
+        passive: 'Collective Mind: each enemy unit with >0% corruption grants +0.5 soul/s. At 100% corruption, unit switches sides for 20s. Corrupted units that die spawn a loyal Thought Ghost.',
+        pros: ['Soul income from corruption scales with enemy army size', 'Mind-controlled units create devastating friendly fire for enemies', 'Free Thought Ghost army from corrupted deaths'],
+        cons: ['Corruption builds slowly — must attack same targets repeatedly', 'Corrupted units return to enemy after 20s — temporary benefit', 'Very fragile units — loses melee brawls badly without mind control'],
+        matchup: 'Best against: slow high-HP armies (Brutes, Glacial) | Weak to: fast swarm (Pandemonium, Infernal)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'ps_worker', name: 'Mind Probe', icon: '🔮', souls: 2, bodies: 1, hp: 22, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 52, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#a29bfe', type: 'mel', desc: 'Melee. Each hit adds 15% corruption to target.' },
+          { id: 'ps_thief', name: 'Thought Thief', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 13, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#6c5ce7', type: 'rng', desc: 'Ranged. Shots add 20% corruption to target.', corruptOnHit: true, corruptAmt: 0.20 },
+          { id: 'ps_dom', name: 'Dominion Caster', icon: '🦅', souls: 11, bodies: 3, hp: 36, speed: 82, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial. Shots add 25% corruption.', corruptOnHit: true, corruptAmt: 0.25 },
+          { id: 'ps_mind', name: 'The Overmind', icon: '🧠', souls: 20, bodies: 5, hp: 120, speed: 46, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#6c5ce7', type: 'mel', desc: 'Heavy melee. Aura corrupts enemies within 65px at 10%/s.', psionicAura: true, psionicAuraRange: 65, psionicAuraRate: 0.10 },
+        ],
+        extraUnits: [
+          { id: 'ps_ghost', name: 'Thought Ghost', icon: '👁️', souls: 0, bodies: 0, hp: 28, speed: 74, dmg: 10, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 11, color: '#a29bfe', type: 'mel', desc: 'Spawned from corrupted enemy deaths. Loyal to Psionics.', isSpawned: true },
+          { id: 'ps_guard', name: 'The Hivemind', icon: '🧠', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 20, color: '#6c5ce7', type: 'mel', desc: 'Royal Guard. Overmind aura 100px. Triggers Rewind for Psionic allies. Despawns 30s.', isSpawned: true, psionicAura: true, psionicAuraRange: 100, psionicAuraRate: 0.12 },
+        ],
+        guardUnit: 'ps_guard',
+        upgrades: [
+          { id: 'deep_scan', name: 'Deep Scan', cost: { souls: 33, bodies: 5 }, desc: 'Corruption per hit +10% (Thief: 30%, Dominion: 35%).', effect: 'psionic_corrupt', value: 0.10 },
+          { id: 'prolonged_control', name: 'Prolonged Control', cost: { souls: 36, bodies: 5 }, desc: 'Mind-control duration: 20s→35s.', effect: 'psionic_dur', value: 35 },
+          { id: 'mind_harvest', name: 'Mind Harvest', cost: { souls: 48, bodies: 6 }, desc: 'Passive income from corruption: +1 soul/s per unit. Thought Ghosts gain +8 HP.', effect: 'psionic_income', value: 1.0 },
+        ]
+      },
+      {
+        id: 'umbral', name: 'Umbral', icon: '🌑', tagline: 'Blind the enemy. Hunt in the dark.',
+        passive: 'Shadow Domain: every 30s, auto-deploys a darkness zone at mid for 12s. Enemies in darkness have range reduced to 35px (melee only). Umbral units in darkness gain 20% dmg reduction and +15% DMG.',
+        pros: ['Darkness completely neutralizes enemy ranged superiority', 'Umbral melee thrive in darkness while enemies are blind', 'The Blot creates a darkness zone on death'],
+        cons: ['Darkness is time-limited and somewhat predictable', 'Umbral is weaker outside darkness zones', 'No aerial units — cannot threaten backline without darkness cover'],
+        matchup: 'Best against: ranged-heavy factions (Warriors, Spirits) | Weak to: fast aerial factions (Spirits)',
+        startSouls: 20, startBodies: 10,
+        units: [
+          { id: 'um_worker', name: 'Dark Stalker', icon: '🌑', souls: 2, bodies: 1, hp: 24, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2d3436', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'um_night', name: 'Nightblade', icon: '🗡️', souls: 5, bodies: 1, hp: 62, speed: 65, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#636e72', type: 'mel', desc: 'Melee. In darkness: +20% dmg reduction, +15% DMG.', umbral: true },
+          { id: 'um_archer', name: 'Umbra Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#636e72', type: 'rng', desc: 'Ranged. In darkness: enemies cannot target this unit with ranged attacks.', umbral: true },
+          { id: 'um_blot', name: 'The Blot', icon: '💀', souls: 12, bodies: 3, hp: 105, speed: 50, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#2d3436', type: 'mel', desc: 'Heavy melee. Creates 120px darkness zone for 10s on death.', umbral: true, darkOnDeath: true },
+          { id: 'um_eclipse', name: 'Eclipse Titan', icon: '🌑', souls: 20, bodies: 5, hp: 150, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#2d3436', type: 'mel', desc: 'Titan. Immune to knockback. Constant 60px darkness aura around itself.', umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 60 },
+        ],
+        extraUnits: [{ id: 'um_guard', name: 'The Shadow King', icon: '🌑', souls: 0, bodies: 0, hp: 210, speed: 52, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 0.95, radius: 20, color: '#2d3436', type: 'mel', desc: 'Royal Guard. Immune to knockback. 80px darkness aura. Despawns 30s.', isSpawned: true, umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 80 }],
+        guardUnit: 'um_guard',
+        upgrades: [
+          { id: 'deep_dark', name: 'Deep Dark', cost: { souls: 33, bodies: 5 }, desc: 'Darkness zone duration: 12s→20s. Cooldown: 30s→20s.', effect: 'umbral_dur', value: 20 },
+          { id: 'shadow_strike', name: 'Shadow Strike', cost: { souls: 36, bodies: 5 }, desc: 'Umbral units in darkness deal +30% DMG instead of +15%.', effect: 'umbral_dmg', value: 0.30 },
+          { id: 'total_eclipse', name: 'Total Eclipse', cost: { souls: 48, bodies: 6 }, desc: 'Darkness zone radius expands to cover entire mid. All Umbral gain +1 armor.', effect: 'umbral_eclipse', value: 1 },
         ]
       },
     ];
@@ -10447,6 +10778,56 @@
               if (isMel) score += 1.5;
               if (isAir && gameSecs > 60) score += 3; // Gryphon as finisher
               break;
+            case 'weavers':
+              if (u.webTrail || u.tarShot) score += 3;
+              if (u.cocoonsOnDeath) score += 2;
+              break;
+            case 'merchants':
+              if (u.soulsOnKill) score += 3;
+              if (u.merchantAura) score += 4;
+              break;
+            case 'reavers':
+              if (u.corpseFeed) score += 3;
+              if (u.bodyOnKill) score += 2;
+              break;
+            case 'fortune':
+              score += Math.random() * 4; // luck-themed — random
+              break;
+            case 'plagued':
+              if (u.plagued) score += 2;
+              if (u.plagueMaxMutations && u.plagueMaxMutations > 4) score += 3;
+              break;
+            case 'chrysalis':
+              if (u.chrysAdultHp && u.chrysAdultHp > 100) score += 4;
+              break;
+            case 'tideborn':
+              if (u.tideHighHP) score += 3;
+              break;
+            case 'echoes':
+              score += 1.5; // all echo units spawn echos
+              break;
+            case 'veilborn':
+              if (u.veilPhaseDur) score += 3;
+              break;
+            case 'chronomancers':
+              if (u.chronoElite) score += 4;
+              if (u.chronoBonus) score += 2;
+              break;
+            case 'illusionists':
+              if (u.illuHeavyDecoy) score += 3;
+              break;
+            case 'pandemonium':
+              score += Math.random() * 4; // chaos!
+              if (u.pandemonium && u.hp > 80) score += 2;
+              break;
+            case 'psionics':
+              if (u.corruptOnHit) score += 3;
+              if (u.psionicAura) score += 4;
+              break;
+            case 'umbral':
+              if (u.umbralAura) score += 3;
+              if (u.darkOnDeath) score += 2;
+              break;
           }
         }
 
@@ -10632,7 +11013,7 @@
         players: [
           {
             id: 1, souls: P1_FACTION.startSouls, bodies: P1_FACTION.startBodies,
-            baseX: BW / 2 + 8, baseHp: 100, baseMaxHp: 100, dir: 1,
+            baseX: BW / 2 + 8, baseHp: 150, baseMaxHp: 150, dir: 1,
             workers: 0, bodyAccum: 0, kills: 0, spawned: 0,
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
@@ -10653,7 +11034,7 @@
           },
           {
             id: 2, souls: P2_FACTION.startSouls, bodies: P2_FACTION.startBodies,
-            baseX: VIRTUAL_W - BW / 2 - 8, baseHp: 100, baseMaxHp: 100, dir: -1,
+            baseX: VIRTUAL_W - BW / 2 - 8, baseHp: 150, baseMaxHp: 150, dir: -1,
             workers: 0, bodyAccum: 0, kills: 0, spawned: 0,
             noMidTimer: 0, despStacks: 0, bodyDespTimer: 0,
             soulsLast5: [], recentSoulRate: 0,
@@ -10679,6 +11060,9 @@
         capFlash: 0, capFlashPlayer: 0,
         lastCapAnnounce: 0,
         bloodPools: [], groundFX: [], _upgradeFlash: [0, 0], workerMidMode: [false, false],
+        tarPatches: [], corpses: [], echoSchedule: [], darkZones: [],
+        _chronoTimer: [40, 40], _umbraTimer: [30, 30],
+        _fortuneStreaks: [0, 0], _fortuneStreakTimer: [0, 0],
         // Conquest mode: 3 zones [left, mid, right], owner = 1|2|null, capTimer per zone
         zones: null,
       };
@@ -11549,6 +11933,84 @@
         case 'retreat_speed':
           modDef(up.target, def => { def._retreatSpeed = up.val; });
           break;
+        // ── Weavers ──
+        case 'web_toxic': p._webToxic = up.value || up.val || 4; break;
+        case 'web_root': p._webRoot = true; break;
+        case 'web_dur': p._webDur = (p._webDur || 8) + (up.value || up.val || 8); break;
+        // ── Merchants ──
+        case 'merchant_rate': p._merchantPassive = (p._merchantPassive || 0.3) + (up.value || up.val || 0.2); break;
+        case 'merchant_discount':
+          G.unitDefs[pid - 1].forEach(d => { if (!d.isWorker) d.souls = Math.max(1, Math.round(d.souls * (1 - (up.value || 0.15)))); });
+          break;
+        case 'merchant_kill_bonus': liveUnits.forEach(u => { if (u.def.soulsOnKill) u.def.soulsOnKill += (up.value || 1); }); G.unitDefs[pid - 1].forEach(d => { if (d.soulsOnKill) d.soulsOnKill += (up.value || 1); }); break;
+        // ── Reavers ──
+        case 'reaver_corpse': liveUnits.forEach(u => { if (u.def.reaverKillBonus) u.def.reaverKillBonus += up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.reaverKillBonus) d.reaverKillBonus += up.value; }); break;
+        case 'golem_feed': liveUnits.forEach(u => { if (u.def.corpseFeed) u.def.corpseFeedCap = (u.def.corpseFeedCap || 200) + up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.corpseFeed) d.corpseFeedCap = (d.corpseFeedCap || 200) + up.value; }); break;
+        case 'reaver_body': liveUnits.forEach(u => { if (u.def.bodyOnKill) u.def.bodyOnKill += up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.bodyOnKill) d.bodyOnKill += up.value; }); break;
+        // ── Fortune Seekers ──
+        case 'fortune_double': p._fortuneDouble = true; break;
+        case 'fortune_refund': p._fortuneRefund = true; break;
+        case 'fortune_streak': p._fortuneStreak = true; break;
+        // ── Plagued ──
+        case 'plague_double':
+          liveUnits.filter(u => u.def.plagued).forEach(u => _applyPlagueMutation(u));
+          break;
+        case 'plague_spread': p._plagueSpread = (p._plagueSpread || 1) + 1; break;
+        case 'plague_radius': liveUnits.forEach(u => { if (u.def.plagued) u.def.range += up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.plagued) d.range += up.value; }); break;
+        // ── Chrysalis ──
+        case 'chrysalis_speed': liveUnits.forEach(u => { if (u._chrysPhase === 'larva') u._chrysMorphTime = Math.max(3, (u._chrysMorphTime || 12) - up.value); }); break;
+        case 'chrysalis_armor': G.unitDefs[pid - 1].filter(d => d.chrysalis).forEach(d => { d.armor = (d.armor || 0) + up.value; }); break;
+        case 'chrysalis_adult':
+          G.unitDefs[pid - 1].filter(d => d.chrysAdultHp).forEach(d => { d.chrysAdultHp = Math.round(d.chrysAdultHp * (1 + up.value)); d.chrysAdultDmg = Math.round(d.chrysAdultDmg * (1 + up.value)); });
+          break;
+        // ── Tideborn ──
+        case 'tide_regen': p._tideRegen = (p._tideRegen || 3) + up.value; break;
+        case 'tide_split':
+          G.unitDefs[pid - 1].filter(d => d.tideHighHP).forEach(d => { d.hp = Math.round(d.hp * 1.15); });
+          liveUnits.filter(u => u.def.tideHighHP).forEach(u => { const bonus = Math.round(u.maxHp * 0.15); u.maxHp += bonus; u.hp = Math.min(u.hp + bonus, u.maxHp); });
+          break;
+        case 'tide_brute':
+          modDef('tb_brute', def => { def.dmg += up.value; def.hp += 30; });
+          break;
+        // ── Echoes ──
+        case 'echo_delay': p._echoDelay = Math.max(2, (p._echoDelay || 8) - up.value); break;
+        case 'echo_power': p._echoPower = (p._echoPower || 0.7) + up.value; break;
+        case 'echo_chain': p._echoChain = true; break;
+        // ── Veilborn ──
+        case 'veil_dur': p._veilDur = (p._veilDur || 2) + up.value; break;
+        case 'veil_cd': p._veilCooldown = Math.max(4, (p._veilCooldown || 10) - up.value); break;
+        case 'veil_strike': p._veilStrikeBonus = (p._veilStrikeBonus || 0) + up.value; break;
+        // ── Chronomancers ──
+        case 'chrono_cooldown': p._chronoCooldown = Math.max(15, (p._chronoCooldown || 40) - up.value); break;
+        case 'chrono_restore': p._chronoRestore = (p._chronoRestore || 0.80) + up.value; break;
+        case 'chrono_tax':
+          // Time Tax: enemies near own base are slowed whenever chronoElite is alive
+          p._chronoTax = true;
+          break;
+        // ── Illusionists ──
+        case 'illusion_power': G.unitDefs[pid - 1].filter(d => d.illuHeavyDecoy).forEach(d => { d.illuHeavyDecoy = true; /* already heavy, raise HP */ }); liveUnits.filter(u => u._isDecoy && u.maxHp > 1).forEach(u => { u.maxHp += 15; u.hp = Math.min(u.hp + 15, u.maxHp); }); break;
+        case 'illusion_drain': p._illuDrain = (p._illuDrain || 1) + up.value; break;
+        case 'illusion_dur': p._illuDur = (p._illuDur || 18) + up.value; break;
+        // ── Pandemonium ──
+        case 'pandemonium_chaos': liveUnits.filter(u => u.def.pandemonium).forEach(u => { u.def.dmg += up.value; }); G.unitDefs[pid - 1].filter(d => d.pandemonium).forEach(d => { d.dmg += up.value; }); break;
+        case 'pandemonium_frenzy': liveUnits.filter(u => u.def.pandemonium).forEach(u => { u.def.speed = Math.round(u.def.speed * 1.15); }); G.unitDefs[pid - 1].filter(d => d.pandemonium).forEach(d => { d.speed = Math.round(d.speed * 1.15); }); break;
+        case 'pandemonium_death': p._panWildfire = true; break;
+        // ── Psionics ──
+        case 'psionic_corrupt': liveUnits.filter(u => u.def.corruptOnHit).forEach(u => { u.def.corruptAmt = (u.def.corruptAmt || 0.20) + up.value; }); G.unitDefs[pid - 1].filter(d => d.corruptOnHit).forEach(d => { d.corruptAmt = (d.corruptAmt || 0.20) + up.value; }); break;
+        case 'psionic_dur': p._psionicAuraBonus = (p._psionicAuraBonus || 0) + up.value; break;
+        case 'psionic_income': p._psionicPassive = true; break;
+        // ── Umbral ──
+        case 'umbral_dur':
+          G._umbraTimer[pid - 1] = Math.max(15, (G._umbraTimer[pid - 1] || 30) - up.value);
+          break;
+        case 'umbral_dmg':
+          liveUnits.filter(u => u.def.umbral && u._inDark).forEach(u => { u.def.dmg += up.value; });
+          G.unitDefs[pid - 1].filter(d => d.umbral).forEach(d => { d._darkDmgBonus = (d._darkDmgBonus || 0) + up.value; });
+          break;
+        case 'umbral_eclipse':
+          // Immediately deploy dark zone at mid
+          if (G.darkZones) G.darkZones.push({ x: G.midX, owner: pid, radius: 160, life: 18, auto: true, unitId: null });
+          break;
       }
     }
 
@@ -11657,6 +12119,75 @@
         const infernoGuardActive = G.units.some(gu => gu.player === pid && gu.isGuard && gu.defId === 'if_guard' && !gu.dead);
         if (infernoGuardActive || p.infernalCount % rate === 0) { u.dmgMult = 1.25; u._hellfire = true; }
       }
+      // ── Fortune Seekers: luck rolls at spawn ──
+      if (G.factions[pid - 1].id === 'fortune' && !def.isWorker && !def.isSpawned) {
+        const roll = Math.random();
+        if (p._fortuneDouble && roll < 0.12) {
+          // Double stats luck
+          u.hp = u.hp * 2; u.maxHp = u.maxHp * 2; u.dmg = u.dmg * 2;
+          showPopup(x, u.y, '🎰 Lucky!', '#FFD700', pid);
+        } else if (p._fortuneRefund && roll < 0.10) {
+          // Half cost refund
+          const refundSouls = Math.floor((def.souls || 0) / 2);
+          const refundBodies = Math.floor((def.bodies || 0) / 2);
+          p.souls += refundSouls; p.bodies += refundBodies;
+          showPopup(x, u.y, '🪙 Refund!', '#FFD700', pid);
+        }
+        if (p._fortuneStreak) {
+          const si = pid - 1;
+          G._fortuneStreaks[si] = (G._fortuneStreaks[si] || 0) + 1;
+          G._fortuneStreakTimer[si] = 12;
+          if (G._fortuneStreaks[si] >= 3) {
+            u.dmg = Math.round(u.dmg * 1.15);
+            showPopup(x, u.y, '🔥 Streak!', '#FF8C00', pid);
+          }
+        }
+      }
+      // ── Illusionists: spawn a decoy alongside every non-worker ──
+      if (G.factions[pid - 1].id === 'illusionists' && !def.isWorker && !def.isSpawned && !def._isDecoy) {
+        const decoyHp = (def.illuHeavyDecoy) ? 20 : 1;
+        const decoy = {
+          id: 'decoy_' + Date.now() + '_' + Math.random(),
+          defId: def.id, def: Object.assign({}, def, { dmg: 0, isSpawned: true }), player: pid,
+          x: x, y: u.y, hp: decoyHp, maxHp: decoyHp,
+          dead: false, _isDecoy: true, _decoyMaster: u.id,
+          attackCooldown: 0, aliveSecs: 0, dmgMult: 1.0,
+          _fadeTimer: (p._illuDur || 18), spawnProtectionTimer: 0,
+          hitFlash: 0, hitShake: 0, vx: 0, vy: 0, offscreen: false,
+          slowTimer: 0, stunTimer: 0, burnTimer: 0, burnDmgTotal: 0,
+          poisonTimer: 0, poisonDmgPerSec: 0,
+          retreating: false, healingPhase: false, retreatCooldown: 0,
+          veteranTimer: 0, veteranStacks: 0, stillTimer: 0, fortified: false, frenzyTimer: 0,
+          chargeTimer: 0, _speedMult: 1.0, lastHitTime: 0, killCount: 0,
+          lastHitById: null, lastHitByPlayer: null, _stunnedTargets: null,
+          wolfFrenzied: false, _berserkActive: false, _attackCount: 0, _hellfire: false,
+          isGuard: false, guardTimer: 0,
+        };
+        G.units.push(decoy);
+      }
+      // ── Echoes: schedule a delayed echo spawn ──
+      if (G.factions[pid - 1].id === 'echoes' && !def.isWorker && !def.isSpawned && !u._isEcho) {
+        const delay = p._echoDelay || 8;
+        G.echoSchedule.push({ pid, defId: def.id, x, y: u.y, t: delay, power: p._echoPower || 0.7 });
+      }
+      // ── Veilborn guard: starts phased ──
+      if (def.veilStartPhased) {
+        u._phased = true;
+        u._phaseDur = 4; // will phase out after 4s, then normal phase mechanics apply
+        u._phaseCooldown = 0;
+      }
+      // ── Chrysalis: initialize metamorphosis state ──
+      if (def.chrysalis) {
+        u._chrysPhase = 'larva';
+        u._chrysTimer = 0;
+        u._chrysMorphTime = 12;
+      }
+      // ── Plagued: apply initial mutations ──
+      if (def.plagueStartMutation && def.plagueStartMutation > 0) {
+        u._mutations = 0;
+        const mutCount = def.plagueStartMutation;
+        for (let m = 0; m < mutCount; m++) _applyPlagueMutation(u);
+      }
       G.units.push(u);
       spawnParticles(x, G.groundY + yOff, def.color, 10);
     }
@@ -11714,6 +12245,19 @@
       kf.appendChild(el);
       while (kf.children.length > 6) kf.removeChild(kf.firstChild);
       setTimeout(() => el.remove(), 2800);
+    }
+    // ── Plague mutation helper ──
+    function _applyPlagueMutation(u) {
+      if (!u || !u.def) return;
+      u._mutations = (u._mutations || 0) + 1;
+      const maxMut = u.def.plagueMaxMutations || 4;
+      if (u._mutations > maxMut) return;
+      const roll = Math.floor(Math.random() * 4);
+      if (roll === 0) { u.def.hp = Math.round(u.def.hp * 1.12); u.maxHp = Math.round(u.maxHp * 1.12); u.hp = Math.round(u.hp * 1.12); }
+      else if (roll === 1) { u.def.dmg = Math.round(u.def.dmg * 1.12); }
+      else if (roll === 2) { u.def.speed = Math.round(u.def.speed * 1.10); u.speed = u.def.speed; }
+      else { u.def.range = Math.round(u.def.range * 1.10); }
+      spawnParticles(u.x, u.y, '#7bed9f', 8);
     }
     function spawnFactionDeath(u) {
       const fid = G.factions[u.player - 1] ? G.factions[u.player - 1].id : null;
@@ -11838,11 +12382,16 @@
     function findEnemy(u) {
       let best = null, bestD = Infinity;
       const isRanged = u.def.range > 60;
+      // Pandemonium: 15% chance to pick a random visible enemy instead of nearest
+      if (u.def.pandemonium && Math.random() < 0.15) {
+        const candidates = G.units.filter(e => e.player !== u.player && !e.offscreen && !e._phased);
+        if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)];
+      }
       // Pass 0: ranged aerial priority — always check for aerial in range first.
       // Aerial bypasses melee entirely so ranged must naturally counter them even mid-fight.
       if (isRanged) {
         G.units.forEach(e => {
-          if (e.player === u.player || e.offscreen || !e.def.aerial || e.retreating) return;
+          if (e.player === u.player || e.offscreen || !e.def.aerial || e.retreating || e._phased) return;
           const d = rangeDist(u, e);
           if (d < u.def.range * 1.4 && d < bestD) { best = e; bestD = d; }
         });
@@ -11852,7 +12401,7 @@
       bestD = Infinity;
       // Pass 1: nearest non-worker (retreating units ARE valid targets)
       G.units.forEach(e => {
-        if (e.player === u.player || e.offscreen || e.def.isWorker) return;
+        if (e.player === u.player || e.offscreen || e.def.isWorker || e._phased) return;
         // Ground melee cannot target aerial units — ranged and aerial only
         if (!isRanged && !u.def.aerial && e.def.aerial) return;
         const d = rangeDist(u, e);
@@ -12018,6 +12567,20 @@
           aoeShot: attacker.def.aoeShot, aoeSplashRange: attacker.def.aoeSplashRange, aoeSplashMult: attacker.def.aoeSplashMult || 0.4,
           blocked: false,
         });
+        // Pandemonium misfire: 15% chance to redirect shot to random unit (including allies)
+        if (attacker.def.pandemonium && Math.random() < 0.15) {
+          const allUnits = G.units.filter(u => u !== attacker && !u.offscreen && !u._phased);
+          if (allUnits.length > 0) {
+            const misfireTarget = allUnits[Math.floor(Math.random() * allUnits.length)];
+            const proj = G.projectiles[G.projectiles.length - 1];
+            if (proj) {
+              proj.targetId = misfireTarget.id;
+              const mdx = misfireTarget.x - attacker.x, mdy = misfireTarget.y - attacker.y;
+              const md = Math.sqrt(mdx * mdx + mdy * mdy) || 1;
+              proj.vx = (mdx / md) * 300; proj.vy = (mdy / md) * 300;
+            }
+          }
+        }
       } else {
         // Warriors Charge Strike — +80% damage on first hit after 1.5s of marching
         if (attacker.def.chargeStrike && (attacker.chargeTimer || 0) > 1.5) {
@@ -12042,6 +12605,7 @@
         // Melee direct
         let actualDmg = dmg;
         if (target._ironwalled > 0) actualDmg *= 0.6;
+        if (target._cocoonArmor) actualDmg *= (1 - target._cocoonArmor); // Chrysalis cocoon damage reduction
         if (target.spawnProtectionTimer > 0) actualDmg = 0;// spawn protect
         else {
           actualDmg = Math.max(1, actualDmg - (target.def.armor || 0));
@@ -12098,6 +12662,16 @@
           allies.sort((a, b) => (a.hp / a.maxHp) - (b.hp / b.maxHp));
           if (allies[0]) allies[0].hp = Math.min(allies[0].maxHp, allies[0].hp + (attacker.def.seraphHeal || 6));
         }
+        // Psionics melee corruptOnHit
+        if (attacker.def.corruptOnHit) {
+          target._corrupted = Math.min(1.0, (target._corrupted || 0) + (attacker.def.corruptAmt || 0.20));
+          spawnParticles(target.x, target.y, '#9b59b6', 4);
+        }
+        // Umbral in-darkness damage bonus
+        if (attacker.def.umbral && attacker._inDark && attacker.def._darkDmgBonus) {
+          target.hp -= attacker.def._darkDmgBonus;
+          if (target.hp <= 0) handleDeath(target, attacker);
+        }
         handleDeath(target, attacker);
       }
       if (attacker.def.type === 'mel') attacker.stillTimer = 0;
@@ -12137,7 +12711,7 @@
         ap.unitTypeSecs[u.def.id] = (ap.unitTypeSecs[u.def.id] || 0) + (u.aliveSecs || 0);
       }
       const kp = killer ? G.players[killer.player - 1] : null;
-      let soulReward = u.def.isSpawned ? 0 : Math.max(1, Math.floor((u.def.souls || 0) * 0.5 + 1));
+      let soulReward = u.def.isSpawned ? 0 : Math.max(1, Math.floor((u.def.souls || 0) * 0.3 + 1));
       // Shade reward
       const isShade = u.defId && (u.defId.endsWith('_shade') || u.def.isSpawned) && u.def.hp <= 30;
       if (isShade && kp) soulReward += (kp._shadeSoulReward || 0);
@@ -12270,6 +12844,75 @@
           spawnUnit(u.player, u.def.deathSpawn, true, u.x, G.groundY);
           spawnParticles(u.x, u.y, '#6c3483', 12);
         }
+      }
+      // ── Reavers: leave a corpse pickup on death ──
+      if (!u.def.isWorker && !u.def.isSpawned && G.corpses) {
+        const corpseVal = (killer && killer.def.reaverKillBonus) ? killer.def.reaverKillBonus : 3 + Math.floor(Math.random() * 4);
+        G.corpses.push({ x: u.x, val: corpseVal, life: 25 });
+        // corpseFeed: nearby Reavers Golems gain HP
+        G.units.forEach(gu => {
+          if (gu.def.corpseFeed && gu.player !== u.player) {
+            if (Math.abs(gu.x - u.x) < (gu.def.corpseFeedRange || 100)) {
+              const feedHp = Math.min((gu.def.corpseFeedCap || 200), gu.maxHp);
+              const gain = Math.min(feedHp - gu.hp, 20);
+              if (gain > 0) { gu.hp = Math.min(feedHp, gu.hp + gain); spawnParticles(gu.x, gu.y, '#8B4513', 6); }
+            }
+          }
+        });
+      }
+      // Reaver bodyOnKill
+      if (killer && killer.def.bodyOnKill && !u.def.isWorker && !u.def.isSpawned) {
+        const kp2 = G.players[killer.player - 1];
+        kp2.bodies += killer.def.bodyOnKill;
+        showPopup(u.x, u.y - 26, `+${killer.def.bodyOnKill}🦴`, '#8B4513', killer.player);
+      }
+      // ── Plagued: mutations on kill / spread on death ──
+      if (killer && killer.def.plagued && !u.def.isWorker && !u.def.isSpawned) {
+        _applyPlagueMutation(killer);
+      }
+      if (u._mutations && u._mutations > 0 && u.def.plagued) {
+        // spread strongest mutation to nearest plagued ally
+        const plAlly = G.units
+          .filter(a => a.player === u.player && a.def.plagued && a !== u)
+          .sort((a, b) => dist2d(a, u) - dist2d(b, u))[0];
+        if (plAlly) {
+          const spread = G.players[u.player - 1]._plagueSpread || 1;
+          for (let s = 0; s < spread; s++) _applyPlagueMutation(plAlly);
+          showPopup(plAlly.x, plAlly.y - 28, '🦠 SPREAD', '#7bed9f', u.player);
+        }
+      }
+      // ── Psionics: corrupted unit death spawns ghost for the Psionics player ──
+      if (u._corrupted && u._corrupted > 0) {
+        const psiPid = [0, 1].find(i => G.factions[i] && G.factions[i].id === 'psionics');
+        if (psiPid !== undefined && (psiPid + 1) !== u.player) {
+          spawnUnit(psiPid + 1, 'ps_ghost', true, u.x, G.groundY);
+          spawnParticles(u.x, u.y, '#9b59b6', 18);
+        }
+      }
+      // ── Illusionists: decoy death drains soul from killer ──
+      if (u._isDecoy && killer && kp) {
+        kp.souls = Math.max(0, kp.souls - (G.players[u.player - 1]._illuDrain || 1));
+        showPopup(u.x, u.y - 26, '👁 DECOY!', '#fd79a8', u.player);
+      }
+      // ── Pandemonium upgrade wildfire_spread: death splash ──
+      if (G.players[u.player - 1]._panWildfire && !u.def.isWorker && !u.def.isSpawned) {
+        [...G.units].forEach(e => {
+          if (e === u || e.player === u.player || e.offscreen) return;
+          if (dist2d(e, u) < 55) { e.hp -= 8; e.hitFlash = 1; if (e.hp <= 0) handleDeath(e, null); }
+        });
+        spawnParticles(u.x, u.y, '#e67e22', 12);
+      }
+      // ── Umbral darkOnDeath: deploy dark zone ──
+      if (u.def.darkOnDeath && G.darkZones) {
+        G.darkZones.push({ x: u.x, owner: u.player, radius: 80, life: 8, auto: false, unitId: null });
+        spawnParticles(u.x, u.y, '#2d3436', 18);
+      }
+      // ── Weavers cocoonsOnDeath: spawn tar patches ──
+      if (u.def.cocoonsOnDeath && G.tarPatches) {
+        for (let ci = 0; ci < 3; ci++) {
+          G.tarPatches.push({ x: u.x + (ci - 1) * 28, life: 8, dur: 8, toxic: G.players[u.player - 1]._webToxic, owner: u.player, radius: 26 });
+        }
+        spawnParticles(u.x, u.y, '#2d3436', 16);
       }
       const idx = G.units.indexOf(u);
       if (idx !== -1) G.units.splice(idx, 1);
@@ -13002,6 +13645,11 @@
       const spd = Math.max(30, u.def.speed * (u._speedMult || 1));
       u._midRing = u.goToMid && !u.offscreen;
       u._carryGlow = u.carrying;
+      // Veilborn Phase Scout: phased (untargetable) while traveling, unphased at base
+      if (u.defId === 'vb2_worker') {
+        const baseX = p.baseX;
+        u._phased = Math.abs(u.x - baseX) > G.baseW * 1.5;
+      }
       // Always snap to ground — workers skip the per-frame Y snap that combat units get,
       // so we do it here to handle canvas resizes and any first-frame stale groundY
       if (!u.offscreen) u.y = G.groundY - (u.def.radius || 10);
@@ -13012,6 +13660,7 @@
           // Mid trips take ~3× as long as normal trips, so reward 12 bodies (vs 2 at home) — genuinely worth using
           let _baseCarry = u._wasGoingMid ? 12 : 3;
           if (u._wasGoingMid && (u.def.groveMidBonus || u.def.frostMidBonus)) _baseCarry += 2;
+          if (u._wasGoingMid && u.def.merchantMidBonus) _baseCarry += 2;
           u.carryCount = _baseCarry;
           // Mid workers reappear at mid and walk home visibly; normal trips reappear behind base edge
           u.x = u._wasGoingMid ? G.midX : offX;
@@ -13105,6 +13754,7 @@
         if (Math.sqrt(dx * dx + dy * dy) < (t.def.radius || 10) + 6) {
           let dmg = p.dmg;
           if (t._ironwalled > 0) dmg *= 0.6;
+          if (t._cocoonArmor) dmg *= (1 - t._cocoonArmor); // Chrysalis cocoon damage reduction
           // Warriors Iron Resolve — 15% resistance when below 30% HP
           if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * 0.30) {
             dmg *= 0.85;
@@ -13141,6 +13791,17 @@
             t.poisonDmgPerSec = (t.poisonDmgPerSec || 0) + (atkDef.poisonDmg / atkDef.poisonDur);
           }
           if (atkDef && atkDef.thornslow && !t.def.immuneDebuff) { t.slowTimer = Math.max(t.slowTimer || 0, 2); t._speedMult = Math.min(t._speedMult || 1, 0.65); }
+          // Psionics: corruptOnHit
+          if (atkDef && atkDef.corruptOnHit) {
+            t._corrupted = Math.min(1.0, (t._corrupted || 0) + (atkDef.corruptAmt || 0.20));
+            spawnParticles(t.x, t.y, '#9b59b6', 4);
+          }
+          // Weavers: tarShot — create tar patch on impact
+          if (atkDef && atkDef.tarShot && G.tarPatches) {
+            const pr = G.players[p.player - 1];
+            G.tarPatches.push({ x: p.x, life: pr._webDur || 8, dur: pr._webDur || 8, toxic: pr._webToxic || 0, root: pr._webRoot || false, owner: p.player, radius: 28 });
+            spawnParticles(p.x, p.y - 5, '#2d3436', 8);
+          }
           // Melee slow from ranged hit? No — only melee hits slow
           // Chain lightning (ranged)
           if (atk) {
@@ -13312,8 +13973,9 @@
         const rallyMult = u._rallySpeed ? 1.20 : 1.0;
         const blitzMult = (_spOwner.activeBuffs && _spOwner.activeBuffs.blitz > 0) ? 1.40 : 1.0;
         // Speed floor for slowed units (BUG2 fix)
-        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult * blitzMult;
-        const spd = u.def.immuneDebuff ? u.def.speed * warcryMult * blitzMult : Math.max(30, rawSpd);
+        const groundMult = (!u.def.aerial && !u.def.isWorker) ? 0.92 : 1.0;
+        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult * blitzMult * groundMult;
+        const spd = u.def.immuneDebuff ? u.def.speed * warcryMult * blitzMult * groundMult : Math.max(30, rawSpd);
         const enemy = findEnemy(u);
         u.target = enemy;
         if (enemy) {
@@ -13323,7 +13985,7 @@
           const atBase = Math.abs(u.x - ebaseCheck.baseX) < G.baseW * .7 + u.def.range;
           if (atBase && canAttackBase(u)) {
             if (u.attackCooldown <= 0) {
-              const baseMult = G.players[u.player - 1]._baseDmgMult || 1;
+              const baseMult = (G.players[u.player - 1]._baseDmgMult || 1) * 0.65;
               if (!ebaseCheck._conquestShield) ebaseCheck.baseHp -= u.def.dmg * (u.dmgMult || 1) * baseMult;
               if (ebaseCheck.lastStandGrace > 0 && ebaseCheck.baseHp <= 0) ebaseCheck.baseHp = 1;
               if (!ebaseCheck.lastStandUsed && ebaseCheck.baseHp <= 0) ebaseCheck.baseHp = 1;
@@ -13444,7 +14106,7 @@
             const ebase = G.players[u.player === 1 ? 1 : 0];
             if (Math.abs(u.x - ebase.baseX) < G.baseW * .7 + u.def.range) {
               if (u.attackCooldown <= 0) {
-                const baseMult = G.players[u.player - 1]._baseDmgMult || 1;
+                const baseMult = (G.players[u.player - 1]._baseDmgMult || 1) * 0.65;
                 if (!ebase._conquestShield) ebase.baseHp -= u.def.dmg * (u.dmgMult || 1) * baseMult;
                 // Grace period: base can't die while Last Stand guards are spawning
                 if (ebase.lastStandGrace > 0 && ebase.baseHp <= 0) {
@@ -13483,6 +14145,154 @@
           }
           // If no clamp zone (player owns all zones), units march freely to base — no clamp
         }
+        // ── Illusionists: decoy fade timer ──
+        if (u._isDecoy) {
+          u._fadeTimer = (u._fadeTimer || 0) - dt;
+          if (u._fadeTimer <= 0) { u.hp = 0; handleDeath(u, null); continue; }
+        }
+        // ── Weavers: web trail (tar patch deposit while moving) ──
+        if (u.def.webTrail && Math.abs(u.vx || 0) > 5) {
+          u._tarTrailTimer = (u._tarTrailTimer || 0) + dt;
+          if (u._tarTrailTimer >= 0.8) {
+            u._tarTrailTimer = 0;
+            const tr = G.players[u.player - 1];
+            G.tarPatches.push({ x: u.x, life: tr._webDur || 8, dur: tr._webDur || 8, toxic: tr._webToxic || 0, root: tr._webRoot || false, owner: u.player, radius: u.def.webTrailRadius || 20 });
+          }
+        }
+        // ── Merchants: Banker passive soul income ──
+        if (u.def.merchantAura) {
+          G.players[u.player - 1].souls = Math.min(900, G.players[u.player - 1].souls + (u.def.merchantAuraRate || 0.6) * dt);
+        }
+        // ── Veilborn: auto-phase at low HP ──
+        if (u.def.veilborn) {
+          if (u._phased) {
+            u._phaseDur = (u._phaseDur || 0) - dt;
+            u.hp = Math.min(u.maxHp, u.hp + 8 * dt); // regen while phased
+            if (u._phaseDur <= 0) {
+              u._phased = false;
+              // Free strike bonus on re-materialization
+              const nearestFoe = G.units.find(e => e.player !== u.player && !e._phased && Math.abs(e.x - u.x) < (u.def.range || 80));
+              if (nearestFoe) {
+                const strikeDmg = u.def.dmg + (u.def.veilStrikeBonus || 0) + (G.players[u.player - 1]._veilStrikeBonus || 0);
+                nearestFoe.hp -= strikeDmg; nearestFoe.hitFlash = 1;
+                spawnParticles(nearestFoe.x, nearestFoe.y, '#6c5ce7', 10);
+                if (nearestFoe.hp <= 0) handleDeath(nearestFoe, u);
+              }
+              u._phaseCooldown = G.players[u.player - 1]._veilCooldown || 10;
+            }
+            continue; // phased units don't move or attack
+          }
+          if (u._phaseCooldown > 0) u._phaseCooldown -= dt;
+          if (!u._phased && u.hp < u.maxHp * 0.40 && (u._phaseCooldown || 0) <= 0) {
+            u._phased = true;
+            u._phaseDur = u.def.veilPhaseDur || (G.players[u.player - 1]._veilDur || 2);
+            spawnParticles(u.x, u.y, '#6c5ce7', 14);
+            showPopup(u.x, u.y - 30, '👁 PHASE', '#6c5ce7', u.player);
+          }
+        }
+        // ── Chrysalis: metamorphosis timer ──
+        if (u._chrysPhase === 'larva') {
+          u._chrysTimer += dt;
+          if (u._chrysTimer >= (u._chrysMorphTime || 12)) {
+            u._chrysPhase = 'cocoon';
+            u._chrysTimer = 0;
+            spawnParticles(u.x, u.y, '#00b894', 12);
+          }
+        } else if (u._chrysPhase === 'cocoon') {
+          u._chrysTimer += dt;
+          // Damage reduction while cocooning
+          u._cocoonArmor = 0.60;
+          if (u._chrysTimer >= 2.5) {
+            u._chrysPhase = 'adult';
+            u._cocoonArmor = 0;
+            const d = u.def;
+            if (d.chrysAdultHp)    { u.maxHp = d.chrysAdultHp; u.hp = d.chrysAdultHp; }
+            if (d.chrysAdultDmg)   { u.def = Object.assign({}, u.def, { dmg: d.chrysAdultDmg }); }
+            if (d.chrysAdultSpeed) { u.def.speed = d.chrysAdultSpeed; }
+            if (d.chrysAdultAerial) { u.def.aerial = true; }
+            if (d.chrysAdultImmune) { u.def.immuneDebuff = true; }
+            if (d.chrysAdultName)  { u.def.name = d.chrysAdultName; }
+            if (d.chrysAdultIcon)  { u.def.icon = d.chrysAdultIcon; }
+            spawnParticles(u.x, u.y, '#fdcb6e', 22);
+            showPopup(u.x, u.y - 40, '🦋 EMERGED!', '#fdcb6e', u.player);
+          }
+          continue; // cocooning — no movement/attack
+        }
+        // ── Tideborn: regen near allies + split at low HP ──
+        if (u.def.tideborn) {
+          const allyNear = G.units.some(a => a.player === u.player && a !== u && Math.abs(a.x - u.x) < 50);
+          if (allyNear) u.hp = Math.min(u.maxHp, u.hp + (G.players[u.player - 1]._tideRegen || 3) * dt);
+          if (!u._splitDone && u.hp < u.maxHp * 0.20 && u.def.tideHighHP) {
+            u._splitDone = true;
+            // Split into two smaller units
+            for (let si = 0; si < 2; si++) {
+              spawnUnit(u.player, 'tb_surge', true, u.x + (si === 0 ? -15 : 15), G.groundY);
+            }
+            u.hp = 0; handleDeath(u, null);
+            continue;
+          }
+        }
+        // ── Psionics: aura corruption ──
+        if (u.def.psionicAura) {
+          G.units.forEach(e => {
+            if (e.player === u.player || e.dead || e.hp <= 0) return;
+            if (dist2d(u, e) < (u.def.psionicAuraRange || 65)) {
+              e._corrupted = Math.min(1.0, (e._corrupted || 0) + (u.def.psionicAuraRate || 0.10) * dt);
+              if (e._corrupted >= 1.0) {
+                e._corrupted = 0;
+                // Fully corrupted: convert to psionic side for 8s
+                const origPlayer = e.player;
+                e.player = u.player; e._corruptedOrig = origPlayer; e._corruptTimer = 8;
+                showPopup(e.x, e.y - 30, '🧠 DOMINATED', '#9b59b6', u.player);
+              }
+            }
+          });
+        }
+        // Handle corruption timer (revert unit after control expires)
+        if (u._corruptTimer > 0) {
+          u._corruptTimer -= dt;
+          if (u._corruptTimer <= 0 && u._corruptedOrig) {
+            u.player = u._corruptedOrig;
+            u._corruptedOrig = null;
+            u._corrupted = 0;
+          }
+        }
+        // ── Umbral: aura creates dark zones ──
+        if (u.def.umbralAura && G.darkZones) {
+          // Refresh or add dark zone around this unit
+          let dz = G.darkZones.find(d => d.unitId === u.id);
+          if (!dz) { dz = { unitId: u.id, owner: u.player, life: 99, auto: false }; G.darkZones.push(dz); }
+          dz.x = u.x; dz.radius = u.def.umbralAuraRange || 60; dz.life = 0.5; // keep alive
+        }
+        // Umbral: apply in-darkness buff (+30% dmg)
+        if (u.def.umbral && G.darkZones) {
+          u._inDark = G.darkZones.some(d => d.owner === u.player && dist2d(u, { x: d.x, y: G.groundY }) < (d.radius || 60));
+        }
+        // ── Chronomancers: rewind timer ──
+        if (u.def.chronoElite) {
+          u._rewindTimer = (u._rewindTimer || 0) + dt;
+          const rewindCd = G.players[u.player - 1]._chronoCooldown || 40;
+          if (u._rewindTimer >= rewindCd) {
+            u._rewindTimer = 0;
+            const restoreHp = u.maxHp * (G.players[u.player - 1]._chronoRestore || 0.80);
+            u.hp = Math.min(u.maxHp, u.hp + restoreHp);
+            spawnParticles(u.x, u.y, '#74b9ff', 18);
+            showPopup(u.x, u.y - 35, '⏪ REWIND', '#74b9ff', u.player);
+          }
+        }
+        // Chrono bonus (Ager unit): scales with alive time
+        if (u.def.chronoBonus) {
+          const ageBonus = Math.min(0.50, u.aliveSecs * 0.005);
+          u.dmgMult = 1.0 + ageBonus;
+        }
+        // ── Fortune Seekers: streak timer decay ──
+        {
+          const si = u.player - 1;
+          if (G._fortuneStreakTimer && G._fortuneStreakTimer[si] > 0) {
+            G._fortuneStreakTimer[si] -= dt;
+            if (G._fortuneStreakTimer[si] <= 0) G._fortuneStreaks[si] = 0;
+          }
+        }
         // Clamp X; aerial bobs
         const minX = G.players[0].baseX + G.baseW / 2 + 2, maxX = G.players[1].baseX - G.baseW / 2 - 2;
         u.x = Math.max(minX, Math.min(maxX, u.x));
@@ -13511,6 +14321,15 @@
           }
           G.players.forEach(p => { if (p.baseHp > 0) p.baseHp = Math.max(1, p.baseHp - doomRate * dt); });
         }
+      }
+
+      // ── Base regen: +1.5 HP/s when no enemy within 200px of base (not in Sudden Death) ──
+      if (!_isSudden) {
+        G.players.forEach(p => {
+          if (p.baseHp <= 0 || p.baseHp >= p.baseMaxHp) return;
+          const enemyNear = G.units.some(u => u.player !== p.id && !u.def.isWorker && Math.abs(u.x - p.baseX) < 200);
+          if (!enemyNear) p.baseHp = Math.min(p.baseMaxHp, p.baseHp + 1.5 * dt);
+        });
       }
 
       G.players.forEach(p => {
@@ -14003,6 +14822,133 @@
         return fx.life > 0;
       });
     }
+    // ── New faction update functions ──
+    function updateTarPatches(dt) {
+      if (!G.tarPatches) return;
+      G.tarPatches = G.tarPatches.filter(tp => {
+        tp.life -= dt;
+        if (tp.life <= 0) return false;
+        const r = tp.radius || 22;
+        G.units.forEach(u => {
+          if (u.player === tp.owner || u.def.isWorker || u._phased) return;
+          if (Math.abs(u.x - tp.x) < r) {
+            // Slow
+            u.slowTimer = Math.max(u.slowTimer || 0, 0.4);
+            u._speedMult = Math.min(u._speedMult || 1, 0.55);
+            // Root (web_root upgrade) — freeze unit on first contact
+            if (tp.root && !u._tarRooted) { u._tarRooted = true; u.slowTimer = 2.0; u._speedMult = 0.0; }
+            // Toxic DoT
+            if (tp.toxic > 0) { u.hp -= tp.toxic * dt; if (u.hp <= 0) handleDeath(u, null); }
+          }
+        });
+        return true;
+      });
+    }
+    function updateCorpses(dt) {
+      if (!G.corpses) return;
+      G.corpses = G.corpses.filter(c => {
+        c.life -= dt;
+        if (c.life <= 0) return false;
+        // Reaver workers pick up corpses for bodies
+        G.units.forEach(u => {
+          if (c.life <= 0) return;
+          if (!u.def.reaverWorker || Math.abs(u.x - c.x) > 22) return;
+          const p = G.players[u.player - 1];
+          p.bodies = Math.min(99, p.bodies + c.val);
+          c.life = 0;
+        });
+        return c.life > 0;
+      });
+    }
+    function updateEchoSchedule(dt) {
+      if (!G.echoSchedule) return;
+      G.echoSchedule = G.echoSchedule.filter(ev => {
+        ev.t -= dt;
+        if (ev.t > 0) return true;
+        // Spawn the echo
+        const def = G.unitDefs[ev.pid - 1].find(d => d.id === ev.defId);
+        if (!def) return false;
+        const power = ev.power || 0.7;
+        const chain = G.players[ev.pid - 1]._echoChain || false;
+        const echo = {
+          id: 'echo_' + Date.now() + '_' + Math.random(),
+          defId: 'echo_' + ev.defId, def: Object.assign({}, def, {
+            hp: Math.round(def.hp * power), dmg: Math.round(def.dmg * power),
+            speed: def.speed, name: 'Echo: ' + def.name, isSpawned: true
+          }),
+          player: ev.pid, x: ev.x, y: ev.y,
+          hp: Math.round(def.hp * power), maxHp: Math.round(def.hp * power),
+          dead: false, _isEcho: true, aliveSecs: 0,
+          attackTimer: 0, attackCooldown: 0,
+          moveDir: ev.pid === 1 ? 1 : -1,
+          _age: 0, radius: def.radius || 14,
+          aerial: def.aerial || false, color: '#9b59b6',
+          icon: def.icon, veteranTimer: 0, veteranStacks: 0,
+          stillTimer: 0, fortified: false, frenzyTimer: 0,
+          chargeTimer: 0, _speedMult: 1.0, lastHitTime: 0,
+          slowTimer: 0, stunTimer: 0, burnTimer: 0, burnDmgTotal: 0,
+          poisonTimer: 0, poisonDmgPerSec: 0,
+          wolfFrenzied: false, _berserkActive: false, _attackCount: 0, _hellfire: false,
+          isGuard: false, guardTimer: 0, killCount: 0,
+          lastHitById: null, lastHitByPlayer: null, _stunnedTargets: null,
+          retreating: false, healingPhase: false, retreatCooldown: 0,
+          spawnProtectionTimer: 0.5, hitFlash: 0, hitShake: 0, vx: 0, vy: 0,
+          offscreen: false, dmgMult: 1.0,
+        };
+        G.units.push(echo);
+        spawnParticles(ev.x, ev.y, '#9b59b6', 12);
+        // If echo_chain upgrade: schedule another echo in 4s
+        if (chain) G.echoSchedule.push({ pid: ev.pid, defId: ev.defId, x: ev.x, y: ev.y, t: 4, power: power * 0.7 });
+        return false;
+      });
+    }
+    function updateDarkZones(dt) {
+      if (!G.darkZones) return;
+      // Auto-deploy for Umbral players every 30s
+      G.players.forEach((p, i) => {
+        if (!G.factions[i] || G.factions[i].id !== 'umbral') return;
+        G._umbraTimer[i] = (G._umbraTimer[i] || 30) - dt;
+        if (G._umbraTimer[i] <= 0) {
+          G._umbraTimer[i] = 30;
+          G.darkZones.push({ x: G.midX, owner: i + 1, radius: 120, life: 12, auto: true, unitId: null });
+          showPopup(G.midX, G.groundY - 80, '🌑 DARKNESS', '#2d3436', i + 1);
+        }
+      });
+      G.darkZones = G.darkZones.filter(dz => {
+        if (!dz.unitId) { dz.life -= dt; return dz.life > 0; }
+        // Unit-anchored dark zones stay while unit lives
+        const unit = G.units.find(u => u.id === dz.unitId);
+        return !!unit && unit.hp > 0;
+      });
+    }
+    function updateNewFactionSystems(dt) {
+      // Merchants: passive soul income when rich
+      G.players.forEach((p, i) => {
+        if (!G.factions[i] || G.factions[i].id !== 'merchants') return;
+        if (p.souls > 30 && p._merchantPassive) p.souls = Math.min(900, p.souls + p._merchantPassive * dt);
+      });
+      // Chronomancers: Time Tax — enemies near own base of chrono player are slowed
+      G.players.forEach((p, i) => {
+        if (!p._chronoTax) return;
+        const baseX = G.players[i].baseX;
+        const chronoAlive = G.units.some(u => u.player === i + 1 && u.def.chronoElite && u.hp > 0);
+        if (!chronoAlive) return;
+        G.units.forEach(e => {
+          if (e.player === i + 1 || e.def.isWorker || e.def.immuneDebuff) return;
+          if (Math.abs(e.x - baseX) < 150) {
+            e.slowTimer = Math.max(e.slowTimer || 0, 0.5);
+            e._speedMult = Math.min(e._speedMult || 1, 0.75);
+          }
+        });
+      });
+      // Psionics: passive income from corrupted enemies
+      G.players.forEach((p, i) => {
+        if (!p._psionicPassive) return;
+        const corruptedCount = G.units.filter(u => u.player !== i + 1 && u._corrupted > 0.3).length;
+        if (corruptedCount > 0) p.souls = Math.min(900, p.souls + corruptedCount * 0.3 * dt);
+      });
+    }
+
     function updateBloodPools(dt) {
       if (!G.bloodPools || !G.bloodPools.length) return;
       G.bloodPools = G.bloodPools.filter(pool => {
@@ -14042,6 +14988,37 @@
       if (GAME_MODE !== 'conquest') drawMid();
       // Conquest zones
       if (GAME_MODE === 'conquest' && G.zones) drawConquestZones();
+      // Tar patches (Weavers) — dark sticky ground
+      if (G.tarPatches && G.tarPatches.length) {
+        G.tarPatches.forEach(tp => {
+          const frac = tp.life / tp.dur;
+          ctx.save();
+          ctx.globalAlpha = frac * 0.5;
+          const tg = ctx.createRadialGradient(tp.x, G.groundY, 0, tp.x, G.groundY, tp.radius || 22);
+          tg.addColorStop(0, '#2d3436');
+          tg.addColorStop(0.6, '#636e72');
+          tg.addColorStop(1, 'transparent');
+          ctx.fillStyle = tg;
+          ctx.beginPath(); ctx.ellipse(tp.x, G.groundY, tp.radius || 22, (tp.radius || 22) * 0.3, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      }
+      // Dark zones (Umbral) — darkness overlay
+      if (G.darkZones && G.darkZones.length) {
+        G.darkZones.forEach(dz => {
+          if (!dz.x) return;
+          const pulse = 0.25 + Math.sin(Date.now() / 400) * 0.08;
+          ctx.save();
+          ctx.globalAlpha = pulse;
+          const dzg = ctx.createRadialGradient(dz.x, G.groundY - 40, 0, dz.x, G.groundY - 40, dz.radius || 120);
+          dzg.addColorStop(0, 'rgba(0,0,0,0.85)');
+          dzg.addColorStop(0.7, 'rgba(30,20,40,0.5)');
+          dzg.addColorStop(1, 'transparent');
+          ctx.fillStyle = dzg;
+          ctx.beginPath(); ctx.ellipse(dz.x, G.groundY - 40, dz.radius || 120, (dz.radius || 120) * 0.6, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      }
       // Blood pools (Bloodpact) — draw before particles and units
       if (G.bloodPools && G.bloodPools.length) {
         G.bloodPools.forEach(pool => {
@@ -15363,6 +16340,73 @@
         ctx.shadowBlur = 0;
         ctx.restore();
       }
+      // ── Veilborn: phased — very translucent, blue shimmer ──
+      if (u._phased) {
+        ctx.save();
+        ctx.globalAlpha = 0.25 + Math.sin(Date.now() / 150) * 0.08;
+        ctx.strokeStyle = '#6c5ce7'; ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 16; ctx.shadowColor = '#6c5ce7';
+        ctx.beginPath(); ctx.arc(x, y, r + 8, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 0.3;
+        ctx.restore();
+        // Draw the unit very faded
+        ctx.globalAlpha = 0.28;
+      }
+      // ── Echo unit: purple tint overlay ──
+      if (u._isEcho) {
+        ctx.globalAlpha = 0.65;
+        ctx.save();
+        ctx.globalAlpha = 0.4 + Math.sin(Date.now() / 300) * 0.15;
+        ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+        ctx.globalAlpha = 0.65;
+      }
+      // ── Decoy: flickering + dashed border ──
+      if (u._isDecoy) {
+        const flicker = 0.4 + Math.sin(Date.now() / 80) * 0.3;
+        ctx.globalAlpha = flicker;
+        ctx.save();
+        ctx.globalAlpha = 0.6;
+        ctx.strokeStyle = '#fd79a8'; ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+      // ── Chrysalis cocoon: pulsing green ring ──
+      if (u._chrysPhase === 'cocoon') {
+        const cp = 0.5 + Math.sin(Date.now() / 200) * 0.4;
+        ctx.save();
+        ctx.globalAlpha = cp;
+        ctx.strokeStyle = '#00b894'; ctx.lineWidth = 3;
+        ctx.shadowBlur = 12; ctx.shadowColor = '#00b894';
+        ctx.beginPath(); ctx.arc(x, y, r + 6, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+      // ── Psionics: corruption overlay (purple vignette) ──
+      if (u._corrupted && u._corrupted > 0.1) {
+        const cp2 = u._corrupted * 0.7;
+        ctx.save();
+        ctx.globalAlpha = cp2;
+        ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 2;
+        ctx.shadowBlur = 10; ctx.shadowColor = '#9b59b6';
+        ctx.beginPath(); ctx.arc(x, y, r + 3, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+      // ── Umbral: in-darkness shadow ──
+      if (u._inDark) {
+        ctx.save();
+        ctx.globalAlpha = 0.25 + Math.sin(Date.now() / 500) * 0.1;
+        ctx.fillStyle = '#2d3436';
+        ctx.shadowBlur = 14; ctx.shadowColor = '#000';
+        ctx.beginPath(); ctx.ellipse(x, y, r * 1.2, r * 1.3, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
       // Hit flash
       if (u.hitFlash > 0) { ctx.globalAlpha = 0.5 + u.hitFlash * 0.5; }
 
@@ -15693,6 +16737,11 @@
       if (GAME_MODE === 'conquest') updateConquest(G.dt);
       updateGroundFX(G.dt);
       updateBloodPools(G.dt);
+      updateTarPatches(G.dt);
+      updateCorpses(G.dt);
+      updateEchoSchedule(G.dt);
+      updateDarkZones(G.dt);
+      updateNewFactionSystems(G.dt);
       updateParticles(G.dt);
       drawGame();
       updateHUD();
