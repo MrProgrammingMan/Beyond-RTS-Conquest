@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(grep -n \"name: ''Weavers''\\\\|name: ''Merchants''\\\\|name: ''Reavers''\\\\|name: ''Chronomancers''\\\\|name: ''Tideborn''\\\\|name: ''Pandemonium''\" '/c/Users/sande/OneDrive/Документы/Beyond RTS Conquest/public/index.html')",
+      "Bash(node -e 'const fs=require\\(\"\"fs\"\"\\); const html=fs.readFileSync\\(\"\"public/index.html\"\",\"\"utf8\"\"\\); const m=html.match\\(/<script>\\([\\\\s\\\\S]*?\\)<\\\\/script>/\\); if\\(!m\\){console.log\\(\"\"No script found\"\"\\);process.exit\\(1\\);} try{new Function\\(m[1]\\);console.log\\(\"\"Syntax OK\"\"\\)}catch\\(e\\){console.log\\(\"\"Syntax error:\"\",e.message\\)}')",
+      "Bash(node -e 'var fs=require\\(\"\"fs\"\"\\),h=fs.readFileSync\\(\"\"public/index.html\"\",\"\"utf8\"\"\\),s=h.indexOf\\(\"\"<script>\"\"\\),e=h.indexOf\\(\"\"</script>\"\"\\),j=h.substring\\(s+8,e\\);try{new Function\\(j\\);console.log\\(\"\"OK\"\"\\)}catch\\(x\\){console.log\\(x.message\\)}')"
     ]
   }
 }

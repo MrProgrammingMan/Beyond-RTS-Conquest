@@ -2754,9 +2754,9 @@
 
     /* ── Unit unlock progression ── */
     .ucard.locked {
-      opacity: .28;
+      opacity: .45;
       cursor: not-allowed;
-      filter: grayscale(.9) brightness(.55);
+      filter: grayscale(.7) brightness(.6);
       position: relative;
     }
 
@@ -2772,24 +2772,27 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 1px;
-      background: rgba(0, 0, 0, .52);
+      justify-content: flex-end;
+      padding-bottom: clamp(3px, .5vh, 6px);
+      gap: 2px;
+      background: linear-gradient(180deg, rgba(0,0,0,.3) 0%, rgba(0,0,0,.7) 100%);
       border-radius: 4px;
       pointer-events: none;
       z-index: 3;
     }
 
     .ulock-icon {
-      font-size: clamp(.85rem, 1.5vh, 1.3rem);
+      font-size: clamp(.7rem, 1.2vh, 1rem);
       line-height: 1;
     }
 
     .ulock-cd {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.5rem, .78vw, .68rem);
-      color: #aaa;
-      letter-spacing: .03em;
+      font-size: clamp(.65rem, 1vw, .85rem);
+      font-weight: 700;
+      color: #f0c040;
+      letter-spacing: .06em;
+      text-shadow: 0 1px 4px rgba(0,0,0,.9);
     }
 
     @keyframes unlockPop {
@@ -5973,14 +5976,18 @@
     }
 
     .mskill.locked-hard {
-      opacity: .3;
-      cursor: default;
-      pointer-events: none;
+      opacity: .35;
+      cursor: pointer;
+    }
+
+    .mskill.locked-hard:hover {
+      opacity: .55;
+      border-color: rgba(255, 255, 255, .18);
     }
 
     .mskill.locked-soft {
       opacity: .6;
-      cursor: default;
+      cursor: pointer;
     }
 
     .mskill.locked-soft:hover {
@@ -6669,9 +6676,9 @@
       <div id="momentum-p1"></div>
       <div id="momentum-p2"></div>
       <div id="momentum-center"></div>
-      <span class="momentum-label" id="momentum-p1-label">P1 ◀</span>
+      <span class="momentum-label" id="momentum-p1-label">◀ P1</span>
       <div id="momentum-title">FRONT LINE</div>
-      <span class="momentum-label" id="momentum-p2-label">▶ P2</span>
+      <span class="momentum-label" id="momentum-p2-label">P2 ▶</span>
       <div id="momentum-marker"></div>
     </div>
     <div id="battlefield-wrap">
@@ -8795,8 +8802,8 @@
     // Each faction has units in order: [worker, starter, ranged, special, aerial/elite, ...]
     // Slot index maps to a minimum game-elapsed time before that card becomes usable.
     // Bypassed in sudden_death and tutorial modes.
-    const UNIT_TIER_TIMES = [0, 0, 50, 100, 160]; // seconds per slot index (last value used for 4+)
-    const SPY_UNLOCK_TIME = 100;
+    const UNIT_TIER_TIMES = [0, 0, 30, 60, 100]; // seconds per slot index (last value used for 4+)
+    const SPY_UNLOCK_TIME = 60;
 
     function _unlocksBypassed() {
       return GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' ||
@@ -8841,7 +8848,7 @@
       tideborn: { color: '#0984e3', blur: 16 },  // ocean blue — tidal surge
       echoes: { color: '#a29bfe', blur: 16 },    // pale violet — temporal echo
       veilborn: { color: '#6c5ce7', blur: 16 },  // deep purple — phasing
-      chronomancers: { color: '#74b9ff', blur: 16 }, // sky blue — time
+      chronomancers: { color: '#2e86c1', blur: 16 }, // royal blue — time
       illusionists: { color: '#fd79a8', blur: 14 }, // pink — illusion
       pandemonium: { color: '#e17055', blur: 18 }, // orange-red — chaos
       psionics: { color: '#9b59b6', blur: 16 },  // violet — mind
@@ -8860,9 +8867,9 @@
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
-          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 4, bodies: 1, hp: 100, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true, armor: 2 },
+          { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 4, bodies: 1, hp: 80, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true, armor: 2 },
           { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 5, bodies: 1, hp: 50, speed: 65, dmg: 17, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.', armor: 2 },
-          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 9, bodies: 2, hp: 175, speed: 50, dmg: 30, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 30% HP.', armor: 2 },
+          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 9, bodies: 2, hp: 155, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 30% HP.', armor: 2 },
           { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 9, bodies: 3, hp: 73, speed: 85, dmg: 29, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3, armor: 2 },
         ],
         extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 200, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
@@ -8911,7 +8918,7 @@
           { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Sturdier than average.' },
           { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
           { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 55, speed: 46, dmg: 24, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
-          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 11, bodies: 3, hp: 42, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
           { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
         ],
@@ -9117,7 +9124,7 @@
         startSouls: 22, startBodies: 10,
         units: [
           { id: 'mc_worker', name: 'Courier', icon: '💼', souls: 2, bodies: 1, hp: 25, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid (bonus).', merchantMidBonus: true },
-          { id: 'mc_coin', name: 'Coin Guard', icon: '🗡️', souls: 5, bodies: 1, hp: 70, speed: 60, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#fdcb6e', type: 'mel', desc: 'Melee. On kill: +3 extra souls.', soulsOnKill: 3 },
+          { id: 'mc_coin', name: 'Coin Guard', icon: '🗡️', souls: 5, bodies: 1, hp: 55, speed: 60, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#fdcb6e', type: 'mel', desc: 'Melee. On kill: +3 extra souls.', soulsOnKill: 3 },
           { id: 'mc_fiend', name: 'Market Fiend', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#e17055', type: 'rng', desc: 'Standard ranged unit with good stats.' },
           { id: 'mc_hawk', name: 'Gold Hawk', icon: '🦅', souls: 10, bodies: 2, hp: 36, speed: 87, dmg: 19, range: 58, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial. On kill: +2 extra souls.', soulsOnKill: 2 },
           { id: 'mc_banker', name: 'The Banker', icon: '💎', souls: 22, bodies: 5, hp: 130, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#f9ca24', type: 'mel', desc: 'Massive melee. Grants +1 soul/s to owner while alive.', merchantAura: true },
@@ -9139,9 +9146,9 @@
         startSouls: 18, startBodies: 14,
         units: [
           { id: 'rv_worker', name: 'Bone Picker', icon: '🦴', souls: 2, bodies: 1, hp: 25, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#922b21', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid. Harvests nearby corpses for +5 bodies.', reaverWorker: true },
-          { id: 'rv_digger', name: 'Grave Digger', icon: '⚰️', souls: 5, bodies: 1, hp: 70, speed: 58, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#922b21', type: 'mel', desc: 'Melee. Kills drop high-value corpse (+2 bonus bodies).', reaverKillBonus: 2 },
+          { id: 'rv_digger', name: 'Grave Digger', icon: '⚰️', souls: 5, bodies: 1, hp: 58, speed: 58, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#922b21', type: 'mel', desc: 'Melee. Kills drop high-value corpse (+2 bonus bodies).', reaverKillBonus: 2 },
           { id: 'rv_harvester', name: 'Harvester', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#c0392b', type: 'rng', desc: 'Ranged. Shots apply 4 DPS poison for 3s.', poisonOnHit: true, poisonDur: 3, poisonDmg: 4 },
-          { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 15, bodies: 4, hp: 130, speed: 44, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7d3c98', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 200) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 200 },
+          { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 15, bodies: 4, hp: 100, speed: 44, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7b241c', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 200) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 200 },
           { id: 'rv_flenser', name: 'The Flenser', icon: '⚔️', souls: 20, bodies: 5, hp: 145, speed: 42, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#e74c3c', type: 'mel', desc: 'Titan. Immune to knockback. Each kill grants +3 bodies.', immuneKnockback: true, bodyOnKill: 3 },
         ],
         extraUnits: [{ id: 'rv_guard', name: 'Bone Titan', icon: '🦴', souls: 0, bodies: 0, hp: 240, speed: 44, dmg: 38, range: 34, aerial: false, isWorker: false, attackRate: 0.85, radius: 21, color: '#922b21', type: 'mel', desc: 'Royal Guard. Immune to knockback. Gains +8 HP per nearby death. Despawns 30s.', isSpawned: true, immuneKnockback: true, corpseFeed: true, corpseFeedRange: 120, corpseFeedCap: 350 }],
@@ -9164,7 +9171,7 @@
           { id: 'fs_wild', name: 'Wildcard', icon: '🃏', souls: 5, bodies: 1, hp: 62, speed: 64, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee. Subject to Fortune rolls on spawn.' },
           { id: 'fs_jinx', name: 'The Jinx', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 61, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e17055', type: 'rng', desc: 'Ranged. Subject to Fortune rolls on spawn.' },
           { id: 'fs_drake', name: 'Jackpot Drake', icon: '🐉', souls: 10, bodies: 2, hp: 35, speed: 87, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#f9ca24', type: 'air', desc: 'Aerial. Subject to Fortune rolls on spawn.' },
-          { id: 'fs_fool', name: "Fortune's Fool", icon: '🃏', souls: 16, bodies: 4, hp: 120, speed: 52, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#e17055', type: 'mel', desc: 'Heavy melee. Double-stat lucky roll makes this unit unstoppable.' },
+          { id: 'fs_fool', name: "Fortune's Fool", icon: '🃏', souls: 16, bodies: 4, hp: 105, speed: 52, dmg: 19, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#e17055', type: 'mel', desc: 'Heavy melee. Double-stat lucky roll makes this unit unstoppable.' },
         ],
         extraUnits: [{ id: 'fs_guard', name: 'Jackpot', icon: '🎲', souls: 0, bodies: 0, hp: 200, speed: 58, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Always double stats. Despawns 30s.', isSpawned: true }],
         guardUnit: 'fs_guard',
@@ -9205,10 +9212,10 @@
         startSouls: 22, startBodies: 10,
         units: [
           { id: 'ch_worker', name: 'Gatherer Larva', icon: '🐛', souls: 2, bodies: 1, hp: 22, speed: 52, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a8ff78', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'ch_grub', name: 'Grub', icon: '🐛', souls: 3, bodies: 1, hp: 22, speed: 56, dmg: 7, range: 24, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#a8ff78', type: 'mel', desc: 'Larval melee. After 12s → 2.5s cocoon → adult Crawler (70 HP, 22 DMG, speed 65).', chrysalis: true, chrysAdultDmg: 22, chrysAdultHp: 70, chrysAdultSpeed: 65, chrysAdultName: 'Crawler', chrysAdultIcon: '🦎' },
-          { id: 'ch_scout', name: 'Larval Scout', icon: '🦟', souls: 5, bodies: 1, hp: 18, speed: 80, dmg: 9, range: 50, aerial: true, isWorker: false, attackRate: 1.2, radius: 12, color: '#a8ff78', type: 'air', desc: 'Larval aerial. After 12s → cocoon → adult Wing Scout (42 HP, 22 DMG, speed 98).', chrysalis: true, chrysAdultDmg: 22, chrysAdultHp: 42, chrysAdultSpeed: 98, chrysAdultName: 'Wing Scout', chrysAdultIcon: '🦅', chrysAdultAerial: true },
-          { id: 'ch_pupa', name: 'Pupa Shell', icon: '🥚', souls: 8, bodies: 2, hp: 38, speed: 38, dmg: 10, range: 24, aerial: false, isWorker: false, attackRate: 0.8, radius: 14, color: '#74b9ff', type: 'mel', desc: 'Heavy larva. After 12s → cocoon → adult Rock Shell (155 HP, 30 DMG, immune to knockback).', chrysalis: true, chrysAdultDmg: 30, chrysAdultHp: 155, chrysAdultSpeed: 44, chrysAdultName: 'Rock Shell', chrysAdultIcon: '🪨', chrysAdultImmune: true },
-          { id: 'ch_empress', name: 'Empress Egg', icon: '🫧', souls: 18, bodies: 5, hp: 50, speed: 42, dmg: 12, range: 26, aerial: false, isWorker: false, attackRate: 0.85, radius: 18, color: '#a8ff78', type: 'mel', desc: 'Rare larva. After 12s → cocoon → Empress Moth (aerial, 55 HP, 28 DMG, speed 92).', chrysalis: true, chrysAdultDmg: 28, chrysAdultHp: 55, chrysAdultSpeed: 92, chrysAdultName: 'Empress Moth', chrysAdultIcon: '🦋', chrysAdultAerial: true },
+          { id: 'ch_grub', name: 'Grub', icon: '🐛', souls: 3, bodies: 1, hp: 28, speed: 56, dmg: 7, range: 24, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#a8ff78', type: 'mel', desc: 'Larval melee. After 12s → 2.5s cocoon → adult Crawler (50 HP, 14 DMG, speed 62).', chrysalis: true, chrysAdultDmg: 14, chrysAdultHp: 50, chrysAdultSpeed: 62, chrysAdultName: 'Crawler', chrysAdultIcon: '🦎' },
+          { id: 'ch_scout', name: 'Larval Scout', icon: '🦟', souls: 5, bodies: 1, hp: 18, speed: 80, dmg: 9, range: 50, aerial: true, isWorker: false, attackRate: 1.2, radius: 12, color: '#a8ff78', type: 'air', desc: 'Larval aerial. After 12s → cocoon → adult Wing Scout (34 HP, 16 DMG, speed 88).', chrysalis: true, chrysAdultDmg: 16, chrysAdultHp: 34, chrysAdultSpeed: 88, chrysAdultName: 'Wing Scout', chrysAdultIcon: '🦅', chrysAdultAerial: true },
+          { id: 'ch_pupa', name: 'Pupa Shell', icon: '🥚', souls: 8, bodies: 2, hp: 38, speed: 38, dmg: 10, range: 24, aerial: false, isWorker: false, attackRate: 0.8, radius: 14, color: '#74b9ff', type: 'mel', desc: 'Heavy larva. After 12s → cocoon → adult Rock Shell (110 HP, 22 DMG, immune to knockback).', chrysalis: true, chrysAdultDmg: 22, chrysAdultHp: 110, chrysAdultSpeed: 44, chrysAdultName: 'Rock Shell', chrysAdultIcon: '🪨', chrysAdultImmune: true },
+          { id: 'ch_empress', name: 'Empress Egg', icon: '🫧', souls: 18, bodies: 5, hp: 50, speed: 42, dmg: 12, range: 26, aerial: false, isWorker: false, attackRate: 0.85, radius: 18, color: '#a8ff78', type: 'mel', desc: 'Rare larva. After 12s → cocoon → Empress Moth (aerial, 45 HP, 22 DMG, speed 88).', chrysalis: true, chrysAdultDmg: 22, chrysAdultHp: 45, chrysAdultSpeed: 88, chrysAdultName: 'Empress Moth', chrysAdultIcon: '🦋', chrysAdultAerial: true },
         ],
         extraUnits: [{ id: 'ch_guard', name: 'Ancient Hive', icon: '🐛', souls: 0, bodies: 0, hp: 200, speed: 40, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 21, color: '#a8ff78', type: 'mel', desc: 'Royal Guard. Adult form only. 60% dmg reduction. Despawns 30s.', isSpawned: true }],
         guardUnit: 'ch_guard',
@@ -9227,7 +9234,7 @@
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'tb_worker', name: 'Droplet', icon: '💧', souls: 2, bodies: 1, hp: 22, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'tb_surge', name: 'Surge Guard', icon: '🌊', souls: 5, bodies: 1, hp: 55, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#0984e3', type: 'mel', desc: 'Melee. Regen 3 HP/s near allies. Below 20% HP: splits into 2 copies.', tideborn: true },
+          { id: 'tb_surge', name: 'Surge Guard', icon: '🌊', souls: 5, bodies: 1, hp: 62, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#0984e3', type: 'mel', desc: 'Melee. Regen 3 HP/s near allies. Below 20% HP: splits into 2 copies.', tideborn: true },
           { id: 'tb_archer', name: 'Surge Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#74b9ff', type: 'rng', desc: 'Ranged. Regen 3 HP/s near allies.', tideborn: true },
           { id: 'tb_deep', name: 'Deep Current', icon: '🐋', souls: 10, bodies: 2, hp: 36, speed: 85, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#0984e3', type: 'air', desc: 'Aerial. Regen 3 HP/s near allies.', tideborn: true },
           { id: 'tb_brute', name: 'Tidal Brute', icon: '🌊', souls: 18, bodies: 4, hp: 110, speed: 46, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#2980b9', type: 'mel', desc: 'Heavy melee. Regen 3 HP/s near allies. Split spawns 2 Surge Guards.', tideborn: true, tideHighHP: true },
@@ -9271,9 +9278,9 @@
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'vb2_worker', name: 'Phase Scout', icon: '🫥', souls: 2, bodies: 1, hp: 24, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#dfe6e9', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Always phased while traveling — immune to enemy targeting.' },
-          { id: 'vb2_flicker', name: 'Flicker', icon: '💨', souls: 5, bodies: 1, hp: 55, speed: 65, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#b2bec3', type: 'mel', desc: 'Melee. Below 40% HP: auto-phase 2s, regen 5 HP/s. Reappears with free strike.', veilborn: true },
+          { id: 'vb2_flicker', name: 'Flicker', icon: '💨', souls: 5, bodies: 1, hp: 55, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#b2bec3', type: 'mel', desc: 'Melee. Below 40% HP: auto-phase 2s, regen 5 HP/s. Reappears with free strike.', veilborn: true },
           { id: 'vb2_archer', name: 'Veilstep Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#dfe6e9', type: 'rng', desc: 'Ranged. Below 40% HP: auto-phase 2s.', veilborn: true },
-          { id: 'vb2_blade', name: 'Wraithblade', icon: '⚔️', souls: 13, bodies: 3, hp: 100, speed: 55, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#636e72', type: 'mel', desc: 'Heavy melee. Phase lasts 3s, +10 DMG on re-materialization.', veilborn: true, veilPhaseDur: 3, veilStrikeBonus: 10 },
+          { id: 'vb2_blade', name: 'Wraithblade', icon: '⚔️', souls: 13, bodies: 3, hp: 90, speed: 55, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#636e72', type: 'mel', desc: 'Heavy melee. Phase lasts 3s, +10 DMG on re-materialization.', veilborn: true, veilPhaseDur: 3, veilStrikeBonus: 10 },
           { id: 'vb2_rift', name: 'The Rift', icon: '🌀', souls: 10, bodies: 2, hp: 35, speed: 88, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#b2bec3', type: 'air', desc: 'Aerial. Below 40% HP: auto-phase 2s.', veilborn: true },
         ],
         extraUnits: [{ id: 'vb2_guard', name: 'The Specter', icon: '👻', souls: 0, bodies: 0, hp: 190, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#dfe6e9', type: 'mel', desc: 'Royal Guard. Starts phased for 3s, materializes with a free double-strike. Despawns 30s.', isSpawned: true, veilborn: true, veilStartPhased: true }],
@@ -9292,13 +9299,13 @@
         matchup: 'Best against: sustained factions (Menders, Verdant) | Weak to: fast rush (Infernal, Pandemonium)',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'cm_worker', name: 'Moment Guard', icon: '⌚', souls: 2, bodies: 1, hp: 24, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'cm_rewind', name: 'Rewinder', icon: '↩️', souls: 5, bodies: 1, hp: 57, speed: 65, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. First 5s after spawn: +35% speed (arrives faster). Benefits from Rewind.' },
-          { id: 'cm_delay', name: 'The Delay', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Shots slow targets by 35% for 2s (time dilation).', thornslow: true },
-          { id: 'cm_age', name: 'Age Caster', icon: '🦅', souls: 10, bodies: 2, hp: 35, speed: 85, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Aerial. Deals +25% bonus damage vs enemies that have been Time Taxed.', chronoBonus: true },
-          { id: 'cm_titan', name: 'Temporal Titan', icon: '⌛', souls: 20, bodies: 5, hp: 145, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#4834d4', type: 'mel', desc: 'Titan. Immune to slows/stuns. Rewind restores this unit to 80% HP.', immuneDebuff: true, chronoElite: true },
+          { id: 'cm_worker', name: 'Moment Guard', icon: '⌚', souls: 2, bodies: 1, hp: 24, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2e86c1', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'cm_rewind', name: 'Rewinder', icon: '↩️', souls: 5, bodies: 1, hp: 57, speed: 65, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2471a3', type: 'mel', desc: 'Melee. First 5s after spawn: +35% speed (arrives faster). Benefits from Rewind.' },
+          { id: 'cm_delay', name: 'The Delay', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#5dade2', type: 'rng', desc: 'Ranged. Shots slow targets by 35% for 2s (time dilation).', thornslow: true },
+          { id: 'cm_age', name: 'Age Caster', icon: '🦅', souls: 10, bodies: 2, hp: 35, speed: 85, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#1a5276', type: 'air', desc: 'Aerial. Deals +25% bonus damage vs enemies that have been Time Taxed.', chronoBonus: true },
+          { id: 'cm_titan', name: 'Temporal Titan', icon: '⌛', souls: 20, bodies: 5, hp: 120, speed: 44, dmg: 24, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#1a5276', type: 'mel', desc: 'Titan. Immune to slows/stuns. Rewind restores this unit to 80% HP.', immuneDebuff: true, chronoElite: true },
         ],
-        extraUnits: [{ id: 'cm_guard', name: 'Paradox King', icon: '⏳', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#4834d4', type: 'mel', desc: 'Royal Guard. Triggers Rewind immediately on spawn. Despawns 30s.', isSpawned: true, chronoElite: true }],
+        extraUnits: [{ id: 'cm_guard', name: 'Paradox King', icon: '⏳', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#154360', type: 'mel', desc: 'Royal Guard. Triggers Rewind immediately on spawn. Despawns 30s.', isSpawned: true, chronoElite: true }],
         guardUnit: 'cm_guard',
         upgrades: [
           { id: 'fast_rewind', name: 'Fast Rewind', cost: { souls: 33, bodies: 5 }, desc: 'Auto-Rewind cooldown: 40s→25s.', effect: 'chrono_cooldown', value: 25 },
@@ -9315,9 +9322,9 @@
         startSouls: 22, startBodies: 10,
         units: [
           { id: 'il_worker', name: 'Illusion Caster', icon: '🪄', souls: 2, bodies: 1, hp: 22, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fd79a8', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'il_mirror', name: 'Mirror Blade', icon: '🗡️', souls: 5, bodies: 1, hp: 54, speed: 62, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#fd79a8', type: 'mel', desc: 'Melee. Spawns a 1-HP decoy alongside it.' },
-          { id: 'il_trick', name: 'Trick Shot', icon: '🏹', souls: 6, bodies: 2, hp: 36, speed: 62, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Ranged. Spawns a 1-HP decoy alongside it.' },
-          { id: 'il_double', name: 'The Double', icon: '👥', souls: 13, bodies: 3, hp: 88, speed: 52, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#e84393', type: 'mel', desc: 'Heavy melee. Spawns a decoy with 20 HP instead of 1.', illuHeavyDecoy: true },
+          { id: 'il_mirror', name: 'Mirror Blade', icon: '🗡️', souls: 5, bodies: 1, hp: 60, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#fd79a8', type: 'mel', desc: 'Melee. Spawns a 1-HP decoy alongside it.' },
+          { id: 'il_trick', name: 'Trick Shot', icon: '🏹', souls: 6, bodies: 2, hp: 40, speed: 62, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Ranged. Spawns a 1-HP decoy alongside it.' },
+          { id: 'il_double', name: 'The Double', icon: '👥', souls: 13, bodies: 3, hp: 95, speed: 52, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#e84393', type: 'mel', desc: 'Heavy melee. Spawns a decoy with 20 HP instead of 1.', illuHeavyDecoy: true },
           { id: 'il_deceiver', name: 'Grand Deceiver', icon: '🦅', souls: 10, bodies: 2, hp: 35, speed: 86, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#fd79a8', type: 'air', desc: 'Aerial. Spawns a 1-HP decoy.' },
         ],
         extraUnits: [{ id: 'il_guard', name: 'The Phantom', icon: '🪄', souls: 0, bodies: 0, hp: 190, speed: 58, dmg: 30, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#fd79a8', type: 'mel', desc: 'Royal Guard. Spawns 2 decoys (20 HP each). Despawns 30s.', isSpawned: true }],
@@ -9358,15 +9365,15 @@
         matchup: 'Best against: slow high-HP armies (Brutes, Glacial) | Weak to: fast swarm (Pandemonium, Infernal)',
         startSouls: 20, startBodies: 10,
         units: [
-          { id: 'ps_worker', name: 'Mind Probe', icon: '🔮', souls: 2, bodies: 1, hp: 22, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 52, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#a29bfe', type: 'mel', desc: 'Melee. Each hit adds 15% corruption to target.' },
-          { id: 'ps_thief', name: 'Thought Thief', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 13, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#6c5ce7', type: 'rng', desc: 'Ranged. Shots add 20% corruption to target.', corruptOnHit: true, corruptAmt: 0.20 },
-          { id: 'ps_dom', name: 'Dominion Caster', icon: '🦅', souls: 11, bodies: 3, hp: 36, speed: 82, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial. Shots add 25% corruption.', corruptOnHit: true, corruptAmt: 0.25 },
-          { id: 'ps_mind', name: 'The Overmind', icon: '🧠', souls: 20, bodies: 5, hp: 120, speed: 46, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#6c5ce7', type: 'mel', desc: 'Heavy melee. Aura corrupts enemies within 65px at 10%/s.', psionicAura: true, psionicAuraRange: 65, psionicAuraRate: 0.10 },
+          { id: 'ps_worker', name: 'Mind Probe', icon: '🔮', souls: 2, bodies: 1, hp: 22, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#c39bd3', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
+          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 58, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Melee. Each hit adds 15% corruption to target.' },
+          { id: 'ps_thief', name: 'Thought Thief', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 13, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged. Shots add 20% corruption to target.', corruptOnHit: true, corruptAmt: 0.20 },
+          { id: 'ps_dom', name: 'Dominion Caster', icon: '🦅', souls: 11, bodies: 3, hp: 36, speed: 82, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#d2b4de', type: 'air', desc: 'Aerial. Shots add 25% corruption.', corruptOnHit: true, corruptAmt: 0.25 },
+          { id: 'ps_mind', name: 'The Overmind', icon: '🧠', souls: 20, bodies: 5, hp: 100, speed: 46, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#7d3c98', type: 'mel', desc: 'Heavy melee. Aura corrupts enemies within 65px at 10%/s.', psionicAura: true, psionicAuraRange: 65, psionicAuraRate: 0.10 },
         ],
         extraUnits: [
-          { id: 'ps_ghost', name: 'Thought Ghost', icon: '👁️', souls: 0, bodies: 0, hp: 28, speed: 74, dmg: 10, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 11, color: '#a29bfe', type: 'mel', desc: 'Spawned from corrupted enemy deaths. Loyal to Psionics.', isSpawned: true },
-          { id: 'ps_guard', name: 'The Hivemind', icon: '🧠', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 20, color: '#6c5ce7', type: 'mel', desc: 'Royal Guard. Overmind aura 100px. Triggers Rewind for Psionic allies. Despawns 30s.', isSpawned: true, psionicAura: true, psionicAuraRange: 100, psionicAuraRate: 0.12 },
+          { id: 'ps_ghost', name: 'Thought Ghost', icon: '👁️', souls: 0, bodies: 0, hp: 28, speed: 74, dmg: 10, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 11, color: '#d7bde2', type: 'mel', desc: 'Spawned from corrupted enemy deaths. Loyal to Psionics.', isSpawned: true },
+          { id: 'ps_guard', name: 'The Hivemind', icon: '🧠', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 20, color: '#76448a', type: 'mel', desc: 'Royal Guard. Overmind aura 100px. Triggers Rewind for Psionic allies. Despawns 30s.', isSpawned: true, psionicAura: true, psionicAuraRange: 100, psionicAuraRate: 0.12 },
         ],
         guardUnit: 'ps_guard',
         upgrades: [
@@ -9384,7 +9391,7 @@
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'um_worker', name: 'Dark Stalker', icon: '🌑', souls: 2, bodies: 1, hp: 24, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2d3436', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'um_night', name: 'Nightblade', icon: '🗡️', souls: 5, bodies: 1, hp: 62, speed: 65, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#636e72', type: 'mel', desc: 'Melee. In darkness: +20% dmg reduction, +15% DMG.', umbral: true },
+          { id: 'um_night', name: 'Nightblade', icon: '🗡️', souls: 5, bodies: 1, hp: 58, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#636e72', type: 'mel', desc: 'Melee. In darkness: +20% dmg reduction, +15% DMG.', umbral: true },
           { id: 'um_archer', name: 'Umbra Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#636e72', type: 'rng', desc: 'Ranged. In darkness: enemies cannot target this unit with ranged attacks.', umbral: true },
           { id: 'um_blot', name: 'The Blot', icon: '💀', souls: 12, bodies: 3, hp: 105, speed: 50, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#2d3436', type: 'mel', desc: 'Heavy melee. Creates 120px darkness zone for 10s on death.', umbral: true, darkOnDeath: true },
           { id: 'um_eclipse', name: 'Eclipse Titan', icon: '🌑', souls: 20, bodies: 5, hp: 150, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#2d3436', type: 'mel', desc: 'Titan. Immune to knockback. Constant 60px darkness aura around itself.', umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 60 },
@@ -11504,20 +11511,35 @@
       _hudTick = (_hudTick + 1) % 4;
       const _fullUpdate = (_hudTick === 0);
       const gameSec = (Date.now() - G.gameStart) / 1000;
+      if (!G._hudLast) G._hudLast = [{}, {}];
       [1, 2].forEach(pid => {
         const p = G.players[pid - 1];
+        const _hl = G._hudLast[pid - 1];
+        const _soulsFloor = Math.floor(p.souls);
+        const _bodiesFloor = Math.floor(p.bodies);
+        const _hpCeil = Math.ceil(p.baseHp);
         const soulsEl = document.getElementById(`p${pid}-souls`);
-        soulsEl.textContent = Math.floor(p.souls);
-        soulsEl.style.color = p.souls >= 900 ? '#e74c3c' : p.souls >= 700 ? '#f39c12' : '';
-        soulsEl.title = p.souls >= 900 ? 'Near cap! Spend souls!' : '';
-        document.getElementById(`p${pid}-bodies`).textContent = Math.floor(p.bodies);
-        const hpPct = p.baseHp / p.baseMaxHp;
-        document.getElementById(`p${pid}-hp-bar`).style.width = (hpPct * 100) + '%';
-        document.getElementById(`p${pid}-hp-txt`).textContent = Math.ceil(p.baseHp);
+        if (_soulsFloor !== _hl.souls) {
+          _hl.souls = _soulsFloor;
+          soulsEl.textContent = _soulsFloor;
+          soulsEl.style.color = p.souls >= 900 ? '#e74c3c' : p.souls >= 700 ? '#f39c12' : '';
+          soulsEl.title = p.souls >= 900 ? 'Near cap! Spend souls!' : '';
+        }
+        if (_bodiesFloor !== _hl.bodies) {
+          _hl.bodies = _bodiesFloor;
+          document.getElementById(`p${pid}-bodies`).textContent = _bodiesFloor;
+        }
+        if (_hpCeil !== _hl.hp) {
+          _hl.hp = _hpCeil;
+          const hpPct = p.baseHp / p.baseMaxHp;
+          document.getElementById(`p${pid}-hp-bar`).style.width = (hpPct * 100) + '%';
+          document.getElementById(`p${pid}-hp-txt`).textContent = _hpCeil;
+        }
         // Combat units vs cap — show ??? during fog of war
         const combatUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard).length;
         const enemyFogged = G.players[pid - 1]._fogOfWar;
-        document.getElementById(`p${pid}-unit-count`).textContent = `ARMY ${combatUnits}/${p.unitCap}${enemyFogged ? ' ???' : ''}`;
+        const _armyStr = `ARMY ${combatUnits}/${p.unitCap}${enemyFogged ? ' ???' : ''}`;
+        if (_armyStr !== _hl.armyStr) { _hl.armyStr = _armyStr; document.getElementById(`p${pid}-unit-count`).textContent = _armyStr; }
         const offWorkers = G.units.filter(u => u.player === pid && u.def.isWorker && u.offscreen);
         const minReturn = offWorkers.length > 0 ? Math.ceil(Math.min(...offWorkers.map(w => w.offTimer))) : 0;
         const wReturnStr = minReturn > 0 ? ` ⏳${minReturn}s` : '';
@@ -11588,7 +11610,8 @@
         const _ec = G.activeEvent && G.activeEvent._eclipseActive;
         const _ecRemain = _ec ? Math.ceil((G.activeEvent.duration || 15) - (G.activeEvent.timer || 0)) : 0;
         const eventTag = _bm ? ` 🔴×½🦴 ${_bmRemain}s` : _ec ? ` 🌑 ${_ecRemain}s` : '';
-        incEl.textContent = `+${soulRate}💀/s · +${bodyRate}🦴/m${eventTag}`;
+        const _incStr = `+${soulRate}💀/s · +${bodyRate}🦴/m${eventTag}`;
+        if (_incStr !== _hl.incStr) { _hl.incStr = _incStr; incEl.textContent = _incStr; }
         const passiveText = G.factions[pid - 1].passive || '';
         incEl.title = passiveText ? `PASSIVE: ${passiveText}` : '';
         // Rotating in-game tips — faction passive + gameplay hints cycle every 9s
@@ -11724,6 +11747,43 @@
           if (markerEl) markerEl.style.left = (markerPct * 100) + '%';
           if (p1El) p1El.style.width = (markerPct * 100) + '%';
           if (p2El) p2El.style.width = ((1 - markerPct) * 100) + '%';
+          // Dynamic arrows — show push direction based on marker movement
+          const p1Label = document.getElementById('momentum-p1-label');
+          const p2Label = document.getElementById('momentum-p2-label');
+          const titleEl = document.getElementById('momentum-title');
+          if (p1Label && p2Label && titleEl) {
+            const pushThresh = 0.04; // 4% off center = pushing
+            const strongThresh = 0.12; // 12% = strong push
+            const off = markerPct - 0.5;
+            if (off > strongThresh) {
+              // P1 strongly pushing right
+              p1Label.textContent = '⚔ P1 ▶▶';
+              p2Label.textContent = '◀◀ P2 🛡';
+              titleEl.textContent = 'P1 PUSHING';
+              titleEl.style.color = 'rgba(100,180,255,.6)';
+            } else if (off > pushThresh) {
+              p1Label.textContent = 'P1 ▶';
+              p2Label.textContent = '◀ P2';
+              titleEl.textContent = 'P1 ADVANCING';
+              titleEl.style.color = 'rgba(100,180,255,.45)';
+            } else if (off < -strongThresh) {
+              // P2 strongly pushing left
+              p1Label.textContent = '🛡 P1 ▶▶';
+              p2Label.textContent = '◀◀ P2 ⚔';
+              titleEl.textContent = 'P2 PUSHING';
+              titleEl.style.color = 'rgba(255,100,100,.6)';
+            } else if (off < -pushThresh) {
+              p1Label.textContent = 'P1 ▶';
+              p2Label.textContent = '◀ P2';
+              titleEl.textContent = 'P2 ADVANCING';
+              titleEl.style.color = 'rgba(255,100,100,.45)';
+            } else {
+              p1Label.textContent = '◀ P1';
+              p2Label.textContent = 'P2 ▶';
+              titleEl.textContent = 'FRONT LINE';
+              titleEl.style.color = 'rgba(255,255,255,.35)';
+            }
+          }
         }
       });
     }
@@ -12368,6 +12428,110 @@
           }
           spawnParticles(x, y, '#e67e22', 4);
           break;
+        case 'weavers':
+          // Web strands bursting + purple wisps
+          for (let i = 0; i < 14; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 30 + Math.random() * 70;
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: -20 - Math.random() * 60, life: 0.6 + Math.random() * 0.5, maxLife: 1.1, r: 1.5 + Math.random() * 3, col: Math.random() < 0.5 ? '#a29bfe' : Math.random() < 0.5 ? '#6c5ce7' : '#dfe6e9' });
+          }
+          spawnParticles(x, y, '#636e72', 6);
+          break;
+        case 'merchants':
+          // Gold coin scatter — bright gold sparkles
+          for (let i = 0; i < 16; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 40 + Math.random() * 90;
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: -40 - Math.random() * 80, life: 0.4 + Math.random() * 0.4, maxLife: 0.8, r: 2 + Math.random() * 3, col: Math.random() < 0.6 ? '#fdcb6e' : Math.random() < 0.5 ? '#f39c12' : '#ffeaa7' });
+          }
+          break;
+        case 'reavers':
+          // Bone shard burst + dark blood
+          for (let i = 0; i < 16; i++) {
+            G.particles.push({ x, y, vx: (Math.random() - 0.5) * 100, vy: -20 - Math.random() * 70, life: 0.4 + Math.random() * 0.4, maxLife: 0.8, r: 2 + Math.random() * 4, col: Math.random() < 0.5 ? '#d5c4a1' : Math.random() < 0.5 ? '#cd853f' : '#8B4513' });
+          }
+          spawnParticles(x, y, '#4a0000', 4);
+          break;
+        case 'fortune':
+          // Lucky sparkle burst — gold + rainbow
+          for (let i = 0; i < 18; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 50 + Math.random() * 100;
+            const cols = ['#f9ca24', '#ffeaa7', '#ff6b6b', '#4ecdc4', '#a29bfe', '#fdcb6e'];
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: -50 - Math.random() * 90, life: 0.35 + Math.random() * 0.4, maxLife: 0.75, r: 2 + Math.random() * 3, col: cols[Math.floor(Math.random() * cols.length)] });
+          }
+          break;
+        case 'plagued':
+          // Toxic cloud burst — green gas particles floating
+          for (let i = 0; i < 16; i++) {
+            G.particles.push({ x: x + (Math.random() - 0.5) * 20, y, vx: (Math.random() - 0.5) * 50, vy: -15 - Math.random() * 40, life: 0.8 + Math.random() * 0.6, maxLife: 1.4, r: 3 + Math.random() * 5, col: Math.random() < 0.5 ? '#7bed9f' : Math.random() < 0.5 ? '#2ecc71' : '#badc58', noFall: true });
+          }
+          G.groundFX.push({ x, y: G.groundY, type: 'fire', life: 1.5, maxLife: 1.5, r: 14, col: '#7bed9f' });
+          break;
+        case 'chrysalis':
+          // Cocoon burst — teal chitin fragments
+          for (let i = 0; i < 14; i++) {
+            const a = (i / 14) * Math.PI * 2;
+            const spd = 50 + Math.random() * 80;
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd * 0.3 - 40, life: 0.5 + Math.random() * 0.4, maxLife: 0.9, r: 2 + Math.random() * 3, col: Math.random() < 0.5 ? '#55efc4' : Math.random() < 0.5 ? '#00b894' : '#00cec9' });
+          }
+          spawnParticles(x, y, '#81ecec', 4);
+          break;
+        case 'tideborn':
+          // Water splash burst — blue droplets
+          for (let i = 0; i < 16; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 40 + Math.random() * 100;
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: -30 - Math.random() * 90, life: 0.4 + Math.random() * 0.4, maxLife: 0.8, r: 2 + Math.random() * 3, col: Math.random() < 0.5 ? '#74b9ff' : Math.random() < 0.5 ? '#0984e3' : '#00cec9' });
+          }
+          break;
+        case 'echoes':
+          // Afterimage fade — pale wisps + purple echo rings
+          for (let i = 0; i < 12; i++) {
+            G.particles.push({ x: x + (Math.random() - 0.5) * 20, y, vx: (Math.random() - 0.5) * 30, vy: -20 - Math.random() * 40, life: 0.8 + Math.random() * 0.6, maxLife: 1.4, r: 3 + Math.random() * 4, col: Math.random() < 0.5 ? '#a29bfe' : '#dfe6e9', noFall: true });
+          }
+          spawnParticles(x, y, '#6c5ce7', 6);
+          break;
+        case 'veilborn':
+          // Phase-out dissolve — purple shimmer that fades quickly
+          for (let i = 0; i < 14; i++) {
+            G.particles.push({ x: x + (Math.random() - 0.5) * 18, y: y + (Math.random() - 0.5) * 12, vx: (Math.random() - 0.5) * 40, vy: -10 - Math.random() * 30, life: 0.5 + Math.random() * 0.5, maxLife: 1.0, r: 2 + Math.random() * 3, col: Math.random() < 0.5 ? '#6c5ce7' : '#a29bfe', noFall: true });
+          }
+          break;
+        case 'chronomancers':
+          // Time shatter — blue clock fragments + white flash
+          for (let i = 0; i < 16; i++) {
+            const a = (i / 16) * Math.PI * 2, spd = 50 + Math.random() * 80;
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: Math.sin(a) * spd * 0.4 - 50, life: 0.4 + Math.random() * 0.4, maxLife: 0.8, r: 2 + Math.random() * 3, col: Math.random() < 0.5 ? '#5dade2' : Math.random() < 0.5 ? '#2e86c1' : '#aed6f1' });
+          }
+          spawnParticles(x, y - 5, '#ffffff', 6);
+          break;
+        case 'illusionists':
+          // Mirror shatter — prismatic fragments
+          for (let i = 0; i < 18; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 50 + Math.random() * 100;
+            const cols = ['#fd79a8', '#fab1cc', '#ffffff', '#a29bfe', '#ffeaa7', '#dfe6e9'];
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: -40 - Math.random() * 80, life: 0.3 + Math.random() * 0.4, maxLife: 0.7, r: 2 + Math.random() * 3, col: cols[Math.floor(Math.random() * cols.length)] });
+          }
+          break;
+        case 'pandemonium':
+          // Chaotic explosion — mixed fire + random wild colors
+          for (let i = 0; i < 22; i++) {
+            const a = Math.random() * Math.PI * 2, spd = 60 + Math.random() * 140;
+            const cols = ['#e17055', '#fab1a0', '#ff6b6b', '#fdcb6e', '#ff9ff3', '#feca57'];
+            G.particles.push({ x, y, vx: Math.cos(a) * spd, vy: -40 - Math.random() * 120, life: 0.3 + Math.random() * 0.4, maxLife: 0.7, r: 2 + Math.random() * 4, col: cols[Math.floor(Math.random() * cols.length)] });
+          }
+          G.groundFX.push({ x, y: G.groundY, type: 'fire', life: 1.5, maxLife: 1.5, r: 14 + Math.random() * 10 });
+          break;
+        case 'psionics':
+          // Psychic burst — violet energy waves
+          for (let i = 0; i < 14; i++) {
+            G.particles.push({ x: x + (Math.random() - 0.5) * 20, y, vx: (Math.random() - 0.5) * 50, vy: -20 - Math.random() * 50, life: 0.7 + Math.random() * 0.5, maxLife: 1.2, r: 3 + Math.random() * 4, col: Math.random() < 0.5 ? '#c39bd3' : Math.random() < 0.5 ? '#9b59b6' : '#d7bde2', noFall: true });
+          }
+          spawnParticles(x, y, '#8e44ad', 6);
+          break;
+        case 'umbral':
+          // Shadow dissolve — dark particles that sink downward
+          for (let i = 0; i < 14; i++) {
+            G.particles.push({ x: x + (Math.random() - 0.5) * 24, y, vx: (Math.random() - 0.5) * 40, vy: 10 + Math.random() * 30, life: 0.6 + Math.random() * 0.5, maxLife: 1.1, r: 3 + Math.random() * 5, col: Math.random() < 0.5 ? '#2d3436' : Math.random() < 0.5 ? '#636e72' : '#0a0a0e', noFall: true });
+          }
+          break;
         default: // warriors and any others
           spawnParticles(x, y, u.def.color, 22);
           spawnParticles(x, y - 8, '#ffffff', 6);
@@ -12380,47 +12544,49 @@
     }
 
     function findEnemy(u) {
+      // Use per-frame cache (G._fc) — built once per tick before updateUnits runs.
+      // Falls back to G.units if cache not yet available (e.g. spawns mid-tick).
+      const fc = G._fc;
+      const enemyPidIdx = u.player === 1 ? 1 : 0; // index into G._fc arrays
+      const enemyUnits = fc ? fc[u.player === 1 ? 'p2' : 'p1'] : G.units.filter(e => e.player !== u.player && !e.offscreen);
       let best = null, bestD = Infinity;
       const isRanged = u.def.range > 60;
       // Pandemonium: 15% chance to pick a random visible enemy instead of nearest
       if (u.def.pandemonium && Math.random() < 0.15) {
-        const candidates = G.units.filter(e => e.player !== u.player && !e.offscreen && !e._phased);
+        const candidates = enemyUnits.filter(e => !e._phased);
         if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)];
       }
-      // Pass 0: ranged aerial priority — always check for aerial in range first.
-      // Aerial bypasses melee entirely so ranged must naturally counter them even mid-fight.
+      // Pass 0: ranged aerial priority — check for aerial in range first.
       if (isRanged) {
-        G.units.forEach(e => {
-          if (e.player === u.player || e.offscreen || !e.def.aerial || e.retreating || e._phased) return;
+        for (let _i = 0; _i < enemyUnits.length; _i++) {
+          const e = enemyUnits[_i];
+          if (!e.def.aerial || e.retreating || e._phased) continue;
           const d = rangeDist(u, e);
           if (d < u.def.range * 1.4 && d < bestD) { best = e; bestD = d; }
-        });
+        }
         if (best) return best;
         bestD = Infinity;
       }
-      bestD = Infinity;
-      // Pass 1: nearest non-worker (retreating units ARE valid targets)
-      G.units.forEach(e => {
-        if (e.player === u.player || e.offscreen || e.def.isWorker || e._phased) return;
-        // Ground melee cannot target aerial units — ranged and aerial only
-        if (!isRanged && !u.def.aerial && e.def.aerial) return;
+      // Pass 1: nearest non-worker
+      for (let _i = 0; _i < enemyUnits.length; _i++) {
+        const e = enemyUnits[_i];
+        if (e.def.isWorker || e._phased) continue;
+        if (!isRanged && !u.def.aerial && e.def.aerial) continue;
         const d = rangeDist(u, e);
         if (d < bestD) { best = e; bestD = d; }
-      });
+      }
       if (best) return best;
-      // Pass 2: worker hunt after 8s alive (skip offscreen or base-side workers)
+      // Pass 2: worker hunt after 8s alive
       if (u.aliveSecs > 8) {
         bestD = Infinity;
-        G.units.forEach(e => {
-          if (e.player === u.player || e.offscreen || !e.def.isWorker) return;
-          // Don't target workers that are safely behind the front line or at base
-          const myBase = G.players[u.player - 1].baseX;
-          const theirBase = G.players[e.player - 1].baseX;
-          const workerNearTheirBase = Math.abs(e.x - theirBase) < G.baseW * 2;
-          if (workerNearTheirBase) return;
+        const theirBaseX = G.players[enemyPidIdx].baseX;
+        const baseProximity = G.baseW * 2;
+        for (let _i = 0; _i < enemyUnits.length; _i++) {
+          const e = enemyUnits[_i];
+          if (!e.def.isWorker || Math.abs(e.x - theirBaseX) < baseProximity) continue;
           const d = rangeDist(u, e);
           if (d < bestD) { best = e; bestD = d; }
-        });
+        }
         if (best) return best;
       }
       return null;
@@ -12471,7 +12637,8 @@
         target._focused = (attackerCount >= 2);
 
         // Density penalty: raised threshold from 4→6, reduced penalty from 10%→6% per stack
-        const friendlyRanged = G.units.filter(a => a.player === attacker.player && a.def.type === 'rng' && !a.offscreen).length;
+        const _fcRng = G._fc ? G._fc.rng[attacker.player - 1] : G.units.filter(a => a.player === attacker.player && a.def.type === 'rng' && !a.offscreen);
+        const friendlyRanged = _fcRng.length;
         if (friendlyRanged > 6) {
           const stacks = Math.min(4, friendlyRanged - 6);
           const dmgPenalty = stacks * 0.06;
@@ -12483,18 +12650,21 @@
 
         // Obstruction penalty: raised threshold from 2→3 obstructors before it kicks in
         const ax = attacker.x, tx = target.x;
-        const obstructors = G.units.filter(a =>
-          a !== attacker && a.player === attacker.player && a.def.type === 'rng' && !a.offscreen &&
-          ((ax < tx && a.x > ax && a.x < tx) || (ax > tx && a.x < ax && a.x > tx)) &&
-          Math.abs(a.y - attacker.y) < 30
-        ).length;
+        let obstructors = 0;
+        for (let _oi = 0; _oi < _fcRng.length; _oi++) {
+          const a = _fcRng[_oi];
+          if (a === attacker) continue;
+          if (((ax < tx && a.x > ax && a.x < tx) || (ax > tx && a.x < ax && a.x > tx)) && Math.abs(a.y - attacker.y) < 30) obstructors++;
+        }
         if (obstructors >= 3) dmg *= Math.max(0.5, 1 - obstructors * 0.14);
         // Shield bonus: ranged unit firing from BEHIND a friendly melee gets +28% DMG (was +22%)
-        const allyMeleeInFront = G.units.some(a =>
-          a !== attacker && a.player === attacker.player && a.def.type === 'mel' && !a.offscreen &&
-          ((ax < tx && a.x > ax && a.x < tx) || (ax > tx && a.x < ax && a.x > tx)) &&
-          Math.abs(a.y - attacker.y) < 40
-        );
+        const _fcMel = G._fc ? G._fc.mel[attacker.player - 1] : G.units.filter(a => a.player === attacker.player && a.def.type === 'mel' && !a.offscreen);
+        let allyMeleeInFront = false;
+        for (let _mi = 0; _mi < _fcMel.length; _mi++) {
+          const a = _fcMel[_mi];
+          if (a === attacker) continue;
+          if (((ax < tx && a.x > ax && a.x < tx) || (ax > tx && a.x < ax && a.x > tx)) && Math.abs(a.y - attacker.y) < 40) { allyMeleeInFront = true; break; }
+        }
         if (allyMeleeInFront) dmg *= 1.28; // Firing from cover
       }
 
@@ -12508,7 +12678,8 @@
       dmg *= 1 + (attacker.veteranStacks || 0) * 0.08;
       // Melee disruption: ranged takes +20% damage AND fires slower when enemy melee is close
       if (target.def.type === 'rng') {
-        const meleeClose = G.units.some(a => a.player === attacker.player && a.def.type === 'mel' && !a.offscreen && Math.abs(a.x - target.x) < 42);
+        const _fcMelA = G._fc ? G._fc.mel[attacker.player - 1] : G.units.filter(a => a.player === attacker.player && a.def.type === 'mel' && !a.offscreen);
+        const meleeClose = _fcMelA.some(a => Math.abs(a.x - target.x) < 42);
         if (meleeClose) {
           dmg *= 1.20; // +20% damage taken when disrupted
           target._meleeDisrupted = true; // flag read at attack cooldown reset to slow fire rate
@@ -13850,11 +14021,6 @@
           p.activeBuffs.soul_tide = Math.max(0, p.activeBuffs.soul_tide - dt);
           p.souls = Math.min(900, p.souls + 3.0 * dt);
         }
-        if (p.activeBuffs.blitz > 0) p.activeBuffs.blitz = Math.max(0, p.activeBuffs.blitz - dt);
-        if (p.activeBuffs.soul_tide > 0) {
-          p.activeBuffs.soul_tide = Math.max(0, p.activeBuffs.soul_tide - dt);
-          p.souls = Math.min(900, p.souls + 3.0 * dt);
-        }
         if (p.activeBuffs.ironwall > 0) p.activeBuffs.ironwall = Math.max(0, p.activeBuffs.ironwall - dt);
       });
       for (let i = G.units.length - 1; i >= 0; i--) {
@@ -14849,14 +15015,23 @@
       G.corpses = G.corpses.filter(c => {
         c.life -= dt;
         if (c.life <= 0) return false;
-        // Reaver workers pick up corpses for bodies
-        G.units.forEach(u => {
-          if (c.life <= 0) return;
-          if (!u.def.reaverWorker || Math.abs(u.x - c.x) > 22) return;
+        // Pulse animation timer
+        c._pulse = (c._pulse || 0) + dt;
+        // Reaver workers + combat units with reaverKillBonus can collect corpses
+        for (let _ci = 0; _ci < G.units.length; _ci++) {
+          if (c.life <= 0) break;
+          const u = G.units[_ci];
+          if (u.dead || u.offscreen) continue;
+          const isCollector = u.def.reaverWorker || u.def.reaverKillBonus || u.def.bodyOnKill;
+          if (!isCollector) continue;
+          const pickupRange = u.def.reaverWorker ? 30 : 24;
+          if (Math.abs(u.x - c.x) > pickupRange) continue;
           const p = G.players[u.player - 1];
           p.bodies = Math.min(99, p.bodies + c.val);
+          showPopup(c.x, G.groundY - 18, `+${c.val}🦴`, '#cd853f', u.player);
+          spawnParticles(c.x, G.groundY - 4, '#d5c4a1', 6);
           c.life = 0;
-        });
+        }
         return c.life > 0;
       });
     }
@@ -15036,6 +15211,43 @@
           ctx.restore();
         });
       }
+      // Corpses (Reavers) — visible bone pile on the ground with pulsing glow
+      if (G.corpses && G.corpses.length) {
+        G.corpses.forEach(c => {
+          const frac = Math.min(1, c.life / 8);
+          const _now = Date.now();
+          const pulse = 0.4 + Math.sin((_now / 500) + c.x * 0.1) * 0.15;
+          ctx.save();
+          ctx.globalAlpha = frac * pulse;
+          // Bone pile base — brown radial glow
+          const cg = ctx.createRadialGradient(c.x, G.groundY - 2, 0, c.x, G.groundY - 2, 14);
+          cg.addColorStop(0, '#d5c4a1'); cg.addColorStop(0.5, '#8B4513'); cg.addColorStop(1, 'transparent');
+          ctx.fillStyle = cg;
+          ctx.beginPath(); ctx.ellipse(c.x, G.groundY - 2, 14, 5, 0, 0, Math.PI * 2); ctx.fill();
+          // Bone fragments
+          ctx.fillStyle = '#d5c4a1'; ctx.globalAlpha = frac * 0.7;
+          ctx.beginPath(); ctx.ellipse(c.x - 4, G.groundY - 4, 4, 2, -0.3, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(c.x + 3, G.groundY - 3, 3.5, 1.8, 0.4, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(c.x, G.groundY - 6, 3, 0, Math.PI * 2); ctx.fill();
+          // Skull icon — small
+          ctx.fillStyle = '#e8d5b7'; ctx.globalAlpha = frac * 0.6;
+          ctx.beginPath(); ctx.arc(c.x, G.groundY - 7, 3.5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#4a2810'; ctx.globalAlpha = frac * 0.8;
+          ctx.beginPath(); ctx.arc(c.x - 1.2, G.groundY - 7.5, 0.8, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(c.x + 1.2, G.groundY - 7.5, 0.8, 0, Math.PI * 2); ctx.fill();
+          // Value indicator — faint number
+          if (c.val >= 4) {
+            ctx.globalAlpha = frac * 0.5;
+            ctx.fillStyle = '#cd853f'; ctx.font = 'bold 7px Rajdhani,sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText('+' + c.val + '🦴', c.x, G.groundY - 13);
+          }
+          // Pickup glow ring when Reaver units are nearby
+          ctx.globalAlpha = frac * (0.15 + Math.abs(Math.sin(_now / 300)) * 0.15);
+          ctx.strokeStyle = '#cd853f'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(c.x, G.groundY - 4, 16, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        });
+      }
       // Ground FX — fire patches (Infernal), ice crystals (Glacial)
       if (G.groundFX && G.groundFX.length) {
         G.groundFX.forEach(fx => {
@@ -15098,7 +15310,11 @@
       const themes = {
         infernal: 'hell', glacial: 'ice', voltborn: 'storm', menders: 'forest',
         warriors: 'plains', summoners: 'dark', brutes: 'cave', spirits: 'sky',
-        verdant: 'forest', bloodpact: 'blood'
+        verdant: 'forest', bloodpact: 'blood',
+        weavers: 'swamp', merchants: 'plains', reavers: 'bone', fortune: 'plains',
+        plagued: 'swamp', chrysalis: 'hive', tideborn: 'ocean', echoes: 'void',
+        veilborn: 'void', chronomancers: 'storm', illusionists: 'dream',
+        pandemonium: 'hell', psionics: 'psionic', umbral: 'abyss'
       };
       const t1 = themes[f1id] || 'dark', t2 = themes[f2id] || 'dark';
       const mixed = t1 !== t2;
@@ -15114,6 +15330,14 @@
         dark: ['#06020f', '#0e061c', '#160829'],   // summoner violet-black
         cave: ['#06020a', '#0d0510', '#130718'],   // dark magenta-black
         sky: ['#02022a', '#04053e', '#070850'],   // spirit deep indigo
+        swamp: ['#020e06', '#041a0c', '#062210'],   // toxic murky green
+        bone: ['#0e0804', '#1a1008', '#24180c'],   // bone/ossuary brown
+        hive: ['#020e0c', '#041c16', '#062a20'],   // organic teal-green
+        ocean: ['#000814', '#001028', '#001840'],   // deep ocean blue
+        void: ['#080010', '#10001e', '#18002c'],   // ethereal void purple
+        dream: ['#0e0416', '#1c0a2a', '#2a103e'],  // dreamscape magenta
+        psionic: ['#0c0018', '#180030', '#240048'], // psychic violet
+        abyss: ['#020204', '#060608', '#0a0a0e'],   // near-total darkness
       };
 
       // Faction horizon glow colours — shown as a strong band at the bottom of the sky
@@ -15124,6 +15348,10 @@
         forest: 'rgba(20, 160, 40,', plains: 'rgba(80, 90, 200,',
         dark: 'rgba(130, 0, 200,', cave: 'rgba(180, 0, 80,',
         sky: 'rgba(60, 100, 255,',
+        swamp: 'rgba(40, 180, 60,', bone: 'rgba(160, 100, 40,',
+        hive: 'rgba(0, 184, 148,', ocean: 'rgba(9, 132, 227,',
+        void: 'rgba(108, 92, 231,', dream: 'rgba(253, 121, 168,',
+        psionic: 'rgba(155, 89, 182,', abyss: 'rgba(80, 80, 100,',
       };
 
       // Draw sky — for mixed, blend both palettes via an offscreen canvas
@@ -15432,6 +15660,703 @@
           const hg = ctx.createLinearGradient(0, GY - 45, 0, GY);
           hg.addColorStop(0, 'rgba(0,0,0,0)'); hg.addColorStop(1, 'rgba(100,140,220,.18)');
           ctx.fillStyle = hg; ctx.fillRect(0, GY - 45, W, 45);
+        } else if (th === 'swamp') {
+          // Murky swamp — layered dead mangroves, hanging moss, bubbling muck, toxic fog
+          // Far background — distant dead mangrove silhouettes
+          ctx.fillStyle = 'rgba(1,10,2,.5)';
+          for (let i = 0; i < 18; i++) {
+            const tx = W * (i / 18), th2 = 14 + Math.sin(i * 2.7) * 10, tw = 8 + Math.sin(i * 3.1) * 3;
+            ctx.beginPath(); ctx.moveTo(tx, GY - 22); ctx.quadraticCurveTo(tx + tw * .3, GY - 22 - th2, tx + tw, GY - 22); ctx.fill();
+          }
+          // Mid-ground — twisted mangrove roots (taller, detailed)
+          ctx.fillStyle = 'rgba(2,14,4,.85)';
+          for (let i = 0; i < 12; i++) {
+            const tx = W * (i / 12 + .04), th2 = 30 + Math.sin(i * 2.1) * 22, tw = 16 + Math.sin(i * 1.7) * 6;
+            ctx.beginPath(); ctx.moveTo(tx, GY); ctx.quadraticCurveTo(tx - tw * .3, GY - th2 * .6, tx + tw * .2, GY - th2);
+            ctx.quadraticCurveTo(tx + tw * .5, GY - th2 * .4, tx + tw, GY); ctx.fill();
+            // Hanging roots from branches
+            ctx.strokeStyle = 'rgba(4,20,6,.6)'; ctx.lineWidth = 1;
+            for (let r = 0; r < 3; r++) {
+              const rx = tx + tw * (0.2 + r * 0.3), rl = 8 + r * 5;
+              ctx.beginPath(); ctx.moveTo(rx, GY - th2 * (.5 + r * .1));
+              ctx.quadraticCurveTo(rx + Math.sin(now / 2500 + i + r) * 4, GY - th2 * (.5 + r * .1) + rl * .6, rx + Math.sin(now / 3000 + i) * 2, GY - th2 * (.5 + r * .1) + rl);
+              ctx.stroke();
+            }
+          }
+          // Foreground — thick root bulges
+          ctx.fillStyle = 'rgba(3,18,5,.7)';
+          for (let i = 0; i < 8; i++) {
+            const tx = W * (i / 8 + .06), th2 = 16 + Math.sin(i * 3.3) * 8, tw = 28 + Math.sin(i * 2) * 10;
+            ctx.beginPath(); ctx.moveTo(tx, GY); ctx.quadraticCurveTo(tx + tw * 0.5, GY - th2, tx + tw, GY); ctx.fill();
+          }
+          // Hanging moss/web strands from ceiling
+          ctx.strokeStyle = 'rgba(80,160,60,.12)'; ctx.lineWidth = 1;
+          for (let i = 0; i < 16; i++) {
+            const mx = W * (i / 16 + .03), ml = 15 + Math.sin(i * 2.3) * 25;
+            ctx.beginPath(); ctx.moveTo(mx, 0);
+            ctx.quadraticCurveTo(mx + Math.sin(now / 3000 + i) * 8, ml * .5, mx + Math.sin(now / 4000 + i) * 5, ml);
+            ctx.stroke();
+          }
+          // Ground fog layers drifting
+          for (let f = 0; f < 5; f++) {
+            const fx = W * (((f * 0.2 + now / 14000) % 1.2) - .1), fy = GY - 6 - f * 10;
+            ctx.globalAlpha = opacity * (0.06 + Math.sin(now / 3500 + f) * .03);
+            ctx.fillStyle = '#3a6830';
+            ctx.beginPath(); ctx.ellipse(fx, fy, W * 0.22, 14 + f * 4, 0, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          // Bubbling muck — varied sizes, popping animation
+          for (let i = 0; i < 14; i++) {
+            const bx = W * (0.03 + i * 0.07 + Math.sin(now / 2000 + i) * 0.015);
+            const bPhase = ((now / 800 + i * 400) % 1200) / 1200;
+            const by = GY - 2 - bPhase * 12;
+            const bs = (1 - bPhase) * (2.5 + i % 3);
+            ctx.globalAlpha = opacity * (1 - bPhase) * .45;
+            ctx.fillStyle = i % 3 === 0 ? '#5a9c4a' : '#3a7c2a';
+            ctx.beginPath(); ctx.arc(bx, by, bs, 0, Math.PI * 2); ctx.fill();
+          }
+          // Toxic spores drifting upward
+          for (let i = 0; i < 18; i++) {
+            const sx = W * ((i * 0.056 + now / 20000) % 1), sy = GY * (0.3 + Math.sin(now / 1400 + i * 1.1) * 0.35);
+            ctx.globalAlpha = opacity * (0.2 + Math.abs(Math.sin(now / 900 + i * .7)) * .55) * .5;
+            ctx.fillStyle = i % 4 === 0 ? '#7bed9f' : i % 4 === 1 ? '#2ecc71' : i % 4 === 2 ? '#badc58' : '#55efc4';
+            ctx.beginPath(); ctx.arc(sx, sy, 1.2 + Math.sin(i) * .5, 0, Math.PI * 2); ctx.fill();
+          }
+          // Rare: toxic gas plume erupting
+          if (Math.random() < 0.008) {
+            const px = W * (0.1 + Math.random() * 0.8);
+            ctx.globalAlpha = opacity * 0.4;
+            const pg2 = ctx.createRadialGradient(px, GY, 0, px, GY - 30, 25);
+            pg2.addColorStop(0, 'rgba(40,180,60,.6)'); pg2.addColorStop(1, 'rgba(40,180,60,0)');
+            ctx.fillStyle = pg2; ctx.beginPath(); ctx.arc(px, GY - 15, 25, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          const sg = ctx.createLinearGradient(0, GY - 50, 0, GY);
+          sg.addColorStop(0, 'rgba(0,0,0,0)'); sg.addColorStop(0.4, 'rgba(10,50,10,.1)'); sg.addColorStop(1, 'rgba(20,80,20,.35)');
+          ctx.fillStyle = sg; ctx.fillRect(0, GY - 50, W, 50);
+        } else if (th === 'bone') {
+          // Ossuary — layered bone hills, rib cage arches, bone pillars, hanging skeletons, bone dust
+          // Far background — distant bone mountain range
+          ctx.fillStyle = 'rgba(20,14,6,.55)';
+          const fbpx = [.02, .1, .2, .3, .42, .52, .62, .72, .82, .92], fbph = [.18, .3, .14, .35, .2, .32, .16, .38, .22, .28];
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          fbpx.forEach((p, i) => ctx.lineTo(W * p, GY - GY * fbph[i]));
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Mid-ground — closer bone piles
+          ctx.fillStyle = 'rgba(30,20,10,.85)';
+          const bpx = [.05, .15, .28, .4, .55, .65, .78, .9], bph = [.15, .25, .12, .3, .18, .28, .14, .22];
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          bpx.forEach((p, i) => ctx.lineTo(W * p, GY - GY * bph[i]));
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Bone pillar structures (spine columns)
+          ctx.fillStyle = 'rgba(180,160,130,.18)';
+          for (let i = 0; i < 6; i++) {
+            const px = W * (0.08 + i * 0.16), ph = GY * (.18 + i % 3 * .06), pw = 6 + i % 2 * 3;
+            ctx.fillRect(px - pw / 2, GY - ph, pw, ph);
+            // Vertebrae knobs
+            ctx.fillStyle = 'rgba(200,180,150,.2)';
+            for (let v = 0; v < 4; v++) {
+              const vy = GY - ph + ph * (v / 4 + .1);
+              ctx.beginPath(); ctx.ellipse(px, vy, pw / 2 + 3, 3, 0, 0, Math.PI * 2); ctx.fill();
+            }
+            ctx.fillStyle = 'rgba(180,160,130,.18)';
+          }
+          // Rib cage arches — more, varied sizes
+          ctx.strokeStyle = 'rgba(205,185,155,.22)'; ctx.lineWidth = 3;
+          for (let i = 0; i < 7; i++) {
+            const rx = W * (0.06 + i * 0.14), rh = GY * (.1 + i % 4 * .035);
+            ctx.beginPath(); ctx.arc(rx, GY, rh, Math.PI, 0); ctx.stroke();
+            // Individual ribs extending from arch
+            ctx.lineWidth = 1.5;
+            for (let r = 0; r < 3; r++) {
+              const ra = Math.PI - (Math.PI * (r + 1) / 4);
+              const rcx = rx + Math.cos(ra) * rh, rcy = GY - Math.sin(ra) * rh;
+              ctx.beginPath(); ctx.moveTo(rx, GY); ctx.quadraticCurveTo(rx + (rcx - rx) * .5, rcy - 5, rcx, rcy); ctx.stroke();
+            }
+            ctx.lineWidth = 3;
+          }
+          // Hanging skeleton silhouettes from ceiling
+          for (let i = 0; i < 4; i++) {
+            const hx = W * (0.15 + i * 0.22), hLen = 20 + i % 3 * 12;
+            ctx.globalAlpha = opacity * 0.18;
+            ctx.strokeStyle = '#d5c4a1'; ctx.lineWidth = 1.5;
+            // Chain
+            ctx.beginPath(); ctx.moveTo(hx, 0); ctx.lineTo(hx, hLen - 8); ctx.stroke();
+            // Skull
+            ctx.fillStyle = '#d5c4a1'; ctx.beginPath(); ctx.arc(hx, hLen - 4, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#1a1008';
+            ctx.beginPath(); ctx.arc(hx - 1.5, hLen - 5, 1, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(hx + 1.5, hLen - 5, 1, 0, Math.PI * 2); ctx.fill();
+            // Body
+            ctx.strokeStyle = '#c0a888'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(hx, hLen); ctx.lineTo(hx, hLen + 14); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(hx - 6, hLen + 6); ctx.lineTo(hx, hLen + 3); ctx.lineTo(hx + 6, hLen + 6); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(hx - 4, hLen + 18); ctx.lineTo(hx, hLen + 14); ctx.lineTo(hx + 4, hLen + 18); ctx.stroke();
+          }
+          ctx.globalAlpha = opacity;
+          // Scattered skulls on ground — more varied
+          for (let i = 0; i < 12; i++) {
+            const sx = W * (0.04 + i * 0.08), ss = 4 + i % 4 * 1.5;
+            ctx.globalAlpha = opacity * (0.2 + i % 3 * .08);
+            ctx.fillStyle = '#d5c4a1'; ctx.beginPath(); ctx.arc(sx, GY - ss, ss, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#1a1008';
+            ctx.beginPath(); ctx.arc(sx - ss * .35, GY - ss - ss * .15, ss * .2, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(sx + ss * .35, GY - ss - ss * .15, ss * .2, 0, Math.PI * 2); ctx.fill();
+          }
+          // Bone dust particles drifting
+          for (let i = 0; i < 16; i++) {
+            const dx = W * ((i * 0.063 + now / 24000) % 1), dy = GY * (0.4 + Math.sin(now / 1800 + i * 1.2) * 0.3);
+            ctx.globalAlpha = opacity * (0.1 + Math.abs(Math.sin(now / 1200 + i * .6)) * .2);
+            ctx.fillStyle = i % 2 === 0 ? '#d5c4a1' : '#c0a888';
+            ctx.beginPath(); ctx.arc(dx, dy, 1, 0, Math.PI * 2); ctx.fill();
+          }
+          // Eerie bone-fire glow at ground level — scattered
+          for (let i = 0; i < 4; i++) {
+            const fx = W * (0.12 + i * 0.22), fl = Math.sin(now / 200 + i * 1.8) * .3 + .7;
+            ctx.globalAlpha = opacity * fl * .2;
+            const fg2 = ctx.createRadialGradient(fx, GY - 6, 0, fx, GY - 6, 18);
+            fg2.addColorStop(0, 'rgba(200,140,60,.7)'); fg2.addColorStop(1, 'rgba(200,140,60,0)');
+            ctx.fillStyle = fg2; ctx.beginPath(); ctx.arc(fx, GY - 6, 18, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          const bg2 = ctx.createLinearGradient(0, GY - 50, 0, GY);
+          bg2.addColorStop(0, 'rgba(0,0,0,0)'); bg2.addColorStop(0.4, 'rgba(40,25,10,.08)'); bg2.addColorStop(1, 'rgba(80,50,20,.28)');
+          ctx.fillStyle = bg2; ctx.fillRect(0, GY - 50, W, 50);
+        } else if (th === 'hive') {
+          // Organic hive — layered chitin formations, honeycomb ceiling, pulsing resin, egg sacs, spore glow
+          // Far background — distant organic formations
+          ctx.fillStyle = 'rgba(2,18,14,.5)';
+          for (let i = 0; i < 14; i++) {
+            const hx = W * (i / 14 + .03), hh = 18 + Math.sin(i * 2.3) * 12;
+            ctx.beginPath(); ctx.moveTo(hx, GY - 18); ctx.quadraticCurveTo(hx + 6, GY - 18 - hh, hx + 12, GY - 18); ctx.fill();
+          }
+          // Mid-ground — chitin spires with organic curves
+          ctx.fillStyle = 'rgba(4,26,20,.85)';
+          for (let i = 0; i < 10; i++) {
+            const hx = W * (i / 10 + .05), hh = 35 + Math.sin(i * 1.6) * 25, hw = 18 + i % 3 * 6;
+            ctx.beginPath(); ctx.moveTo(hx, GY); ctx.quadraticCurveTo(hx + hw * .3, GY - hh * .8, hx + hw * .5, GY - hh);
+            ctx.quadraticCurveTo(hx + hw * .7, GY - hh * .8, hx + hw, GY); ctx.fill();
+          }
+          // Foreground — thick organic bulges
+          ctx.fillStyle = 'rgba(6,32,24,.65)';
+          for (let i = 0; i < 7; i++) {
+            const hx = W * (i / 7 + .07), hh = 14 + Math.sin(i * 2.8) * 8, hw = 25 + i % 3 * 8;
+            ctx.beginPath(); ctx.moveTo(hx, GY); ctx.quadraticCurveTo(hx + hw * .5, GY - hh, hx + hw, GY); ctx.fill();
+          }
+          // Stalactite-like dripping resin from ceiling
+          ctx.fillStyle = 'rgba(6,36,28,.88)';
+          for (let i = 0; i < 12; i++) {
+            const sx = W * (i / 12 + .04), sl = 18 + Math.sin(i * 2.1) * 30, sw = 6 + Math.sin(i * 1.4) * 3;
+            ctx.beginPath(); ctx.moveTo(sx - sw / 2, 0); ctx.lineTo(sx, sl); ctx.lineTo(sx + sw / 2, 0); ctx.fill();
+            // Dripping resin drop
+            const drip = ((now / 1500 + i * 300) % 1500) / 1500;
+            if (drip < 0.5) {
+              ctx.globalAlpha = opacity * (1 - drip * 2) * 0.4;
+              ctx.fillStyle = '#55efc4';
+              ctx.beginPath(); ctx.arc(sx, sl + drip * 40, 2, 0, Math.PI * 2); ctx.fill();
+              ctx.fillStyle = 'rgba(6,36,28,.88)';
+              ctx.globalAlpha = opacity;
+            }
+          }
+          // Dense hexagonal honeycomb pattern on ceiling (3 rows)
+          ctx.strokeStyle = 'rgba(85,239,196,.1)'; ctx.lineWidth = 1;
+          for (let row = 0; row < 3; row++) {
+            for (let i = 0; i < 14; i++) {
+              const hs = 10 + row * 2;
+              const hx = W * (i / 14 + .03) + (row % 2 === 0 ? 0 : W / 28), hy = 8 + row * 18;
+              ctx.beginPath();
+              for (let a = 0; a < 6; a++) { const angle = Math.PI / 3 * a - Math.PI / 6; ctx.lineTo(hx + hs * Math.cos(angle), hy + hs * Math.sin(angle)); }
+              ctx.closePath(); ctx.stroke();
+            }
+          }
+          // Pulsing veins on walls — organic lines connecting structures
+          ctx.strokeStyle = 'rgba(0,184,148,.12)'; ctx.lineWidth = 1.5;
+          for (let i = 0; i < 8; i++) {
+            const vx = W * (i / 8 + .06), vy1 = GY - 10, vy2 = GY * (0.3 + Math.sin(i * 1.4) * 0.15);
+            ctx.beginPath(); ctx.moveTo(vx, vy1);
+            ctx.quadraticCurveTo(vx + Math.sin(now / 3000 + i) * 15, (vy1 + vy2) / 2, vx + Math.sin(i * 2.1) * 10, vy2);
+            ctx.stroke();
+          }
+          // Pulsing egg sacs — more, glowing
+          for (let i = 0; i < 9; i++) {
+            const ex = W * (0.05 + i * 0.1), ef = Math.abs(Math.sin(now / 1200 + i * .8));
+            ctx.globalAlpha = opacity * (0.15 + ef * .3);
+            const eg = ctx.createRadialGradient(ex, GY - 8, 0, ex, GY - 8, 14);
+            eg.addColorStop(0, 'rgba(0,184,148,.8)'); eg.addColorStop(0.5, 'rgba(0,184,148,.3)'); eg.addColorStop(1, 'rgba(0,184,148,0)');
+            ctx.fillStyle = eg; ctx.beginPath(); ctx.ellipse(ex, GY - 8, 12, 7, 0, 0, Math.PI * 2); ctx.fill();
+            // Dark embryo shape inside
+            ctx.globalAlpha = opacity * ef * .2;
+            ctx.fillStyle = '#034030';
+            ctx.beginPath(); ctx.ellipse(ex, GY - 8, 5, 4, Math.sin(now / 2000 + i) * .3, 0, Math.PI * 2); ctx.fill();
+          }
+          // Bioluminescent spores floating
+          for (let i = 0; i < 16; i++) {
+            const sx = W * ((i * 0.063 + now / 22000) % 1), sy = GY * (0.25 + Math.sin(now / 1600 + i * 0.9) * 0.35);
+            ctx.globalAlpha = opacity * (0.15 + Math.abs(Math.sin(now / 700 + i * .8)) * .4) * .5;
+            ctx.fillStyle = i % 3 === 0 ? '#55efc4' : i % 3 === 1 ? '#00b894' : '#00cec9';
+            ctx.beginPath(); ctx.arc(sx, sy, 1.3, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          // Ground glow
+          const hvg = ctx.createLinearGradient(0, GY - 50, 0, GY);
+          hvg.addColorStop(0, 'rgba(0,0,0,0)'); hvg.addColorStop(0.5, 'rgba(0,60,48,.08)'); hvg.addColorStop(1, 'rgba(0,120,96,.25)');
+          ctx.fillStyle = hvg; ctx.fillRect(0, GY - 50, W, 50);
+        } else if (th === 'ocean') {
+          // Deep ocean — layered waves, coral reef, seaweed forests, jellyfish, bioluminescence
+          // Far wave layers — distant deep water
+          for (let wl = 0; wl < 4; wl++) {
+            ctx.globalAlpha = opacity * (0.06 + wl * 0.025);
+            ctx.fillStyle = ['#000e2a', '#001840', '#002255', '#003070'][wl];
+            ctx.beginPath(); ctx.moveTo(0, GY);
+            for (let i = 0; i <= 24; i++) {
+              const wx = W * (i / 24), wy = GY - 15 - wl * 28 - Math.sin(now / (1400 + wl * 500) + i * .45 + wl * .7) * (6 + wl * 4);
+              ctx.lineTo(wx, wy);
+            }
+            ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          // Seaweed forests — swaying vertical strands
+          for (let i = 0; i < 14; i++) {
+            const sx = W * (i / 14 + .035), sh = 20 + Math.sin(i * 2.3) * 18;
+            ctx.strokeStyle = i % 2 === 0 ? 'rgba(0,100,80,.12)' : 'rgba(0,80,60,.1)'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(sx, GY);
+            for (let s = 1; s <= 4; s++) {
+              ctx.lineTo(sx + Math.sin(now / 1500 + i + s * .8) * (5 + s * 2), GY - sh * (s / 4));
+            }
+            ctx.stroke();
+            // Leaf fronds
+            ctx.lineWidth = 1;
+            for (let f = 0; f < 2; f++) {
+              const fy = GY - sh * (0.4 + f * .3);
+              const fx = sx + Math.sin(now / 1500 + i + (1 + f) * .8) * (5 + (1 + f) * 2);
+              ctx.beginPath(); ctx.moveTo(fx, fy);
+              ctx.quadraticCurveTo(fx + (i % 2 === 0 ? 8 : -8), fy - 4, fx + (i % 2 === 0 ? 12 : -12) + Math.sin(now / 1200 + i + f) * 3, fy + 2);
+              ctx.stroke();
+            }
+          }
+          // Coral reef formations — more varied, colorful
+          for (let i = 0; i < 10; i++) {
+            const cx = W * (0.05 + i * 0.1), ch = 14 + Math.sin(i * 2.1) * 12;
+            const coralColors = ['rgba(255,100,120,.18)', 'rgba(255,180,60,.15)', 'rgba(100,200,255,.15)', 'rgba(255,150,200,.14)', 'rgba(100,255,200,.12)'];
+            ctx.fillStyle = coralColors[i % 5];
+            // Branching coral shape
+            ctx.beginPath(); ctx.moveTo(cx, GY);
+            ctx.quadraticCurveTo(cx - 4, GY - ch * .4, cx - 6, GY - ch * .7);
+            ctx.quadraticCurveTo(cx - 3, GY - ch, cx, GY - ch * .85);
+            ctx.quadraticCurveTo(cx + 3, GY - ch, cx + 6, GY - ch * .7);
+            ctx.quadraticCurveTo(cx + 4, GY - ch * .4, cx + 3, GY);
+            ctx.fill();
+          }
+          // Jellyfish silhouettes — floating, pulsing
+          for (let i = 0; i < 4; i++) {
+            const jx = W * (0.15 + i * 0.22 + Math.sin(now / 4000 + i) * 0.04);
+            const jy = GY * (0.2 + Math.sin(now / 2500 + i * 1.3) * 0.2);
+            const jp = Math.sin(now / 1000 + i * 1.5); // pulse
+            ctx.globalAlpha = opacity * (0.06 + Math.abs(jp) * 0.06);
+            ctx.fillStyle = i % 2 === 0 ? 'rgba(100,180,255,.4)' : 'rgba(200,100,255,.3)';
+            // Bell
+            ctx.beginPath(); ctx.arc(jx, jy, 8 + jp * 2, Math.PI, 0); ctx.fill();
+            // Tentacles
+            ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1;
+            for (let t = 0; t < 3; t++) {
+              ctx.beginPath(); ctx.moveTo(jx - 4 + t * 4, jy);
+              ctx.quadraticCurveTo(jx - 4 + t * 4 + Math.sin(now / 1200 + i + t) * 3, jy + 10, jx - 4 + t * 4 + Math.sin(now / 900 + i + t) * 5, jy + 18);
+              ctx.stroke();
+            }
+          }
+          // Light rays from above — underwater caustics
+          for (let i = 0; i < 5; i++) {
+            ctx.globalAlpha = opacity * (0.025 + Math.abs(Math.sin(now / 3000 + i * 1.3)) * .02);
+            ctx.fillStyle = '#74b9ff';
+            const rx = W * (0.12 + i * 0.18 + Math.sin(now / 6000 + i) * 0.04);
+            ctx.beginPath(); ctx.moveTo(rx - 8, 0); ctx.lineTo(rx - 20, GY); ctx.lineTo(rx + 20, GY); ctx.lineTo(rx + 8, 0); ctx.closePath(); ctx.fill();
+          }
+          // Bioluminescent particles — denser
+          for (let i = 0; i < 20; i++) {
+            const bx = W * ((i * 0.05 + now / 25000) % 1), by = GY * (0.2 + Math.sin(now / 1600 + i * 0.8) * 0.38);
+            ctx.globalAlpha = opacity * (0.12 + Math.abs(Math.sin(now / 800 + i * .6)) * .4) * .5;
+            ctx.fillStyle = ['#00d2ff', '#0984e3', '#74b9ff', '#00cec9', '#55efc4'][i % 5];
+            ctx.beginPath(); ctx.arc(bx, by, 1.2, 0, Math.PI * 2); ctx.fill();
+          }
+          // Air bubbles rising
+          for (let i = 0; i < 8; i++) {
+            const bx = W * (0.08 + i * 0.12), bPhase = ((now / 1200 + i * 500) % 2000) / 2000;
+            const by = GY - bPhase * GY * 0.7;
+            ctx.globalAlpha = opacity * (1 - bPhase) * 0.12;
+            ctx.strokeStyle = 'rgba(116,185,255,.5)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(bx + Math.sin(bPhase * 8 + i) * 4, by, 2 + i % 2, 0, Math.PI * 2); ctx.stroke();
+          }
+          ctx.globalAlpha = opacity;
+          const og = ctx.createLinearGradient(0, GY - 55, 0, GY);
+          og.addColorStop(0, 'rgba(0,0,0,0)'); og.addColorStop(0.4, 'rgba(0,50,120,.08)'); og.addColorStop(1, 'rgba(9,132,227,.28)');
+          ctx.fillStyle = og; ctx.fillRect(0, GY - 55, W, 55);
+        } else if (th === 'void') {
+          // Ethereal void — shattered reality, floating debris, rift tears, echo geometry
+          // Far background — fragmented geometric landscape
+          ctx.fillStyle = 'rgba(12,0,24,.6)';
+          const vpx = [.04, .12, .24, .36, .48, .58, .7, .82, .94], vph = [.2, .35, .15, .4, .22, .36, .18, .42, .24];
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          vpx.forEach((p, i) => ctx.lineTo(W * p, GY - GY * vph[i]));
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Mid-ground — tilted/broken platform shards
+          ctx.fillStyle = 'rgba(18,0,36,.45)';
+          for (let i = 0; i < 6; i++) {
+            const px = W * (0.08 + i * 0.16), pw = 30 + i % 3 * 15, ph = 6 + i % 2 * 4;
+            const tilt = Math.sin(i * 1.7) * 0.15;
+            ctx.save(); ctx.translate(px, GY - 20 - i % 3 * 25); ctx.rotate(tilt);
+            ctx.fillRect(-pw / 2, -ph / 2, pw, ph);
+            ctx.restore();
+          }
+          // Floating crystal shards — 3 depth layers
+          for (let layer = 0; layer < 3; layer++) {
+            for (let i = 0; i < 5; i++) {
+              const idx = layer * 5 + i;
+              const sx = W * (0.04 + idx * 0.065 + Math.sin(now / (3000 + layer * 500) + idx) * 0.03);
+              const sy = GY * (0.15 + layer * .15 + Math.sin(now / (2000 + layer * 300) + idx * 1.3) * 0.18);
+              const sr = Math.sin(now / (1500 + layer * 200) + idx * 0.8);
+              const size = 5 + layer * 3;
+              ctx.globalAlpha = opacity * (0.06 + layer * .04 + Math.abs(sr) * .12);
+              ctx.fillStyle = idx % 3 === 0 ? '#a29bfe' : idx % 3 === 1 ? '#6c5ce7' : '#dfe6e9';
+              ctx.save(); ctx.translate(sx, sy); ctx.rotate(sr * 0.5);
+              ctx.beginPath(); ctx.moveTo(0, -size); ctx.lineTo(size * .5, 0); ctx.lineTo(0, size); ctx.lineTo(-size * .5, 0); ctx.closePath(); ctx.fill();
+              ctx.restore();
+            }
+          }
+          // Rift tear lines — more, with energy glow
+          for (let i = 0; i < 6; i++) {
+            const rx = W * (0.1 + i * 0.15), ry = GY * (0.25 + Math.sin(i * 1.5) * 0.2);
+            const rf = Math.abs(Math.sin(now / 2000 + i * 1.7));
+            if (rf > 0.5) {
+              ctx.globalAlpha = opacity * rf * 0.25;
+              ctx.strokeStyle = '#dfe6e9'; ctx.lineWidth = 1.5;
+              ctx.shadowBlur = 10; ctx.shadowColor = '#a29bfe';
+              const rl = 15 + i % 3 * 10;
+              ctx.beginPath(); ctx.moveTo(rx, ry - rl); ctx.lineTo(rx + 4 * Math.sin(i), ry); ctx.lineTo(rx - 3 * Math.sin(i + 1), ry + rl); ctx.stroke();
+              ctx.shadowBlur = 0;
+              // Energy particles along rift
+              ctx.fillStyle = '#a29bfe';
+              for (let p = 0; p < 3; p++) {
+                const pp = ((now / 800 + i * 200 + p * 333) % 1000) / 1000;
+                const py = ry - rl + pp * rl * 2;
+                ctx.globalAlpha = opacity * (1 - pp) * rf * 0.3;
+                ctx.beginPath(); ctx.arc(rx + Math.sin(pp * 6) * 3, py, 1.5, 0, Math.PI * 2); ctx.fill();
+              }
+            }
+          }
+          // Geometric echo patterns — rotating shapes
+          for (let i = 0; i < 4; i++) {
+            const gx = W * (0.18 + i * 0.22), gy = GY * (0.4 + Math.sin(i * 2.1) * 0.15);
+            const gr = now / 4000 + i * 1.5;
+            ctx.globalAlpha = opacity * 0.06;
+            ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 1;
+            ctx.save(); ctx.translate(gx, gy); ctx.rotate(gr);
+            const sides = 4 + i % 3;
+            const gs = 18 + i % 2 * 8;
+            ctx.beginPath();
+            for (let s = 0; s <= sides; s++) { const a = (Math.PI * 2 / sides) * s; ctx.lineTo(gs * Math.cos(a), gs * Math.sin(a)); }
+            ctx.stroke();
+            ctx.restore();
+          }
+          // Echo ripple rings on ground — more
+          for (let i = 0; i < 7; i++) {
+            const ex = W * (0.07 + i * 0.13), ePhase = ((now / 2000 + i * 0.9) % 1);
+            ctx.globalAlpha = opacity * (1 - ePhase) * 0.15;
+            ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.ellipse(ex, GY - 4, 10 + ePhase * 35, 3 + ePhase * 10, 0, 0, Math.PI * 2); ctx.stroke();
+          }
+          // Void particles — floating embers of reality
+          for (let i = 0; i < 14; i++) {
+            const vx = W * ((i * 0.072 + now / 28000) % 1), vy = GY * (0.2 + Math.sin(now / 1200 + i * 0.7) * 0.4);
+            ctx.globalAlpha = opacity * (0.1 + Math.abs(Math.sin(now / 600 + i * .9)) * .3);
+            ctx.fillStyle = i % 4 === 0 ? '#a29bfe' : i % 4 === 1 ? '#dfe6e9' : i % 4 === 2 ? '#6c5ce7' : '#c8c5ff';
+            ctx.beginPath(); ctx.arc(vx, vy, 1, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          // Ground glow
+          const vg = ctx.createLinearGradient(0, GY - 50, 0, GY);
+          vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(0.5, 'rgba(40,30,80,.06)'); vg.addColorStop(1, 'rgba(80,60,160,.2)');
+          ctx.fillStyle = vg; ctx.fillRect(0, GY - 50, W, 50);
+        } else if (th === 'dream') {
+          // Dreamscape — impossible geometry, floating mirrors, prismatic light, kaleidoscope fog
+          // Surreal floating landscape — inverted hills on ceiling
+          ctx.fillStyle = 'rgba(20,8,30,.4)';
+          const dpx = [.05, .15, .25, .38, .5, .62, .75, .88, .95], dph = [.12, .2, .1, .24, .14, .22, .16, .26, .1];
+          ctx.beginPath(); ctx.moveTo(0, 0);
+          dpx.forEach((p, i) => ctx.lineTo(W * p, GY * dph[i]));
+          ctx.lineTo(W, 0); ctx.closePath(); ctx.fill();
+          // Ground formations — soft rolling dream hills
+          ctx.fillStyle = 'rgba(16,6,24,.6)';
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          for (let i = 0; i <= 14; i++) ctx.lineTo(W * (i / 14), GY - 8 - Math.sin(i * .9 + now / 8000) * 15 - Math.cos(i * 1.6) * 8);
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Prismatic light beams — wider, more colorful, animated sway
+          const dreamColors = ['#fd79a8', '#fab1cc', '#a29bfe', '#74b9ff', '#55efc4', '#ffeaa7', '#ff7675', '#81ecec'];
+          for (let i = 0; i < 8; i++) {
+            const bx = W * (0.06 + i * 0.12 + Math.sin(now / 5000 + i) * 0.04);
+            ctx.globalAlpha = opacity * (0.025 + Math.abs(Math.sin(now / 3000 + i * 1.1)) * .035);
+            ctx.fillStyle = dreamColors[i];
+            ctx.beginPath(); ctx.moveTo(bx, 0); ctx.lineTo(bx - 25, GY); ctx.lineTo(bx + 25, GY); ctx.closePath(); ctx.fill();
+          }
+          // Rainbow caustic ripples on ground
+          for (let i = 0; i < 6; i++) {
+            const cx = W * (0.08 + i * 0.16), cPhase = ((now / 2500 + i * 600) % 2500) / 2500;
+            ctx.globalAlpha = opacity * (1 - cPhase) * 0.08;
+            ctx.strokeStyle = dreamColors[i % dreamColors.length]; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.ellipse(cx, GY - 2, 15 + cPhase * 40, 4 + cPhase * 10, 0, 0, Math.PI * 2); ctx.stroke();
+          }
+          // Floating mirror shards — varied sizes with reflective shimmer
+          for (let i = 0; i < 8; i++) {
+            const mx = W * (0.06 + i * 0.12 + Math.sin(now / 2500 + i) * 0.03);
+            const my = GY * (0.2 + Math.sin(now / 1800 + i * 1.5) * 0.25);
+            const mr = Math.sin(now / 1200 + i);
+            const ms = 6 + i % 3 * 4;
+            ctx.globalAlpha = opacity * (0.08 + Math.abs(mr) * .15);
+            ctx.save(); ctx.translate(mx, my); ctx.rotate(mr * 0.4);
+            // Mirror body
+            ctx.fillStyle = 'rgba(255,255,255,.12)';
+            ctx.strokeStyle = dreamColors[i % dreamColors.length]; ctx.globalAlpha = opacity * (0.15 + Math.abs(mr) * .2);
+            ctx.lineWidth = 1;
+            ctx.fillRect(-ms * .5, -ms * .8, ms, ms * 1.6); ctx.strokeRect(-ms * .5, -ms * .8, ms, ms * 1.6);
+            // Reflection glint
+            ctx.fillStyle = 'rgba(255,255,255,.3)';
+            ctx.fillRect(-ms * .3, -ms * .6, ms * .3, ms * .4);
+            ctx.restore();
+          }
+          // Impossible floating staircases
+          ctx.strokeStyle = 'rgba(200,160,220,.1)'; ctx.lineWidth = 1.5;
+          for (let i = 0; i < 3; i++) {
+            const sx = W * (0.2 + i * 0.3), sy = GY * (0.3 + i * 0.12);
+            const dir = i % 2 === 0 ? 1 : -1;
+            ctx.beginPath();
+            for (let s = 0; s < 6; s++) {
+              const x1 = sx + dir * s * 8, y1 = sy + s * 6;
+              ctx.moveTo(x1, y1); ctx.lineTo(x1 + dir * 8, y1);
+              ctx.lineTo(x1 + dir * 8, y1 + 6);
+            }
+            ctx.stroke();
+          }
+          // Kaleidoscope fog drifting
+          for (let f = 0; f < 4; f++) {
+            const fx = W * (((f * 0.25 + now / 16000) % 1.2) - .1), fy = GY - 12 - f * 14;
+            ctx.globalAlpha = opacity * 0.05;
+            ctx.fillStyle = dreamColors[f % dreamColors.length];
+            ctx.beginPath(); ctx.ellipse(fx, fy, W * 0.2, 16 + f * 5, 0, 0, Math.PI * 2); ctx.fill();
+          }
+          // Sparkle dust — denser
+          for (let i = 0; i < 22; i++) {
+            const dx = W * ((i * 0.046 + now / 20000) % 1), dy = GY * (0.15 + Math.sin(now / 1000 + i * 0.8) * 0.42);
+            ctx.globalAlpha = opacity * (0.15 + Math.abs(Math.sin(now / 500 + i * .9)) * .6) * .4;
+            ctx.fillStyle = dreamColors[i % dreamColors.length];
+            const ss = i % 5 === 0 ? 2 : 1.2;
+            ctx.beginPath(); ctx.arc(dx, dy, ss, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          // Ground glow — pink/purple
+          const drg = ctx.createLinearGradient(0, GY - 50, 0, GY);
+          drg.addColorStop(0, 'rgba(0,0,0,0)'); drg.addColorStop(0.5, 'rgba(50,10,40,.06)'); drg.addColorStop(1, 'rgba(100,20,80,.2)');
+          ctx.fillStyle = drg; ctx.fillRect(0, GY - 50, W, 50);
+        } else if (th === 'psionic') {
+          // Psychic dimension — brain-like organic terrain, branching neural tendrils, synapse storms, thought orbs
+          // Far background — organic brain-like landscape folds
+          ctx.fillStyle = 'rgba(16,0,28,.55)';
+          const ppx = [.04, .14, .24, .36, .46, .56, .66, .78, .88, .96], pph = [.22, .34, .16, .4, .24, .38, .2, .42, .26, .3];
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          ppx.forEach((p, i) => ctx.lineTo(W * p, GY - GY * pph[i]));
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Mid-ground — brain fold ridges
+          ctx.fillStyle = 'rgba(24,0,40,.4)';
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          for (let i = 0; i <= 18; i++) ctx.lineTo(W * (i / 18), GY - 10 - Math.sin(i * .8 + .5) * 18 - Math.cos(i * 1.6) * 10);
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Neural tendrils from ceiling — with branching (like dark's dead trees)
+          const drawTendril = (tx, maxY, side) => {
+            ctx.strokeStyle = 'rgba(155,89,182,.18)'; ctx.lineWidth = 2.5;
+            ctx.beginPath(); ctx.moveTo(tx, 0);
+            for (let s = 1; s <= 6; s++) {
+              ctx.lineTo(tx + Math.sin(now / 2000 + tx + s) * 15, maxY * (s / 6));
+            }
+            ctx.stroke();
+            // Branches
+            ctx.lineWidth = 1.5;
+            for (let b = 0; b < 3; b++) {
+              const by = maxY * (0.3 + b * 0.2);
+              const bx = tx + Math.sin(now / 2000 + tx + b + 1) * 15;
+              ctx.beginPath(); ctx.moveTo(bx, by);
+              ctx.quadraticCurveTo(bx + side * 18, by + 8, bx + side * 28 + Math.sin(now / 2500 + b) * 5, by + 16);
+              ctx.stroke();
+              // Sub-branches
+              ctx.lineWidth = 1;
+              ctx.beginPath(); ctx.moveTo(bx + side * 18, by + 8); ctx.lineTo(bx + side * 24, by - 4); ctx.stroke();
+            }
+          };
+          for (let i = 0; i < 8; i++) drawTendril(W * (i / 8 + .06), GY * (.35 + i % 3 * .1), i % 2 === 0 ? 1 : -1);
+          // Neural tendrils from ground — reaching upward
+          ctx.strokeStyle = 'rgba(155,89,182,.12)'; ctx.lineWidth = 1.5;
+          for (let i = 0; i < 6; i++) {
+            const tx = W * (0.08 + i * 0.16), tl = 20 + Math.sin(i * 1.9) * 15;
+            ctx.beginPath(); ctx.moveTo(tx, GY);
+            ctx.quadraticCurveTo(tx + Math.sin(now / 2200 + i) * 12, GY - tl * .6, tx + Math.sin(now / 1800 + i) * 8, GY - tl);
+            ctx.stroke();
+          }
+          // Consciousness orbs — large floating thought spheres
+          for (let i = 0; i < 4; i++) {
+            const ox = W * (0.15 + i * 0.22 + Math.sin(now / 4000 + i) * 0.04);
+            const oy = GY * (0.25 + Math.sin(now / 3000 + i * 1.5) * 0.15);
+            const of2 = Math.abs(Math.sin(now / 2000 + i));
+            ctx.globalAlpha = opacity * (0.06 + of2 * .08);
+            const og2 = ctx.createRadialGradient(ox, oy, 0, ox, oy, 22);
+            og2.addColorStop(0, 'rgba(195,155,211,.6)'); og2.addColorStop(0.5, 'rgba(155,89,182,.2)'); og2.addColorStop(1, 'rgba(155,89,182,0)');
+            ctx.fillStyle = og2; ctx.beginPath(); ctx.arc(ox, oy, 22, 0, Math.PI * 2); ctx.fill();
+            // Inner eye-like pupil
+            ctx.globalAlpha = opacity * of2 * 0.15;
+            ctx.fillStyle = '#e8d5f5';
+            ctx.beginPath(); ctx.arc(ox, oy, 4, 0, Math.PI * 2); ctx.fill();
+          }
+          // Synapse flashes — more frequent, connected by faint lines
+          for (let i = 0; i < 8; i++) {
+            const sf = Math.abs(Math.sin(now / 350 + i * 1.8));
+            if (sf > 0.8) {
+              const sx = W * (0.06 + i * 0.12), sy = GY * (0.15 + Math.sin(i * 1.7) * 0.3);
+              ctx.globalAlpha = opacity * sf * 0.5;
+              const sg2 = ctx.createRadialGradient(sx, sy, 0, sx, sy, 12);
+              sg2.addColorStop(0, 'rgba(195,155,211,.9)'); sg2.addColorStop(1, 'rgba(155,89,182,0)');
+              ctx.fillStyle = sg2; ctx.beginPath(); ctx.arc(sx, sy, 12, 0, Math.PI * 2); ctx.fill();
+              // Lightning connection to nearest synapse
+              if (i < 7) {
+                const nx = W * (0.06 + (i + 1) * 0.12), ny = GY * (0.15 + Math.sin((i + 1) * 1.7) * 0.3);
+                ctx.globalAlpha = opacity * sf * 0.15;
+                ctx.strokeStyle = '#c39bd3'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(sx, sy);
+                ctx.lineTo((sx + nx) / 2 + Math.sin(now / 200 + i) * 8, (sy + ny) / 2);
+                ctx.lineTo(nx, ny); ctx.stroke();
+              }
+            }
+          }
+          // Thought wave rings expanding — more
+          for (let i = 0; i < 6; i++) {
+            const rx = W * (0.08 + i * 0.16), rPhase = ((now / 3000 + i * 0.6) % 1);
+            ctx.globalAlpha = opacity * (1 - rPhase) * 0.1;
+            ctx.strokeStyle = '#c39bd3'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(rx, GY * 0.45, 8 + rPhase * 55, 0, Math.PI * 2); ctx.stroke();
+          }
+          // Telekinetic debris — tiny floating particles
+          for (let i = 0; i < 18; i++) {
+            const dx = W * ((i * 0.056 + now / 26000) % 1);
+            const dy = GY * (0.2 + Math.sin(now / 1100 + i * 0.7) * 0.35);
+            ctx.globalAlpha = opacity * (0.1 + Math.abs(Math.sin(now / 700 + i * .8)) * .25);
+            ctx.fillStyle = i % 3 === 0 ? '#c39bd3' : i % 3 === 1 ? '#9b59b6' : '#e8d5f5';
+            ctx.beginPath(); ctx.arc(dx, dy, 1, 0, Math.PI * 2); ctx.fill();
+          }
+          // Rare: psionic burst — flash of light
+          if (Math.random() < 0.006) {
+            const bx = W * (0.2 + Math.random() * 0.6), by = GY * (0.2 + Math.random() * 0.4);
+            ctx.globalAlpha = opacity * 0.3;
+            const bg3 = ctx.createRadialGradient(bx, by, 0, bx, by, 40);
+            bg3.addColorStop(0, 'rgba(195,155,211,.8)'); bg3.addColorStop(1, 'rgba(155,89,182,0)');
+            ctx.fillStyle = bg3; ctx.beginPath(); ctx.arc(bx, by, 40, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          const pg = ctx.createLinearGradient(0, GY - 55, 0, GY);
+          pg.addColorStop(0, 'rgba(0,0,0,0)'); pg.addColorStop(0.4, 'rgba(40,0,60,.08)'); pg.addColorStop(1, 'rgba(75,0,110,.28)');
+          ctx.fillStyle = pg; ctx.fillRect(0, GY - 55, W, 55);
+        } else if (th === 'abyss') {
+          // Abyssal void — consuming darkness, shadow mountains, creeping tendrils, predator eyes
+          // Far background — barely visible jagged shadow mountains
+          ctx.fillStyle = 'rgba(6,6,10,.7)';
+          const apx = [.03, .13, .23, .35, .45, .55, .67, .77, .87, .95], aph = [.24, .38, .18, .44, .22, .4, .2, .46, .26, .32];
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          apx.forEach((p, i) => ctx.lineTo(W * p, GY - GY * aph[i]));
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Mid-ground — closer dark ridge
+          ctx.fillStyle = 'rgba(8,8,14,.5)';
+          const arx = [.06, .18, .32, .46, .6, .74, .88], arh = [.16, .26, .14, .3, .18, .28, .12];
+          ctx.beginPath(); ctx.moveTo(0, GY);
+          arx.forEach((p, i) => ctx.lineTo(W * p, GY - GY * arh[i]));
+          ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          // Shadow tendrils reaching up — with branching (like dead trees but darker)
+          const drawShadowTendril = (tx, th2, side) => {
+            ctx.strokeStyle = 'rgba(18,18,28,.85)'; ctx.lineWidth = 3.5;
+            ctx.beginPath(); ctx.moveTo(tx, GY);
+            ctx.quadraticCurveTo(tx + Math.sin(now / 2000 + tx) * 8, GY - th2 * .5, tx + Math.sin(now / 1500 + tx) * 12, GY - th2);
+            ctx.stroke();
+            // Branches
+            ctx.lineWidth = 2;
+            for (let b = 0; b < 2; b++) {
+              const by = GY - th2 * (0.5 + b * .2);
+              const bx = tx + Math.sin(now / 2000 + tx + b) * (6 + b * 3);
+              ctx.beginPath(); ctx.moveTo(bx, by);
+              ctx.quadraticCurveTo(bx + side * 15, by - 8, bx + side * 22 + Math.sin(now / 2500 + b) * 4, by - 14);
+              ctx.stroke();
+            }
+            ctx.lineWidth = 1;
+            // Thin wisps at tips
+            const topX = tx + Math.sin(now / 1500 + tx) * 12, topY = GY - th2;
+            ctx.beginPath(); ctx.moveTo(topX, topY);
+            ctx.lineTo(topX + side * 8, topY - 10 + Math.sin(now / 1800 + tx) * 3); ctx.stroke();
+          };
+          for (let i = 0; i < 8; i++) drawShadowTendril(W * (0.06 + i * 0.12), 35 + Math.sin(i * 1.9) * 20, i % 2 === 0 ? 1 : -1);
+          // Shadow tendrils from ceiling — dripping down
+          ctx.strokeStyle = 'rgba(12,12,20,.6)'; ctx.lineWidth = 2.5;
+          for (let i = 0; i < 10; i++) {
+            const sx = W * (i / 10 + .05), sl = 15 + Math.sin(i * 2.3) * 25;
+            ctx.beginPath(); ctx.moveTo(sx, 0);
+            ctx.quadraticCurveTo(sx + Math.sin(now / 3000 + i) * 6, sl * .6, sx + Math.sin(now / 2200 + i) * 4, sl);
+            ctx.stroke();
+          }
+          // Consuming darkness waves — flowing across ground
+          for (let w = 0; w < 3; w++) {
+            ctx.globalAlpha = opacity * (0.15 + w * 0.05);
+            ctx.fillStyle = w === 0 ? '#06060a' : w === 1 ? '#0a0a10' : '#0e0e16';
+            ctx.beginPath(); ctx.moveTo(0, GY);
+            for (let i = 0; i <= 22; i++) {
+              const wx = W * (i / 22), wy = GY - 6 - w * 8 - Math.sin(now / (1800 + w * 400) + i * .6 + w) * (5 + w * 3);
+              ctx.lineTo(wx, wy);
+            }
+            ctx.lineTo(W, GY); ctx.closePath(); ctx.fill();
+          }
+          ctx.globalAlpha = opacity;
+          // Faint predator eyes — more, varied
+          for (let i = 0; i < 7; i++) {
+            const ex = W * (0.08 + i * 0.13), ey = GY * (0.2 + Math.sin(i * 1.3 + 0.5) * 0.2);
+            const blink = Math.abs(Math.sin(now / (2500 + i * 300) + i * 1.7));
+            if (blink > 0.45) {
+              ctx.globalAlpha = opacity * blink * 0.12;
+              ctx.fillStyle = i % 3 === 0 ? '#b2bec3' : i % 3 === 1 ? '#636e72' : '#dfe6e9';
+              const es = 2 + i % 2;
+              ctx.beginPath(); ctx.ellipse(ex - 4, ey, es, es * .6 * blink, 0, 0, Math.PI * 2); ctx.fill();
+              ctx.beginPath(); ctx.ellipse(ex + 4, ey, es, es * .6 * blink, 0, 0, Math.PI * 2); ctx.fill();
+              // Faint glow around eyes
+              ctx.globalAlpha = opacity * blink * 0.04;
+              const eg2 = ctx.createRadialGradient(ex, ey, 0, ex, ey, 16);
+              eg2.addColorStop(0, 'rgba(100,100,120,.5)'); eg2.addColorStop(1, 'rgba(100,100,120,0)');
+              ctx.fillStyle = eg2; ctx.beginPath(); ctx.arc(ex, ey, 16, 0, Math.PI * 2); ctx.fill();
+            }
+          }
+          // Dark mist layers creeping
+          for (let f = 0; f < 6; f++) {
+            const fx = W * (((f * 0.17 + now / (12000 + f * 2000)) % 1.2) - .1), fy = GY - 8 - f * 10;
+            ctx.globalAlpha = opacity * (0.08 + f * 0.02);
+            ctx.fillStyle = f % 2 === 0 ? '#06060a' : '#0a0a10';
+            ctx.beginPath(); ctx.ellipse(fx, fy, W * 0.2, 16 + f * 4, 0, 0, Math.PI * 2); ctx.fill();
+          }
+          // Void particles — anti-light motes
+          for (let i = 0; i < 12; i++) {
+            const vx = W * ((i * 0.084 + now / 30000) % 1), vy = GY * (0.25 + Math.sin(now / 1500 + i * 0.8) * 0.35);
+            ctx.globalAlpha = opacity * (0.05 + Math.abs(Math.sin(now / 1000 + i * .6)) * .1);
+            ctx.fillStyle = '#b2bec3';
+            ctx.beginPath(); ctx.arc(vx, vy, 0.8, 0, Math.PI * 2); ctx.fill();
+          }
+          // Rare: shadow pulse — a wave of deeper darkness
+          if (Math.random() < 0.005) {
+            ctx.globalAlpha = opacity * 0.15;
+            ctx.fillStyle = '#020204';
+            ctx.fillRect(0, 0, W, GY);
+          }
+          ctx.globalAlpha = opacity;
+          // Anti-light ground glow — darker than surroundings
+          const abg = ctx.createLinearGradient(0, GY - 50, 0, GY);
+          abg.addColorStop(0, 'rgba(0,0,0,0)'); abg.addColorStop(0.5, 'rgba(4,4,6,.15)'); abg.addColorStop(1, 'rgba(8,8,12,.4)');
+          ctx.fillStyle = abg; ctx.fillRect(0, GY - 50, W, 50);
         }
         ctx.restore();
       };
@@ -15446,6 +16371,9 @@
         ice: ['#0a1830', '#040e1c'], storm: ['#0e0c22', '#080616'],
         forest: ['#031405', '#010a02'], plains: ['#0c0c22', '#07071a'],
         dark: ['#1a0e2e', '#0e0820'], cave: ['#150a18', '#080410'], sky: ['#0c0c28', '#060618'],
+        swamp: ['#061a08', '#030e04'], bone: ['#1a1208', '#0e0a04'], hive: ['#062018', '#031410'],
+        ocean: ['#001030', '#000820'], void: ['#100828', '#080418'], dream: ['#180a24', '#0e0616'],
+        psionic: ['#140828', '#0a0418'], abyss: ['#080810', '#040408'],
       };
       const gp1 = gndP[t1] || gndP.dark, gp2 = mixed ? (gndP[t2] || gndP.dark) : gp1;
       if (mixed) {
@@ -15566,6 +16494,20 @@
       voltborn: { wall: '#1a1800', wall2: '#0e0e00', mid: '#2a2600', flag: '#f1c40f', accent: '#f5d06e', torch: false, gate: 'arch', deco: 'lightning' },
       bloodpact: { wall: '#280408', wall2: '#140204', mid: '#380608', flag: '#c0392b', accent: '#e74c3c', torch: false, gate: 'arch', deco: 'blood' },
       menders: { wall: '#183020', wall2: '#0e1e14', mid: '#1e3e26', flag: '#27ae60', accent: '#2ecc71', torch: true, gate: 'arch', deco: 'cross' },
+      weavers: { wall: '#1a0e28', wall2: '#0e0618', mid: '#241438', flag: '#6c5ce7', accent: '#a29bfe', torch: false, gate: 'web', deco: 'webs' },
+      merchants: { wall: '#2c2408', wall2: '#1a1604', mid: '#3a3010', flag: '#f39c12', accent: '#fdcb6e', torch: true, gate: 'gilded', deco: 'coins' },
+      reavers: { wall: '#2a1a10', wall2: '#1a0e08', mid: '#382214', flag: '#8B4513', accent: '#cd853f', torch: false, gate: 'bone', deco: 'skulls' },
+      fortune: { wall: '#2a2400', wall2: '#1a1600', mid: '#383008', flag: '#f9ca24', accent: '#ffeaa7', torch: true, gate: 'dice', deco: 'cards' },
+      plagued: { wall: '#0e2010', wall2: '#081408', mid: '#142a14', flag: '#27ae60', accent: '#7bed9f', torch: false, gate: 'ooze', deco: 'boils' },
+      chrysalis: { wall: '#0a2820', wall2: '#061a14', mid: '#103428', flag: '#00b894', accent: '#55efc4', torch: false, gate: 'hive', deco: 'chitin' },
+      tideborn: { wall: '#0a1a38', wall2: '#061030', mid: '#0e2448', flag: '#0984e3', accent: '#74b9ff', torch: false, gate: 'coral', deco: 'barnacles' },
+      echoes: { wall: '#1a1430', wall2: '#0e0a20', mid: '#241a40', flag: '#a29bfe', accent: '#dfe6e9', torch: false, gate: 'rift', deco: 'glitch' },
+      veilborn: { wall: '#140e28', wall2: '#0a0618', mid: '#1e1438', flag: '#6c5ce7', accent: '#a29bfe', torch: false, gate: 'void', deco: 'phase' },
+      chronomancers: { wall: '#0e1e38', wall2: '#081430', mid: '#142848', flag: '#2e86c1', accent: '#5dade2', torch: false, gate: 'clock', deco: 'gears' },
+      illusionists: { wall: '#28142a', wall2: '#1a0a1a', mid: '#341e38', flag: '#fd79a8', accent: '#fab1cc', torch: false, gate: 'mirror', deco: 'prisms' },
+      pandemonium: { wall: '#2c0c08', wall2: '#1a0604', mid: '#3a1408', flag: '#e17055', accent: '#fab1a0', torch: false, gate: 'jagged', deco: 'chaos' },
+      psionics: { wall: '#1e0e30', wall2: '#120828', mid: '#2a1440', flag: '#9b59b6', accent: '#c39bd3', torch: false, gate: 'eye', deco: 'tendrils' },
+      umbral: { wall: '#0e0e14', wall2: '#06060a', mid: '#14141e', flag: '#636e72', accent: '#b2bec3', torch: false, gate: 'shadow', deco: 'void' },
     };
 
     function drawBase(p) {
@@ -15772,6 +16714,144 @@
         const lgrd = ctx.createRadialGradient(x, gy - 5, 0, x, gy - 5, keepW * 0.35);
         lgrd.addColorStop(0, 'rgba(255,60,0,0.5)'); lgrd.addColorStop(1, 'rgba(255,60,0,0)');
         ctx.fillStyle = lgrd; ctx.fillRect(x - keepW * 0.4, gy - keepW * 0.4, keepW * 0.8, keepW * 0.4);
+      } else if (fid === 'weavers') {
+        // Web-covered archway
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.strokeStyle = 'rgba(162,155,254,.4)'; ctx.lineWidth = 0.8;
+        const wR = keepW * 0.24;
+        for (let s = 0; s < 6; s++) { const a = Math.PI + (s / 5) * Math.PI; ctx.beginPath(); ctx.moveTo(x, gy - wR * 0.5); ctx.lineTo(x + Math.cos(a) * wR, gy + Math.sin(a) * wR * 0.3); ctx.stroke(); }
+        for (let r = 0.3; r <= 0.9; r += 0.3) { ctx.beginPath(); ctx.arc(x, gy - wR * 0.2, wR * r, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); }
+        ctx.restore();
+      } else if (fid === 'merchants') {
+        // Gilded arch with gold trim
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.7;
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.27, Math.PI, 0); ctx.stroke();
+        ctx.fillStyle = '#fdcb6e'; ctx.globalAlpha = 0.5;
+        ctx.font = `${bw * 0.15}px serif`; ctx.textAlign = 'center';
+        ctx.fillText('💰', x, gy - keepW * 0.12); ctx.restore();
+      } else if (fid === 'reavers') {
+        // Bone jaw gate
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.fillStyle = '#d5c4a1'; ctx.globalAlpha = 0.5;
+        const bR = keepW * 0.25;
+        for (let t = 0; t < 5; t++) { const a = Math.PI + (t / 4) * Math.PI; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * bR * 0.8, gy + Math.sin(a) * bR * 0.3); ctx.lineTo(x + Math.cos(a) * bR, gy + Math.sin(a) * bR * 0.3 - 6); ctx.lineTo(x + Math.cos(a) * bR * 1.05, gy + Math.sin(a) * bR * 0.3 + 2); ctx.fill(); }
+        ctx.restore();
+      } else if (fid === 'fortune') {
+        // Dice gate with glowing arch
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.strokeStyle = '#f9ca24'; ctx.lineWidth = 2; ctx.globalAlpha = 0.6;
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.27, Math.PI, 0); ctx.stroke();
+        ctx.fillStyle = '#ffeaa7'; ctx.globalAlpha = 0.5; ctx.font = `${bw * 0.14}px serif`; ctx.textAlign = 'center';
+        ctx.fillText('🎲', x, gy - keepW * 0.12); ctx.restore();
+      } else if (fid === 'plagued') {
+        // Oozing gate with toxic drip
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        const tGrd = ctx.createRadialGradient(x, gy - 5, 0, x, gy - 5, keepW * 0.3);
+        tGrd.addColorStop(0, 'rgba(123,237,159,0.3)'); tGrd.addColorStop(1, 'rgba(39,174,96,0)');
+        ctx.fillStyle = tGrd; ctx.fillRect(x - keepW * 0.35, gy - keepW * 0.35, keepW * 0.7, keepW * 0.35);
+        ctx.save(); ctx.fillStyle = '#7bed9f'; ctx.globalAlpha = 0.5;
+        for (let d = 0; d < 4; d++) { const dx = x - keepW * 0.15 + d * keepW * 0.1, dl = 4 + Math.sin(now / 300 + d) * 3; ctx.beginPath(); ctx.moveTo(dx - 1.5, gy - keepW * 0.26 + 5); ctx.lineTo(dx, gy - keepW * 0.26 + 5 + dl); ctx.lineTo(dx + 1.5, gy - keepW * 0.26 + 5); ctx.fill(); }
+        ctx.restore();
+      } else if (fid === 'chrysalis') {
+        // Organic hive entrance
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.ellipse(x, gy, keepW * 0.24, keepW * 0.28, 0, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.strokeStyle = '#55efc4'; ctx.lineWidth = 2; ctx.globalAlpha = 0.35;
+        ctx.beginPath(); ctx.ellipse(x, gy, keepW * 0.26, keepW * 0.30, 0, Math.PI, 0); ctx.stroke();
+        const hPulse = 0.2 + Math.abs(Math.sin(now / 800)) * 0.2;
+        const hGrd = ctx.createRadialGradient(x, gy - 5, 0, x, gy - 5, keepW * 0.25);
+        hGrd.addColorStop(0, `rgba(0,184,148,${hPulse})`); hGrd.addColorStop(1, 'rgba(0,184,148,0)');
+        ctx.globalAlpha = 1; ctx.fillStyle = hGrd; ctx.fillRect(x - keepW * 0.3, gy - keepW * 0.35, keepW * 0.6, keepW * 0.35);
+        ctx.restore();
+      } else if (fid === 'tideborn') {
+        // Coral-encrusted arch
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.globalAlpha = 0.35;
+        const cR = keepW * 0.26;
+        for (let c = 0; c < 6; c++) { const ca = Math.PI + (c / 5) * Math.PI; const cx2 = x + Math.cos(ca) * cR * 1.05, cy2 = gy + Math.sin(ca) * cR * 0.5; ctx.fillStyle = c % 3 === 0 ? '#ff6b81' : c % 3 === 1 ? '#ffa502' : '#74b9ff'; ctx.beginPath(); ctx.arc(cx2, cy2, 3 + c % 2, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
+      } else if (fid === 'echoes') {
+        // Rift tear gate — glitching
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 1.5;
+        ctx.globalAlpha = 0.3 + Math.abs(Math.sin(now / 300)) * 0.3;
+        ctx.shadowBlur = 6; ctx.shadowColor = '#a29bfe';
+        ctx.beginPath(); ctx.moveTo(x - 3, gy - keepW * 0.25); ctx.lineTo(x + 2, gy - keepW * 0.15); ctx.lineTo(x - 4, gy - keepW * 0.05); ctx.stroke();
+        ctx.shadowBlur = 0; ctx.restore();
+      } else if (fid === 'veilborn') {
+        // Void portal gate
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save();
+        const vPulse = 0.15 + Math.abs(Math.sin(now / 600)) * 0.2;
+        const vGrd = ctx.createRadialGradient(x, gy - keepW * 0.1, 0, x, gy - keepW * 0.1, keepW * 0.25);
+        vGrd.addColorStop(0, `rgba(108,92,231,${vPulse})`); vGrd.addColorStop(0.6, 'rgba(108,92,231,0.05)'); vGrd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = vGrd; ctx.fillRect(x - keepW * 0.3, gy - keepW * 0.35, keepW * 0.6, keepW * 0.35);
+        ctx.restore();
+      } else if (fid === 'chronomancers') {
+        // Clock face gate
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save(); ctx.strokeStyle = '#5dade2'; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.45;
+        const clkR = keepW * 0.18;
+        ctx.beginPath(); ctx.arc(x, gy - clkR * 0.7, clkR, 0, Math.PI * 2); ctx.stroke();
+        // Clock hands
+        const hourA = (now / 5000) % (Math.PI * 2), minA = (now / 800) % (Math.PI * 2);
+        ctx.beginPath(); ctx.moveTo(x, gy - clkR * 0.7); ctx.lineTo(x + Math.cos(hourA - Math.PI / 2) * clkR * 0.5, gy - clkR * 0.7 + Math.sin(hourA - Math.PI / 2) * clkR * 0.5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, gy - clkR * 0.7); ctx.lineTo(x + Math.cos(minA - Math.PI / 2) * clkR * 0.75, gy - clkR * 0.7 + Math.sin(minA - Math.PI / 2) * clkR * 0.75); ctx.stroke();
+        ctx.restore();
+      } else if (fid === 'illusionists') {
+        // Mirror gate with reflection shimmer
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save();
+        const mShimmer = 0.1 + Math.abs(Math.sin(now / 400)) * 0.15;
+        ctx.fillStyle = `rgba(255,255,255,${mShimmer})`;
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.24, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = '#fd79a8'; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.5;
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.stroke();
+        ctx.restore();
+      } else if (fid === 'pandemonium') {
+        // Jagged chaotic entrance
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.moveTo(x - keepW * 0.28, gy);
+        ctx.lineTo(x - keepW * 0.22, gy - wallH * 0.45); ctx.lineTo(x - keepW * 0.1, gy - wallH * 0.55);
+        ctx.lineTo(x, gy - wallH * 0.62); ctx.lineTo(x + keepW * 0.1, gy - wallH * 0.52);
+        ctx.lineTo(x + keepW * 0.22, gy - wallH * 0.48); ctx.lineTo(x + keepW * 0.28, gy);
+        ctx.closePath(); ctx.fill();
+        ctx.save(); const cGrd = ctx.createRadialGradient(x, gy - 5, 0, x, gy - 5, keepW * 0.3);
+        cGrd.addColorStop(0, 'rgba(225,112,85,0.3)'); cGrd.addColorStop(1, 'rgba(225,112,85,0)');
+        ctx.fillStyle = cGrd; ctx.fillRect(x - keepW * 0.35, gy - keepW * 0.4, keepW * 0.7, keepW * 0.4); ctx.restore();
+      } else if (fid === 'psionics') {
+        // Psychic eye gate
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save();
+        const eyeY = gy - keepW * 0.14, eyeR = keepW * 0.1;
+        const ePulse = 0.3 + Math.abs(Math.sin(now / 500)) * 0.3;
+        ctx.fillStyle = `rgba(155,89,182,${ePulse})`; ctx.beginPath();
+        ctx.moveTo(x - eyeR * 1.5, eyeY); ctx.quadraticCurveTo(x, eyeY - eyeR, x + eyeR * 1.5, eyeY);
+        ctx.quadraticCurveTo(x, eyeY + eyeR, x - eyeR * 1.5, eyeY); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, eyeY, eyeR * 0.4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#2d003a'; ctx.beginPath(); ctx.arc(x, eyeY, eyeR * 0.2, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else if (fid === 'umbral') {
+        // Shadow void gate — darkness seeping out
+        ctx.fillStyle = '#000';
+        ctx.beginPath(); ctx.arc(x, gy, keepW * 0.26, Math.PI, 0); ctx.closePath(); ctx.fill();
+        ctx.save();
+        const sGrd = ctx.createRadialGradient(x, gy - keepW * 0.1, keepW * 0.1, x, gy - keepW * 0.1, keepW * 0.45);
+        sGrd.addColorStop(0, 'rgba(0,0,0,0.4)'); sGrd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = sGrd; ctx.fillRect(x - keepW * 0.5, gy - keepW * 0.5, keepW, keepW * 0.5);
+        ctx.restore();
       } else {
         // Default arch
         ctx.fillStyle = '#000';
@@ -15858,6 +16938,196 @@
           ctx.fillStyle = wGrd; ctx.beginPath(); ctx.arc(wx2, wy, 7, 0, Math.PI * 2); ctx.fill();
           ctx.restore();
         }
+      } else if (fid === 'weavers') {
+        // Web strands connecting towers
+        ctx.save(); ctx.strokeStyle = 'rgba(162,155,254,.25)'; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(t1x, turretY + th * 0.3); ctx.quadraticCurveTo(x, turretY + th * 0.5 + Math.sin(now / 2000) * 5, t2x, turretY + th * 0.3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(t1x, turretY + th * 0.5); ctx.quadraticCurveTo(x, turretY + th * 0.7 + Math.sin(now / 1800) * 4, t2x, turretY + th * 0.5); ctx.stroke();
+        // Spider silhouette on keep
+        ctx.globalAlpha = 0.3; ctx.fillStyle = '#6c5ce7'; ctx.font = `${bw * 0.12}px serif`; ctx.textAlign = 'center';
+        ctx.fillText('🕷️', x, keepY + wallH * 0.5);
+        ctx.restore();
+      } else if (fid === 'merchants') {
+        // Gold coin stacks on walls
+        ctx.save(); ctx.fillStyle = '#f39c12'; ctx.globalAlpha = 0.5;
+        [keepX + keepW * 0.2, keepX + keepW * 0.5, keepX + keepW * 0.8].forEach((cx2) => {
+          for (let s = 0; s < 3; s++) { ctx.beginPath(); ctx.ellipse(cx2, keepY - s * 3, 4, 2, 0, 0, Math.PI * 2); ctx.fill(); }
+        });
+        // Gold shimmer on walls
+        const gShimmer = Math.abs(Math.sin(now / 1500));
+        ctx.globalAlpha = gShimmer * 0.12; ctx.fillStyle = '#ffeaa7';
+        ctx.fillRect(keepX, keepY, keepW, wallH);
+        ctx.restore();
+      } else if (fid === 'reavers') {
+        // Bone decorations — skulls on spikes along walls
+        ctx.save(); ctx.fillStyle = '#d5c4a1'; ctx.globalAlpha = 0.55;
+        [t1x, t2x, keepX + keepW * 0.3, keepX + keepW * 0.7].forEach((bx2, bi) => {
+          const by = bi < 2 ? turretY - 3 : keepY - 3;
+          ctx.beginPath(); ctx.arc(bx2, by, 3.5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#1a0e08'; ctx.beginPath(); ctx.arc(bx2 - 1.2, by - 1, 0.8, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(bx2 + 1.2, by - 1, 0.8, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#d5c4a1';
+        });
+        ctx.restore();
+      } else if (fid === 'fortune') {
+        // Glowing lucky symbols cycling
+        ctx.save(); ctx.globalAlpha = 0.4 + Math.abs(Math.sin(now / 800)) * 0.2;
+        ctx.font = `${bw * 0.1}px serif`; ctx.textAlign = 'center';
+        const symbols = ['🎰', '💎', '🍀', '⭐'];
+        const si = Math.floor(now / 1500) % symbols.length;
+        ctx.fillText(symbols[si], x, keepY + wallH * 0.45);
+        ctx.restore();
+      } else if (fid === 'plagued') {
+        // Toxic bubbles and dripping ooze on walls
+        ctx.save(); ctx.fillStyle = '#7bed9f'; ctx.globalAlpha = 0.4;
+        for (let d = 0; d < 6; d++) {
+          const dx = keepX + keepW * (0.1 + d * 0.16);
+          const dl = wallH * (0.1 + Math.abs(Math.sin(now / 800 + d)) * 0.15);
+          ctx.beginPath(); ctx.moveTo(dx - 1.5, keepY); ctx.lineTo(dx, keepY + dl); ctx.lineTo(dx + 1.5, keepY); ctx.fill();
+          ctx.beginPath(); ctx.arc(dx, keepY + dl, 2, 0, Math.PI * 2); ctx.fill();
+        }
+        // Miasma around base
+        const mGrd = ctx.createRadialGradient(x, gy, 0, x, gy, bw * 1.2);
+        mGrd.addColorStop(0, 'rgba(123,237,159,0.08)'); mGrd.addColorStop(1, 'rgba(39,174,96,0)');
+        ctx.globalAlpha = 0.5 + Math.abs(Math.sin(now / 1200)) * 0.3; ctx.fillStyle = mGrd;
+        ctx.fillRect(x - bw * 1.2, gy - bw * 0.5, bw * 2.4, bw * 0.5);
+        ctx.restore();
+      } else if (fid === 'chrysalis') {
+        // Organic chitin plates and pulsing veins
+        ctx.save(); ctx.strokeStyle = '#00b894'; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.3;
+        // Vein lines on keep
+        [keepX + keepW * 0.25, keepX + keepW * 0.75].forEach(vx => {
+          ctx.beginPath(); ctx.moveTo(vx, keepY);
+          ctx.bezierCurveTo(vx + 4, keepY + wallH * 0.3, vx - 6, keepY + wallH * 0.6, vx + 2, gy); ctx.stroke();
+        });
+        // Egg sacs at base
+        ctx.globalAlpha = 0.25 + Math.abs(Math.sin(now / 900)) * 0.2;
+        ctx.fillStyle = '#55efc4';
+        [x - keepW * 0.35, x + keepW * 0.35].forEach(ex => {
+          ctx.beginPath(); ctx.ellipse(ex, gy - 5, 6, 4, 0, 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.restore();
+      } else if (fid === 'tideborn') {
+        // Barnacle clusters and water drip effect
+        ctx.save(); ctx.fillStyle = '#74b9ff'; ctx.globalAlpha = 0.3;
+        for (let b = 0; b < 8; b++) {
+          const bx2 = keepX + keepW * (0.1 + b * 0.11);
+          const by = keepY + wallH * (0.3 + Math.sin(b * 1.4) * 0.2);
+          ctx.beginPath(); ctx.arc(bx2, by, 2 + b % 2, 0, Math.PI * 2); ctx.fill();
+        }
+        // Water dripping
+        for (let d = 0; d < 3; d++) {
+          const dx = keepX + keepW * (0.25 + d * 0.25);
+          const dy = keepY + ((now / 400 + d * 100) % wallH);
+          ctx.globalAlpha = 0.35; ctx.fillStyle = '#0984e3';
+          ctx.beginPath(); ctx.arc(dx, dy, 1.5, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      } else if (fid === 'echoes') {
+        // Glitch lines + afterimage towers
+        ctx.save();
+        const glitchPhase = Math.abs(Math.sin(now / 200));
+        if (glitchPhase > 0.7) {
+          ctx.globalAlpha = 0.12; ctx.fillStyle = '#a29bfe';
+          ctx.fillRect(keepX - 3, keepY, keepW, wallH);
+          ctx.fillRect(keepX + 3, keepY + 2, keepW, wallH);
+        }
+        // Echo ripple from keep
+        const ePhase = ((now / 2500) % 1);
+        ctx.globalAlpha = (1 - ePhase) * 0.2; ctx.strokeStyle = '#dfe6e9'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(x, keepY + wallH * 0.5, 10 + ePhase * 30, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      } else if (fid === 'veilborn') {
+        // Phase shift shimmer on walls
+        ctx.save();
+        const phaseOff = Math.sin(now / 600) * 3;
+        ctx.globalAlpha = 0.08 + Math.abs(Math.sin(now / 400)) * 0.08;
+        ctx.fillStyle = '#6c5ce7';
+        ctx.fillRect(keepX + phaseOff, keepY, keepW, wallH);
+        // Void particles drifting up
+        for (let v = 0; v < 4; v++) {
+          const vx = x + Math.sin(now / 1200 + v * 1.5) * bw * 0.4;
+          const vy = keepY + wallH - ((now / 800 + v * 200) % (wallH * 1.5));
+          ctx.globalAlpha = 0.3; ctx.fillStyle = '#a29bfe';
+          ctx.beginPath(); ctx.arc(vx, vy, 2, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      } else if (fid === 'chronomancers') {
+        // Gear motifs on walls + ticking hands
+        ctx.save(); ctx.strokeStyle = '#5dade2'; ctx.lineWidth = 1; ctx.globalAlpha = 0.3;
+        [keepX + keepW * 0.25, keepX + keepW * 0.75].forEach((gx, gi) => {
+          const gy2 = keepY + wallH * 0.4, gr = 8;
+          ctx.beginPath(); ctx.arc(gx, gy2, gr, 0, Math.PI * 2); ctx.stroke();
+          // Gear teeth
+          for (let t = 0; t < 8; t++) {
+            const a = (t / 8) * Math.PI * 2 + now / 3000;
+            ctx.beginPath(); ctx.moveTo(gx + Math.cos(a) * gr, gy2 + Math.sin(a) * gr);
+            ctx.lineTo(gx + Math.cos(a) * (gr + 3), gy2 + Math.sin(a) * (gr + 3)); ctx.stroke();
+          }
+        });
+        ctx.restore();
+      } else if (fid === 'illusionists') {
+        // Prismatic shimmer on walls
+        ctx.save();
+        const prismHue = (now / 20) % 360;
+        ctx.globalAlpha = 0.06 + Math.abs(Math.sin(now / 500)) * 0.06;
+        ctx.fillStyle = `hsl(${prismHue},70%,70%)`;
+        ctx.fillRect(keepX, keepY, keepW, wallH);
+        // Mirror shards
+        ctx.globalAlpha = 0.2; ctx.fillStyle = 'rgba(255,255,255,.3)';
+        for (let m = 0; m < 4; m++) {
+          const mx = keepX + keepW * (0.15 + m * 0.22), my = keepY + wallH * (0.2 + m * 0.18);
+          ctx.save(); ctx.translate(mx, my); ctx.rotate(m * 0.5);
+          ctx.fillRect(-3, -4, 6, 8); ctx.restore();
+        }
+        ctx.restore();
+      } else if (fid === 'pandemonium') {
+        // Crack lines and chaotic fire licks
+        ctx.save(); ctx.strokeStyle = '#e17055'; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.45;
+        for (let c = 0; c < 4; c++) {
+          const cx2 = keepX + keepW * (0.15 + c * 0.22);
+          ctx.beginPath(); ctx.moveTo(cx2, keepY);
+          for (let s = 1; s <= 3; s++) ctx.lineTo(cx2 + (Math.random() - 0.5) * 8, keepY + wallH * (s / 3));
+          ctx.stroke();
+        }
+        // Chaotic flames on top
+        for (let f = 0; f < 3; f++) {
+          const fx = keepX + keepW * (0.2 + f * 0.3), fl = Math.sin(now / 100 + f * 2) * 0.4 + 0.6;
+          ctx.globalAlpha = fl * 0.4; ctx.fillStyle = f === 1 ? '#fab1a0' : '#e17055';
+          ctx.beginPath(); ctx.moveTo(fx - 4, keepY); ctx.lineTo(fx, keepY - 8 - Math.sin(now / 80 + f) * 4); ctx.lineTo(fx + 4, keepY); ctx.fill();
+        }
+        ctx.restore();
+      } else if (fid === 'psionics') {
+        // Psionic tendrils + eye glow
+        ctx.save(); ctx.strokeStyle = '#c39bd3'; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.3;
+        for (let t = 0; t < 3; t++) {
+          const tx2 = keepX + keepW * (0.2 + t * 0.3);
+          ctx.beginPath(); ctx.moveTo(tx2, gy);
+          ctx.bezierCurveTo(tx2 + Math.sin(now / 1500 + t) * 12, gy - wallH * 0.4, tx2 - Math.sin(now / 1200 + t) * 8, gy - wallH * 0.7, tx2 + Math.sin(now / 900 + t) * 5, keepY + 5);
+          ctx.stroke();
+        }
+        // Pulsing mind glow from keep center
+        const mPulse = 0.1 + Math.abs(Math.sin(now / 700)) * 0.15;
+        const mGrd = ctx.createRadialGradient(x, keepY + wallH * 0.4, 0, x, keepY + wallH * 0.4, keepW * 0.4);
+        mGrd.addColorStop(0, `rgba(195,155,211,${mPulse})`); mGrd.addColorStop(1, 'rgba(155,89,182,0)');
+        ctx.globalAlpha = 1; ctx.fillStyle = mGrd;
+        ctx.fillRect(x - keepW * 0.5, keepY, keepW, wallH);
+        ctx.restore();
+      } else if (fid === 'umbral') {
+        // Darkness seeping from walls — shadow tendrils
+        ctx.save(); ctx.globalAlpha = 0.25;
+        ctx.fillStyle = '#0a0a0e';
+        for (let s = 0; s < 5; s++) {
+          const sx = keepX + keepW * (0.1 + s * 0.2);
+          const sLen = wallH * (0.3 + Math.abs(Math.sin(now / 2000 + s)) * 0.3);
+          ctx.beginPath(); ctx.moveTo(sx - 3, gy); ctx.quadraticCurveTo(sx + Math.sin(now / 1500 + s) * 6, gy - sLen * 0.6, sx, gy - sLen);
+          ctx.quadraticCurveTo(sx - Math.sin(now / 1200 + s) * 4, gy - sLen * 0.4, sx + 3, gy); ctx.fill();
+        }
+        // Abyss glow beneath
+        const aGrd = ctx.createRadialGradient(x, gy, 0, x, gy, bw * 1.3);
+        aGrd.addColorStop(0, 'rgba(10,10,14,0.3)'); aGrd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = aGrd; ctx.fillRect(x - bw * 1.3, gy - bw * 0.3, bw * 2.6, bw * 0.3);
+        ctx.restore();
       }
 
       // ── Torches (faction-aware) ───────────────────────────────────────────
@@ -15921,6 +17191,143 @@
             ctx.fillStyle = eGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 12, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
           }
+        });
+      } else if (fid === 'weavers') {
+        // Purple web glow points
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.3 + Math.sin(now / 600 + ti * Math.PI) * 0.25;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const wGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 8);
+          wGrd.addColorStop(0, 'rgba(162,155,254,0.8)'); wGrd.addColorStop(1, 'rgba(108,92,231,0)');
+          ctx.fillStyle = wGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 8, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'reavers') {
+        // Bone-fire — dim yellow-green flames
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const fl = 0.5 + Math.sin(now / 100 + ti * 2) * 0.3;
+          ctx.save(); ctx.globalAlpha = fl * 0.5;
+          const bGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 7);
+          bGrd.addColorStop(0, 'rgba(205,133,63,0.9)'); bGrd.addColorStop(1, 'rgba(139,69,19,0)');
+          ctx.fillStyle = bGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 7, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'plagued') {
+        // Toxic glow orbs
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.4 + Math.sin(now / 400 + ti * Math.PI) * 0.3;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const tGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 9);
+          tGrd.addColorStop(0, 'rgba(123,237,159,0.9)'); tGrd.addColorStop(1, 'rgba(39,174,96,0)');
+          ctx.fillStyle = tGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 9, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'chrysalis') {
+        // Bioluminescent glow orbs
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.3 + Math.sin(now / 700 + ti) * 0.25;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const cGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 8);
+          cGrd.addColorStop(0, 'rgba(85,239,196,0.9)'); cGrd.addColorStop(1, 'rgba(0,184,148,0)');
+          ctx.fillStyle = cGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 8, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'tideborn') {
+        // Water droplet glow
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.35 + Math.sin(now / 500 + ti * 1.5) * 0.25;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const oGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 8);
+          oGrd.addColorStop(0, 'rgba(116,185,255,0.9)'); oGrd.addColorStop(1, 'rgba(9,132,227,0)');
+          ctx.fillStyle = oGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 8, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'echoes') {
+        // Flickering afterimage glow
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const flicker = Math.abs(Math.sin(now / 150 + ti * 3));
+          if (flicker > 0.5) {
+            ctx.save(); ctx.globalAlpha = flicker * 0.5;
+            const eGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 9);
+            eGrd.addColorStop(0, 'rgba(162,155,254,0.9)'); eGrd.addColorStop(1, 'rgba(162,155,254,0)');
+            ctx.fillStyle = eGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 9, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+          }
+        });
+      } else if (fid === 'veilborn') {
+        // Phase-shifting void orbs
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox + Math.sin(now / 400 + ti) * 3, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.2 + Math.abs(Math.sin(now / 500 + ti * Math.PI)) * 0.3;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const vGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 8);
+          vGrd.addColorStop(0, 'rgba(108,92,231,0.9)'); vGrd.addColorStop(1, 'rgba(108,92,231,0)');
+          ctx.fillStyle = vGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 8, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'chronomancers') {
+        // Blue chrono orbs with spinning ring
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.4 + Math.sin(now / 400 + ti) * 0.2;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const cGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 9);
+          cGrd.addColorStop(0, 'rgba(93,173,226,0.9)'); cGrd.addColorStop(1, 'rgba(46,134,193,0)');
+          ctx.fillStyle = cGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 9, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'illusionists') {
+        // Prismatic shifting orbs
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const hue = (now / 10 + ti * 180) % 360;
+          const pulse = 0.35 + Math.sin(now / 300 + ti) * 0.25;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const pGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 8);
+          pGrd.addColorStop(0, `hsla(${hue},80%,70%,0.9)`); pGrd.addColorStop(1, `hsla(${hue},80%,70%,0)`);
+          ctx.fillStyle = pGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 8, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'pandemonium') {
+        // Chaotic flame bursts — erratic
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox + (Math.random() - 0.5) * 3, ty2 = keepY + wallH * 0.12;
+          for (let f = 0; f < 2; f++) {
+            const fl = 0.4 + Math.sin(now / 70 + ti * 3 + f) * 0.4;
+            ctx.save(); ctx.globalAlpha = fl * 0.6;
+            const fGrd = ctx.createRadialGradient(tx2, ty2 - f * 3, 0, tx2, ty2 - f * 3, 7 + f * 2);
+            fGrd.addColorStop(0, 'rgba(225,112,85,0.9)'); fGrd.addColorStop(1, 'rgba(250,177,160,0)');
+            ctx.fillStyle = fGrd; ctx.beginPath(); ctx.arc(tx2, ty2 - f * 3, 7 + f * 2, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+          }
+        });
+      } else if (fid === 'psionics') {
+        // Pulsing mind orbs
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.3 + Math.sin(now / 500 + ti * Math.PI) * 0.3;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const pGrd = ctx.createRadialGradient(tx2, ty2, 0, tx2, ty2, 10);
+          pGrd.addColorStop(0, 'rgba(195,155,211,0.9)'); pGrd.addColorStop(1, 'rgba(155,89,182,0)');
+          ctx.fillStyle = pGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 10, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        });
+      } else if (fid === 'umbral') {
+        // Anti-light — darkness orbs that pulse inward
+        [-0.32, 0.32].forEach((ox, ti) => {
+          const tx2 = x + keepW * ox, ty2 = keepY + wallH * 0.12;
+          const pulse = 0.25 + Math.sin(now / 600 + ti) * 0.15;
+          ctx.save(); ctx.globalAlpha = pulse;
+          const dGrd = ctx.createRadialGradient(tx2, ty2, 8, tx2, ty2, 0);
+          dGrd.addColorStop(0, 'rgba(0,0,0,0)'); dGrd.addColorStop(1, 'rgba(10,10,14,0.9)');
+          ctx.fillStyle = dGrd; ctx.beginPath(); ctx.arc(tx2, ty2, 10, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
         });
       }
 
@@ -16386,26 +17793,105 @@
         ctx.shadowBlur = 0;
         ctx.restore();
       }
-      // ── Psionics: corruption overlay (purple vignette) ──
+      // ── Psionics: corruption overlay — glowing purple eyes + tendrils ──
       if (u._corrupted && u._corrupted > 0.1) {
-        const cp2 = u._corrupted * 0.7;
+        const cp2 = u._corrupted;
+        const _now = Date.now();
         ctx.save();
-        ctx.globalAlpha = cp2;
+        // Corruption ring
+        ctx.globalAlpha = cp2 * 0.6;
         ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 2;
-        ctx.shadowBlur = 10; ctx.shadowColor = '#9b59b6';
+        ctx.shadowBlur = 12; ctx.shadowColor = '#9b59b6';
         ctx.beginPath(); ctx.arc(x, y, r + 3, 0, Math.PI * 2); ctx.stroke();
+        // Corruption tendrils crawling over body
+        if (cp2 > 0.3) {
+          ctx.strokeStyle = '#c39bd3'; ctx.lineWidth = 1; ctx.globalAlpha = cp2 * 0.4;
+          for (let t = 0; t < 3; t++) {
+            const ta = (_now / 800 + t * 2.1) % (Math.PI * 2);
+            ctx.beginPath();
+            ctx.moveTo(x + Math.cos(ta) * r * 0.3, y + Math.sin(ta) * r * 0.3);
+            ctx.quadraticCurveTo(x + Math.cos(ta + 0.5) * r * 1.2, y + Math.sin(ta + 0.5) * r * 1.2, x + Math.cos(ta + 1) * (r + 4), y + Math.sin(ta + 1) * (r + 4));
+            ctx.stroke();
+          }
+        }
+        // Glowing purple eyes when heavily corrupted
+        if (cp2 > 0.5) {
+          ctx.globalAlpha = cp2 * 0.85;
+          ctx.fillStyle = '#d7bde2'; ctx.shadowBlur = 8; ctx.shadowColor = '#9b59b6';
+          const eyeOff = u.def.aerial ? r * 0.15 : (r >= 14 ? r * 0.2 : r * 0.2);
+          const eyeY2 = u.def.aerial ? y - r * 0.1 : (r >= 14 ? y - r * 0.9 : y - r * 0.3);
+          const eyeR = r * (cp2 > 0.8 ? 0.22 : 0.16);
+          ctx.beginPath(); ctx.arc(x - eyeOff, eyeY2, eyeR, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x + eyeOff, eyeY2, eyeR, 0, Math.PI * 2); ctx.fill();
+        }
         ctx.shadowBlur = 0;
         ctx.restore();
       }
-      // ── Umbral: in-darkness shadow ──
-      if (u._inDark) {
+      // ── Plagued: mutation marks ──
+      if (u._mutations && u._mutations > 0) {
+        const mutCount = u._mutations;
+        const _now2 = Date.now();
         ctx.save();
-        ctx.globalAlpha = 0.25 + Math.sin(Date.now() / 500) * 0.1;
-        ctx.fillStyle = '#2d3436';
-        ctx.shadowBlur = 14; ctx.shadowColor = '#000';
-        ctx.beginPath(); ctx.ellipse(x, y, r * 1.2, r * 1.3, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 0.5;
+        // Green boil marks on body
+        for (let m = 0; m < Math.min(mutCount, 4); m++) {
+          const ma = (m / 4) * Math.PI * 2 + 0.3;
+          const mx2 = x + Math.cos(ma) * r * 0.5, my2 = y + Math.sin(ma) * r * 0.5;
+          const mPulse = 0.4 + Math.abs(Math.sin(_now2 / 500 + m * 1.2)) * 0.4;
+          ctx.globalAlpha = mPulse;
+          ctx.fillStyle = '#7bed9f'; ctx.shadowBlur = 4; ctx.shadowColor = '#2ecc71';
+          ctx.beginPath(); ctx.arc(mx2, my2, 2 + mutCount * 0.3, 0, Math.PI * 2); ctx.fill();
+        }
+        // Toxic aura when highly mutated
+        if (mutCount >= 3) {
+          ctx.globalAlpha = 0.15 + Math.abs(Math.sin(_now2 / 700)) * 0.1;
+          const tGrd = ctx.createRadialGradient(x, y, r * 0.5, x, y, r + 10);
+          tGrd.addColorStop(0, 'rgba(123,237,159,0.3)'); tGrd.addColorStop(1, 'rgba(123,237,159,0)');
+          ctx.fillStyle = tGrd; ctx.beginPath(); ctx.arc(x, y, r + 10, 0, Math.PI * 2); ctx.fill();
+        }
         ctx.shadowBlur = 0;
         ctx.restore();
+      }
+      // ── Umbral: in-darkness shadow + glowing eyes ──
+      if (u._inDark) {
+        const _now3 = Date.now();
+        ctx.save();
+        ctx.globalAlpha = 0.3 + Math.sin(_now3 / 500) * 0.1;
+        ctx.fillStyle = '#0a0a0e';
+        ctx.shadowBlur = 18; ctx.shadowColor = '#000';
+        ctx.beginPath(); ctx.ellipse(x, y, r * 1.3, r * 1.4, 0, 0, Math.PI * 2); ctx.fill();
+        // Piercing eyes in the darkness
+        ctx.globalAlpha = 0.7 + Math.sin(_now3 / 300) * 0.2;
+        ctx.fillStyle = '#b2bec3'; ctx.shadowBlur = 6; ctx.shadowColor = '#b2bec3';
+        const deyeOff = r * 0.2, deyeY = y - r * (r >= 14 ? 0.9 : 0.3);
+        ctx.beginPath(); ctx.ellipse(x - deyeOff, deyeY, 2.5, 1.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(x + deyeOff, deyeY, 2.5, 1.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+      // ── Tideborn: water shimmer aura ──
+      if (u.def.tideborn && !u.def.isWorker) {
+        const _now4 = Date.now();
+        ctx.save();
+        ctx.globalAlpha = 0.12 + Math.abs(Math.sin(_now4 / 600 + u.id)) * 0.08;
+        ctx.strokeStyle = '#74b9ff'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(x, y, r + 3 + Math.sin(_now4 / 400 + u.id) * 2, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+      // ── Chronomancers: time distortion ring ──
+      if (u.def.chronoElite || u.def.chronoBonus) {
+        const _now5 = Date.now();
+        const rotAngle = (_now5 / 1500) % (Math.PI * 2);
+        ctx.save();
+        ctx.globalAlpha = 0.2;
+        ctx.strokeStyle = '#5dade2'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(x, y, r + 5, rotAngle, rotAngle + Math.PI * 1.2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, r + 5, rotAngle + Math.PI, rotAngle + Math.PI * 2.2); ctx.stroke();
+        ctx.restore();
+      }
+      // ── Pandemonium: chaotic fire trails ──
+      if (u.def.pandemonium && !u.def.isWorker && Math.random() < 0.3) {
+        G.particles.push({ x: x + (Math.random() - 0.5) * r, y: y + r * 0.5, vx: (Math.random() - 0.5) * 20, vy: -15 - Math.random() * 25, life: 0.2 + Math.random() * 0.2, maxLife: 0.4, r: 1.5 + Math.random() * 2, col: Math.random() < 0.5 ? '#e17055' : '#fab1a0' });
       }
       // Hit flash
       if (u.hitFlash > 0) { ctx.globalAlpha = 0.5 + u.hitFlash * 0.5; }
@@ -16730,6 +18216,18 @@
       updateAI(G.dt);
       updateSpies(G.dt);
       if (_tutActive) _checkTutConditions();
+      // ── Per-frame unit cache ─────────────────────────────────────────────────
+      // Built once here so findEnemy / doAttack / updateUnits don't each re-scan
+      // the full unit list for the same player/type sub-sets every call.
+      { const _on1 = [], _on2 = [], _m1 = [], _m2 = [], _r1 = [], _r2 = [];
+        for (let _ci = 0; _ci < G.units.length; _ci++) {
+          const _cu = G.units[_ci];
+          if (_cu.offscreen) continue;
+          if (_cu.player === 1) { _on1.push(_cu); if (_cu.def.type === 'mel') _m1.push(_cu); else if (_cu.def.type === 'rng') _r1.push(_cu); }
+          else { _on2.push(_cu); if (_cu.def.type === 'mel') _m2.push(_cu); else if (_cu.def.type === 'rng') _r2.push(_cu); }
+        }
+        G._fc = { p1: _on1, p2: _on2, mel: [_m1, _m2], rng: [_r1, _r2] };
+      }
       updateUnits(G.dt);
       updateProjectiles(G.dt);
       _tickLastStandGrace(G.dt);
@@ -17986,8 +19484,8 @@
 
       // Show P1 AI settings panel only in aivsai mode
       document.getElementById('ai-p1-panel').style.display = aivsai ? '' : 'none';
-      // In aivsai, fchosen-p1 is redundant — ai1-faction-display in the panel covers it
-      document.getElementById('fchosen-p1').style.display = aivsai ? 'none' : '';
+      // Keep fchosen-p1 visible in aivsai so the selected faction name is always shown (matches P2 side)
+      document.getElementById('fchosen-p1').style.display = '';
       // Update P2 faction panel label
       const p2lbl = document.getElementById('faction-hint-p2');
       if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : solo ? '🤖 AI FACTION' : 'PLAYER 2';
@@ -18022,6 +19520,11 @@
           if (AI1_FACTION_IDX === null) AI1_FACTION_IDX = Math.floor(Math.random() * FACTIONS.length);
           AI1_PERSONALITY = AI1_PERSONALITY; // keep existing or null for random
           fSelected[0] = AI1_FACTION_IDX;
+          // Highlight the AI1 faction card on the P1 grid
+          document.querySelectorAll('#fcards-p1 .fcard').forEach((c, i) => c.classList.toggle('sel1', i === AI1_FACTION_IDX));
+          // Update fchosen-p1 text (hidden in aivsai, but keeps data consistent for start button)
+          const _ai1f = FACTIONS[AI1_FACTION_IDX];
+          if (_ai1f) document.getElementById('fchosen-p1').textContent = _ai1f.icon + ' ' + _ai1f.name + ' — ' + _ai1f.tagline;
           // Clear keyboard cursor highlights — not used in aivsai
           document.querySelectorAll('.fkey-cursor').forEach(c => c.classList.remove('fkey-cursor'));
           _updateAi1Display();
@@ -19704,6 +21207,202 @@
           req: [8, 10], effects: [{ type: 'flag', flag: 'dualHeal', value: true }, { type: 'flag', flag: 'lastStandChance', value: 0.15 }]
         },
       ],
+      weavers: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Sticky Thread', icon: '🕸️', cost: 50, desc: 'Spindler gains +15 HP and +10% attack rate. Tougher, more persistent frontline silk-weaver.', req: [], effects: [{ type: 'unit_hp_flat', target: 'wv_spindler', value: 15 }, { type: 'unit_atkrate_pct', target: 'wv_spindler', value: 0.10 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Tar Stockpile', icon: '🪣', cost: 50, desc: 'Start every match with +10 bonus souls. More starting resources for web materials.', req: [], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Silk Armor', icon: '🛡️', cost: 100, desc: 'Silk Wyrm gains +35 HP. The apex silk-weaver becomes a true frontline anchor.', req: [0], effects: [{ type: 'unit_hp_flat', target: 'wv_wyrm', value: 35 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: "Trapper's Instinct", icon: '🪤', cost: 100, desc: 'Workers return +1 extra body per trip. Spinners know where to find the most resources.', req: [0, 1], effects: [{ type: 'worker_bodies', value: 1 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Precision Shot', icon: '🎯', cost: 100, desc: 'Tar Caster gains +12 DMG and +15 attack range. Tar patches land further and hurt more.', req: [1], effects: [{ type: 'unit_dmg_flat', target: 'wv_tar', value: 12 }, { type: 'unit_range_flat', target: 'wv_tar', value: 15 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Reinforced Silk', icon: '💪', cost: 175, desc: 'All melee units take 8% less damage. The silk weave hardens your warriors.', req: [2], effects: [{ type: 'unit_dmg_reduce', target: 'mel', value: 0.08 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Web Toxin', icon: '☠️', cost: 175, desc: 'Web zones deal +3 DPS to all enemies inside them (even without the upgrade purchased).', req: [3], effects: [{ type: 'flag', flag: 'webToxinMastery', value: 3 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Sky Silk', icon: '🦋', cost: 175, desc: 'Web Runner gains +15 HP and +5 DMG. Your aerial silk-layer becomes a real threat.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'wv_runner', value: 15 }, { type: 'unit_dmg_flat', target: 'wv_runner', value: 5 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Living Web', icon: '🌿', cost: 275, desc: 'Silk Wyrm slow aura expands to 90px. Enemies cannot escape its gravitational pull of silk.', req: [5], effects: [{ type: 'flag', flag: 'wyrmauraBonus', value: 30 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Poisoned Domain', icon: '💀', cost: 275, desc: 'Enemies inside web zones take +15% damage from ALL sources, not just Weavers.', req: [6], effects: [{ type: 'flag', flag: 'webDmgAmpBonus', value: 0.15 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Aerial Net', icon: '🪁', cost: 275, desc: 'Web Runner web trail radius increases by +18px. More of the field covered in silk.', req: [7], effects: [{ type: 'flag', flag: 'webRunnerRadiusBonus', value: 18 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: "LEGENDARY: Queen's Domain", icon: '👑', cost: 400, desc: 'Web Queen gains +80 HP, +12 DMG. All web zones double their slow strength. Silk Wyrm drops webs covering 250px on death. The battlefield drowns in silk.', req: [8, 10], effects: [{ type: 'unit_hp_flat', target: 'wv_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'wv_guard', value: 12 }, { type: 'flag', flag: 'queenDomainMastery', value: true }] },
+      ],
+      merchants: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Opening Capital', icon: '💰', cost: 50, desc: 'Start every match with +12 bonus souls. More money means more options from turn one.', req: [], effects: [{ type: 'start_souls', value: 12 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Fast Courier', icon: '🏃', cost: 50, desc: 'Workers gain +15% movement speed. Supply chains run faster, income flows sooner.', req: [], effects: [{ type: 'unit_speed_flat', target: 'mc_worker', value: 9 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Gold Reserve', icon: '🏦', cost: 100, desc: 'Passive income threshold drops to 20 souls (down from 30). Money earns money sooner.', req: [0], effects: [{ type: 'flag', flag: 'merchantThreshold', value: 20 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Trade Network', icon: '🤝', cost: 100, desc: 'Coin Guard gains +12 HP. A better-equipped frontline soldier represents a stronger trade.', req: [0, 1], effects: [{ type: 'unit_hp_flat', target: 'mc_coin', value: 12 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Aerial Trade', icon: '🦅', cost: 100, desc: 'Gold Hawk gains +12 HP and +5 DMG. A faster, more lethal trade hawk.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'mc_hawk', value: 12 }, { type: 'unit_dmg_flat', target: 'mc_hawk', value: 5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Interest Rate', icon: '📈', cost: 175, desc: 'Passive income rate increases to +0.5/s. The treasury grows faster.', req: [2], effects: [{ type: 'flag', flag: 'merchantIncomeRate', value: 0.5 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Hired Muscle', icon: '💪', cost: 175, desc: 'All melee units gain +12% attack rate. Quality mercenaries know how to fight.', req: [3], effects: [{ type: 'unit_atkrate_pct', target: 'mel', value: 0.12 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Market Dominance', icon: '🏆', cost: 175, desc: 'Gold Hawk on-kill bonus increases by +2 souls. Your aerial agents bring back more profit.', req: [4], effects: [{ type: 'flag', flag: 'hawkKillBonus', value: 2 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'War Chest', icon: '🪙', cost: 275, desc: 'Start every match with +8 extra bodies. More troops means more kills means more income.', req: [5], effects: [{ type: 'start_bodies', value: 8 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: "Banker's Army", icon: '🏛️', cost: 275, desc: 'The Banker gains +35 HP and soul-aura range expands to 130px. A living treasury.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'mc_banker', value: 35 }, { type: 'flag', flag: 'bankerAuraRangeBonus', value: 30 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Soul Monopoly', icon: '💎', cost: 275, desc: 'Coin Guard on-kill bonus increases by +2 extra souls. Every kill is a sale.', req: [7], effects: [{ type: 'flag', flag: 'coinKillBonus', value: 2 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: The Grand Exchange', icon: '👑', cost: 400, desc: 'The Broker gains +80 HP, +15 DMG. Nearby ally damage aura increases to +20%. Passive income runs even when below 30 souls. The market never closes.', req: [8, 10], effects: [{ type: 'unit_hp_flat', target: 'mc_mguard', value: 80 }, { type: 'unit_dmg_flat', target: 'mc_mguard', value: 15 }, { type: 'flag', flag: 'grandExchangeMastery', value: true }] },
+      ],
+      reavers: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Bone Collector', icon: '🦴', cost: 50, desc: 'Workers return +1 extra body per trip. Every scrap of bone has value.', req: [], effects: [{ type: 'worker_bodies', value: 1 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: "Digger's Grip", icon: '⚰️', cost: 50, desc: 'Grave Digger gains +15 HP. A hardier digger survives long enough to drop more corpses.', req: [], effects: [{ type: 'unit_hp_flat', target: 'rv_digger', value: 15 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Mass Harvest', icon: '🌾', cost: 100, desc: 'Reaver workers harvest corpses for +8 bodies each (up from +5). Thorough scavenging.', req: [0], effects: [{ type: 'flag', flag: 'reaverHarvestBonus', value: 8 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Start Loaded', icon: '📦', cost: 100, desc: 'Start every match with +10 bonus bodies. The Reavers begin already stocked with corpse fuel.', req: [0, 1], effects: [{ type: 'start_bodies', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Poisoned Blades', icon: '☠️', cost: 100, desc: 'Harvester poison increases by +2 DPS (to 6 DPS total). Slower deaths, more suffering.', req: [1], effects: [{ type: 'flag', flag: 'harvestPoisonBonus', value: 2 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Golem Growth', icon: '💀', cost: 175, desc: 'Corpse Golem gains +8 HP per nearby death (up from +5). The Golem grows ravenously.', req: [2], effects: [{ type: 'flag', flag: 'golemGrowthBonus', value: 3 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Iron Scavenger', icon: '⚔️', cost: 175, desc: 'The Flenser gains +20 HP and +8 DMG. Your elite harvester becomes truly unstoppable.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'rv_flenser', value: 20 }, { type: 'unit_dmg_flat', target: 'rv_flenser', value: 8 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Toxic Harvest', icon: '🧪', cost: 175, desc: 'Harvester gains +12 HP and +18 attack range. Poison from a safer distance.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'rv_harvester', value: 12 }, { type: 'unit_range_flat', target: 'rv_harvester', value: 18 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Unstoppable Golem', icon: '🗿', cost: 275, desc: 'Corpse Golem max HP cap raised to 260 (from 200). Near-immortal given enough deaths.', req: [5], effects: [{ type: 'flag', flag: 'golemMaxHPBonus', value: 60 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Body Surplus', icon: '💪', cost: 275, desc: 'Flenser kills grant +5 bodies (up from +3). Every enemy slain funds the next wave.', req: [6], effects: [{ type: 'flag', flag: 'flensorBodiesBonus', value: 2 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Dead Pool', icon: '🩸', cost: 275, desc: 'Corpse Golem gains HP from deaths in a 160px range (up from 100px). Nothing escapes notice.', req: [7], effects: [{ type: 'flag', flag: 'golemRangeBonus', value: 60 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Bone Titan Ascendant', icon: '👑', cost: 400, desc: 'Bone Titan gains +100 HP, +15 DMG. Workers harvest corpses for +12 bodies. Golem gains +12 HP per death. The Reavers become an unstoppable charnel machine.', req: [8, 10], effects: [{ type: 'unit_hp_flat', target: 'rv_guard', value: 100 }, { type: 'unit_dmg_flat', target: 'rv_guard', value: 15 }, { type: 'flag', flag: 'boneTitanMastery', value: true }] },
+      ],
+      fortune: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Lucky Star', icon: '⭐', cost: 50, desc: 'Start every match with +12 bonus souls. Fortune favors those who start ahead.', req: [], effects: [{ type: 'start_souls', value: 12 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Rigged Deck', icon: '🃏', cost: 50, desc: 'Double-stat roll chance increases from 20% to 27%. Slightly more loaded dice.', req: [], effects: [{ type: 'flag', flag: 'fortuneDoubleBonus', value: 0.07 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: "Fortune's Fool Power", icon: '🃏', cost: 100, desc: "Fortune's Fool gains +20 HP. Your biggest gamble has a higher floor.", req: [0], effects: [{ type: 'unit_hp_flat', target: 'fs_fool', value: 20 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Lucky Stash', icon: '💰', cost: 100, desc: 'Start every match with +8 bonus bodies. A reserve to weather unlucky early rolls.', req: [0, 1], effects: [{ type: 'start_bodies', value: 8 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Loaded Dice', icon: '🎲', cost: 100, desc: 'Free unit chance increases from 10% to 17%. Freebies come around more often.', req: [1], effects: [{ type: 'flag', flag: 'fortuneFreeBonus', value: 0.07 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'High Roller', icon: '🎰', cost: 175, desc: 'All units gain +8% bonus HP. Even baseline luck runs a little hot.', req: [2], effects: [{ type: 'all_hp_pct', value: 0.08 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Streak Mastery', icon: '🔥', cost: 175, desc: 'Lucky Streak bonus lasts +7s longer. Stay hot longer when the dice are running your way.', req: [3], effects: [{ type: 'flag', flag: 'fortuneStreakTimeBonus', value: 7 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Jackpot Drake Power', icon: '🐉', cost: 175, desc: 'Jackpot Drake gains +15 HP and +5 DMG. Your lucky aerial is now a genuine threat.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'fs_drake', value: 15 }, { type: 'unit_dmg_flat', target: 'fs_drake', value: 5 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: "Fortune's Army", icon: '⚔️', cost: 275, desc: 'All units gain +8% damage. Fortune blesses the whole army, not just the lucky few.', req: [5], effects: [{ type: 'all_dmg_pct', value: 0.08 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Grand Streak', icon: '💎', cost: 275, desc: 'During Lucky Streak all units deal +15% DMG. The streak makes your army truly dangerous.', req: [6], effects: [{ type: 'flag', flag: 'fortuneStreakDmgBonus', value: 0.15 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Sky Fortune', icon: '🌟', cost: 275, desc: 'Jackpot Drake on a double-stat roll spawns a free copy. Two drakes for the price of one.', req: [7], effects: [{ type: 'flag', flag: 'drakeFortuneCopy', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Ultimate Gamble', icon: '👑', cost: 400, desc: 'Jackpot Royal Guard always triggers Lucky Streak on spawn. Double-stat roll chance increases by a further +10%. The house always wins when you control the house.', req: [8, 10], effects: [{ type: 'flag', flag: 'jackpotMastery', value: true }, { type: 'flag', flag: 'fortuneDoubleBonus2', value: 0.10 }] },
+      ],
+      plagued: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Patient Carrier', icon: '🧫', cost: 50, desc: 'Carrier gains +15 HP. A tougher vessel means the plague spreads longer.', req: [], effects: [{ type: 'unit_hp_flat', target: 'pl_carrier', value: 15 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Viral Vector', icon: '☣️', cost: 50, desc: 'Vector poison increases by +2 DPS. The pathogen evolves to be more virulent.', req: [], effects: [{ type: 'flag', flag: 'vectorPoisonBonus', value: 2 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Adaptive Host', icon: '🦠', cost: 100, desc: 'Mutation Host can hold 8 mutations (up from 6). More room for the strain to diversify.', req: [0], effects: [{ type: 'flag', flag: 'plagueHostMaxMut', value: 8 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Genetic Reservoir', icon: '🧬', cost: 100, desc: 'Start with +10 souls. More resources to field the plague army faster.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Viral Acceleration', icon: '⚡', cost: 100, desc: 'Vector gains +12 HP and +15 attack range. The ranged carrier becomes harder to silence.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'pl_vector', value: 12 }, { type: 'unit_range_flat', target: 'pl_vector', value: 15 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Genetic Memory', icon: '🧠', cost: 175, desc: 'On death, Plagued units spread mutations to 2 nearest allies (up from 1). The strain refuses to die.', req: [2], effects: [{ type: 'flag', flag: 'plagueSpreadCount', value: 2 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Super Strain', icon: '💪', cost: 175, desc: 'All Plagued melee gain +12% attack rate. The infected strike faster and with more fury.', req: [3], effects: [{ type: 'unit_atkrate_pct', target: 'mel', value: 0.12 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Winged Disease', icon: '🦋', cost: 175, desc: 'Broodspawn gains +15 HP and +5 DMG. Your airborne carrier becomes truly dangerous.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'pl_spawn', value: 15 }, { type: 'unit_dmg_flat', target: 'pl_spawn', value: 5 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Extinction Protocol', icon: '☠️', cost: 275, desc: 'Mutation spread radius doubles to 200px on death. The plague floods the battlefield.', req: [5], effects: [{ type: 'flag', flag: 'plagueMutSpreadRange', value: 100 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Pandemic Protocol', icon: '🌍', cost: 275, desc: 'Kills grant 2 mutations at once. The adaptive strain evolves at twice the natural rate.', req: [6], effects: [{ type: 'flag', flag: 'plagueDoubleKillMut', value: true }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Airborne', icon: '💨', cost: 275, desc: 'All Plagued aerial units gain +12% attack rate and +10 HP. The skies carry the contagion.', req: [7], effects: [{ type: 'unit_atkrate_pct', target: 'air', value: 0.12 }, { type: 'unit_hp_flat', target: 'pl_spawn', value: 10 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: "LEGENDARY: The Progenitor's Wrath", icon: '👑', cost: 400, desc: 'The Progenitor starts with 5 mutations. On death spreads ALL mutations in 250px. All Plagued units begin each match with 1 starter mutation. The plague is eternal.', req: [8, 10], effects: [{ type: 'flag', flag: 'progenitorMasteryMut', value: 5 }, { type: 'flag', flag: 'plagueStartMutAll', value: true }] },
+      ],
+      chrysalis: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Swift Pupation', icon: '⏱️', cost: 50, desc: 'Transform timer reduced by 1.5s. Larvae reach their adult form a little sooner.', req: [], effects: [{ type: 'flag', flag: 'chrysalisTimerBonus', value: 1.5 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Cocoon Armor', icon: '🛡️', cost: 50, desc: 'Cocoon damage reduction increases by +10%. Transformation becomes even more protected.', req: [], effects: [{ type: 'flag', flag: 'chrysalisArmorBonus', value: 0.10 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Grub Vitality', icon: '🐛', cost: 100, desc: 'Grub gains +8 HP. Crawler adult gains +12 HP. Even larvae are harder to kill.', req: [0], effects: [{ type: 'unit_hp_flat', target: 'ch_grub', value: 8 }, { type: 'flag', flag: 'crawlerHPBonus', value: 12 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Metamorph Energy', icon: '✨', cost: 100, desc: 'Start every match with +10 souls. More larvae in flight before the first transformation.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Hard Shell', icon: '🪨', cost: 100, desc: 'Pupa Shell gains +15 HP. Rock Shell adult gains +20 HP. Your tank larva tanks harder.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'ch_pupa', value: 15 }, { type: 'flag', flag: 'rockShellHPBonus', value: 20 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Rapid Larvae', icon: '🏃', cost: 175, desc: 'All larvae move +15% faster. Reach the front lines and trigger metamorphosis sooner.', req: [2], effects: [{ type: 'flag', flag: 'chrysalisLarvaeSpeedBonus', value: 0.15 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Adult Dominance', icon: '👑', cost: 175, desc: 'All adult forms gain +8 DMG. Every emerged unit hits harder from the moment they awaken.', req: [3], effects: [{ type: 'flag', flag: 'chrysalisAdultDmgBonus', value: 8 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Winged Empress', icon: '🦋', cost: 175, desc: 'Empress Moth adult gains +20 HP and +8 DMG. Your rarest larva becomes legendary.', req: [4], effects: [{ type: 'flag', flag: 'empressMothBonus', value: true }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Swarm Rush', icon: '⚡', cost: 275, desc: 'All larvae gain +10% attack rate. Fragile as they are, larvae can now deal some damage.', req: [5], effects: [{ type: 'unit_atkrate_pct', target: 'mel', value: 0.10 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Evolved Carapace', icon: '🪬', cost: 275, desc: 'All adult forms take 10% less damage. The shell of adulthood is truly armored.', req: [6], effects: [{ type: 'flag', flag: 'chrysalisAdultArmor', value: 0.10 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Wing Scout Evolved', icon: '🦅', cost: 275, desc: 'Wing Scout adult gains +20 HP and +8 DMG. Aerial dominance through transformation.', req: [7], effects: [{ type: 'flag', flag: 'wingScoutBonus', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Ancient Hive Awakens', icon: '👑', cost: 400, desc: 'Ancient Hive gains +80 HP, +12 DMG. All adults on the field gain +15 HP and +8 DMG when unlocked. The Hive has awakened and nothing remains larval for long.', req: [8, 10], effects: [{ type: 'unit_hp_flat', target: 'ch_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'ch_guard', value: 12 }, { type: 'flag', flag: 'ancientHiveMastery', value: true }] },
+      ],
+      tideborn: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Surge Power', icon: '🌊', cost: 50, desc: 'Surge Guard gains +15 HP. Your frontline wave crashes harder.', req: [], effects: [{ type: 'unit_hp_flat', target: 'tb_surge', value: 15 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Deep Healing', icon: '💧', cost: 50, desc: 'Tideborn HP regen near allies increases to 4 HP/s (up from 3). The tide sustains faster.', req: [], effects: [{ type: 'flag', flag: 'tidebornRegenBonus', value: 1 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Tidal Surge', icon: '⚡', cost: 100, desc: 'Surge Guard gains +12% attack rate. Your frontline crashes faster and more ferociously.', req: [0], effects: [{ type: 'unit_atkrate_pct', target: 'tb_surge', value: 0.12 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Wave Capital', icon: '🌊', cost: 100, desc: 'Start every match with +10 souls. A larger ocean means a bigger first wave.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Deep Current Power', icon: '🐋', cost: 100, desc: 'Deep Current gains +15 HP and +5 DMG. Your aerial ocean becomes a proper threat.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'tb_deep', value: 15 }, { type: 'unit_dmg_flat', target: 'tb_deep', value: 5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Split Vitality', icon: '💪', cost: 175, desc: 'Split copies retain 65% HP (up from 50%). Halved units are harder to clean up.', req: [2], effects: [{ type: 'flag', flag: 'tideSplitHP', value: 0.65 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Tidal Brute Force', icon: '🌊', cost: 175, desc: 'Tidal Brute gains +25 HP and +8 DMG. Your heaviest wave has more weight behind it.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'tb_brute', value: 25 }, { type: 'unit_dmg_flat', target: 'tb_brute', value: 8 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Aerial Flow', icon: '🌀', cost: 175, desc: 'Deep Current gains +15% attack rate. Your aerial swimmers strike like rapid currents.', req: [4], effects: [{ type: 'unit_atkrate_pct', target: 'tb_deep', value: 0.15 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Surge Mastery', icon: '🔱', cost: 275, desc: 'Split threshold raises to 30% HP. Units split with more life remaining to fight with.', req: [5], effects: [{ type: 'flag', flag: 'tideSplitThreshold', value: 0.30 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Colossus Strength', icon: '🗿', cost: 275, desc: 'The Colossus gains +80 HP. Your royal guard becomes the largest wave of all.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'tb_guard', value: 80 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Current of War', icon: '⚔️', cost: 275, desc: 'Deep Current below 20% HP splits into 2 copies like ground units. The tide divides endlessly.', req: [7], effects: [{ type: 'flag', flag: 'tideDeepSplit', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Tidal Dominion', icon: '👑', cost: 400, desc: 'The Colossus splits into 2 full-health Tidal Brutes on death. All Tideborn regen rate doubles to 8 HP/s near allies. The tide is unending.', req: [8, 10], effects: [{ type: 'flag', flag: 'tidalDominionMastery', value: true }] },
+      ],
+      echoes: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Echo Haste', icon: '⏱️', cost: 50, desc: 'Echo spawn delay reduced by 1s (8s→7s). The past catches up to the present faster.', req: [], effects: [{ type: 'flag', flag: 'echoDelayBonus', value: 1 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Remnant Power', icon: '👁️', cost: 50, desc: 'The Remnant gains +15 HP. A sturdier original means the echo has more to mirror.', req: [], effects: [{ type: 'unit_hp_flat', target: 'ec_remnant', value: 15 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Phantom Archers', icon: '🏹', cost: 100, desc: 'Echo Archer echoes spawn with 80% stats (up from 70%). More lethal echoes in the backline.', req: [0], effects: [{ type: 'flag', flag: 'echoArcherPower', value: 0.80 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Time Investment', icon: '💰', cost: 100, desc: 'Start every match with +10 souls. Invest now, reap echoes later.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Remnant Surge', icon: '⚡', cost: 100, desc: 'The Remnant gains +12% attack rate. Original and echo both strike faster.', req: [1], effects: [{ type: 'unit_atkrate_pct', target: 'ec_remnant', value: 0.12 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Rapid Recall', icon: '⏩', cost: 175, desc: 'Echo delay reduced by an additional 1.5s (total up to 2.5s faster). The echoes surge forward.', req: [2], effects: [{ type: 'flag', flag: 'echoDelayBonus2', value: 1.5 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Paradox Power', icon: '⏰', cost: 175, desc: 'The Paradox gains +20 HP and +8 DMG. Your heavy echo-source becomes truly intimidating.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'ec_paradox', value: 20 }, { type: 'unit_dmg_flat', target: 'ec_paradox', value: 8 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Aerial Echo', icon: '⏳', cost: 175, desc: 'Moment Reaver echoes spawn with 80% stats. Ghostly aerial reinforcements come in stronger.', req: [4], effects: [{ type: 'flag', flag: 'echoMomentPower', value: 0.80 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Echo Surge', icon: '🔮', cost: 275, desc: 'All echoes spawn with 80% stats (up from 70%). Every echo across all units is deadlier.', req: [5], effects: [{ type: 'flag', flag: 'echoAllPower', value: 0.80 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Echo Champion Elite', icon: '⚔️', cost: 275, desc: 'Echo Champion gains +80 HP and +10 DMG. Your royal guard and its echoes are fearsome.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'ec_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'ec_guard', value: 10 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Paradox Chain', icon: '🔗', cost: 275, desc: 'The Paradox echo also spawns its own echo at 50% stats. One original becomes three fighters.', req: [7], effects: [{ type: 'flag', flag: 'paradoxChain', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Echo Cascade', icon: '👑', cost: 400, desc: 'Each unit spawned creates 2 echoes — first at 7s, second at 14s at 60% stats. The battlefield fills with ghosts of your army. The past overwrites the present.', req: [8, 10], effects: [{ type: 'flag', flag: 'echoCascadeMastery', value: true }] },
+      ],
+      veilborn: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Flicker Mastery', icon: '💨', cost: 50, desc: 'Flicker gains +15 HP. More HP means surviving to trigger the phase ability more reliably.', req: [], effects: [{ type: 'unit_hp_flat', target: 'vb2_flicker', value: 15 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Phase Ready', icon: '👻', cost: 50, desc: 'Phase cooldown reduced by 1.5s. Units can re-phase sooner in prolonged engagements.', req: [], effects: [{ type: 'flag', flag: 'veilCooldownBonus', value: 1.5 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Phase Armor', icon: '🛡️', cost: 100, desc: 'Phased units regen 7 HP/s while phased (up from 5). Recovery is more substantial.', req: [0], effects: [{ type: 'flag', flag: 'veilRegenBonus', value: 2 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Shadow Capital', icon: '💰', cost: 100, desc: 'Start every match with +10 souls. Phase in with a stronger initial army.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Deep Phase', icon: '🌀', cost: 100, desc: 'Phase duration extends by +0.5s. Units stay safe and regenerating for longer.', req: [1], effects: [{ type: 'flag', flag: 'veilDurBonus', value: 0.5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Wraithblade Power', icon: '⚔️', cost: 175, desc: 'Wraithblade gains +25 HP and +8 DMG. Your elite phase-fighter becomes truly lethal.', req: [2], effects: [{ type: 'unit_hp_flat', target: 'vb2_blade', value: 25 }, { type: 'unit_dmg_flat', target: 'vb2_blade', value: 8 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Phase Strike II', icon: '💥', cost: 175, desc: 'Re-materialization free strike deals an additional +15 DMG. Appearing from thin air, hard.', req: [3], effects: [{ type: 'flag', flag: 'veilStrikeBonusMastery', value: 15 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Rift Mastery', icon: '🌀', cost: 175, desc: 'The Rift gains +15 HP and +5 DMG. Your aerial phase-unit soars and strikes harder.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'vb2_rift', value: 15 }, { type: 'unit_dmg_flat', target: 'vb2_rift', value: 5 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'High Veil', icon: '🔭', cost: 275, desc: 'Phase now triggers at 45% HP (up from 40%). Units enter safety sooner.', req: [5], effects: [{ type: 'flag', flag: 'veilHPThresholdBonus', value: 0.05 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: "Specter's Gift", icon: '👻', cost: 275, desc: 'The Specter gains +80 HP and +12 DMG. Your royal guard phases and materializes with fury.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'vb2_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'vb2_guard', value: 12 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Shadow Rift', icon: '🌑', cost: 275, desc: 'The Rift phase duration extends by +1s, and re-materialization strike +20 DMG.', req: [7], effects: [{ type: 'flag', flag: 'riftPhaseDurBonus', value: 1 }, { type: 'flag', flag: 'riftStrikeBonus', value: 20 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Veil Ascendant', icon: '👑', cost: 400, desc: 'Phase triggers at 55% HP for all units. Phase cooldown drops to 7s globally. The Specter starts phased for 5s and materializes with a triple-strike. The Veil is everywhere.', req: [8, 10], effects: [{ type: 'flag', flag: 'veilAscendantMastery', value: true }] },
+      ],
+      chronomancers: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Temporal Bank', icon: '💰', cost: 50, desc: 'Start every match with +10 souls. Time is money, and money buys more time.', req: [], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Time Dilation', icon: '⏳', cost: 50, desc: 'The Delay slow duration extends by +0.5s. Enemies are locked in slow motion longer.', req: [], effects: [{ type: 'flag', flag: 'delaySlowBonus', value: 0.5 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Rewind Reserve', icon: '↩️', cost: 100, desc: 'Auto-Rewind cooldown reduced by 5s. Your timeline-restoration arrives sooner.', req: [0], effects: [{ type: 'flag', flag: 'chronoCooldownBonus', value: 5 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Temporal Capital', icon: '📦', cost: 100, desc: 'Start every match with +8 bonus bodies. More soldiers to benefit from the Rewind.', req: [0, 1], effects: [{ type: 'start_bodies', value: 8 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Delay Mastery', icon: '🏹', cost: 100, desc: 'The Delay gains +15 HP and +5 DMG. A more resilient and dangerous time-anchor.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'cm_delay', value: 15 }, { type: 'unit_dmg_flat', target: 'cm_delay', value: 5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Deep Rewind', icon: '🔄', cost: 175, desc: 'Rewind restores units to 45% HP (up from 40%). The healing wave runs deeper.', req: [2], effects: [{ type: 'flag', flag: 'chronoRestoreBonus', value: 0.05 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Titan Endurance', icon: '⌛', cost: 175, desc: 'Temporal Titan gains +30 HP. Your immune titan absorbs more punishment between Rewinds.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'cm_titan', value: 30 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Age Caster Elite', icon: '🦅', cost: 175, desc: 'Age Caster gains +15 HP and +8 DMG. The time-taxing aerial becomes a true punisher.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'cm_age', value: 15 }, { type: 'unit_dmg_flat', target: 'cm_age', value: 8 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Time Prison', icon: '🔒', cost: 275, desc: 'Time Tax rate increases by +0.5%/s. Enemies near your base deteriorate faster.', req: [5], effects: [{ type: 'flag', flag: 'chronoTaxBonus', value: 0.005 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Paradox King Elite', icon: '⏳', cost: 275, desc: 'Paradox King gains +80 HP and +12 DMG. Your royal guard reshapes time itself.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'cm_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'cm_guard', value: 12 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Temporal Dominance', icon: '🌀', cost: 275, desc: 'Rewinder speed boost extends to 8s (from 5s) and increases to +50%. A supercharged vanguard.', req: [7], effects: [{ type: 'flag', flag: 'chronoRewinderBonus', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Eternal Loop', icon: '👑', cost: 400, desc: 'Rewind cooldown drops to 20s. On each Rewind, all allies gain +25% DMG for 8s. Temporal Titan restores to 90% HP from Rewind. Time bends to your will completely.', req: [8, 10], effects: [{ type: 'flag', flag: 'chronoEternalLoop', value: true }] },
+      ],
+      illusionists: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Mirror Trick', icon: '🗡️', cost: 50, desc: 'Mirror Blade gains +15 HP. A tougher original spawns a tougher-seeming decoy.', req: [], effects: [{ type: 'unit_hp_flat', target: 'il_mirror', value: 15 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Opening Act', icon: '🪄', cost: 50, desc: 'Start every match with +10 souls. More resources for your opening illusion barrage.', req: [], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Lasting Illusion', icon: '⏱️', cost: 100, desc: 'Decoy convert time extends by 3s (10s→13s). More time for decoys to become real.', req: [0], effects: [{ type: 'flag', flag: 'illuConvertTimeBonus', value: 3 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Grand Deception', icon: '👥', cost: 100, desc: 'Trick Shot gains +10 HP and +5 DMG. More convincing ranged illusions apply more pressure.', req: [0, 1], effects: [{ type: 'unit_hp_flat', target: 'il_trick', value: 10 }, { type: 'unit_dmg_flat', target: 'il_trick', value: 5 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Sky Illusion', icon: '🦅', cost: 100, desc: 'Grand Deceiver gains +12 HP and +5 DMG. Aerial phantoms become true threats.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'il_deceiver', value: 12 }, { type: 'unit_dmg_flat', target: 'il_deceiver', value: 5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Heavy Mirrors', icon: '🪞', cost: 175, desc: 'Mirror Blade spawns a 15 HP decoy (up from 1 HP). Beefier fakes draw real attention.', req: [2], effects: [{ type: 'flag', flag: 'mirrorHeavyDecoy', value: true }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Soul Tap', icon: '💀', cost: 175, desc: 'Decoy kills drain 2 souls from the killer (up from 1). Wasted swings are expensive.', req: [3], effects: [{ type: 'flag', flag: 'illuSoulDrainBonus', value: 1 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Double Deceiver', icon: '🦅', cost: 175, desc: 'Grand Deceiver spawns 2 decoys instead of 1. The sky fills with phantoms.', req: [4], effects: [{ type: 'flag', flag: 'deceiverDoubleDecoy', value: true }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Perfect Mirror', icon: '✨', cost: 275, desc: 'Converted decoys gain 70% stats (up from 50%). Real illusions are barely distinguishable.', req: [5], effects: [{ type: 'flag', flag: 'illuConvertPowerBonus', value: 0.20 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Phantom Elite', icon: '🪄', cost: 275, desc: 'The Phantom gains +80 HP and +12 DMG, and spawns 3 decoys (20 HP each). Total chaos.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'il_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'il_guard', value: 12 }, { type: 'flag', flag: 'phantomTripleDecoy', value: true }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Aerial Swarm', icon: '🌀', cost: 275, desc: 'Aerial units spawn 2 decoys. The sky becomes a cloud of phantoms.', req: [7], effects: [{ type: 'flag', flag: 'illuAerialDoubleDecoy', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: World of Illusions', icon: '👑', cost: 400, desc: 'All decoys convert at 75% stats. Killing any decoy costs 5 souls. All units spawn 2 decoys. The enemy can no longer tell what is real.', req: [8, 10], effects: [{ type: 'flag', flag: 'illuWorldMastery', value: true }] },
+      ],
+      pandemonium: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Cheap Chaos', icon: '🤪', cost: 50, desc: 'Start every match with +14 souls. More budget for a larger initial chaos swarm.', req: [], effects: [{ type: 'start_souls', value: 14 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Wildfire Fury', icon: '🔥', cost: 50, desc: 'Wildfire gains +12 HP. More durable chaos — harder to clean up the swarm.', req: [], effects: [{ type: 'unit_hp_flat', target: 'pd_wild', value: 12 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Mass Hysteria', icon: '😵', cost: 100, desc: 'Wildfire gains +10% attack rate. Faster, more frantic chaos swarmers.', req: [0], effects: [{ type: 'unit_atkrate_pct', target: 'pd_wild', value: 0.10 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Chaos Capital', icon: '🌀', cost: 100, desc: 'Start every match with +8 bonus bodies. Enough fodder for a proper initial catastrophe.', req: [0, 1], effects: [{ type: 'start_bodies', value: 8 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Unhinged Power', icon: '😤', cost: 100, desc: 'The Unhinged gains +20 HP. More HP means more chaos before it berserks.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'pd_unhng', value: 20 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Misfire Mastery', icon: '💥', cost: 175, desc: 'Misfire chance increases to 20% (up from 15%). Enemies damage themselves more frequently.', req: [2], effects: [{ type: 'flag', flag: 'panMisfireBonus', value: 0.05 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Drake Elite', icon: '🐲', cost: 175, desc: 'Chaos Drake gains +12 HP and +5 DMG. Your aerial chaos unit actually hits now.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'pd_chaos', value: 12 }, { type: 'unit_dmg_flat', target: 'pd_chaos', value: 5 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Berserker Wave', icon: '⚡', cost: 175, desc: 'The Unhinged also deals +20% DMG when in Berserk. Chaotic fury becomes devastating.', req: [4], effects: [{ type: 'flag', flag: 'panBerserkDmgBonus', value: 0.20 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Wildfire Chain', icon: '🔥', cost: 275, desc: 'Wildfire death triggers a 10 DMG splash in 50px (even without the upgrade). Swarmers explode.', req: [5], effects: [{ type: 'flag', flag: 'wildfireDeathSplash', value: true }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Chaos Lord Elite', icon: '🌀', cost: 275, desc: 'Chaos Lord gains +80 HP and +12 DMG. Misfire aura expands to 130px. Entropy incarnate.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'pd_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'pd_guard', value: 12 }, { type: 'flag', flag: 'chaosLordElite', value: true }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Maelstrom Mastery', icon: '🌀', cost: 275, desc: 'The Maelstrom gains +12 HP and +5 DMG. Your cheap ranged chaos unit becomes frightening.', req: [7], effects: [{ type: 'unit_hp_flat', target: 'pd_maelstrom', value: 12 }, { type: 'unit_dmg_flat', target: 'pd_maelstrom', value: 5 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Total Pandemonium', icon: '👑', cost: 400, desc: 'All attacks from any unit have 25% misfire chance. All unit deaths trigger 12 DMG splash in 55px. The Chaos Lord misfire aura now covers 160px. Nothing is under control.', req: [8, 10], effects: [{ type: 'flag', flag: 'totalPandemoniumMastery', value: true }] },
+      ],
+      psionics: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Whisper Training', icon: '💭', cost: 50, desc: 'The Whisper gains +15 HP. A more durable corruptor stays alive to corrupt more targets.', req: [], effects: [{ type: 'unit_hp_flat', target: 'ps_whisper', value: 15 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Deep Scan', icon: '🔍', cost: 50, desc: 'The Whisper corruption per hit: 15%→20%. The mental intrusion cuts deeper.', req: [], effects: [{ type: 'flag', flag: 'whisperCorruptBonus', value: 0.05 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Mind Probe Elite', icon: '🔮', cost: 100, desc: 'Workers return +1 extra body per trip. Even the workers probe for resources.', req: [0], effects: [{ type: 'worker_bodies', value: 1 }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Psionic Capital', icon: '💰', cost: 100, desc: 'Start every match with +10 souls. More resources to field your corruption network.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Thought Thief Power', icon: '🏹', cost: 100, desc: 'Thought Thief gains +12 HP and +5 DMG. A more durable ranged corruptor.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'ps_thief', value: 12 }, { type: 'unit_dmg_flat', target: 'ps_thief', value: 5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Overmind Expansion', icon: '🧠', cost: 175, desc: 'Overmind corruption aura range expands by +25px. The mental reach extends further.', req: [2], effects: [{ type: 'flag', flag: 'psionicAuraRangeBonus', value: 25 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Ghost Army', icon: '👁️', cost: 175, desc: 'Thought Ghosts gain +12 HP and +5 DMG. Your corrupted-death spawns become real threats.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'ps_ghost', value: 12 }, { type: 'unit_dmg_flat', target: 'ps_ghost', value: 5 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Dominion Power', icon: '🦅', cost: 175, desc: 'Dominion Caster gains +12 HP. Corruption per hit: +0.10 (total 35%). Aerial mind control.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'ps_dom', value: 12 }, { type: 'flag', flag: 'dominionCorruptBonus', value: 0.10 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Mass Control', icon: '📡', cost: 275, desc: 'Passive soul income from corruption: +0.8/s per corrupted unit (up from +0.5/s).', req: [5], effects: [{ type: 'flag', flag: 'psionicIncomeBonus', value: 0.3 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Hivemind Elite', icon: '🧠', cost: 275, desc: 'The Hivemind gains +80 HP and +12 DMG. Corruption aura increases to 15%/s.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'ps_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'ps_guard', value: 12 }, { type: 'flag', flag: 'hivemindAuraBonus', value: 0.03 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Extended Control', icon: '⏱️', cost: 275, desc: 'Mind-control duration: 20s→30s. You own their units for longer before they snap free.', req: [7], effects: [{ type: 'flag', flag: 'psionicControlDurBonus', value: 10 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Total Ascendancy', icon: '👑', cost: 400, desc: 'When a unit reaches 100% corruption, all nearby enemies gain +25% corruption instantly. Thought Ghosts gain +15 HP. The Hivemind dominates an additional 20px radius. All minds belong to you.', req: [8, 10], effects: [{ type: 'flag', flag: 'psionicAscendancy', value: true }, { type: 'unit_hp_flat', target: 'ps_ghost', value: 15 }] },
+      ],
+      umbral: [
+        /* 0 T1L */ { row: 1, col: 0, name: 'Nightblade Elite', icon: '🗡️', cost: 50, desc: 'Nightblade gains +15 HP. A more durable shadow soldier strikes longer from the dark.', req: [], effects: [{ type: 'unit_hp_flat', target: 'um_night', value: 15 }] },
+        /* 1 T1R */ { row: 1, col: 4, name: 'Dark Domain', icon: '🌑', cost: 50, desc: 'Darkness zone duration extended by +3s. More time to hunt in the shadow.', req: [], effects: [{ type: 'flag', flag: 'umbralDurBonus', value: 3 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Shadow Step', icon: '👣', cost: 100, desc: 'Workers gain +20% movement speed when inside darkness zones. Ghost logistics.', req: [0], effects: [{ type: 'flag', flag: 'umbralWorkerSpeed', value: true }] },
+        /* 3 T2M */ { row: 2, col: 2, name: 'Dark Capital', icon: '💰', cost: 100, desc: 'Start every match with +10 souls. More soldiers for the shadow army.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
+        /* 4 T2R */ { row: 2, col: 4, name: 'Umbra Archer Elite', icon: '🏹', cost: 100, desc: 'Umbra Archer gains +15 HP and +5 DMG. Your hidden ranged unit becomes more dangerous.', req: [1], effects: [{ type: 'unit_hp_flat', target: 'um_archer', value: 15 }, { type: 'unit_dmg_flat', target: 'um_archer', value: 5 }] },
+        /* 5 T3L */ { row: 3, col: 0, name: 'Eclipse Armor', icon: '🛡️', cost: 175, desc: 'Umbral units in darkness take 25% less damage (up from 20%). The dark is impenetrable.', req: [2], effects: [{ type: 'flag', flag: 'umbralArmorBonus', value: 0.05 }] },
+        /* 6 T3M */ { row: 3, col: 2, name: 'Darkness Mastery', icon: '🌑', cost: 175, desc: 'Auto-deploy darkness cooldown: 30s→22s. Night falls more frequently.', req: [3], effects: [{ type: 'flag', flag: 'umbralCooldownBonus', value: 8 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Blot Elite', icon: '💀', cost: 175, desc: 'The Blot gains +25 HP and +8 DMG. On death, darkness zone lasts 15s instead of 10s.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'um_blot', value: 25 }, { type: 'unit_dmg_flat', target: 'um_blot', value: 8 }, { type: 'flag', flag: 'blotDeathDurBonus', value: 5 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Eclipse Titan Power', icon: '🌑', cost: 275, desc: 'Eclipse Titan gains +30 HP and darkness aura expands to 80px. A walking shadow zone.', req: [5], effects: [{ type: 'unit_hp_flat', target: 'um_eclipse', value: 30 }, { type: 'flag', flag: 'eclipseAuraBonus', value: 20 }] },
+        /* 9 T4M */ { row: 4, col: 2, name: 'Shadow King Elite', icon: '👑', cost: 275, desc: 'Shadow King gains +80 HP and +12 DMG. Darkness aura expands to 110px.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'um_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'um_guard', value: 12 }, { type: 'flag', flag: 'shadowKingAuraBonus', value: 30 }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Eternal Dark', icon: '🔲', cost: 275, desc: 'Darkness zones last +6s longer. The night never truly ends on this battlefield.', req: [7], effects: [{ type: 'flag', flag: 'umbralEternalDark', value: 6 }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Reign of Darkness', icon: '👑', cost: 400, desc: 'Auto-deploy darkness every 15s. All Umbral units deal +30% DMG in darkness. Eclipse Titan aura expands to 100px. The battlefield belongs to the night.', req: [8, 10], effects: [{ type: 'flag', flag: 'umbralReignMastery', value: true }] },
+      ],
     };
 
     // ── Mastery localStorage helpers ──────────────────────────────────────────
@@ -19914,8 +21613,64 @@
         bg: ['#021208', '#041e10', '#021208'], accent: '#27ae60', textCol: '#80e8a0',
         particles: [{ e: '💚', a: 'bp-float', c: 7 }, { e: '✨', a: 'bp-rise', c: 5 }, { e: '⭐', a: 'bp-float', c: 3 }]
       },
+      weavers: {
+        bg: ['#0e0520', '#1a0835', '#0e0520'], accent: '#6c5ce7', textCol: '#c9b0f5',
+        particles: [{ e: '🕸️', a: 'bp-float', c: 6 }, { e: '🕷️', a: 'bp-rise', c: 4 }, { e: '✨', a: 'bp-float', c: 3 }]
+      },
+      merchants: {
+        bg: ['#1a1200', '#2e1e00', '#1a1200'], accent: '#f9ca24', textCol: '#ffe88a',
+        particles: [{ e: '💰', a: 'bp-rise', c: 5 }, { e: '💎', a: 'bp-float', c: 4 }, { e: '✨', a: 'bp-flash', c: 4 }]
+      },
+      reavers: {
+        bg: ['#1a0002', '#300004', '#1a0002'], accent: '#922b21', textCol: '#e87060',
+        particles: [{ e: '🦴', a: 'bp-fall', c: 6 }, { e: '⚰️', a: 'bp-float', c: 3 }, { e: '💀', a: 'bp-rise', c: 4 }]
+      },
+      fortune: {
+        bg: ['#1a1000', '#2e1c00', '#1a1000'], accent: '#f9ca24', textCol: '#ffe090',
+        particles: [{ e: '🎲', a: 'bp-flash', c: 6 }, { e: '🃏', a: 'bp-float', c: 5 }, { e: '⭐', a: 'bp-rise', c: 5 }]
+      },
+      plagued: {
+        bg: ['#041206', '#071e0a', '#041206'], accent: '#27ae60', textCol: '#80f090',
+        particles: [{ e: '🦠', a: 'bp-float', c: 6 }, { e: '🧫', a: 'bp-rise', c: 4 }, { e: '☣️', a: 'bp-float', c: 3 }]
+      },
+      chrysalis: {
+        bg: ['#031210', '#061e1a', '#031210'], accent: '#00b894', textCol: '#80f0d8',
+        particles: [{ e: '🐛', a: 'bp-rise', c: 4 }, { e: '🦋', a: 'bp-float', c: 5 }, { e: '✨', a: 'bp-rise', c: 4 }]
+      },
+      tideborn: {
+        bg: ['#021018', '#041a28', '#021018'], accent: '#0984e3', textCol: '#80c8f0',
+        particles: [{ e: '🌊', a: 'bp-drift', c: 7 }, { e: '💧', a: 'bp-drip', c: 5 }, { e: '🐋', a: 'bp-float', c: 2 }]
+      },
+      echoes: {
+        bg: ['#0a0518', '#140828', '#0a0518'], accent: '#a29bfe', textCol: '#d0c8ff',
+        particles: [{ e: '👁️', a: 'bp-float', c: 5 }, { e: '✨', a: 'bp-flash', c: 6 }, { e: '⏳', a: 'bp-rise', c: 3 }]
+      },
+      veilborn: {
+        bg: ['#0a0a0e', '#141418', '#0a0a0e'], accent: '#b2bec3', textCol: '#e0e8ee',
+        particles: [{ e: '👻', a: 'bp-float', c: 6 }, { e: '💨', a: 'bp-drift', c: 5 }, { e: '✨', a: 'bp-flash', c: 4 }]
+      },
+      chronomancers: {
+        bg: ['#020810', '#04121e', '#020810'], accent: '#2e86c1', textCol: '#88c8f0',
+        particles: [{ e: '⏳', a: 'bp-float', c: 5 }, { e: '⌛', a: 'bp-rise', c: 4 }, { e: '🌀', a: 'bp-flash', c: 3 }]
+      },
+      illusionists: {
+        bg: ['#180612', '#280a1e', '#180612'], accent: '#fd79a8', textCol: '#ffc0d8',
+        particles: [{ e: '🪄', a: 'bp-rise', c: 6 }, { e: '✨', a: 'bp-flash', c: 7 }, { e: '👥', a: 'bp-float', c: 3 }]
+      },
+      pandemonium: {
+        bg: ['#1a0400', '#300800', '#1a0400'], accent: '#e84393', textCol: '#ff90c0',
+        particles: [{ e: '🌀', a: 'bp-flash', c: 8 }, { e: '💥', a: 'bp-flash', c: 6 }, { e: '🔥', a: 'bp-rise', c: 4 }]
+      },
+      psionics: {
+        bg: ['#0e0418', '#180628', '#0e0418'], accent: '#9b59b6', textCol: '#d090e8',
+        particles: [{ e: '🧠', a: 'bp-float', c: 4 }, { e: '💭', a: 'bp-rise', c: 5 }, { e: '✨', a: 'bp-flash', c: 5 }]
+      },
+      umbral: {
+        bg: ['#050505', '#0a0a0a', '#050505'], accent: '#636e72', textCol: '#b0b8bc',
+        particles: [{ e: '🌑', a: 'bp-float', c: 6 }, { e: '🗡️', a: 'bp-rise', c: 4 }, { e: '✨', a: 'bp-flash', c: 3 }]
+      },
     };
-    const BOOK_FACTION_ORDER = ['warriors', 'summoners', 'brutes', 'spirits', 'verdant', 'infernal', 'glacial', 'voltborn', 'bloodpact', 'menders'];
+    const BOOK_FACTION_ORDER = ['warriors', 'summoners', 'brutes', 'spirits', 'verdant', 'infernal', 'glacial', 'voltborn', 'bloodpact', 'menders', 'weavers', 'merchants', 'reavers', 'fortune', 'plagued', 'chrysalis', 'tideborn', 'echoes', 'veilborn', 'chronomancers', 'illusionists', 'pandemonium', 'psionics', 'umbral'];
 
     let _bookIdx = 0;
     window._bookIdx = 0; // exposed for inline onclick
