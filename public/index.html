@@ -1688,7 +1688,7 @@
       position: relative;
       overflow: hidden;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       background: var(--bg);
     }
@@ -1696,7 +1696,7 @@
     #battlefield {
       flex: 0 0 auto;
       display: block;
-      transform-origin: center center;
+      transform-origin: top center;
     }
 
     #momentum-bar-wrap {
@@ -2304,8 +2304,8 @@
       width: 100%;
       display: none;
       flex-shrink: 0;
-      background: var(--panel);
-      border-top: 2px solid var(--border);
+      background: linear-gradient(180deg, #0c0c1a 0%, #08081a 100%);
+      border-top: 2px solid rgba(60,60,90,.5);
       position: relative;
       z-index: 10;
     }
@@ -2319,7 +2319,7 @@
       display: flex;
       flex-direction: row;
       padding: clamp(4px, .6vh, 8px) clamp(4px, .5vw, 10px);
-      gap: clamp(4px, .6vw, 10px);
+      gap: clamp(6px, .8vw, 12px);
       position: relative;
       overflow: hidden;
       min-width: 0;
@@ -2334,7 +2334,7 @@
     }
 
     #p1-hud {
-      border-right: 2px solid var(--border);
+      border-right: 2px solid rgba(80,80,120,.4);
     }
 
     #p1-hud::before {
@@ -2353,6 +2353,8 @@
       flex-shrink: 0;
       width: clamp(140px, 16vw, 210px);
       justify-content: center;
+      border-right: 1px solid rgba(60,60,90,.3);
+      padding-right: clamp(4px, .5vw, 8px);
     }
 
     /* Right cards column — tabs + grid, takes all remaining space */
@@ -2414,10 +2416,10 @@
       display: flex;
       align-items: center;
       gap: clamp(2px, .3vw, 4px);
-      background: rgba(0, 0, 0, .35);
-      padding: clamp(2px, .3vh, 4px) clamp(2px, .4vw, 6px);
-      border-radius: 4px;
-      border: 1px solid var(--border2);
+      background: rgba(0, 0, 0, .4);
+      padding: clamp(3px, .4vh, 5px) clamp(4px, .5vw, 8px);
+      border-radius: 5px;
+      border: 1px solid rgba(60,60,90,.35);
       transition: background .2s;
     }
 
@@ -2492,11 +2494,11 @@
 
     .hp-bar {
       flex: 1;
-      height: clamp(6px, 1vh, 10px);
-      background: #1a1a2e;
+      height: clamp(8px, 1.2vh, 12px);
+      background: #0e0e20;
       border-radius: 4px;
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(60,60,90,.4);
       min-width: 20px;
     }
 
@@ -2622,31 +2624,37 @@
     /* HUD MODE TABS */
     .hud-mode-tabs {
       display: flex;
-      gap: 4px;
+      gap: 3px;
       flex-shrink: 0;
     }
 
     .hud-tab {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.62rem, .92vw, .82rem);
-      padding: 2px 8px;
-      border-radius: 2px;
-      border: 1px solid var(--border2);
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 3px 3px 0 0;
+      border: 1px solid rgba(60,60,90,.3);
+      border-bottom: none;
       color: var(--dim);
       cursor: default;
-      letter-spacing: .06em;
+      letter-spacing: .08em;
+      background: rgba(0,0,0,.2);
+      transition: all .15s;
     }
 
     .hud-tab.active1 {
       color: var(--p1);
       border-color: var(--p1);
-      background: rgba(36, 113, 163, .12);
+      background: rgba(36, 113, 163, .18);
+      box-shadow: 0 -2px 8px rgba(36,113,163,.15);
     }
 
     .hud-tab.active2 {
       color: var(--p2);
       border-color: var(--p2);
-      background: rgba(192, 57, 43, .12);
+      background: rgba(192, 57, 43, .18);
+      box-shadow: 0 -2px 8px rgba(192,57,43,.15);
     }
 
     /* UNIT GRID */
@@ -2661,9 +2669,9 @@
     }
 
     .ucard {
-      background: rgba(0, 0, 0, .45);
-      border: 1.5px solid var(--border);
-      border-radius: 5px;
+      background: linear-gradient(180deg, rgba(15,15,30,.6) 0%, rgba(5,5,18,.8) 100%);
+      border: 1.5px solid rgba(60,60,90,.4);
+      border-radius: 6px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -2874,16 +2882,18 @@
 
     .uname {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.65rem, 1.0vw, 1rem);
-      color: #ccc;
+      font-size: clamp(.6rem, .9vw, .9rem);
+      font-weight: 600;
+      color: #d8d0c8;
       text-align: center;
       line-height: 1.1;
       flex-shrink: 1;
+      text-shadow: 0 1px 2px rgba(0,0,0,.5);
     }
 
     .ucost {
       display: flex;
-      gap: 2px;
+      gap: 3px;
       flex-wrap: wrap;
       justify-content: center;
       width: 100%;
@@ -2894,23 +2904,24 @@
     .ctag {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.58rem, .82vw, .78rem) !important;
-      padding: 1px clamp(1px, .25vw, 3px);
-      border-radius: 2px;
+      font-weight: 600;
+      padding: 1px clamp(2px, .3vw, 4px);
+      border-radius: 3px;
       line-height: 1.3;
       white-space: nowrap;
       flex-shrink: 0;
     }
 
     .cs {
-      background: rgba(155, 89, 182, .25);
-      color: #c39bd3;
-      border: 1px solid #7d3c98;
+      background: rgba(155, 89, 182, .3);
+      color: #d4a8e8;
+      border: 1px solid rgba(125,60,152,.6);
     }
 
     .cb {
-      background: rgba(39, 174, 96, .25);
-      color: #82e0aa;
-      border: 1px solid #1e8449;
+      background: rgba(39, 174, 96, .3);
+      color: #96edb8;
+      border: 1px solid rgba(30,132,73,.6);
     }
 
     .utypetag {
@@ -3890,13 +3901,14 @@
     /* Faction badge in HUD */
     .faction-badge {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(.5rem, .75vw, .68rem);
+      font-size: clamp(.52rem, .78vw, .7rem);
+      font-weight: 600;
       letter-spacing: .08em;
-      padding: 1px 5px;
+      padding: 2px 6px;
       border-radius: 3px;
-      background: rgba(255, 255, 255, .05);
-      border: 1px solid var(--border2);
-      color: var(--dim);
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(100,100,140,.3);
+      color: #b0a898;
       white-space: nowrap;
       flex-shrink: 0;
       cursor: pointer;
@@ -8280,7 +8292,9 @@
       _canvasScale = Math.min(scaleByW, scaleByH);
       canvas.style.transform = `scale(${_canvasScale})`;
       const wrap = canvas.parentElement;
-      if (wrap) wrap.style.height = availH + 'px';
+      // Set wrap height to the actual scaled canvas height, not full available space
+      const scaledH = Math.ceil(VIRTUAL_H * _canvasScale);
+      if (wrap) wrap.style.height = Math.min(availH, scaledH) + 'px';
     }
 
     // Live resize: just re-scale the canvas visually — game coords never change
@@ -9622,12 +9636,12 @@
       { render(el) { el.innerHTML = `<div class="tut-title">PLAYER COLOURS</div><div class="tut-sub">BLUE vs RED</div><div class="tut-body"><b>Player 1</b> is always <span style='color:#2471a3'>BLUE</span> and controls the left base.<br><b>Player 2</b> is always <span style='color:#c0392b'>RED</span> and controls the right base.<br><br>Unit health bars, HUD accents, base colour, faction card highlights, mid-point capture arcs, and the victory screen all follow these colours. When in doubt — look for your colour.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1</div><div class="tstat-desc">Left base · Blue HUD · WASD defaults</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2</div><div class="tstat-desc">Right base · Red HUD · Arrow key defaults</div></div></div>`; } },
       ,
       { render(el) { el.innerHTML = `<div class="tut-title">PLAYER CONTROLS</div><div class="tut-sub">P1 · WASD + Q &nbsp;&nbsp; P2 · ARROW KEYS + ENTER</div><div class="tut-body">This is a two-player keyboard game. Each player uses a different part of the keyboard so both can play simultaneously.<br><br><span class="tut-step-badge">⭐ KEY INFO</span><br>If you are playing <b>solo vs AI</b>, you only need P1 controls.</div><div class="tut-visual"><div class="tstat" style="border-color:#2471a3"><div class="tstat-icon" style="color:#2471a3">🔵</div><div class="tstat-name" style="color:#2471a3">PLAYER 1 — LEFT BASE</div><div class="tstat-desc"><kbd>A</kbd>/<kbd>D</kbd> navigate &nbsp; <kbd>W</kbd>/<kbd>S</kbd> switch mode<br><kbd>Q</kbd> spawn/activate &nbsp; <kbd>E</kbd> worker-mid toggle<br><kbd>F</kbd> taunt</div></div><div class="tstat" style="border-color:#c0392b"><div class="tstat-icon" style="color:#c0392b">🔴</div><div class="tstat-name" style="color:#c0392b">PLAYER 2 — RIGHT BASE</div><div class="tstat-desc"><kbd>←</kbd>/<kbd>→</kbd> navigate &nbsp; <kbd>↑</kbd>/<kbd>↓</kbd> switch mode<br><kbd>Enter</kbd> spawn/activate &nbsp; <kbd>NP1</kbd> worker-mid toggle<br><kbd>NP0</kbd> taunt</div></div><div class="tstat" style="border-color:var(--border)"><div class="tstat-icon">🔧</div><div class="tstat-name">FULLY REBINDABLE</div><div class="tstat-desc">Open Controls & Key Binds from the main menu to change any key, including optional direct-spawn hotkeys.</div></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE ×N', 'Desperation stacks. Appear if enemy holds mid 15+ seconds. Each stack: +1.0💀/s (max 3).'], ['💀/s Rate', 'Your live soul income per second — accounts for mid, surge stacks, and active buffs.'], ['🔒 Locked Cards', 'Unit cards with a countdown are not yet available. They unlock at 50s, 100s, and 160s — and a banner announces each unlock.'], ['⛏→MID Button', 'Toggle workers to route through mid for 12 bodies/trip instead of 2. Press E or NP1.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:130px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">THE HUD EXPLAINED</div><div class="tut-sub">UNDERSTANDING YOUR INTERFACE</div><div class="tut-body">Each player has a HUD panel at the bottom of the screen. Here is what each element means:</div><div class="tut-visual" style="flex-direction:column;gap:8px;align-items:flex-start;max-width:650px;margin:0 auto;">${[['💀 Souls', 'Your main spending resource. Increases passively, from kills, and from mid control.'], ['🦴 Bodies', 'Secondary resource. Workers bring these from the field. Required for most units.'], ['❤️ Base HP', 'Your base health. At 30 HP, Last Stand triggers. At 0, you lose.'], ['⚔ Unit Count', 'Current combat units vs. your army cap. Cap grows from 12 to 30 over ~8 min.'], ['⛏ Workers', 'Active workers. Starts at max 3, increases to 5 over a long game.'], ['🔥 SURGE ×N', 'Desperation stacks. Appear if enemy holds mid 15+ seconds. Each stack: +1.0💀/s (max 3).'], ['💀/s Rate', 'Your live soul income per second — accounts for mid, surge stacks, and active buffs.'], ['🔒 Locked Cards', 'Unit cards with a countdown are not yet available. They unlock at 30s, 60s, and 100s — and a banner announces each unlock.'], ['⛏→MID Button', 'Toggle workers to route through mid for 12 bodies/trip instead of 2. Press E or NP1.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:center;"><div style="min-width:130px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">RESOURCES</div><div class="tut-sub">SOULS AND BODIES</div><div class="tut-body">Souls arrive automatically at <b>+0.45/sec</b> base rate. Killing enemies, holding mid, and desperation stacks all increase this.<br><br>Bodies are collected by workers who patrol off-screen and return <b>2 bodies per home trip</b>, or <b>12 bodies per mid trip</b> (if you own mid). Deploy up to 3 workers — keep them alive, they are your economy.<br><br>The income rate shown below your resources updates in real time.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💀</span>Passive: +0.45/s<br>Mid owned: +0.8→2.0/s (escalates over 60s)<br>Each desp surge stack: +0.7/s</div><div class="hl-box"><span class="hl-icon">🦴</span>Home trip: +2 per trip (~8s)<br>Mid trip: +12 per trip (~30s)<br>Passive body trickle scales with game time</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">WORKERS & BODIES</div><div class="tut-sub">YOUR ECONOMIC BACKBONE</div><div class="tut-body"><span class="tut-step-badge">⭐ KEY MECHANIC</span><br>Workers automatically patrol off-screen to collect bodies. Deploy them early and keep them alive — they are your economy.<br><br>You can have <b>up to 3 workers at the start</b>, increasing to 5 over a long game. Workers cannot be directly attacked but CAN be hit by area-of-effect damage.<br><br><b>Two routes to choose from:</b> Workers patrol at home by default, but you can send them to the mid-field using the <b>⛏→MID</b> button in your HUD (or press <kbd>E</kbd> / <kbd>NP1</kbd>). Mid trips take longer but pay out far more bodies per run. Workers automatically retreat home if you lose mid or enemies get too close.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:500px;margin:0 auto;width:100%"><div class="hl-box" style="display:flex;align-items:center;gap:12px;text-align:left;"><span style="font-size:clamp(1.4rem,2.3vw,2rem);">🏠</span><div><div style="font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--dim);letter-spacing:.08em;">HOME ROUTE (default)</div><div style="font-size:var(--fs-xs);">~2 bodies per trip · ~8s round trip · Always available</div></div></div><div class="hl-box tut-highlight-step" style="display:flex;align-items:center;gap:12px;text-align:left;"><span style="font-size:clamp(1.4rem,2.3vw,2rem);">⛏→MID</span><div><div style="font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);letter-spacing:.08em;">MID ROUTE — press E / NP1</div><div style="font-size:var(--fs-xs);">12 bodies per trip · ~30s round trip · Requires mid control<br><span style="color:var(--dim);">Workers retreat automatically if mid is lost</span></div></div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MENU SYSTEM</div><div class="tut-sub">UNITS · UPGRADES · BUFFS</div><div class="tut-body">Your HUD has <b>three modes</b> — cycle between them with <kbd>W</kbd>/<kbd>S</kbd> (P1) or <kbd>↑</kbd>/<kbd>↓</kbd> (P2):<br><br>Use <kbd>A</kbd>/<kbd>D</kbd> (or <kbd>←</kbd>/<kbd>→</kbd>) to navigate within a mode, and <kbd>Q</kbd> (P1) or <kbd>ENTER</kbd> (P2) to activate the selected card.<br><br>All keys are fully rebindable from the main menu. You can also assign <b>direct-spawn hotkeys</b> — one key per unit slot — to instantly spawn without navigating.</div><div class="tut-visual"><div class="tstat" style="border-color:#e74c3c"><div class="tstat-icon">⚔️</div><div class="tstat-name">UNITS</div><div class="tstat-desc">Spawn combat units and workers. Main mode during battle.</div></div><div class="tstat" style="border-color:var(--gold)"><div class="tstat-icon">🔮</div><div class="tstat-name">UPGRADES</div><div class="tstat-desc">3 permanent faction upgrades. Buy once per game. High cost, major impact.</div></div><div class="tstat" style="border-color:var(--soul)"><div class="tstat-icon">⚡</div><div class="tstat-name">BUFFS</div><div class="tstat-desc">3 temporary rally buffs. Shared across all factions. Has cooldowns.</div></div></div>`; } },
 
-      { render(el) { el.innerHTML = `<div class="tut-title">UNIT UNLOCK PROGRESSION</div><div class="tut-sub">YOUR ROSTER OPENS UP OVER TIME</div><div class="tut-body">You don't start with your full roster. Units unlock in tiers as the match progresses — shown with a <b>🔒 countdown</b> on locked cards.<br><br>This gives both players time to learn the basic units before elites and specials arrive. It also shapes pacing: early game is about economy and map control, not elite spam.<br><br><span class="tut-step-badge">⭐ KEY INFO</span><br>Locked cards show the unit name and stats — you can plan ahead. The countdown ticks down in real time. When a tier unlocks, an announcement banner fires and the card pops in.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:560px;margin:0 auto;width:100%">${[['0s — Slots 1 & 2', 'Worker + starter combat unit. Available from the very first second.'], ['50s — Slot 3', 'Ranged or secondary unit. Economy should be running by now.'], ['100s — Slots 4 & Spy', 'Special units (Necromancer, powerful melee, etc.) and the Spy card.'], ['160s — Slots 5+', 'Aerial units and elite heavies. End-game power unlocks.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:flex-start;"><div style="min-width:165px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div><div class="tut-body" style="margin-top:8px;font-size:var(--fs-xs);color:var(--dim);">Note: The Tutorial and Sudden Death modes bypass all locks — full roster is available immediately.</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">UNIT UNLOCK PROGRESSION</div><div class="tut-sub">YOUR ROSTER OPENS UP OVER TIME</div><div class="tut-body">You don't start with your full roster. Units unlock in tiers as the match progresses — shown with a <b>🔒 countdown</b> on locked cards.<br><br>This gives both players time to learn the basic units before elites and specials arrive. It also shapes pacing: early game is about economy and map control, not elite spam.<br><br><span class="tut-step-badge">⭐ KEY INFO</span><br>Locked cards show the unit name and stats — you can plan ahead. The countdown ticks down in real time. When a tier unlocks, an announcement banner fires and the card pops in.</div><div class="tut-visual" style="flex-direction:column;gap:8px;max-width:560px;margin:0 auto;width:100%">${[['0s — Slots 1 & 2', 'Worker + starter combat unit. Available from the very first second.'], ['30s — Slot 3', 'Ranged or secondary unit. Economy should be running by now.'], ['60s — Slots 4 & Spy', 'Special units (Necromancer, powerful melee, etc.) and the Spy card.'], ['100s — Slots 5+', 'Aerial units and elite heavies. End-game power unlocks.']].map(([k, v]) => `<div style="display:flex;gap:10px;align-items:flex-start;"><div style="min-width:165px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div><div class="tut-body" style="margin-top:8px;font-size:var(--fs-xs);color:var(--dim);">Note: The Tutorial and Sudden Death modes bypass all locks — full roster is available immediately.</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT TYPES</div><div class="tut-sub">MELEE · RANGED · AERIAL · WORKER · SUMMONED</div><div class="tut-body"><span class="tut-step-badge">⭐ KEY MECHANIC</span><br>Each unit type has a role. Understanding the triangle of interactions is critical:</div><div class="tut-visual"><div class="tstat tut-highlight-step" style="border-color:#e74c3c"><div class="tstat-icon">🗡️</div><div class="tstat-name" style="color:#e74c3c">SOLDIER (MELEE)</div><div class="tstat-desc">Fast close-range fighters. Cannot hit aerial units. Slow ranged units on hit.</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🏹</div><div class="tstat-name">RANGED</div><div class="tstat-desc">Attacks from distance. 2.2× damage vs aerial. 3+ targeting same unit deals reduced damage.</div></div><div class="tstat" style="border-color:#1abc9c"><div class="tstat-icon">🦅</div><div class="tstat-name">AERIAL</div><div class="tstat-desc">Flies above melee reach. Only ranged and other aerial can hit them.</div></div><div class="tstat tut-highlight-step" style="border-color:#27ae60"><div class="tstat-icon">⛏</div><div class="tstat-name" style="color:#27ae60">WORKER</div><div class="tstat-desc">Collects Bodies off-screen. Cannot fight. Your economy — keep them alive.</div></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">UNIT INTERACTIONS</div><div class="tut-sub">THE COMBAT TRIANGLE</div><div class="tut-body">Combat has built-in counters. Exploit them to win:<br><br>🦅 <b>AERIAL beats MELEE</b> — ground melee units can't target aerial at all. Aerial units move freely over a melee wall.<br><br>🏹 <b>RANGED beats AERIAL</b> — ranged units deal 2.2× damage to aerial — a hard counter. Aerial units are fragile glass cannons — ranged will melt them.<br><br>🗡️ <b>MELEE beats RANGED</b> — every melee hit slows the target's movement. Ranged units can't permanently kite melee — once slowed, they get caught.</div><div class="tut-visual"><div class="hl-box" style="font-size:var(--fs-md);">🦅 → 🗡️ → 🏹 → 🦅<br><span style="font-size:var(--fs-xs);color:var(--dim);">Counter in this direction</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">THE MIDDLE POINT — CAPTURE AND HOLD</div><div class="tut-sub">CONTROLLING THE BATTLEFIELD</div><div class="tut-body">The mid circle at the center of the map is key. Sending units there and holding it <b>uncontested for 2 seconds</b> captures it.<br><br><b>Mid income escalates the longer you hold it</b> — don't just capture it and forget. Holding it for 60 seconds maxes your advantage. Recapturing a long-held mid is always an emergency.<br><br>If you lose mid for <b>15+ seconds</b>, you gain 🔥 <b>SURGE stacks</b> — each gives +0.7💀/s bonus income to keep you competitive. Max 3 stacks.</div><div class="tut-visual"><div class="tstat"><div class="tstat-icon">🔘</div><div class="tstat-name">UNCLAIMED</div><div class="tstat-desc">No mid income for anyone. Capture it first.</div></div><div class="tstat" style="border-color:var(--p1)"><div class="tstat-icon">⚡</div><div class="tstat-name">OWNED — ESCALATING</div><div class="tstat-desc">0s: +0.8💀/s → 30s: +1.5💀/s → 60s: +2.0💀/s (max)</div></div><div class="tstat" style="border-color:var(--mid)"><div class="tstat-icon">🟡</div><div class="tstat-name">CONTESTED</div><div class="tstat-desc">Both sides present. Income paused. Hold 2s to recapture.</div></div></div>`; } },
@@ -9639,7 +9653,7 @@
       { render(el) { el.innerHTML = `<div class="tut-title">FOCUS FIRE & BLOCKING</div><div class="tut-sub">ARMY DIVERSITY IS REWARDED</div><div class="tut-body"><b>Focus Fire Penalty:</b> When 3 or more ranged units target the same enemy, each attacker beyond the 2nd deals progressively less damage (80% → 65% → 50%). Spamming 8 archers at one target is less effective than a mix.<br><br><b>Projectile Blocking:</b> Enemy frontline melee units can block or deflect incoming ranged projectiles. 65% chance to reduce the shot by 40%, 35% chance to absorb it entirely. A wall of melee protects units behind it.<br><br>Together these systems mean: <b>mix your army</b>.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🛡️</span>Melee wall = natural shield<br>vs ranged spam</div><div class="hl-box"><span class="hl-icon">🎯</span>3+ on one target<br>= diminishing returns</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">LAST STAND</div><div class="tut-sub">THE DESPERATE DEFENSE</div><div class="tut-body">When your base falls to <b>30 HP</b>, Last Stand triggers automatically:<br><br>• You receive <b>+40 souls instantly</b><br>• Your faction's <b>Royal Guard</b> units are summoned (3 powerful temporary units)<br>• Royal Guards despawn after 30 seconds<br>• This can only trigger <b>once per game</b><br><br>Last Stand is your moment to turn the tide. Use the souls wisely — spawn your best units. The guard timer shows in your HUD.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">👑</span>Base ≤ 30 HP → Last Stand!<br>+40💀 + Royal Guards spawned<br><span style="font-size:var(--fs-xs);color:var(--dim);">Guard timer shown in HUD bottom panel</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SIEGE DECAY</div><div class="tut-sub">THE CLOCK IS TICKING</div><div class="tut-body">After <b>3 minutes</b> of gameplay, Siege Decay begins: both bases slowly lose HP over time. After <b>6 minutes</b>, the rate doubles.<br><br>This forces decisive action — you cannot turtle forever. The longer the game goes, the more your base crumbles even without enemy attacks.<br><br>The indicator at the top of the screen shows when Siege Decay is active.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⏳</span>3min: Decay starts (-0.02 HP/s)<br>6min: Decay doubles (-0.04 HP/s)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Both bases decay equally — no advantage to stalling</span></div></div>`; } },
-      { render(el) { el.innerHTML = `<div class="tut-title">FACTIONS</div><div class="tut-sub">10 FACTIONS — EACH PLAYS DIFFERENTLY</div><div class="tut-body">Choose your faction before each battle. Each faction has:</div><div class="tut-visual" style="flex-direction:column;gap:8px;text-align:left;max-width:600px;margin:0 auto;">${[['Unique Passive', 'A powerful ability that triggers automatically based on how you play.'], ['5 Units', 'Worker, starter combat, ranged/secondary, special, and an aerial or elite unit. Units unlock progressively over 160 seconds — you start with the first two, and the rest open as the match develops.'], ['3 Upgrades', 'Permanent army improvements bought mid-game. High cost, major reward.'], ['Royal Guard', '3 powerful temporary units summoned during Last Stand.'], ['Matchup Notes', 'Each faction has natural advantages and disadvantages against others.']].map(([k, v]) => `<div style="display:flex;gap:10px;"><div style="min-width:140px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
+      { render(el) { el.innerHTML = `<div class="tut-title">FACTIONS</div><div class="tut-sub">10 FACTIONS — EACH PLAYS DIFFERENTLY</div><div class="tut-body">Choose your faction before each battle. Each faction has:</div><div class="tut-visual" style="flex-direction:column;gap:8px;text-align:left;max-width:600px;margin:0 auto;">${[['Unique Passive', 'A powerful ability that triggers automatically based on how you play.'], ['5 Units', 'Worker, starter combat, ranged/secondary, special, and an aerial or elite unit. Units unlock progressively over 100 seconds — you start with the first two, and the rest open as the match develops.'], ['3 Upgrades', 'Permanent army improvements bought mid-game. High cost, major reward.'], ['Royal Guard', '3 powerful temporary units summoned during Last Stand.'], ['Matchup Notes', 'Each faction has natural advantages and disadvantages against others.']].map(([k, v]) => `<div style="display:flex;gap:10px;"><div style="min-width:140px;font-family:Rajdhani,sans-serif;font-size:var(--fs-xs);color:var(--gold);">${k}</div><div style="font-size:var(--fs-xs);color:var(--dim);">${v}</div></div>`).join('')}</div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">SUMMONER FACTION</div><div class="tut-sub">UNIQUE: PASSIVE SHADE SUMMONING</div><div class="tut-body">The Necromancer unit has two ways to summon Shades:<br><br>• <b>On kill:</b> Summons 2 Shades when it lands the killing blow<br>• <b>Passive:</b> Every 12 seconds, automatically summons 1 Shade (shown as a purple bar under the unit's HP bar on screen)<br><br>Shades have a cap (12 by default, raised to 16 with Dark Covenant upgrade). The Death Frenzy passive gives all nearby allies a +15% attack speed boost whenever any friendly unit dies.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">🔮</span>Necromancer: passive summon every 12s<br><span style="font-size:var(--fs-xs);color:var(--dim);">Purple bar below HP = summon countdown</span></div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">MENDERS FACTION</div><div class="tut-sub">UNIQUE: RETREAT AND RETURN</div><div class="tut-body">The Menders have a unique mechanic — their units retreat when damaged instead of dying:<br><br>• Units below <b>35% HP</b> automatically turn and run back to base<br>• At base, they heal gradually over 6 seconds (vulnerable during this time!)<br>• After fully healed, they rejoin the fight and a <b>18s retreat cooldown</b> begins<br>• Veteran units gain a permanent <b>+10% DMG</b> each time they successfully retreat and return (max 3 times)<br><br>The Cleric fires healing projectiles at the lowest-HP friendly unit. The Seraph heals nearby allies on every attack.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">💚</span>Unit below 35% HP → retreats<br>Heals fully → returns stronger</div></div>`; } },
       { render(el) { el.innerHTML = `<div class="tut-title">KEY BINDINGS &amp; HOTKEYS</div><div class="tut-sub">CUSTOMISE YOUR CONTROLS</div><div class="tut-body">All controls can be rebound from the main menu's <b>⌨️ KEY Bindings</b> screen.<br><br>You can also assign <b>Direct Spawn Hotkeys</b> — optional keys that instantly spawn a specific unit slot without navigating the menu. For example, bind <kbd>Q</kbd> to Unit Slot 1 and tap it to immediately spawn your first unit.<br><br>Slot labels show the actual unit names if you've already picked a faction. Hotkeys are unassigned by default and reset on page refresh.</div><div class="tut-visual"><div class="hl-box"><span class="hl-icon">⌨️</span>Navigate = WASD / Arrow Keys<br>Direct spawn = any key (optional)<br><span style="font-size:var(--fs-xs);color:var(--dim);">Controls screen updates live with your bindings</span></div></div>`; } },
@@ -9705,7 +9719,7 @@
       // ── Step 5b: Unit unlock progression ──
       {
         title: '🔒 UNITS UNLOCK OVER TIME',
-        body: 'In normal matches, your roster opens up in tiers as the game progresses:\n\n• Slot 2 (ranged) unlocks at <b>50 seconds</b>\n• Slot 3 (specials) and Spy unlock at <b>100 seconds</b>\n• Slot 4+ (aerials, elites) unlock at <b>160 seconds</b>\n\nLocked cards show a 🔒 countdown so you can plan ahead. A banner announcement fires the moment each tier becomes available.\n\n<i style="color:var(--dim);font-size:.9em;">The Tutorial gives you the full roster from the start — all cards are already unlocked here.</i>',
+        body: 'In normal matches, your roster opens up in tiers as the game progresses:\n\n• Slot 2 (ranged) unlocks at <b>30 seconds</b>\n• Slot 3 (specials) and Spy unlock at <b>60 seconds</b>\n• Slot 4+ (aerials, elites) unlock at <b>100 seconds</b>\n\nLocked cards show a 🔒 countdown so you can plan ahead. A banner announcement fires the moment each tier becomes available.\n\n<i style="color:var(--dim);font-size:.9em;">The Tutorial gives you the full roster from the start — all cards are already unlocked here.</i>',
         highlight: null,
         pause: true,
         btn: 'GOT IT →',
@@ -11068,6 +11082,7 @@
         lastCapAnnounce: 0,
         bloodPools: [], groundFX: [], _upgradeFlash: [0, 0], workerMidMode: [false, false],
         tarPatches: [], corpses: [], echoSchedule: [], darkZones: [],
+        _hasReavers: (P1_FACTION.name === 'Reavers' || P2_FACTION.name === 'Reavers'),
         _chronoTimer: [40, 40], _umbraTimer: [30, 30],
         _fortuneStreaks: [0, 0], _fortuneStreakTimer: [0, 0],
         // Conquest mode: 3 zones [left, mid, right], owner = 1|2|null, capTimer per zone
@@ -13016,8 +13031,8 @@
           spawnParticles(u.x, u.y, '#6c3483', 12);
         }
       }
-      // ── Reavers: leave a corpse pickup on death ──
-      if (!u.def.isWorker && !u.def.isSpawned && G.corpses) {
+      // ── Reavers: leave a corpse pickup on death (only when Reavers are in play) ──
+      if (G._hasReavers && !u.def.isWorker && !u.def.isSpawned && G.corpses) {
         const corpseVal = (killer && killer.def.reaverKillBonus) ? killer.def.reaverKillBonus : 3 + Math.floor(Math.random() * 4);
         G.corpses.push({ x: u.x, val: corpseVal, life: 25 });
         // corpseFeed: nearby Reavers Golems gain HP
@@ -15011,7 +15026,7 @@
       });
     }
     function updateCorpses(dt) {
-      if (!G.corpses) return;
+      if (!G._hasReavers || !G.corpses) return;
       G.corpses = G.corpses.filter(c => {
         c.life -= dt;
         if (c.life <= 0) return false;
@@ -15212,7 +15227,7 @@
         });
       }
       // Corpses (Reavers) — visible bone pile on the ground with pulsing glow
-      if (G.corpses && G.corpses.length) {
+      if (G._hasReavers && G.corpses && G.corpses.length) {
         G.corpses.forEach(c => {
           const frac = Math.min(1, c.life / 8);
           const _now = Date.now();
