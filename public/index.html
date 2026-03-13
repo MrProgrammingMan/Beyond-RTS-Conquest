@@ -566,7 +566,7 @@
     }
 
     #menu-canvas {
-      position: absolute;
+      position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
@@ -575,7 +575,7 @@
     }
 
     .menu-overlay {
-      position: absolute;
+      position: fixed;
       inset: 0;
       background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(192, 57, 43, .12), transparent 70%), linear-gradient(180deg, #07070f, #0d0d1a);
       pointer-events: none;
@@ -5192,14 +5192,14 @@
 
     .br-faction-label {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+      font-size: clamp(.8rem, 1.2vw, 1.05rem);
       letter-spacing: .22em;
       color: var(--dim);
     }
 
     .br-mastery-heading {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-size: clamp(1.15rem, 2vw, 1.5rem);
       font-weight: 900;
       letter-spacing: .14em;
       color: var(--gold);
@@ -5211,7 +5211,7 @@
       align-items: center;
       gap: 10px;
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+      font-size: clamp(.78rem, 1.15vw, .95rem);
     }
 
     .br-xp-bar-wrap {
@@ -5242,7 +5242,7 @@
 
     .br-skill-count {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+      font-size: clamp(.82rem, 1.2vw, 1rem);
       color: var(--dim);
       letter-spacing: .06em;
     }
@@ -5263,7 +5263,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+      font-size: clamp(.75rem, 1.1vw, .92rem);
       color: var(--dim);
     }
 
@@ -5277,7 +5277,7 @@
     }
 
     .br-empty-hint {
-      font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+      font-size: clamp(.75rem, 1.1vw, .92rem);
       color: var(--dim);
       opacity: .6;
       font-style: italic;
@@ -5286,7 +5286,7 @@
 
     .br-available-hint {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-size: clamp(.75rem, 1.1vw, .95rem);
       color: var(--gold);
       letter-spacing: .06em;
       opacity: .8;
@@ -5307,15 +5307,15 @@
 
     .br-open-tree-btn {
       width: 100%;
-      padding: clamp(14px, 2vh, 22px) clamp(20px, 2.5vw, 32px);
-      font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+      padding: clamp(10px, 1.5vh, 16px) clamp(16px, 2vw, 26px);
+      font-size: clamp(.82rem, 1.2vw, 1.05rem);
       letter-spacing: .16em;
       margin-top: auto;
       border-width: 2px;
     }
 
     .br-pros {
-      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-size: clamp(.72rem, 1.05vw, .9rem);
       color: var(--dim);
       line-height: 1.7;
       opacity: .85;
@@ -7475,7 +7475,7 @@
       // ══════════════════════════════════════════════════════════════════════
       // P1-AUTHORITATIVE SYNC WITH P2 INTERPOLATION
       // ──────────────────────────────────────────────────────────────────────
-      // P1 runs the full simulation and sends state snapshots every 16ms (~60fps).
+      // P1 runs the full simulation and sends state snapshots every 33ms (~30fps).
       // P2 dead-reckons unit positions from the latest snapshot each animation frame.
       // Resource spends are applied locally immediately and protected for 300ms so
       // stale P1 snapshots can't cause the "jump back" visual glitch.
@@ -7516,7 +7516,7 @@
       function _startStateSync() {
         if (_syncInterval) clearInterval(_syncInterval);
         if (myPid === 1) {
-          _syncInterval = setInterval(_broadcastFullState, 16); // ~60fps snapshots
+          _syncInterval = setInterval(_broadcastFullState, 33); // ~30fps snapshots — dead reckoning fills gaps
         }
       }
       function _stopStateSync() {
@@ -8270,6 +8270,7 @@
     // Both players see an identical map regardless of their screen resolution.
     const VIRTUAL_W = 1920;
     const VIRTUAL_H = 600;
+    const UNIT_SPEED_MULT = 0.75; // global movement speed scalar — lower = slower paced
     let _canvasScale = 1; // current CSS scale factor — used to map game→screen coords
 
     function resizeGameCanvas() {
@@ -8883,10 +8884,10 @@
           { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
           { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 4, bodies: 1, hp: 80, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +80% damage. Benefits from Veterans.', chargeStrike: true, armor: 2 },
           { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 5, bodies: 1, hp: 50, speed: 65, dmg: 17, range: 110, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.', armor: 2 },
-          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 9, bodies: 2, hp: 155, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 30% HP.', armor: 2 },
+          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 9, bodies: 2, hp: 125, speed: 50, dmg: 22, range: 30, aerial: false, isWorker: false, attackRate: 0.85, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 30% HP.', armor: 2 },
           { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 9, bodies: 3, hp: 73, speed: 85, dmg: 29, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3, armor: 2 },
         ],
-        extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 200, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
+        extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 170, speed: 60, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
         guardUnit: 'w_guard',
         upgrades: [
           { id: 'iron_discipline', name: 'Iron Discipline', cost: { souls: 33, bodies: 5 }, desc: 'All melee units gain +25% attack rate permanently.', effect: 'melee_atkrate', value: 0.18 },
@@ -8911,7 +8912,7 @@
         ],
         extraUnits: [
           { id: 's_shade', name: 'Shade', icon: '🌑', souls: 0, bodies: 0, hp: 18, speed: 76, dmg: 8, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 11, color: '#2c3e50', type: 'mel', desc: 'Summoned undead. Swarms enemies.', isSpawned: true },
-          { id: 'su_guard', name: 'Death Knight', icon: '💀', souls: 0, bodies: 0, hp: 220, speed: 55, dmg: 35, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#7d3c98', type: 'mel', desc: 'Royal Guard. Kills spawn 1 Shade. Despawns 30s.', isSpawned: true, deathKnightSummon: true },
+          { id: 'su_guard', name: 'Death Knight', icon: '💀', souls: 0, bodies: 0, hp: 180, speed: 55, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.95, radius: 18, color: '#7d3c98', type: 'mel', desc: 'Royal Guard. Kills spawn 1 Shade. Despawns 30s.', isSpawned: true, deathKnightSummon: true },
         ],
         guardUnit: 'su_guard',
         upgrades: [
@@ -8930,16 +8931,16 @@
         startSouls: 18, startBodies: 12,
         units: [
           { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Sturdier than average.' },
-          { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 90, speed: 48, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
-          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 55, speed: 46, dmg: 24, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
-          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 180, speed: 42, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 75, speed: 48, dmg: 13, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
+          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 50, speed: 46, dmg: 22, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
+          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 145, speed: 42, dmg: 25, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 11, bodies: 3, hp: 42, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
-          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 20, bodies: 5, hp: 160, speed: 38, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 22, bodies: 5, hp: 125, speed: 38, dmg: 23, range: 34, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
         ],
-        extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 280, speed: 40, dmg: 44, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
+        extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 210, speed: 40, dmg: 32, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
         upgrades: [
-          { id: 'warbrand', name: 'Warbrand', cost: { souls: 36, bodies: 7 }, desc: 'All melee units gain +18 base DMG.', effect: 'melee_dmg', value: 22 },
+          { id: 'warbrand', name: 'Warbrand', cost: { souls: 36, bodies: 7 }, desc: 'All melee units gain +14 base DMG.', effect: 'melee_dmg', value: 14 },
           { id: 'siege_training', name: 'Siege Training', cost: { souls: 39, bodies: 6 }, desc: 'All units deal +35% damage to enemy base. Workers deal base damage.', effect: 'base_dmg', value: 0.24 },
           { id: 'armored_core', name: 'Armored Core', cost: { souls: 54, bodies: 9 }, desc: 'Warlord and Grave Brute gain +100 max HP and +8 DMG.', effect: 'heavy_hp', value: 72 },
         ]
@@ -8980,7 +8981,7 @@
           { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 1, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
           { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 16, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
           { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 10, bodies: 2, hp: 32, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies 8 HP. On death: pollinates 3 nearby allies — 3 HP/s regen for 6s.', sylphHeal: 8, sylphHealRange: 110, pollenDeath: true },
-          { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 150, speed: 42, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
+          { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 120, speed: 42, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
         ],
         extraUnits: [{ id: 've_guard', name: 'Ancient Oak', icon: '🌳', souls: 0, bodies: 0, hp: 250, speed: 35, dmg: 22, range: 35, aerial: false, isWorker: false, attackRate: 0.7, radius: 22, color: '#27ae60', type: 'mel', desc: 'Royal Guard. Massive HP. Adjacent allies gain +1 HP regen/sec. Despawns 30s.', isSpawned: true, guardRegen: 1 }],
         guardUnit: 've_guard',
@@ -9003,9 +9004,9 @@
           { id: 'if_fiend', name: 'Fiend', icon: '👿', souls: 5, bodies: 2, hp: 50, speed: 70, dmg: 14, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#d63031', type: 'mel', desc: 'Aggressive melee demon. Benefits from Hellfire empowerment.' },
           { id: 'if_hellshot', name: 'Hellshot', icon: '🏹', souls: 7, bodies: 3, hp: 34, speed: 62, dmg: 18, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#e84393', type: 'rng', desc: 'Ranged unit. Shots apply 3 DPS burn for 2s. Inferno Chain upgrade: 8 DPS for 3s.', burnOnHit: true, burnDur: 2, burnDmg: 3 },
           { id: 'if_nightmare', name: 'Nightmare', icon: '🦇', souls: 11, bodies: 3, hp: 35, speed: 85, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6c1f1f', type: 'air', desc: 'Aerial unit. Explodes on death for 15 splash damage in 70px.', deathSplash: true, deathSplashDmg: 15, deathSplashRange: 60 },
-          { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 6, hp: 117, speed: 44, dmg: 28, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 5 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 5 },
+          { id: 'if_pitlord', name: 'Pit Lord', icon: '👹', souls: 22, bodies: 6, hp: 95, speed: 44, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#c0392b', type: 'mel', desc: 'Massive demon. Aura deals 5 DPS to all enemies within 65px.', pitAura: true, pitAuraRange: 65, pitAuraDmg: 5 },
         ],
-        extraUnits: [{ id: 'if_guard', name: 'Inferno Lord', icon: '🔥', souls: 0, bodies: 0, hp: 210, speed: 55, dmg: 40, range: 34, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#ff4500', type: 'mel', desc: 'Royal Guard. Hellfire on every spawn while active. Despawns 30s.', isSpawned: true, _hellfire: true }],
+        extraUnits: [{ id: 'if_guard', name: 'Inferno Lord', icon: '🔥', souls: 0, bodies: 0, hp: 170, speed: 55, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.95, radius: 19, color: '#ff4500', type: 'mel', desc: 'Royal Guard. Hellfire on every spawn while active. Despawns 30s.', isSpawned: true, _hellfire: true }],
         guardUnit: 'if_guard',
         upgrades: [
           { id: 'hellforge', name: 'Hellforge', cost: { souls: 36, bodies: 5 }, desc: 'Hellfire triggers every 5th spawn (was 8th) and empowered units gain +30% DMG instead of +25%.', effect: 'hellfire_rate', value: 6 },
@@ -9026,9 +9027,9 @@
           { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 1, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.2s chill on every melee hit.', chillOnHit: true, chillDur: 1.2 },
           { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.2, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
           { id: 'gl_snowhawk', name: 'Snowhawk', icon: '🦅', souls: 11, bodies: 2, hp: 36, speed: 85, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#dfe6e9', type: 'air', desc: 'Aerial unit. First hit on each enemy stuns for 0.8s.', firstHitStun: true, stunDur: 0.8 },
-          { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 200, speed: 36, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 1.6 },
+          { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 165, speed: 36, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 1.6 },
         ],
-        extraUnits: [{ id: 'gl_guard', name: 'Blizzard Queen', icon: '❄️', souls: 0, bodies: 0, hp: 190, speed: 50, dmg: 30, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#74b9ff', type: 'mel', desc: 'Royal Guard. Melee ice titan. All hits chill for 2.0s. Despawns 30s.', isSpawned: true, chillOnHit: true, chillDur: 2.0 }],
+        extraUnits: [{ id: 'gl_guard', name: 'Blizzard Queen', icon: '❄️', souls: 0, bodies: 0, hp: 155, speed: 50, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#74b9ff', type: 'mel', desc: 'Royal Guard. Melee ice titan. All hits chill for 2.0s. Despawns 30s.', isSpawned: true, chillOnHit: true, chillDur: 2.0 }],
         guardUnit: 'gl_guard',
         upgrades: [
           { id: 'deep_freeze', name: 'Deep Freeze', cost: { souls: 33, bodies: 5 }, desc: 'Chill duration increased by +1.5s and chill slow strength increases from 35% to 50%.', effect: 'chill_dur', value: 0.6 },
@@ -9049,7 +9050,7 @@
           { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 1, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
           { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 17, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
           { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 10, bodies: 2, hp: 42, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.3 },
-          { id: 'vb_stormcaller', name: 'Stormcaller', icon: '🌩️', souls: 20, bodies: 5, hp: 105, speed: 55, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 16, color: '#e17055', type: 'mel', desc: 'Heavy melee. Chain Lightning triggers every 5 attacks with 80px chain range.', chainRate: 5, chainRange: 80 },
+          { id: 'vb_stormcaller', name: 'Stormcaller', icon: '🌩️', souls: 20, bodies: 5, hp: 85, speed: 55, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.85, radius: 16, color: '#e17055', type: 'mel', desc: 'Heavy melee. Chain Lightning triggers every 5 attacks with 80px chain range.', chainRate: 5, chainRange: 80 },
         ],
         extraUnits: [{ id: 'vb_guard', name: 'Thunder Titan', icon: '⚡', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 35, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Chain on every hit. 80px chain range. Despawns 30s.', isSpawned: true, alwaysChain: true, chainRange: 80 }],
         guardUnit: 'vb_guard',
@@ -9071,7 +9072,7 @@
           { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 1, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
           { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 6, bodies: 1, hp: 60, speed: 72, dmg: 9, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 4 stacks).', growOnKill: 2, growMaxStacks: 4 },
           { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 9, bodies: 2, hp: 42, speed: 62, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
-          { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 13, bodies: 3, hp: 90, speed: 58, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
+          { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 13, bodies: 3, hp: 72, speed: 58, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
           { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 12, bodies: 3, hp: 38, speed: 88, dmg: 17, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
         ],
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
@@ -9163,9 +9164,9 @@
           { id: 'rv_digger', name: 'Grave Digger', icon: '⚰️', souls: 5, bodies: 1, hp: 58, speed: 58, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#922b21', type: 'mel', desc: 'Melee. Kills drop high-value corpse (+2 bonus bodies).', reaverKillBonus: 2 },
           { id: 'rv_harvester', name: 'Harvester', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#c0392b', type: 'rng', desc: 'Ranged. Shots apply 4 DPS poison for 3s.', poisonOnHit: true, poisonDur: 3, poisonDmg: 4 },
           { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 15, bodies: 4, hp: 100, speed: 44, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7b241c', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 200) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 200 },
-          { id: 'rv_flenser', name: 'The Flenser', icon: '⚔️', souls: 20, bodies: 5, hp: 145, speed: 42, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#e74c3c', type: 'mel', desc: 'Titan. Immune to knockback. Each kill grants +3 bodies.', immuneKnockback: true, bodyOnKill: 3 },
+          { id: 'rv_flenser', name: 'The Flenser', icon: '⚔️', souls: 20, bodies: 5, hp: 115, speed: 42, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#e74c3c', type: 'mel', desc: 'Titan. Immune to knockback. Each kill grants +3 bodies.', immuneKnockback: true, bodyOnKill: 3 },
         ],
-        extraUnits: [{ id: 'rv_guard', name: 'Bone Titan', icon: '🦴', souls: 0, bodies: 0, hp: 240, speed: 44, dmg: 38, range: 34, aerial: false, isWorker: false, attackRate: 0.85, radius: 21, color: '#922b21', type: 'mel', desc: 'Royal Guard. Immune to knockback. Gains +8 HP per nearby death. Despawns 30s.', isSpawned: true, immuneKnockback: true, corpseFeed: true, corpseFeedRange: 120, corpseFeedCap: 350 }],
+        extraUnits: [{ id: 'rv_guard', name: 'Bone Titan', icon: '🦴', souls: 0, bodies: 0, hp: 195, speed: 44, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 21, color: '#922b21', type: 'mel', desc: 'Royal Guard. Immune to knockback. Gains +8 HP per nearby death. Despawns 30s.', isSpawned: true, immuneKnockback: true, corpseFeed: true, corpseFeedRange: 120, corpseFeedCap: 300 }],
         guardUnit: 'rv_guard',
         upgrades: [
           { id: 'mass_grave', name: 'Mass Grave', cost: { souls: 33, bodies: 6 }, desc: 'Corpse value increases to +8 bodies each.', effect: 'reaver_corpse', value: 8 },
@@ -9251,7 +9252,7 @@
           { id: 'tb_surge', name: 'Surge Guard', icon: '🌊', souls: 5, bodies: 1, hp: 62, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#0984e3', type: 'mel', desc: 'Melee. Regen 3 HP/s near allies. Below 20% HP: splits into 2 copies.', tideborn: true },
           { id: 'tb_archer', name: 'Surge Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#74b9ff', type: 'rng', desc: 'Ranged. Regen 3 HP/s near allies.', tideborn: true },
           { id: 'tb_deep', name: 'Deep Current', icon: '🐋', souls: 10, bodies: 2, hp: 36, speed: 85, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#0984e3', type: 'air', desc: 'Aerial. Regen 3 HP/s near allies.', tideborn: true },
-          { id: 'tb_brute', name: 'Tidal Brute', icon: '🌊', souls: 18, bodies: 4, hp: 110, speed: 46, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#2980b9', type: 'mel', desc: 'Heavy melee. Regen 3 HP/s near allies. Split spawns 2 Surge Guards.', tideborn: true, tideHighHP: true },
+          { id: 'tb_brute', name: 'Tidal Brute', icon: '🌊', souls: 18, bodies: 4, hp: 88, speed: 46, dmg: 19, range: 30, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#2980b9', type: 'mel', desc: 'Heavy melee. Regen 3 HP/s near allies. Split spawns 2 Surge Guards.', tideborn: true, tideHighHP: true },
         ],
         extraUnits: [{ id: 'tb_guard', name: 'The Colossus', icon: '🌊', souls: 0, bodies: 0, hp: 220, speed: 48, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 21, color: '#0984e3', type: 'mel', desc: 'Royal Guard. Splits into 2 Tidal Brutes on death. Despawns 30s.', isSpawned: true }],
         guardUnit: 'tb_guard',
@@ -9294,7 +9295,7 @@
           { id: 'vb2_worker', name: 'Phase Scout', icon: '🫥', souls: 2, bodies: 1, hp: 24, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#dfe6e9', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Always phased while traveling — immune to enemy targeting.' },
           { id: 'vb2_flicker', name: 'Flicker', icon: '💨', souls: 5, bodies: 1, hp: 55, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#b2bec3', type: 'mel', desc: 'Melee. Below 40% HP: auto-phase 2s, regen 5 HP/s. Reappears with free strike.', veilborn: true },
           { id: 'vb2_archer', name: 'Veilstep Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#dfe6e9', type: 'rng', desc: 'Ranged. Below 40% HP: auto-phase 2s.', veilborn: true },
-          { id: 'vb2_blade', name: 'Wraithblade', icon: '⚔️', souls: 13, bodies: 3, hp: 90, speed: 55, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 1.0, radius: 16, color: '#636e72', type: 'mel', desc: 'Heavy melee. Phase lasts 3s, +10 DMG on re-materialization.', veilborn: true, veilPhaseDur: 3, veilStrikeBonus: 10 },
+          { id: 'vb2_blade', name: 'Wraithblade', icon: '⚔️', souls: 13, bodies: 3, hp: 72, speed: 55, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#636e72', type: 'mel', desc: 'Heavy melee. Phase lasts 3s, +10 DMG on re-materialization.', veilborn: true, veilPhaseDur: 3, veilStrikeBonus: 10 },
           { id: 'vb2_rift', name: 'The Rift', icon: '🌀', souls: 10, bodies: 2, hp: 35, speed: 88, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#b2bec3', type: 'air', desc: 'Aerial. Below 40% HP: auto-phase 2s.', veilborn: true },
         ],
         extraUnits: [{ id: 'vb2_guard', name: 'The Specter', icon: '👻', souls: 0, bodies: 0, hp: 190, speed: 60, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#dfe6e9', type: 'mel', desc: 'Royal Guard. Starts phased for 3s, materializes with a free double-strike. Despawns 30s.', isSpawned: true, veilborn: true, veilStartPhased: true }],
@@ -9359,7 +9360,7 @@
         units: [
           { id: 'pd_worker', name: 'Frenzied', icon: '🤪', souls: 2, bodies: 1, hp: 20, speed: 65, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 10, color: '#e84393', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
           { id: 'pd_wild', name: 'Wildfire', icon: '🔥', souls: 4, bodies: 1, hp: 48, speed: 76, dmg: 11, range: 26, aerial: false, isWorker: false, attackRate: 1.3, radius: 12, color: '#e84393', type: 'mel', desc: 'Cheap fast melee. 15% misfire chance on attack.', pandemonium: true },
-          { id: 'pd_unhng', name: 'The Unhinged', icon: '😵', souls: 9, bodies: 2, hp: 78, speed: 68, dmg: 17, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 15, color: '#d63031', type: 'mel', desc: 'Heavy melee. Berserk at 50% HP (attack rate doubles).', pandemonium: true, berserkThreshold: 0.5 },
+          { id: 'pd_unhng', name: 'The Unhinged', icon: '😵', souls: 9, bodies: 2, hp: 60, speed: 68, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 15, color: '#d63031', type: 'mel', desc: 'Heavy melee. Berserk at 50% HP (attack rate doubles).', pandemonium: true, berserkThreshold: 0.5 },
           { id: 'pd_chaos', name: 'Chaos Drake', icon: '🐲', souls: 8, bodies: 2, hp: 30, speed: 95, dmg: 16, range: 52, aerial: true, isWorker: false, attackRate: 1.35, radius: 13, color: '#e84393', type: 'air', desc: 'Fast aerial. 15% misfire chance.', pandemonium: true },
           { id: 'pd_maelstrom', name: 'The Maelstrom', icon: '🌀', souls: 5, bodies: 1, hp: 36, speed: 72, dmg: 14, range: 100, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#d63031', type: 'rng', desc: 'Cheap ranged. 15% chance per shot to ricochet to random unit.', pandemonium: true },
         ],
@@ -9408,7 +9409,7 @@
           { id: 'um_night', name: 'Nightblade', icon: '🗡️', souls: 5, bodies: 1, hp: 58, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#636e72', type: 'mel', desc: 'Melee. In darkness: +20% dmg reduction, +15% DMG.', umbral: true },
           { id: 'um_archer', name: 'Umbra Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 62, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#636e72', type: 'rng', desc: 'Ranged. In darkness: enemies cannot target this unit with ranged attacks.', umbral: true },
           { id: 'um_blot', name: 'The Blot', icon: '💀', souls: 12, bodies: 3, hp: 105, speed: 50, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#2d3436', type: 'mel', desc: 'Heavy melee. Creates 120px darkness zone for 10s on death.', umbral: true, darkOnDeath: true },
-          { id: 'um_eclipse', name: 'Eclipse Titan', icon: '🌑', souls: 20, bodies: 5, hp: 150, speed: 44, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#2d3436', type: 'mel', desc: 'Titan. Immune to knockback. Constant 60px darkness aura around itself.', umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 60 },
+          { id: 'um_eclipse', name: 'Eclipse Titan', icon: '🌑', souls: 20, bodies: 5, hp: 120, speed: 44, dmg: 21, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#2d3436', type: 'mel', desc: 'Titan. Immune to knockback. Constant 60px darkness aura around itself.', umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 60 },
         ],
         extraUnits: [{ id: 'um_guard', name: 'The Shadow King', icon: '🌑', souls: 0, bodies: 0, hp: 210, speed: 52, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 0.95, radius: 20, color: '#2d3436', type: 'mel', desc: 'Royal Guard. Immune to knockback. 80px darkness aura. Despawns 30s.', isSpawned: true, umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 80 }],
         guardUnit: 'um_guard',
@@ -11617,8 +11618,8 @@
           ? (_mhsHUD < 30 ? 0.8 + (_mhsHUD / 30) * 0.7
             : _mhsHUD < 60 ? 1.5 + ((_mhsHUD - 30) / 30) * 0.5
               : 2.0) : 0;
-        const soulRate = (0.45 + _midTaperHUD + (p.despStacks * 1.0) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(1);
-        const bodyRate = ((4.5 + Math.floor(gameSec / 60) * 0.5) * p.workers).toFixed(1);
+        const soulRate = (0.6 + _midTaperHUD + (p.despStacks * 1.0) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(1);
+        const bodyRate = ((3.0 + Math.floor(gameSec / 60) * 0.4) * p.workers).toFixed(1);
         const incEl = document.getElementById(`p${pid}-income-rate`);
         const _bm = G.activeEvent && G.activeEvent.type === 'blood_moon' && p._bloodMoon;
         const _bmRemain = _bm ? Math.ceil((G.activeEvent.duration || 18) - (G.activeEvent.timer || 0)) : 0;
@@ -13828,7 +13829,7 @@
       const p = G.players[u.player - 1];
       const dir = u.player === 1 ? 1 : -1;
       const offX = u.player === 1 ? -100 : G.w + 100;
-      const spd = Math.max(30, u.def.speed * (u._speedMult || 1));
+      const spd = Math.max(22, u.def.speed * (u._speedMult || 1) * UNIT_SPEED_MULT);
       u._midRing = u.goToMid && !u.offscreen;
       u._carryGlow = u.carrying;
       // Veilborn Phase Scout: phased (untargetable) while traveling, unphased at base
@@ -13843,8 +13844,8 @@
         u.offTimer -= dt;
         if (u.offTimer <= 0) {
           u.offscreen = false; u.carrying = true;
-          // Mid trips take ~3× as long as normal trips, so reward 12 bodies (vs 2 at home) — genuinely worth using
-          let _baseCarry = u._wasGoingMid ? 12 : 3;
+          // Mid trips take ~3× as long as normal trips, so reward more bodies — genuinely worth using
+          let _baseCarry = u._wasGoingMid ? 8 : 2;
           if (u._wasGoingMid && (u.def.groveMidBonus || u.def.frostMidBonus)) _baseCarry += 2;
           if (u._wasGoingMid && u.def.merchantMidBonus) _baseCarry += 2;
           u.carryCount = _baseCarry;
@@ -14155,8 +14156,8 @@
         const blitzMult = (_spOwner.activeBuffs && _spOwner.activeBuffs.blitz > 0) ? 1.40 : 1.0;
         // Speed floor for slowed units (BUG2 fix)
         const groundMult = (!u.def.aerial && !u.def.isWorker) ? 0.92 : 1.0;
-        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult * blitzMult * groundMult;
-        const spd = u.def.immuneDebuff ? u.def.speed * warcryMult * blitzMult * groundMult : Math.max(30, rawSpd);
+        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult * blitzMult * groundMult * UNIT_SPEED_MULT;
+        const spd = u.def.immuneDebuff ? u.def.speed * warcryMult * blitzMult * groundMult * UNIT_SPEED_MULT : Math.max(22, rawSpd);
         const enemy = findEnemy(u);
         u.target = enemy;
         if (enemy) {
@@ -14536,7 +14537,7 @@
             : _mhs < 60 ? 1.5 + ((_mhs - 30) / 30) * 0.5
               : 2.0) : 0;
         const midTaper = _midRaw * (_eclipseActive ? 0.5 : 1.0);
-        const baseTick = (0.45 + earlyBonus + midTaper) * sdMult * dt;
+        const baseTick = (0.6 + earlyBonus + midTaper) * sdMult * dt;
         const _eclipseDesp = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
         const despTick = (p.despStacks * (_eclipseDesp ? 2.0 : 1.0)) * dt;
         const soulTick = baseTick + despTick;
@@ -14554,7 +14555,7 @@
           p.bodyDespTimer = (p.bodyDespTimer || 0) + dt;
           if (p.bodyDespTimer >= 10) { p.bodyDespTimer = 0; p.bodies += 1; p.totalBodiesEarned = (p.totalBodiesEarned || 0) + 1; showPopup(p.baseX, G.groundY - 50, '+1🦴 SURGE', '#27ae60', p.id); }
         }
-        const bodyRate = 4.5 + Math.floor(gameSec / 60) * .5;
+        const bodyRate = 3.0 + Math.floor(gameSec / 60) * .4;
         p.bodyAccum += bodyRate / 60 * dt;
         if (p.bodyAccum >= 1) { const bodyGain = Math.floor(p.bodyAccum); p.bodies += bodyGain; p.totalBodiesEarned = (p.totalBodiesEarned || 0) + bodyGain; p.bodyAccum %= 1; }
         // Unit cap scaling
@@ -14605,8 +14606,9 @@
           if (!justUnlocked) return;
 
           // Fire banner announcement (uses existing _announceEvent which all players see)
-          const label = `⚔️ ${def.name.toUpperCase()} UNLOCKED`;
-          const sub = `${fac.name} · ${def.icon} ${def.name} — ${def.desc.split('.')[0]}`;
+          const _typeLabel = { mel: 'MELEE', rng: 'RANGED', air: 'AERIAL', sum: 'SUMMONER', wrk: 'WORKER' }[def.type] || 'UNIT';
+          const label = `⚔️ ${_typeLabel} UNLOCKED`;
+          const sub = `${fac.name} · ${def.icon} ${_typeLabel}`;
           _announceEvent(label, facAura.color, sub);
 
           // Pop-in animation on the card
@@ -15169,6 +15171,8 @@
         G.shakeY = (Math.random() - 0.5) * G.shake * 8;
       } else if (G) { G.shakeX = 0; G.shakeY = 0; }
       ctx.clearRect(0, 0, G.w, G.h);
+      ctx.fillStyle = '#07070f';
+      ctx.fillRect(0, 0, G.w, G.h);
       ctx.save();
       ctx.translate((G && G.shakeX) || 0, (G && G.shakeY) || 0);
       drawFactionBackground(ctx, G);
@@ -18205,7 +18209,7 @@
       // P1 is the authority. P2 skips ALL physics, interpolates unit positions
       // between the two most recently received snapshots, then just renders.
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
-        NET.interpolateUnits();  // smooth 60fps positions between 60fps snapshots
+        NET.interpolateUnits();  // smooth 60fps rendering between 30fps snapshots via dead reckoning
         // Run economy locally so soul income ticks every frame instead of
         // snapping on each P1 snapshot. P1's authoritative values correct drift.
         updateEconomy(G.dt);
