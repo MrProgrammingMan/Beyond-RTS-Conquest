@@ -8483,7 +8483,15 @@
       bubble.style.display = 'block';
       bubble.style.pointerEvents = 'none';
       bubble.className = 'camp-dia-show';
-      _campPosBubble(bubble, side);
+      // Position near the correct base — simpler than _campPosBubble for online chat
+      const _cx = canvas.getBoundingClientRect();
+      const _bh = bubble.offsetHeight || 60;
+      if (side === 'player') {
+        bubble.style.left = Math.max(10, _cx.left + 20) + 'px';
+      } else {
+        bubble.style.left = Math.min(window.innerWidth - 10, _cx.right - 20) - Math.min(380, window.innerWidth * 0.82) + 'px';
+      }
+      bubble.style.setProperty('--arrow-left', side === 'player' ? '30px' : 'calc(100% - 50px)');
       // Typewriter with per-letter sound
       let charIdx = 0, soundCounter = 0;
       CAMPAIGN._diaTimer = setInterval(() => {
@@ -14035,8 +14043,9 @@
       G_eventVote.voted[pidx] = true;
       G_eventVote.votes[choice]++;
       _updateVoteDisplay();
-      // If both voted, resolve immediately
-      if (G_eventVote.voted[0] && G_eventVote.voted[1]) {
+      // If both voted, resolve — but only on P1 (authoritative); P2 waits for snapshot
+      const _isP2Vote = typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2;
+      if (!_isP2Vote && G_eventVote.voted[0] && G_eventVote.voted[1]) {
         setTimeout(_resolveEventVote, 400); // brief pause so players see the result
       }
     }
@@ -19904,11 +19913,11 @@
           if (e.code === KEYS.p1Right) { e.preventDefault(); voteMoveCursor(1, 1); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 1, dir: 1 }); return; }
           if (e.code === KEYS.p1Act) { e.preventDefault(); voteForEvent(1); if (_voteOnline) NET.sendAction({ type: 'voteForEvent', pid: 1 }); return; }
         }
-        // P2 cursor/vote — in online mode send action to P1, in local run directly
+        // P2 cursor/vote — run locally AND send to P1 in online mode
         if (!_votePid || _votePid === 2) {
-          if (e.code === KEYS.p2Left) { e.preventDefault(); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 2, dir: -1 }); else voteMoveCursor(2, -1); return; }
-          if (e.code === KEYS.p2Right) { e.preventDefault(); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 2, dir: 1 }); else voteMoveCursor(2, 1); return; }
-          if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); if (_voteOnline) NET.sendAction({ type: 'voteForEvent', pid: 2 }); else voteForEvent(2); return; }
+          if (e.code === KEYS.p2Left) { e.preventDefault(); voteMoveCursor(2, -1); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 2, dir: -1 }); return; }
+          if (e.code === KEYS.p2Right) { e.preventDefault(); voteMoveCursor(2, 1); if (_voteOnline) NET.sendAction({ type: 'voteMoveCursor', pid: 2, dir: 1 }); return; }
+          if (e.code === KEYS.p2Act || (e.code === 'NumpadEnter' && KEYS.p2Act === 'Enter')) { e.preventDefault(); voteForEvent(2); if (_voteOnline) NET.sendAction({ type: 'voteForEvent', pid: 2 }); return; }
         }
       }
 
