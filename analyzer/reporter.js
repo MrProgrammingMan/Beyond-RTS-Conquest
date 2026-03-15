@@ -36,7 +36,10 @@ function renderSnippets(snippets, bugIdx) {
 const FACTION_ICONS = {
   warriors: '⚔️', summoners: '💀', brutes: '🪨', spirits: '✨',
   verdant: '🌿', infernal: '🔥', glacial: '❄️', voltborn: '⚡',
-  bloodpact: '🩸', menders: '💚',
+  bloodpact: '🩸', menders: '💚', weavers: '🕸️', merchants: '💰',
+  reavers: '🦴', fortune: '🎲', plagued: '🧫', chrysalis: '🐛',
+  tideborn: '🌊', echoes: '👁️', veilborn: '👻', chronomancers: '⏳',
+  illusionists: '🪄', pandemonium: '🌀', psionics: '🧠', umbral: '🌑',
 };
 
 function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta }) {

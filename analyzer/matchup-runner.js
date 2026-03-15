@@ -11,6 +11,9 @@ const fs = require('fs');
 const ALL_FACTIONS = [
   'warriors', 'summoners', 'brutes', 'spirits', 'verdant',
   'infernal', 'glacial', 'voltborn', 'bloodpact', 'menders',
+  'weavers', 'merchants', 'reavers', 'fortune', 'plagued',
+  'chrysalis', 'tideborn', 'echoes', 'veilborn', 'chronomancers',
+  'illusionists', 'pandemonium', 'psionics', 'umbral',
 ];
 
 async function runAllMatchups(cfg, onProgress = () => { }) {

@@ -27,7 +27,7 @@ module.exports = {
     // Latency profiles to test (ideal/good/average/bad/awful)
     latencyProfiles: ['ideal', 'good', 'average'],
     // Faction pairs to test sync with (pick representative matchups)
-    factionPairs: [['warriors', 'brutes'], ['summoners', 'spirits'], ['glacial', 'infernal']],
+    factionPairs: [['warriors', 'brutes'], ['summoners', 'spirits'], ['glacial', 'infernal'], ['weavers', 'merchants'], ['plagued', 'chronomancers'], ['psionics', 'umbral'], ['pandemonium', 'illusionists']],
     // Real seconds before giving up on a test scenario
     testTimeoutSecs: 40,
   },

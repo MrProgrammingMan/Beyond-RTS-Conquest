@@ -55,7 +55,7 @@ const gamesArg = args.find(a => a.startsWith('--games='));
 const focusArg = args.find(a => a.startsWith('--focus='));
 
 if (quickMode) {
-  cfg.balance.factionFilter = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal'];
+  cfg.balance.factionFilter = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal', 'weavers', 'merchants', 'plagued', 'chronomancers', 'psionics', 'umbral', 'pandemonium'];
   cfg.balance.gamesPerMatchup = 2;
   cfg.balance.parallelGames = 3;
   cfg.online = { ...(cfg.online || {}), latencyProfiles: ['ideal'], factionPairs: [['warriors', 'brutes']] };
