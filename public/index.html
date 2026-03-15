@@ -8491,6 +8491,7 @@
       } else {
         bubble.style.left = Math.min(window.innerWidth - 10, _cx.right - 20) - Math.min(380, window.innerWidth * 0.82) + 'px';
       }
+      bubble.style.top = Math.max(10, _cx.top + 10) + 'px';
       bubble.style.setProperty('--arrow-left', side === 'player' ? '30px' : 'calc(100% - 50px)');
       // Typewriter with per-letter sound
       let charIdx = 0, soundCounter = 0;
