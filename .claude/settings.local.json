@@ -14,7 +14,8 @@
       "Bash(node -c public/index.html)",
       "Bash(node validate_dialogue.js)",
       "Bash(grep \"\\\\.js$\")",
-      "Bash(node _validate.js)"
+      "Bash(node _validate.js)",
+      "WebSearch"
     ]
   }
 }

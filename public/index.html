@@ -7698,11 +7698,14 @@
       // ══════════════════════════════════════════════════════════════════════
 
       let _syncInterval = null;
-      // P2 interpolation buffers
-      let _p2SnapPrev = null;  // snapshot received 2 ticks ago
-      let _p2SnapNext = null;  // snapshot received last tick (latest)
-      let _p2SnapPrevTime = 0; // performance.now() when _p2SnapPrev was received
-      let _p2SnapNextTime = 0; // performance.now() when _p2SnapNext was received
+      // ── Snapshot interpolation buffer ─────────────────────────────────────
+      // Instead of extrapolating (dead reckoning), render the world slightly
+      // in the past and INTERPOLATE between two known snapshots.  This gives
+      // perfectly smooth movement because both endpoints are known.
+      const _INTERP_DELAY = 66;           // ms behind real-time (~2 snapshot intervals)
+      const _SNAP_BUFFER_MAX = 8;         // keep last N snapshots
+      const _p2SnapBuffer = [];           // [{ data, time }, ...] newest last
+      let _p2SnapLatest = null;           // most recent raw snapshot (for non-positional state)
 
       // ── P2 client-side prediction ───────────────────────────────────────────
       // When P2 spends resources or spawns a unit, we apply it locally immediately
@@ -7736,7 +7739,7 @@
       }
       function _stopStateSync() {
         if (_syncInterval) { clearInterval(_syncInterval); _syncInterval = null; }
-        _p2SnapPrev = _p2SnapNext = null;
+        _p2SnapBuffer.length = 0; _p2SnapLatest = null; _p2UnitMap.clear();
       }
 
       // ── P1 broadcasts: serialise only what's needed ────────────────────────
@@ -7828,15 +7831,14 @@
         } catch (e) { /* serialisation error — skip frame */ }
       }
 
-      // ── P2 receives snapshot: buffer it for interpolation ──────────────────
+      // ── P2 receives snapshot: push into ring buffer for interpolation ─────
       function _receiveStateSnapshot(snap) {
-        // Expose for QA online tester so it can inject snapshots without needing
-        // a real socket connection or matchmaking flow
+        // Expose for QA online tester
         window.__qaReceiveSnapshot = _receiveStateSnapshot;
-        _p2SnapPrev = _p2SnapNext;
-        _p2SnapPrevTime = _p2SnapNextTime;
-        _p2SnapNext = snap;
-        _p2SnapNextTime = performance.now();
+        const now = performance.now();
+        _p2SnapBuffer.push({ data: snap, time: now });
+        if (_p2SnapBuffer.length > _SNAP_BUFFER_MAX) _p2SnapBuffer.shift();
+        _p2SnapLatest = snap;
 
         // Apply non-positional state immediately (resources, buffs, mid, etc.)
         _applyInstantState(snap);
@@ -8014,81 +8016,172 @@
           if (typeof _updateVoteDisplay === 'function') _updateVoteDisplay();
         } catch (e) { /* ignore */ }
       }
-      // Dead reckoning: instead of interpolating between two stale snapshots,
-      // we take the latest snapshot position and extrapolate forward using the
-      // unit's known velocity. Since units mostly march in one direction this is
-      // nearly always correct and makes movement look perfectly smooth.
-      // A small lerp correction blends out the rare cases where direction changes.
-      function _interpolateUnits() {
-        if (!_p2SnapNext || typeof G === 'undefined' || !G) return;
-        const now = performance.now();
-        // How many seconds have passed since the last snapshot arrived
-        const elapsed = Math.min((now - _p2SnapNextTime) / 1000, 0.15); // cap at 150ms
-        _applyUnitPositions(_p2SnapNext, elapsed);
-      }
-      // Map from unit id → last rendered position (for lerp correction)
-      const _p2UnitMap = new Map();
+      // ── Snapshot interpolation ────────────────────────────────────────────
+      // Render the world _INTERP_DELAY ms in the past, linearly interpolating
+      // between the two snapshots that bracket that render-time.  Both endpoints
+      // are known, so motion is perfectly smooth regardless of network jitter.
+      // Fallback: if we only have one snapshot, extrapolate with velocity.
+      //
+      // O(1) unit lookups via Map instead of .find() per unit per frame.
+      const _p2UnitMap = new Map();       // id → unit reference in G.units
 
-      function _applyUnitPositions(snap, elapsed) {
+      function _interpolateUnits() {
+        if (_p2SnapBuffer.length === 0 || typeof G === 'undefined' || !G) return;
+        const now = performance.now();
+        const renderTime = now - _INTERP_DELAY;
+
+        // Find the two snapshots that bracket renderTime
+        let snapA = null, snapB = null;
+        for (let i = 0; i < _p2SnapBuffer.length - 1; i++) {
+          if (_p2SnapBuffer[i].time <= renderTime && _p2SnapBuffer[i + 1].time >= renderTime) {
+            snapA = _p2SnapBuffer[i];
+            snapB = _p2SnapBuffer[i + 1];
+            break;
+          }
+        }
+
+        if (snapA && snapB) {
+          // Normal case: interpolate between two known snapshots
+          const span = snapB.time - snapA.time;
+          const t = span > 0 ? Math.min(1, (renderTime - snapA.time) / span) : 1;
+          _applyInterpolated(snapA.data, snapB.data, t);
+        } else if (_p2SnapBuffer.length >= 1) {
+          // Fallback: renderTime is beyond latest snapshot → extrapolate from last
+          const last = _p2SnapBuffer[_p2SnapBuffer.length - 1];
+          const elapsed = Math.min((renderTime - last.time) / 1000, 0.12);
+          _applyExtrapolated(last.data, elapsed);
+        }
+      }
+
+      // Build a Map of snapA unit data keyed by id for O(1) lookup
+      function _buildSnapMap(snapUnits) {
+        const m = new Map();
+        for (let i = 0; i < snapUnits.length; i++) m.set(snapUnits[i][0], snapUnits[i]);
+        return m;
+      }
+
+      function _ensureUnit(id, nx, ny, nhp, player, defId, isAerial, isWorker, goToMid) {
+        let u = _p2UnitMap.get(id);
+        if (u) return u;
+        // New unit — evict matching ghost if present
+        const ghostIdx = G.units.findIndex(gu => gu._ghost && gu.defId === defId && gu.player === player);
+        const ghostX = ghostIdx !== -1 ? G.units[ghostIdx].x : null;
+        if (ghostIdx !== -1) G.units.splice(ghostIdx, 1);
+        const faction = G.factions[player - 1];
+        if (!faction) return null;
+        const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
+        const def = allDefs.find(d => d.id === defId);
+        if (!def) return null;
+        u = {
+          id, x: ghostX !== null ? ghostX : nx, y: ny, hp: nhp, maxHp: nhp,
+          player, def, defId, dead: false,
+          target: null, attackTimer: 0, radius: def.radius || 12,
+          color: def.color, slowTimer: 0, _speedMult: 1,
+          _warcryed: 0, _ironwalled: 0, dmgMult: 1,
+          _menderRetreating: false, _growStacks: 0,
+          passiveSummonTimer: 0, aerial: isAerial === 1,
+          isWorker: isWorker === 1, goToMid: goToMid === 1,
+          isGuard: def.isSpawned || false, aliveSecs: 0, vx: 0,
+        };
+        G.units.push(u);
+        _p2UnitMap.set(id, u);
+        return u;
+      }
+
+      function _applyInterpolated(snapA, snapB, t) {
+        if (typeof G === 'undefined' || !G) return;
+        try {
+          const mapA = _buildSnapMap(snapA.u);
+          const currentIds = new Set(snapB.u.map(u => u[0]));
+          const now = performance.now();
+
+          // Remove units gone from latest snapshot (keep ghosts briefly)
+          G.units = G.units.filter(u => {
+            if (currentIds.has(u.id)) return true;
+            if (u._ghost && now - u._ghostTime < 350) return true;
+            _p2UnitMap.delete(u.id);
+            return false;
+          });
+
+          for (let i = 0; i < snapB.u.length; i++) {
+            const [id, bx, by, bhp, player, defId, isAerial, isWorker,
+              warcryT10, ironwallT10, goToMid] = snapB.u[i];
+            const u = _ensureUnit(id, bx, by, bhp, player, defId, isAerial, isWorker, goToMid);
+            if (!u) continue;
+
+            const a = mapA.get(id);
+            if (a) {
+              // Interpolate between snapA and snapB positions
+              const ax = a[1], ay = a[2];
+              u.x = ax + (bx - ax) * t;
+              u.y = ay + (by - ay) * t;
+              u.hp = a[3] + (bhp - a[3]) * t;
+            } else {
+              // Unit only in snapB (just spawned) — place directly
+              u.x = bx;
+              u.y = by;
+              u.hp = bhp;
+            }
+            u._warcryed = warcryT10 / 10;
+            u._ironwalled = ironwallT10 / 10;
+            u.goToMid = goToMid === 1;
+          }
+
+          // Projectiles: interpolate between snapshots
+          const projIdsB = new Set(snapB.pr.map(p => p[0]));
+          const projMapA = new Map();
+          if (snapA.pr) snapA.pr.forEach(p => projMapA.set(p[0], p));
+          G.projectiles = G.projectiles.filter(p => projIdsB.has(p.id));
+          snapB.pr.forEach(pb => {
+            const [id, bx, by, player, defId, isHeal] = pb;
+            let p = G.projectiles.find(pp => pp.id === id);
+            const pa = projMapA.get(id);
+            if (!p) {
+              p = { id, x: bx, y: by, tx: bx, ty: by, player, defId, isHeal: isHeal === 1, dead: false };
+              G.projectiles.push(p);
+            }
+            if (pa) {
+              p.x = pa[1] + (bx - pa[1]) * t;
+              p.y = pa[2] + (by - pa[2]) * t;
+            } else {
+              p.x = bx;
+              p.y = by;
+            }
+          });
+        } catch (e) { /* ignore */ }
+      }
+
+      // Fallback: extrapolate from latest snapshot using velocity (dead reckoning)
+      function _applyExtrapolated(snap, elapsed) {
         if (typeof G === 'undefined' || !G) return;
         try {
           const currentIds = new Set(snap.u.map(u => u[0]));
-
-          // Remove units gone from snapshot — keep P2 ghost predictions briefly
           const now = performance.now();
-          G.units = G.units.filter(u => currentIds.has(u.id) || (u._ghost && now - u._ghostTime < 350));
+          G.units = G.units.filter(u => {
+            if (currentIds.has(u.id)) return true;
+            if (u._ghost && now - u._ghostTime < 350) return true;
+            _p2UnitMap.delete(u.id);
+            return false;
+          });
 
-          snap.u.forEach(snapData => {
+          for (let i = 0; i < snap.u.length; i++) {
             const [id, nx, ny, nhp, player, defId, isAerial, isWorker,
-              warcryT10, ironwallT10, goToMid, vxT10] = snapData;
+              warcryT10, ironwallT10, goToMid, vxT10] = snap.u[i];
             const vx = (vxT10 || 0) / 10;
-
-            let u = G.units.find(uu => uu.id === id);
-            if (!u) {
-              // New unit confirmed by P1 — evict matching ghost if present
-              const ghostIdx = G.units.findIndex(gu => gu._ghost && gu.defId === defId && gu.player === player);
-              // Save ghost's rendered position so the real unit starts there (no teleport)
-              const ghostX = ghostIdx !== -1 ? G.units[ghostIdx].x : null;
-              if (ghostIdx !== -1) G.units.splice(ghostIdx, 1);
-
-              const faction = G.factions[player - 1];
-              if (!faction) return;
-              const allDefs = [...(faction.units || []), ...(faction.extraUnits || [])];
-              const def = allDefs.find(d => d.id === defId);
-              if (!def) return;
-              u = {
-                // Start at ghost's position if we had one, lerp will smoothly correct to P1's true position
-                id, x: ghostX !== null ? ghostX : nx, y: ny, hp: nhp, maxHp: nhp,
-                player, def, defId, dead: false,
-                target: null, attackTimer: 0, radius: def.radius || 12,
-                color: def.color, slowTimer: 0, _speedMult: 1,
-                _warcryed: 0, _ironwalled: 0, dmgMult: 1,
-                _menderRetreating: false, _growStacks: 0,
-                passiveSummonTimer: 0, aerial: isAerial === 1,
-                isWorker: isWorker === 1, goToMid: goToMid === 1,
-                isGuard: def.isSpawned || false, aliveSecs: 0,
-                vx: 0,
-              };
-              G.units.push(u);
-            }
-
-            // ── Dead reckoning ────────────────────────────────────────────────
-            // Project snapshot position forward by time elapsed since snapshot
-            // arrived, using known velocity. For marching units this is exact.
-            const predictedX = nx + vx * elapsed;
-
-            // Lerp correction: smoothly blend rendered pos toward predicted pos.
-            // Corrects rare direction-change drift without any visible snap.
-            u.x = u.x + (predictedX - u.x) * 0.35;
+            const u = _ensureUnit(id, nx, ny, nhp, player, defId, isAerial, isWorker, goToMid);
+            if (!u) continue;
+            const targetX = nx + vx * elapsed;
+            // Gentle lerp toward extrapolated position
+            u.x = u.x + (targetX - u.x) * 0.25;
             u.y = ny;
             u.vx = vx;
             u.hp = nhp;
             u._warcryed = warcryT10 / 10;
             u._ironwalled = ironwallT10 / 10;
             u.goToMid = goToMid === 1;
-          });
+          }
 
-          // Projectiles: lerp toward latest position (they move fast and erratically)
+          // Projectiles: place at latest known position
           const projIds = new Set(snap.pr.map(p => p[0]));
           G.projectiles = G.projectiles.filter(p => projIds.has(p.id));
           snap.pr.forEach(snapData => {
@@ -8098,8 +8191,8 @@
               p = { id, x, y, tx: x, ty: y, player, defId, isHeal: isHeal === 1, dead: false };
               G.projectiles.push(p);
             } else {
-              p.x = p.x + (x - p.x) * 0.5;
-              p.y = p.y + (y - p.y) * 0.5;
+              p.x = p.x + (x - p.x) * 0.4;
+              p.y = p.y + (y - p.y) * 0.4;
             }
           });
         } catch (e) { /* ignore */ }
@@ -9264,7 +9357,7 @@
     const FACTIONS = [
       {
         id: 'warriors', name: 'Warriors', icon: '⚔️', tagline: 'Balanced veterans. Strong melee, capable archers, deadly aerial.',
-        passive: 'Veterans: melee units gain +8% DMG per 5 seconds alive (max 2 stacks). Charge Strike: +80% DMG on first hit after 1.5s marching. Iron Resolve: units below 30% HP gain 15% damage resistance.',
+        passive: 'Veterans: melee units gain +12% DMG per 5 seconds alive (max 4 stacks). Charge Strike: +80% DMG on first hit after 1.5s marching. Iron Resolve: units below 50% HP gain 15% damage resistance.',
         pros: ['Well-rounded roster with no hard weaknesses — good for beginners', 'Gryphon Rider excels at shredding aerial and high-HP targets', 'Iron Resolve passive keeps wounded units alive longer, rewarding sustained pressure'],
         cons: ['No special economy mechanics — relies on pure army efficiency', 'Gryphon is expensive and a priority target — losing it hurts badly', 'No healing or revival — fallen units stay dead'],
         matchup: 'Best against: most factions | Weak to: Summoner shade swarms',
@@ -9338,7 +9431,7 @@
 
       {
         id: 'spirits', name: 'Spirits', icon: '✨', tagline: 'Swift sky hunters. Masters of aerial combat and soul gathering.',
-        passive: 'Ethereal: all units take 15% less damage from melee attacks. Sky Bounty: killing any aerial unit grants +6 souls instantly.',
+        passive: 'Ethereal: all units take 15% less damage from melee attacks. Sky Bounty: killing any aerial unit grants +3 souls instantly.',
         pros: ['Phantom ranged unit is the fastest-firing ranged in the game', 'Sky Bounty passive generates huge soul income against aerial-heavy factions', 'Specter aerial unit has the highest base speed of all aerial units'],
         cons: ['All units have lower HP than average — can be overwhelmed by heavy melee', 'No healing — once a unit is low, it will die', 'Sky Bounty only triggers on aerial kills — worthless vs ground-only factions'],
         matchup: 'Best against: aerial-heavy factions | Weak to: Brutes, Glacial',
@@ -9354,7 +9447,7 @@
         guardUnit: 'sp_guard',
         upgrades: [
           { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 30, bodies: 4 }, desc: 'All Spirit units gain +22% movement speed and +10% attack rate.', effect: 'all_speed', value: 0.14 },
-          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 36, bodies: 4 }, desc: 'Sky Bounty grants +12 souls per aerial kill (was +6).', effect: 'sky_bounty', value: 12 },
+          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 36, bodies: 4 }, desc: 'Sky Bounty grants +8 souls per aerial kill (was +3).', effect: 'sky_bounty', value: 8 },
           { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 45, bodies: 5 }, desc: 'Phantom attack rate increases to 1.9 and gains +6 DMG.', effect: 'phantom_atkrate', value: 2.3 },
         ]
       },
@@ -9407,7 +9500,7 @@
 
       {
         id: 'glacial', name: 'Glacial', icon: '❄️', tagline: 'Slow everything. Ice control, AoE chilling, unstoppable Colossus.',
-        passive: 'Permafrost: when a Glacial unit dies, all enemies within 60px are frozen for 3 seconds.',
+        passive: 'Permafrost: when a Glacial unit dies, all enemies within 60px are chilled for 2 seconds.',
         pros: ['Chill mechanics slow all enemy movement, making kiting and retreating impossible', 'Ice Colossus is immune to all slows and stuns — unstoppable late-game anchor', 'Snowhawk aerial stuns targets on first hit — hard counters key enemy units'],
         cons: ['Almost all units are slower than average — relies on chill to close distance', 'Permafrost death freeze requires your own units to die to activate', 'Weak early game — the roster is expensive and takes time to reach critical mass'],
         matchup: 'Best against: melee brawlers (Warriors, Brutes) | Weak to: fast aerial (Spirits)',
@@ -9430,7 +9523,7 @@
 
       {
         id: 'voltborn', name: 'Voltborn', icon: '⚡', tagline: 'Chain lightning. Every 10th attack arcs electricity to nearby enemies.',
-        passive: 'Chain Lightning: every 10th attack from any unit arcs 40% DMG to a nearby enemy.',
+        passive: 'Chain Lightning: every 10th attack from any unit arcs 25% DMG to a nearby enemy within 70px.',
         pros: ['Chain Lightning rewards dense enemy armies — the more clustered they are the more it chains', 'Stormcaller aerial unit can always chain, making it devastating vs melee blobs', 'Lightning strike mechanic punishes turtling enemies who stack up'],
         cons: ['Chain Lightning is randomized — unreliable vs spread-out armies', 'No defensive mechanics — purely aggressive and loses badly when outnumbered', 'Weakest aerial unit stats — Arc Kite has low HP and relies entirely on chain proc'],
         matchup: 'Best against: dense melee stacks (Brutes, Summoners) | Weak to: mobile spread armies (Spirits)',
@@ -9439,13 +9532,13 @@
           { id: 'vb_worker', name: 'Spark Collector', icon: '⚡', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#fdcb6e', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
           { id: 'vb_shockblade', name: 'Shockblade', icon: '🗡️', souls: 5, bodies: 1, hp: 65, speed: 65, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.2, radius: 13, color: '#f9ca24', type: 'mel', desc: 'Melee unit. 20% chance to stun target for 0.7s per hit.', stunChance: 0.2, stunDur: 0.7 },
           { id: 'vb_bolt', name: 'Bolt Archer', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 63, dmg: 17, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#f0932b', type: 'rng', desc: 'Ranged unit. Chain Lightning triggers every 8 attacks (instead of 10).', alwaysChain: false, chainRate: 8 },
-          { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 10, bodies: 2, hp: 42, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers on EVERY attack.', alwaysChain: true, aerialBonus: 1.3 },
+          { id: 'vb_arckite', name: 'Arc Kite', icon: '🪁', souls: 10, bodies: 2, hp: 42, speed: 88, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#fdcb6e', type: 'air', desc: 'Aerial unit. Chain Lightning triggers every 3rd attack.', chainRate: 3, aerialBonus: 1.3 },
           { id: 'vb_stormcaller', name: 'Stormcaller', icon: '🌩️', souls: 20, bodies: 5, hp: 85, speed: 55, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.85, radius: 16, color: '#e17055', type: 'mel', desc: 'Heavy melee. Chain Lightning triggers every 5 attacks with 80px chain range.', chainRate: 5, chainRange: 80 },
         ],
         extraUnits: [{ id: 'vb_guard', name: 'Thunder Titan', icon: '⚡', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 35, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Chain on every hit. 80px chain range. Despawns 30s.', isSpawned: true, alwaysChain: true, chainRange: 80 }],
         guardUnit: 'vb_guard',
         upgrades: [
-          { id: 'superconductor', name: 'Superconductor', cost: { souls: 33, bodies: 5 }, desc: 'Chain Lightning jumps up to 3 times and each jump deals 50% DMG (was 40%).', effect: 'chain_jump', value: 2 },
+          { id: 'superconductor', name: 'Superconductor', cost: { souls: 33, bodies: 5 }, desc: 'Chain Lightning jumps up to 3 times and each jump deals 40% DMG (was 25%).', effect: 'chain_jump', value: 2 },
           { id: 'voltage_surge', name: 'Voltage Surge', cost: { souls: 36, bodies: 5 }, desc: 'Chain Lightning damage increases to 70% of base DMG and stuns chain targets for 0.4s.', effect: 'chain_dmg', value: 0.72 },
           { id: 'overcharge', name: 'Overcharge', cost: { souls: 48, bodies: 6 }, desc: 'Shockblade stun chance increases to 50% and stun duration increases from 1s to 1.8s.', effect: 'stun_chance', value: 0.42 },
         ]
@@ -9476,16 +9569,16 @@
 
       {
         id: 'menders', name: 'Menders', icon: '💚', tagline: 'Sustain over burst. Wounded units retreat, heal, and return stronger.',
-        passive: 'Field Recovery: units below 35% HP automatically retreat to base and return fully healed.',
+        passive: 'Field Recovery: units below 25% HP automatically retreat to base and return fully healed (5-7s).',
         pros: ['Units regenerate and return to battle — very hard to permanently kill a unit', 'Excellent in long sustained fights where attrition matters', 'Cleric healer unit passively buffs your army HP every engagement'],
         cons: ['Retreating units temporarily reduce your front-line numbers mid-fight', 'Lowest single-target burst damage of all factions — wins through attrition not aggression', 'Seraph is fragile — it can be focused and killed quickly by ranged units'],
         matchup: 'Best against: burst/aggressive factions (Infernal, Bloodpact) | Weak to: fast kill factions (Spirits)',
         startSouls: 18, startBodies: 8,
         units: [
           { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Slightly faster when loaded.' },
-          { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 2, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 35% HP, returns fully healed after 8s.', menderRetreat: true, healDuration: 8 },
+          { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 2, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 25% HP, returns fully healed after 5s.', menderRetreat: true, healDuration: 5 },
           { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 115, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
-          { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 35% HP, returns healed. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
+          { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 25% HP, returns healed after 7s. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 7, returnDmgBonus: 0.1 },
           { id: 'me_seraph', name: 'Seraph', icon: '🕊️', souls: 11, bodies: 3, hp: 32, speed: 90, dmg: 12, range: 55, aerial: true, isWorker: false, attackRate: 1.4, radius: 14, color: '#81ecec', type: 'air', desc: 'Aerial support. Each attack heals the lowest-HP nearby friendly for 6 HP.', seraphHeal: 6, seraphHealRange: 120 },
         ],
         extraUnits: [{ id: 'me_paladin', name: 'Grand Paladin', icon: '💚', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#00b894', type: 'mel', desc: 'Royal Guard. Regenerates 5 HP/sec. Despawns 30s.', isSpawned: true, regenPerSec: 5 }],
@@ -9500,14 +9593,14 @@
       // ─── NEW FACTIONS ────────────────────────────────────────────────────────────
       {
         id: 'weavers', name: 'Weavers', icon: '🕸️', tagline: 'The battlefield is their trap',
-        passive: 'Silk Road: units leave web zones as they move. Enemy units in webs move at 55% speed and take +25% damage from Weavers. Own units immune to own webs.',
+        passive: 'Silk Road: units leave web zones as they move. Enemy units in webs move at 70% speed. Own units immune to own webs.',
         pros: ['Web zones persist 8s covering large sections', 'Tar Caster shots create sticky patches on impact', 'Silk Wyrm drops huge web zone on death'],
         cons: ['Low base damage — relies on slow debuffs', 'Aerial units bypass ground zones', 'No healing mechanics'],
         matchup: 'Best against: slow melee (Brutes, Glacial) | Weak to: aerial-heavy (Spirits)',
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'wv_worker', name: 'Spinner', icon: '🕷️', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'wv_spindler', name: 'Spindler', icon: '🕸️', souls: 5, bodies: 1, hp: 65, speed: 58, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Leaves web trail. Enemies in webs take +25% damage from Weavers.', webTrail: true },
+          { id: 'wv_spindler', name: 'Spindler', icon: '🕸️', souls: 5, bodies: 1, hp: 65, speed: 58, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Leaves web trail. Enemies in webs move at 70% speed.', webTrail: true },
           { id: 'wv_tar', name: 'Tar Caster', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 58, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Shots create tar patches at impact — slow enemies on entry.', tarShot: true },
           { id: 'wv_runner', name: 'Web Runner', icon: '🦋', souls: 9, bodies: 2, hp: 34, speed: 90, dmg: 14, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Fast aerial. Leaves wide web trail.', webTrail: true, webTrailRadius: 26 },
           { id: 'wv_wyrm', name: 'Silk Wyrm', icon: '🐛', souls: 20, bodies: 5, hp: 155, speed: 38, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#4834d4', type: 'mel', desc: 'Massive melee. Aura slows nearby enemies. Drops huge web zone on death.', bearAura: true, cocoonsOnDeath: true },
@@ -9544,13 +9637,13 @@
       },
       {
         id: 'reavers', name: 'Reavers', icon: '🦴', tagline: 'Strip the fallen for parts',
-        passive: 'Carrion Economy: any unit death adds a corpse to the field. Reaver workers auto-harvest nearby corpses for +5 bodies each. Corpse Golem grows stronger from nearby deaths.',
+        passive: 'Carrion Economy: any unit death adds a corpse (lasts 35s). Reaver workers auto-harvest nearby corpses for +5 bodies. Combat units deal +15% DMG near corpses. Corpse Golem grows stronger from nearby deaths.',
         pros: ['Body income from ALL deaths on field — not just mid', 'Corpse Golem snowballs HP throughout the match', 'Strong in drawn-out fights where many units die'],
         cons: ['Body-heavy — needs many bodies, low starting soul income', 'No aerial units — vulnerable to air superiority', 'Workers must be near corpses to benefit'],
         matchup: 'Best against: high-volume factions (Summoners) | Weak to: ranged-heavy (Warriors, Spirits)',
         startSouls: 18, startBodies: 14,
         units: [
-          { id: 'rv_worker', name: 'Bone Picker', icon: '🦴', souls: 2, bodies: 1, hp: 25, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#922b21', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid. Harvests nearby corpses for +5 bodies.', reaverWorker: true },
+          { id: 'rv_worker', name: 'Bone Picker', icon: '🦴', souls: 2, bodies: 1, hp: 25, speed: 62, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#922b21', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid. Harvests nearby corpses for +5 bodies.', reaverWorker: true },
           { id: 'rv_digger', name: 'Grave Digger', icon: '⚰️', souls: 5, bodies: 1, hp: 58, speed: 58, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#922b21', type: 'mel', desc: 'Melee. Kills drop high-value corpse (+2 bonus bodies).', reaverKillBonus: 2 },
           { id: 'rv_harvester', name: 'Harvester', icon: '🏹', souls: 7, bodies: 2, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#c0392b', type: 'rng', desc: 'Ranged. Shots apply 4 DPS poison for 3s.', poisonOnHit: true, poisonDur: 3, poisonDmg: 4 },
           { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 15, bodies: 4, hp: 100, speed: 44, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7b241c', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 200) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 200 },
@@ -9566,7 +9659,7 @@
       },
       {
         id: 'fortune', name: 'Fortune Seekers', icon: '🎲', tagline: 'High risk, enormous reward',
-        passive: 'Lady Luck: each non-worker spawn triggers a roll. 20% chance: double stats. 20% chance: refund half soul cost. 10% chance: second unit free. 3 lucky rolls in a row → 10s bonus period (all rolls lucky).',
+        passive: 'Lady Luck: upgrades unlock fortune rolls on each non-worker spawn. Rigged Dice: 15% double stats. House Edge: 10% refund. Hot Streak: 3 lucky rolls in a row → 12s bonus period.',
         pros: ['Double-stat rolls create instant powerhouse units', 'Free unit bonus can snowball quickly', 'Lucky Streak rewards aggressive spawning'],
         cons: ['Highly random — bad streaks can leave you severely underpowered', 'Base stats slightly below average — gambling is required', 'No defensive mechanics whatsoever'],
         matchup: 'Best against: balanced factions | Weak to: fast-snowball factions (Plagued, Bloodpact)',
@@ -9581,7 +9674,7 @@
         extraUnits: [{ id: 'fs_guard', name: 'Jackpot', icon: '🎲', souls: 0, bodies: 0, hp: 200, speed: 58, dmg: 36, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 18, color: '#f9ca24', type: 'mel', desc: 'Royal Guard. Always double stats. Despawns 30s.', isSpawned: true }],
         guardUnit: 'fs_guard',
         upgrades: [
-          { id: 'rigged_dice', name: 'Rigged Dice', cost: { souls: 33, bodies: 5 }, desc: 'Double-stat roll chance increases from 20% to 35%.', effect: 'fortune_double', value: 0.35 },
+          { id: 'rigged_dice', name: 'Rigged Dice', cost: { souls: 33, bodies: 5 }, desc: 'Unlocks 15% double-stat roll on each non-worker spawn.', effect: 'fortune_double', value: 0.15 },
           { id: 'house_edge', name: 'House Edge', cost: { souls: 36, bodies: 5 }, desc: 'Half-cost refund becomes 75%. Free unit chance: 18%.', effect: 'fortune_refund', value: 0.75 },
           { id: 'hot_streak', name: 'Hot Streak', cost: { souls: 48, bodies: 6 }, desc: 'Lucky Streak bonus lasts 20s and grants +20% DMG to all units.', effect: 'fortune_streak', value: 20 },
         ]
@@ -9610,9 +9703,9 @@
       },
       {
         id: 'chrysalis', name: 'Chrysalis', icon: '🐛', tagline: 'Weak early, unstoppable late',
-        passive: 'Emergence: units start as cheap fragile larvae. After 12 seconds alive → brief cocoon (2.5s, immobile, 60% less damage taken) → emerge as powerful adults with vastly increased stats.',
+        passive: 'Emergence: units start as cheap fragile larvae. After 15 seconds alive → brief cocoon (2.5s, immobile, 45% less damage taken) → emerge as powerful adults with vastly increased stats.',
         pros: ['Adults are extremely strong per cost once transformed', 'Cheap larvae are easy to mass spawn while waiting', 'Cocoon damage resistance makes transformation hard to interrupt'],
-        cons: ['Larvae are very weak — vulnerable to early rushes', 'Enemies can focus down larvae before transformation', '12s window means many initial spawns are lost before transforming'],
+        cons: ['Larvae are very weak — vulnerable to early rushes', 'Enemies can focus down larvae before transformation', '15s window means many initial spawns are lost before transforming'],
         matchup: 'Best against: slow factions (Brutes, Glacial) | Weak to: fast rush factions (Infernal, Pandemonium)',
         startSouls: 22, startBodies: 10,
         units: [
@@ -9625,8 +9718,8 @@
         extraUnits: [{ id: 'ch_guard', name: 'Ancient Hive', icon: '🐛', souls: 0, bodies: 0, hp: 200, speed: 40, dmg: 26, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 21, color: '#a8ff78', type: 'mel', desc: 'Royal Guard. Adult form only. 60% dmg reduction. Despawns 30s.', isSpawned: true }],
         guardUnit: 'ch_guard',
         upgrades: [
-          { id: 'rapid_metamorph', name: 'Rapid Metamorphosis', cost: { souls: 33, bodies: 5 }, desc: 'Transform timer reduced 12s→8s. Cocoon phase shortened 2.5s→1.5s.', effect: 'chrysalis_speed', value: 8 },
-          { id: 'armored_shell', name: 'Armored Shell', cost: { souls: 36, bodies: 5 }, desc: 'Cocoon dmg reduction: 60%→80%. All larvae gain +10 HP.', effect: 'chrysalis_armor', value: 0.8 },
+          { id: 'rapid_metamorph', name: 'Rapid Metamorphosis', cost: { souls: 33, bodies: 5 }, desc: 'Transform timer reduced 15s→10s. Cocoon phase shortened 2.5s→1.5s.', effect: 'chrysalis_speed', value: 5 },
+          { id: 'armored_shell', name: 'Armored Shell', cost: { souls: 36, bodies: 5 }, desc: 'Cocoon dmg reduction: 45%→65%. All larvae gain +10 HP.', effect: 'chrysalis_armor', value: 0.65 },
           { id: 'evolved_form', name: 'Evolved Form', cost: { souls: 48, bodies: 6 }, desc: 'All adult forms gain +10 DMG and +20 HP.', effect: 'chrysalis_adult', value: 1 },
         ]
       },
@@ -9654,22 +9747,22 @@
       },
       {
         id: 'echoes', name: 'Echoes', icon: '👁️', tagline: 'The past attacks the present',
-        passive: 'Temporal Echo: 8 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 70% of the original\'s stats. Echoes cannot create further echoes.',
-        pros: ['Every spawn is effectively double with an 8s offset', 'Overwhelming double-push timing with carefully staggered spawns', 'Echoes appear automatically — no extra effort required'],
+        passive: 'Temporal Echo: 10 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 70% of the original\'s stats. Echoes cannot create further echoes.',
+        pros: ['Every spawn is effectively double with a 10s offset', 'Overwhelming double-push timing with carefully staggered spawns', 'Echoes appear automatically — no extra effort required'],
         cons: ['Echoes at 70% stats will not match real units in direct fights', 'Works best if originals survive long enough to have value', 'Echoes always spawn even if original already died'],
         matchup: 'Best against: sustained factions (Menders, Verdant) | Weak to: fast rush (Infernal, Pandemonium)',
         startSouls: 20, startBodies: 10,
         units: [
           { id: 'ec_worker', name: 'Shadow Step', icon: '👣', souls: 2, bodies: 1, hp: 22, speed: 62, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#6c5ce7', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'ec_remnant', name: 'The Remnant', icon: '👁️', souls: 5, bodies: 1, hp: 55, speed: 62, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Spawns an echo copy 8 seconds after first spawn.' },
-          { id: 'ec_archer', name: 'Echo Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Spawns an echo copy 8 seconds after first spawn.' },
-          { id: 'ec_moment', name: 'Moment Reaver', icon: '⏳', souls: 10, bodies: 2, hp: 34, speed: 87, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Aerial. Spawns an echo copy 8 seconds after first spawn.' },
-          { id: 'ec_paradox', name: 'The Paradox', icon: '⏰', souls: 18, bodies: 4, hp: 130, speed: 48, dmg: 25, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#a29bfe', type: 'mel', desc: 'Heavy melee. Spawns echo 8s after spawn.' },
+          { id: 'ec_remnant', name: 'The Remnant', icon: '👁️', souls: 5, bodies: 1, hp: 55, speed: 62, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Spawns an echo copy 10 seconds after first spawn.' },
+          { id: 'ec_archer', name: 'Echo Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 16, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Spawns an echo copy 10 seconds after first spawn.' },
+          { id: 'ec_moment', name: 'Moment Reaver', icon: '⏳', souls: 10, bodies: 2, hp: 34, speed: 87, dmg: 18, range: 57, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Aerial. Spawns an echo copy 10 seconds after first spawn.' },
+          { id: 'ec_paradox', name: 'The Paradox', icon: '⏰', souls: 18, bodies: 4, hp: 130, speed: 48, dmg: 25, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 20, color: '#a29bfe', type: 'mel', desc: 'Heavy melee. Spawns echo 10s after spawn.' },
         ],
         extraUnits: [{ id: 'ec_guard', name: 'Echo Champion', icon: '👁️', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#6c5ce7', type: 'mel', desc: 'Royal Guard. Instantly creates 2 echoes on spawn. Despawns 30s.', isSpawned: true }],
         guardUnit: 'ec_guard',
         upgrades: [
-          { id: 'faster_echoes', name: 'Rapid Echoes', cost: { souls: 33, bodies: 5 }, desc: 'Echo spawn delay reduced from 8s to 5s.', effect: 'echo_delay', value: 5 },
+          { id: 'faster_echoes', name: 'Rapid Echoes', cost: { souls: 33, bodies: 5 }, desc: 'Echo spawn delay reduced from 10s to 7s.', effect: 'echo_delay', value: 7 },
           { id: 'stronger_echoes', name: 'Phantom Power', cost: { souls: 36, bodies: 5 }, desc: 'Echo units gain 85% stats instead of 70%.', effect: 'echo_power', value: 0.85 },
           { id: 'echo_chain', name: 'Echo Chain', cost: { souls: 48, bodies: 6 }, desc: 'Echoes also spawn their own echo once (at 50% stats).', effect: 'echo_chain', value: 1 },
         ]
@@ -9764,7 +9857,7 @@
       },
       {
         id: 'psionics', name: 'Psionics', icon: '🧠', tagline: 'Turn their army against them',
-        passive: 'Collective Mind: each enemy unit with >0% corruption grants +0.5 soul/s. At 100% corruption, unit switches sides for 20s. Corrupted units that die spawn a loyal Thought Ghost.',
+        passive: 'Collective Mind: each corrupted enemy grants +0.15 soul/s. At 100% corruption, unit switches sides for 20s. Corrupted units that die spawn a loyal Thought Ghost.',
         pros: ['Soul income from corruption scales with enemy army size', 'Mind-controlled units create devastating friendly fire for enemies', 'Free Thought Ghost army from corrupted deaths'],
         cons: ['Corruption builds slowly — must attack same targets repeatedly', 'Corrupted units return to enemy after 20s — temporary benefit', 'Very fragile units — loses melee brawls badly without mind control'],
         matchup: 'Best against: slow high-HP armies (Brutes, Glacial) | Weak to: fast swarm (Pandemonium, Infernal)',
@@ -9789,7 +9882,7 @@
       },
       {
         id: 'umbral', name: 'Umbral', icon: '🌑', tagline: 'Blind the enemy. Hunt in the dark.',
-        passive: 'Shadow Domain: every 30s, auto-deploys a darkness zone at mid for 12s. Enemies in darkness have range reduced to 35px (melee only). Umbral units in darkness gain 20% dmg reduction and +15% DMG.',
+        passive: 'Shadow Domain: every 20s, auto-deploys a darkness zone at mid for 18s. Enemies in darkness have range reduced to 35px (melee only). Umbral units in darkness gain 20% dmg reduction and +15% DMG. The Blot leaves a 12s darkness patch on death.',
         pros: ['Darkness completely neutralizes enemy ranged superiority', 'Umbral melee thrive in darkness while enemies are blind', 'The Blot creates a darkness zone on death'],
         cons: ['Darkness is time-limited and somewhat predictable', 'Umbral is weaker outside darkness zones', 'No aerial units — cannot threaten backline without darkness cover'],
         matchup: 'Best against: ranged-heavy factions (Warriors, Spirits) | Weak to: fast aerial factions (Spirits)',
@@ -9804,7 +9897,7 @@
         extraUnits: [{ id: 'um_guard', name: 'The Shadow King', icon: '🌑', souls: 0, bodies: 0, hp: 210, speed: 52, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 0.95, radius: 20, color: '#2d3436', type: 'mel', desc: 'Royal Guard. Immune to knockback. 80px darkness aura. Despawns 30s.', isSpawned: true, umbral: true, immuneKnockback: true, umbralAura: true, umbralAuraRange: 80 }],
         guardUnit: 'um_guard',
         upgrades: [
-          { id: 'deep_dark', name: 'Deep Dark', cost: { souls: 33, bodies: 5 }, desc: 'Darkness zone duration: 12s→20s. Cooldown: 30s→20s.', effect: 'umbral_dur', value: 20 },
+          { id: 'deep_dark', name: 'Deep Dark', cost: { souls: 33, bodies: 5 }, desc: 'Darkness zone duration: 18s→26s. Cooldown: 20s→15s.', effect: 'umbral_dur', value: 26 },
           { id: 'shadow_strike', name: 'Shadow Strike', cost: { souls: 36, bodies: 5 }, desc: 'Umbral units in darkness deal +30% DMG instead of +15%.', effect: 'umbral_dmg', value: 0.30 },
           { id: 'total_eclipse', name: 'Total Eclipse', cost: { souls: 48, bodies: 6 }, desc: 'Darkness zone radius expands to cover entire mid. All Umbral gain +1 armor.', effect: 'umbral_eclipse', value: 1 },
         ]
@@ -9927,19 +10020,24 @@
       p.soulsSpent = (p.soulsSpent || 0) + SPY_DEF.souls;
       p.bodiesSpent = (p.bodiesSpent || 0) + SPY_DEF.bodies;
       const enemyPid = pid === 1 ? 2 : 1;
+      const _transitDur = 4.0 + Math.random() * 2;
+      const _startX = pid === 1 ? p.baseX + 20 : p.baseX - 20;
+      const _targetX = G.players[enemyPid - 1].baseX + (pid === 1 ? -30 : 30);
       G.spies.push({
         id: ++G.nextId, owner: pid, enemy: enemyPid,
         phase: 'transit',  // transit → active → done
-        transitTimer: 4.0 + Math.random() * 2,  // arrives in 4-6s
+        transitTimer: _transitDur, transitDur: _transitDur,
         stealTimer: 0,
         stealInterval: 5.5,
         stealsLeft: 4,
         detectTimer: 0,
         detectInterval: 3.5,
         hp: SPY_DEF.hp,
-        x: pid === 1 ? -40 : G.w + 40,
+        x: _startX, startX: _startX, targetX: _targetX,
+        _stealFlash: 0, _caughtFlash: 0,
       });
       showPopup(p.baseX, G.groundY - 70, '🕵️ SPY DEPLOYED', '#b2bec3', pid);
+      spawnParticles(p.baseX + (pid === 1 ? 20 : -20), G.groundY - 15, '#636e72', 12);
       SFX.spawnLight && SFX.spawnLight();
       updateHUD();
       if (_spyOnline) { NET.recordLocalAction(); NET.sendAction({ type: 'spawnSpy', pid }); }
@@ -9952,13 +10050,31 @@
         const enemy = G.players[spy.enemy - 1];
         const enemyBase = enemy.baseX;
 
+        // Decay visual flash timers
+        if (spy._stealFlash > 0) spy._stealFlash = Math.max(0, spy._stealFlash - dt);
+        if (spy._caughtFlash > 0) spy._caughtFlash = Math.max(0, spy._caughtFlash - dt);
+
         if (spy.phase === 'transit') {
           spy.transitTimer -= dt;
-          if (spy.transitTimer <= 0) spy.phase = 'active';
+          // Animate x from startX to targetX
+          const t = 1 - Math.max(0, spy.transitTimer / (spy.transitDur || 5));
+          const ease = t * t * (3 - 2 * t); // smoothstep
+          spy.x = spy.startX + (spy.targetX - spy.startX) * ease;
+          if (spy.transitTimer <= 0) {
+            spy.phase = 'active';
+            spy.x = spy.targetX;
+            spawnParticles(spy.x, G.groundY - 20, '#636e72', 10);
+          }
           return true;
         }
 
         if (spy.phase === 'active') {
+          // Dying animation — spy was caught, play flash then remove
+          if (spy._dyingTimer > 0) {
+            spy._dyingTimer -= dt;
+            if (spy._dyingTimer <= 0) { spy.phase = 'done'; }
+            return true;
+          }
           // Steal tick
           spy.stealTimer += dt;
           if (spy.stealTimer >= spy.stealInterval) {
@@ -9985,9 +10101,15 @@
             owner[resource] = Math.min(resource === 'souls' ? 900 : 999, owner[resource] + stealAmt);
             const icon = resource === 'souls' ? '💀' : '🦴';
             showPopup(enemyBase, G.groundY - 70, `🕵️ −${stealAmt}${icon} stolen`, '#b2bec3', spy.owner);
+            spy._stealFlash = 0.6;
+            spawnParticles(spy.x, G.groundY - 25, resource === 'souls' ? '#a29bfe' : '#cd853f', 8);
             spy.stealsLeft--;
             updateHUD();
-            if (spy.stealsLeft <= 0) { spy.phase = 'done'; return true; }
+            if (spy.stealsLeft <= 0) {
+              showPopup(spy.x, G.groundY - 85, '🕵️ MISSION COMPLETE', '#2ecc71', spy.owner);
+              spawnParticles(spy.x, G.groundY - 20, '#2ecc71', 12);
+              spy.phase = 'done'; return true;
+            }
           }
 
           // Detection check — workers or nearby units at enemy base can catch spy
@@ -10000,8 +10122,11 @@
             if (detectChance > 0 && Math.random() < detectChance) {
               showPopup(enemyBase, G.groundY - 80, '🚨 SPY CAUGHT!', '#e74c3c', spy.enemy);
               showPopup(enemyBase, G.groundY - 95, '🕵️ DETECTED', '#636e72', spy.owner);
-              spawnParticles(enemyBase, G.groundY - 30, '#636e72', 15);
-              spy.phase = 'done';
+              spawnParticles(spy.x, G.groundY - 20, '#e74c3c', 18);
+              spawnParticles(spy.x, G.groundY - 30, '#636e72', 12);
+              spy._caughtFlash = 0.8;
+              // Keep spy alive briefly so the caught visual plays
+              spy._dyingTimer = 0.8;
             }
           }
           return true;
@@ -10072,7 +10197,7 @@
       // ── Step 2: Souls ──
       {
         title: '💀 SOULS — YOUR MAIN CURRENCY',
-        body: 'Souls arrive passively over time (+0.45/s base rate).\n\nYou also earn Souls from:\n• Killing enemy units\n• Holding mid — starts at +0.8/s, escalates to +2.0/s after 60s\n• 🔥 SURGE stacks if the enemy holds mid (+1.0/s each, up to ×3)\n\nWatch the 💀/s rate in your HUD — it updates live.',
+        body: 'Souls arrive passively over time (+0.35/s early, +0.5/s after 90s).\n\nYou also earn Souls from:\n• Killing enemy units (lower bounty early, full after 90s)\n• Holding mid — starts slow, escalates to +2.0/s late game\n• 🔥 SURGE stacks if the enemy holds mid (+1.0/s each, up to x3)\n\nWatch the 💀/s rate in your HUD — it updates live.',
         highlight: 'p1-souls-wrap',
         arrowDir: 'down',
         pause: true,
@@ -10697,7 +10822,10 @@
       const cfg = AI_DIFF_SETTINGS[diff] || AI_DIFF_SETTINGS.medium;
       const factionId = G.factions[pid - 1].id || '';
 
-      if (!forceDefend && Math.random() > cfg.spawnChance) return;
+      // Skip spawn-chance gate when outnumbered — AI must respond to player spam
+      const _aiOutnumbered = G.units.filter(u => u.player !== pid && !u.def.isWorker && !u.def.isSpawned).length >
+        G.units.filter(u => u.player === pid && !u.def.isWorker && !u.def.isSpawned).length + 2;
+      if (!forceDefend && !_aiOutnumbered && Math.random() > cfg.spawnChance) return;
 
       const myUnits = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.isGuard);
       const enemyUnits = G.units.filter(u => u.player !== pid && !u.def.isWorker);
@@ -10792,7 +10920,7 @@
       // ── 3.5 TACTICAL PATIENCE — hard/expert waits for real openings ──────────
       // Instead of mindlessly spawning whenever affordable, the AI watches the
       // enemy's soul count and army strength to decide the RIGHT moment to push.
-      if (cfg.tacticalPatience && !forceDefend) {
+      if (cfg.tacticalPatience && !forceDefend && !_aiOutnumbered) {
         const _stKey = pid === 1 ? '_aiStrikeTimer1' : '_aiStrikeTimer';
         G[_stKey] = (G[_stKey] || 0);
 
@@ -10868,7 +10996,7 @@
 
       // ── 6. Resource patience — hard/expert sometimes wait for a premium unit ──
       // If we're close to affording a high-value unit, don't waste souls on something inferior
-      if (cfg.resourcePatience > 0 && !forceDefend && !saving && myCount >= 1) {
+      if (cfg.resourcePatience > 0 && !forceDefend && !saving && !_aiOutnumbered && myCount >= 1) {
         const premiumUnits = units.filter(u => (u.souls + u.bodies * 0.8) >= 16 && u.souls > p.souls);
         if (premiumUnits.length > 0) {
           // Find the one we're closest to affording
@@ -11327,12 +11455,55 @@
         const diffKey = pid === 1 ? (G.ai1Difficulty || 'medium') : (G.aiDifficulty || 'medium');
         const cfg = AI_DIFF_SETTINGS[diffKey] || AI_DIFF_SETTINGS.medium;
 
+        // ── Rush detection — AI burst-spawns to match player spam ──
+        // Track enemy (player) unit count and detect rapid spawning
+        if (GAME_MODE !== 'tutorial') {
+          if (!G._aiRushTrack) G._aiRushTrack = [{ lastCount: 0, spawnBurst: 0, checkTimer: 0 }, { lastCount: 0, spawnBurst: 0, checkTimer: 0 }];
+          const rt = G._aiRushTrack[pid - 1];
+          const enemyPid = pid === 1 ? 2 : 1;
+          const enemyCount = G.units.filter(u => u.player === enemyPid && !u.def.isWorker && !u.def.isSpawned).length;
+          const myCount = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.def.isSpawned).length;
+          rt.checkTimer = (rt.checkTimer || 0) + dt;
+          if (rt.checkTimer >= 1.5) {
+            // How many new enemy units appeared in the last 1.5s?
+            const newEnemies = Math.max(0, enemyCount - (rt.lastCount || 0));
+            rt.lastCount = enemyCount;
+            rt.checkTimer = 0;
+            // Rush detected: enemy spawned 3+ units in 1.5s AND has more units than us
+            if (newEnemies >= 3 && enemyCount > myCount + 1) {
+              // Queue burst spawns to catch up — scale by how far behind we are
+              const deficit = Math.min(5, enemyCount - myCount);
+              rt.spawnBurst = Math.max(rt.spawnBurst, deficit);
+            }
+          }
+          // Execute burst spawns (1 per frame, skip visual delay)
+          if (rt.spawnBurst > 0 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) {
+            const bp = G.players[pid - 1];
+            const bEnemy = G.players[enemyPid - 1];
+            const bUnits = G.factions[pid - 1].units.filter((d, i) => !d.isSpawned && !d.isWorker && _slotUnlocked(i));
+            const bAffordable = bUnits.filter(u => bp.souls >= u.souls && bp.bodies >= (bp._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
+            if (bAffordable.length > 0) {
+              // Pick cheapest affordable combat unit for fast response
+              const cheapest = bAffordable.reduce((a, b) => a.souls < b.souls ? a : b);
+              trySpawn(pid, cheapest.id, null);
+              rt.spawnBurst--;
+            } else {
+              rt.spawnBurst = 0; // can't afford — stop trying
+            }
+          }
+        }
+
         // ── Normal decision timer ──
         if (!G._aiTimers) G._aiTimers = [0, 0];
         G._aiTimers[pid - 1] = (G._aiTimers[pid - 1] || 0) + dt;
         const jitterScale = { tutorial: 0.8, easy: 0.7, medium: 0.9, hard: 0.3, expert: 0.08 }[diffKey] || 0.4;
         const jitter = (Math.random() - 0.5) * jitterScale;
-        if (G._aiTimers[pid - 1] >= cfg.interval + jitter) {
+        // Shorten interval when outnumbered early — AI shouldn't fall behind to spam
+        const _aiMyCount = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.def.isSpawned).length;
+        const _aiEnCount = G.units.filter(u => u.player !== pid && !u.def.isWorker && !u.def.isSpawned).length;
+        const _outnumberedEarly = (G.elapsed || 0) < 60 && _aiEnCount > _aiMyCount + 2;
+        const _effectiveInterval = _outnumberedEarly ? Math.max(0.4, cfg.interval * 0.4) : cfg.interval;
+        if (G._aiTimers[pid - 1] >= _effectiveInterval + jitter) {
           G._aiTimers[pid - 1] = 0;
           const _ak = pid === 1 ? '_aiActing1' : '_aiActing';
           if (!G[_ak]) { G.aiDifficulty = diffKey; if (pid === 1) { G.ai1Personality = G.ai1Personality || AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)]; } runAI(pid, false); }
@@ -11519,8 +11690,8 @@
             unitCap: 12, workerCap: 3, buffCooldowns: [0, 0, 0, 0, 0],
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
-            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.55,
-            bloodTitheRefund: 1, skyBountyAmt: 6,
+            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.25,
+            bloodTitheRefund: 1, skyBountyAmt: 3,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -11540,8 +11711,8 @@
             unitCap: 12, workerCap: 3, buffCooldowns: [0, 0, 0, 0, 0],
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
-            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.55,
-            bloodTitheRefund: 1, skyBountyAmt: 6,
+            hellfireRate: 8, chainRate: 10, chainDmgMult: 0.25,
+            bloodTitheRefund: 1, skyBountyAmt: 3,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -11560,7 +11731,7 @@
         bloodPools: [], groundFX: [], _upgradeFlash: [0, 0], workerMidMode: [false, false],
         tarPatches: [], corpses: [], echoSchedule: [], darkZones: [],
         _hasReavers: (P1_FACTION.name === 'Reavers' || P2_FACTION.name === 'Reavers'),
-        _chronoTimer: [40, 40], _umbraTimer: [30, 30],
+        _chronoTimer: [40, 40], _umbraTimer: [20, 20],
         _fortuneStreaks: [0, 0], _fortuneStreakTimer: [0, 0],
         // Conquest mode: 3 zones [left, mid, right], owner = 1|2|null, capTimer per zone
         zones: null,
@@ -12096,7 +12267,10 @@
           ? (_mhsHUD < 30 ? 0.8 + (_mhsHUD / 30) * 0.7
             : _mhsHUD < 60 ? 1.5 + ((_mhsHUD - 30) / 30) * 0.5
               : 2.0) : 0;
-        const soulRate = (0.5 + _midTaperHUD + (p.despStacks * 1.0) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(1);
+        const _hudBasePassive = gameSec < 90 ? 0.35 : 0.5;
+        const _hudMidCap = gameSec < 90 ? 0.6 : gameSec < 150 ? 1.2 : 2.0;
+        const _midTaperCapped = Math.min(_hudMidCap, _midTaperHUD);
+        const soulRate = (_hudBasePassive + _midTaperCapped + (p.despStacks * 1.0) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(1);
         const bodyRate = ((3.0 + Math.floor(gameSec / 60) * 0.4) * p.workers).toFixed(1);
         const incEl = document.getElementById(`p${pid}-income-rate`);
         const _bm = G.activeEvent && G.activeEvent.type === 'blood_moon' && p._bloodMoon;
@@ -12579,9 +12753,9 @@
         case 'plague_spread': p._plagueSpread = (p._plagueSpread || 1) + 1; break;
         case 'plague_radius': liveUnits.forEach(u => { if (u.def.plagued) u.def.range += up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.plagued) d.range += up.value; }); break;
         // ── Chrysalis ──
-        case 'chrysalis_speed': liveUnits.forEach(u => { if (u._chrysPhase === 'larva') u._chrysMorphTime = Math.max(3, (u._chrysMorphTime || 12) - up.value); }); break;
+        case 'chrysalis_speed': liveUnits.forEach(u => { if (u._chrysPhase === 'larva') u._chrysMorphTime = Math.max(5, (u._chrysMorphTime || 15) - up.value); }); break;
         case 'chrysalis_armor':
-          p._cocoonArmorUpgraded = up.value || 0.80;
+          p._cocoonArmorUpgraded = up.value || 0.65;
           G.unitDefs[pid - 1].filter(d => d.chrysalis).forEach(d => { d.hp += 10; });
           liveUnits.filter(u => u.def.chrysalis && u._chrysPhase === 'larva').forEach(u => { u.maxHp += 10; u.hp += 10; });
           break;
@@ -12598,7 +12772,7 @@
           modDef('tb_brute', def => { def.dmg += up.value; def.hp += 30; });
           break;
         // ── Echoes ──
-        case 'echo_delay': p._echoDelay = Math.max(2, (p._echoDelay || 8) - up.value); break;
+        case 'echo_delay': p._echoDelay = Math.max(2, (p._echoDelay || 10) - up.value); break;
         case 'echo_power': p._echoPower = (p._echoPower || 0.7) + up.value; break;
         case 'echo_chain': p._echoChain = true; break;
         // ── Veilborn ──
@@ -12626,7 +12800,9 @@
         case 'psionic_income': p._psionicPassive = true; break;
         // ── Umbral ──
         case 'umbral_dur':
-          G._umbraTimer[pid - 1] = Math.max(15, (G._umbraTimer[pid - 1] || 30) - up.value);
+          G._umbraTimer[pid - 1] = Math.max(10, (G._umbraTimer[pid - 1] || 20) - 5);
+          G._umbraDurBonus = G._umbraDurBonus || [0, 0];
+          G._umbraDurBonus[pid - 1] = 8; // +8s duration (18→26)
           break;
         case 'umbral_dmg':
           liveUnits.filter(u => u.def.umbral && u._inDark).forEach(u => { u.def.dmg += up.value; });
@@ -12749,9 +12925,9 @@
       // ── Fortune Seekers: luck rolls at spawn ──
       if (G.factions[pid - 1].id === 'fortune' && !def.isWorker && !def.isSpawned) {
         const roll = Math.random();
-        if (p._fortuneDouble && roll < 0.12) {
+        if (p._fortuneDouble && roll < 0.15) {
           // Double stats luck
-          u.hp = u.hp * 2; u.maxHp = u.maxHp * 2; u.dmg = u.dmg * 2;
+          u.hp = u.hp * 2; u.maxHp = u.maxHp * 2; u.def.dmg = u.def.dmg * 2;
           showPopup(x, u.y, '🎰 Lucky!', '#FFD700', pid);
         } else if (p._fortuneRefund && roll < 0.10) {
           // Half cost refund
@@ -12765,7 +12941,7 @@
           G._fortuneStreaks[si] = (G._fortuneStreaks[si] || 0) + 1;
           G._fortuneStreakTimer[si] = 12;
           if (G._fortuneStreaks[si] >= 3) {
-            u.dmg = Math.round(u.dmg * 1.15);
+            u.def.dmg = Math.round(u.def.dmg * 1.15);
             showPopup(x, u.y, '🔥 Streak!', '#FF8C00', pid);
           }
         }
@@ -12794,7 +12970,7 @@
       }
       // ── Echoes: schedule a delayed echo spawn ──
       if (G.factions[pid - 1].id === 'echoes' && !def.isWorker && !def.isSpawned && !u._isEcho) {
-        const delay = p._echoDelay || 8;
+        const delay = p._echoDelay || 10;
         G.echoSchedule.push({ pid, defId: def.id, x, y: u.y, t: delay, power: p._echoPower || 0.7 });
       }
       // ── Veilborn guard: starts phased ──
@@ -12807,7 +12983,7 @@
       if (def.chrysalis) {
         u._chrysPhase = 'larva';
         u._chrysTimer = 0;
-        u._chrysMorphTime = 12;
+        u._chrysMorphTime = 15;
       }
       // ── Plagued: apply initial mutations ──
       if (def.plagueStartMutation && def.plagueStartMutation > 0) {
@@ -13247,7 +13423,12 @@
       } else if (attacker.def.aerialBonus && target.def.aerial) {
         dmg *= attacker.def.aerialBonus;
       }
-      dmg *= 1 + (attacker.veteranStacks || 0) * 0.08;
+      dmg *= 1 + (attacker.veteranStacks || 0) * 0.12;
+      // Reavers: +15% damage when near a corpse (within 80px)
+      if (G._hasReavers && G.corpses && G.corpses.length && (attacker.def.reaverKillBonus || attacker.def.bodyOnKill || attacker.def.corpseFeed)) {
+        const nearCorpse = G.corpses.some(c => Math.abs(c.x - attacker.x) < 80);
+        if (nearCorpse) dmg *= 1.15;
+      }
       // Melee disruption: ranged takes +20% damage AND fires slower when enemy melee is close
       if (target.def.type === 'rng') {
         const _fcMelA = G._fc ? G._fc.mel[attacker.player - 1] : G.units.filter(a => a.player === attacker.player && a.def.type === 'mel' && !a.offscreen);
@@ -13295,6 +13476,8 @@
         }
       }
       target.lastHitById = attacker.id; target.lastHitByPlayer = attacker.player;
+      // NaN guard: if damage became NaN through chained multipliers, fall back to base
+      if (!Number.isFinite(dmg)) dmg = Math.max(1, attacker.def.dmg || 1);
 
       if (isRanged) {
         const speed = 280 + Math.random() * 60;
@@ -13337,8 +13520,8 @@
         if (attacker.def.type === 'mel' && G.factions[target.player - 1] && G.factions[target.player - 1].id === 'spirits') {
           dmg *= 0.85;
         }
-        // Warriors Iron Resolve — 15% resistance when below 30% HP
-        if (G.factions[target.player - 1] && G.factions[target.player - 1].ironResolve && target.hp < target.maxHp * 0.30) {
+        // Warriors Iron Resolve — 15% resistance when below 50% HP
+        if (G.factions[target.player - 1] && G.factions[target.player - 1].ironResolve && target.hp < target.maxHp * 0.50) {
           dmg *= 0.85;
           if (!target._ironResolvePopup || target._ironResolvePopup <= 0) {
             showPopup(target.x, target.y - 28, '🛡 IRON RESOLVE', '#f1c40f', target.player);
@@ -13346,7 +13529,7 @@
           }
         }
         // Melee direct
-        let actualDmg = dmg;
+        let actualDmg = Number.isFinite(dmg) ? dmg : Math.max(1, attacker.def.dmg || 1);
         // Defender's advantage: 12% DR when near own base
         const _tOwner = G.players[target.player - 1];
         if (_tOwner && Math.abs(target.x - _tOwner.baseX) < 180) actualDmg *= 0.88;
@@ -13383,10 +13566,10 @@
         attacker._attackCount = (attacker._attackCount || 0) + 1;
         const crate = attacker.def.alwaysChain ? 1 : (attacker.def.chainRate || G.players[attacker.player - 1].chainRate || 10);
         if ((G.factions[attacker.player - 1].id === 'voltborn' || attacker.def.alwaysChain) && attacker._attackCount % crate === 0) {
-          const cdmg = G.players[attacker.player - 1].chainDmgMult || 0.4;
-          const chainR = attacker.def.chainRange || 100;
+          const cdmg = G.players[attacker.player - 1].chainDmgMult || 0.25;
+          const chainR = attacker.def.chainRange || 70;
           const ct = G.units.filter(e => e.player !== attacker.player && e !== target && !e.offscreen && dist2d(attacker, e) < chainR);
-          if (ct.length > 0) { const c = ct[0]; c.hp -= attacker.def.dmg * cdmg; c.hitFlash = 1; spawnParticles(c.x, c.y, '#fdcb6e', 6); }
+          if (ct.length > 0) { const c = ct[0]; const _cd = (attacker.def.dmg || 1) * cdmg; c.hp -= Number.isFinite(_cd) ? _cd : 1; c.hitFlash = 1; spawnParticles(c.x, c.y, '#fdcb6e', 6); }
         }
         // Ground Slam (Brutes Warlord / Grave Brute) — AoE every 4th hit
         if (attacker.def.groundSlam && attacker._attackCount % 4 === 0) {
@@ -13470,7 +13653,9 @@
       const kp = killer ? G.players[killer.player - 1] : null;
       // Kill bounty scales with unit cost: 40% refund + 1 base (was 30%)
       // Expensive units are now worth fighting for
-      let soulReward = u.def.isSpawned ? 0 : Math.max(1, Math.floor((u.def.souls || 0) * 0.4 + 1));
+      // Early game: lower bounty to prevent melee spam snowball
+      const _killBountyPct = (G.elapsedTime || 0) < 90 ? 0.25 : 0.4;
+      let soulReward = u.def.isSpawned ? 0 : Math.max(1, Math.floor((u.def.souls || 0) * _killBountyPct + 1));
       // Shade reward
       const isShade = u.defId && (u.defId.endsWith('_shade') || u.def.isSpawned) && u.def.hp <= 30;
       if (isShade && kp) soulReward += (kp._shadeSoulReward || 0);
@@ -13482,7 +13667,9 @@
         showPopup(u.x, u.y - 44, `⭐ VETERAN SLAIN +${bounty}💀`, '#d4a843', killer.player);
         addKillFeed(`💀 ${killer.def.icon} slew ⭐ ${u.def.icon} ${u.def.name}`, '#d4a843');
       }
-      if (killer && G.midOwner && G.midOwner !== killer.player) soulReward = Math.floor(soulReward * 1.8);
+      // Mid kill bonus: reduced early to prevent snowball, full value after 90s
+      const _midKillMult = (G.elapsedTime || 0) < 90 ? 1.3 : 1.6;
+      if (killer && G.midOwner && G.midOwner !== killer.player) soulReward = Math.floor(soulReward * _midKillMult);
       if (kp) { kp.souls += soulReward; kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + soulReward; }
       if (kp) {
         kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward });
@@ -13504,7 +13691,7 @@
       }
       // Sky Bounty
       if (u.def.aerial && killer && G.factions[killer.player - 1].id === 'spirits') {
-        const bonus = kp.skyBountyAmt || 6;
+        const bonus = kp.skyBountyAmt || 3;
         kp.souls += bonus; showPopup(u.x, u.y - 30, `✦ SKY BOUNTY +${bonus}💀`, '#fd79a8', killer.player);
       }
       // Summoner summons on kill
@@ -13539,8 +13726,8 @@
       // Glacial Permafrost
       if (G.factions[u.player - 1].id === 'glacial' && killer) {
         const p = G.players[u.player - 1];
-        if (!killer.def.immuneDebuff) { killer.slowTimer = 2.4; killer._speedMult = p.chillSpeedMult || 0.65; }
-        [...G.units].forEach(e => { if (e.player !== u.player && dist2d(e, u) < 60 && !e.def.immuneDebuff) { e.slowTimer = 2.4; e._speedMult = p.chillSpeedMult || 0.65; } });
+        if (!killer.def.immuneDebuff) { killer.slowTimer = 2.0; killer._speedMult = p.chillSpeedMult || 0.65; }
+        [...G.units].forEach(e => { if (e.player !== u.player && dist2d(e, u) < 60 && !e.def.immuneDebuff) { e.slowTimer = 2.0; e._speedMult = p.chillSpeedMult || 0.65; } });
       }
       // Summoner Death Frenzy
       if (G.factions[u.player - 1].id === 'summoners') {
@@ -13607,7 +13794,7 @@
       // ── Reavers: leave a corpse pickup on death (only when Reavers are in play) ──
       if (G._hasReavers && !u.def.isWorker && !u.def.isSpawned && G.corpses) {
         const corpseVal = (killer && killer.def.reaverKillBonus) ? killer.def.reaverKillBonus : 3 + Math.floor(Math.random() * 4);
-        G.corpses.push({ x: u.x, val: corpseVal, life: 25 });
+        G.corpses.push({ x: u.x, val: corpseVal, life: 35 });
         // corpseFeed: nearby Reavers Golems gain HP
         G.units.forEach(gu => {
           if (gu.def.corpseFeed && gu.player !== u.player) {
@@ -13663,7 +13850,7 @@
       }
       // ── Umbral darkOnDeath: deploy dark zone ──
       if (u.def.darkOnDeath && G.darkZones) {
-        G.darkZones.push({ x: u.x, owner: u.player, radius: 80, life: 8, auto: false, unitId: null });
+        G.darkZones.push({ x: u.x, owner: u.player, radius: 80, life: 12, auto: false, unitId: null });
         spawnParticles(u.x, u.y, '#2d3436', 18);
       }
       // ── Weavers cocoonsOnDeath: spawn tar patches ──
@@ -14600,11 +14787,11 @@
 
         const dx = t.x - p.x, dy = t.y - p.y;
         if (Math.sqrt(dx * dx + dy * dy) < (t.def.radius || 10) + 6) {
-          let dmg = p.dmg;
+          let dmg = Number.isFinite(p.dmg) ? p.dmg : 1;
           if (t._ironwalled > 0) dmg *= 0.6;
           if (t._cocoonArmor) dmg *= (1 - t._cocoonArmor); // Chrysalis cocoon damage reduction
-          // Warriors Iron Resolve — 15% resistance when below 30% HP
-          if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * 0.30) {
+          // Warriors Iron Resolve — 15% resistance when below 50% HP
+          if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * 0.50) {
             dmg *= 0.85;
             if (!t._ironResolvePopup || t._ironResolvePopup <= 0) { showPopup(t.x, t.y - 28, '🛡 IRON RESOLVE', '#f1c40f', t.player); t._ironResolvePopup = 2.5; }
           }
@@ -14659,10 +14846,10 @@
             atk._attackCount = (atk._attackCount || 0) + 1;
             const crate = atk.def.alwaysChain ? 1 : (atk.def.chainRate || G.players[atk.player - 1].chainRate || 10);
             if ((G.factions[atk.player - 1].id === 'voltborn' || atk.def.alwaysChain) && atk._attackCount % crate === 0) {
-              const cdmg = G.players[atk.player - 1].chainDmgMult || 0.4;
-              const chainR2 = atk.def.chainRange || 100;
+              const cdmg = G.players[atk.player - 1].chainDmgMult || 0.25;
+              const chainR2 = atk.def.chainRange || 70;
               const ct2 = G.units.filter(e => e.player !== atk.player && e !== t && !e.offscreen && dist2d(atk, e) < chainR2);
-              if (ct2.length > 0) { const c2 = ct2[0]; c2.hp -= atk.def.dmg * cdmg; c2.hitFlash = 1; spawnParticles(c2.x, c2.y, '#fdcb6e', 6); }
+              if (ct2.length > 0) { const c2 = ct2[0]; const _cd2 = (atk.def.dmg || 1) * cdmg; c2.hp -= Number.isFinite(_cd2) ? _cd2 : 1; c2.hitFlash = 1; spawnParticles(c2.x, c2.y, '#fdcb6e', 6); }
             }
             // Seraph heal on ranged
             if (atk.def.seraphHeal) {
@@ -14742,7 +14929,7 @@
         // ─── Mender retreat ───
         if (u.def.menderRetreat) {
           // Retreat trigger: only if cooldown expired
-          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.45 && (u.returnCount || 0) < 3) {
+          if (!u.retreating && !u.healingPhase && (u.retreatCooldown || 0) <= 0 && u.hp < u.maxHp * 0.25 && (u.returnCount || 0) < 3) {
             u.retreating = true;
           }
           // Retreating: walk to base
@@ -14802,7 +14989,7 @@
         if (u.def.allyAura) { G.units.forEach(a => { if (a.player === u.player && a !== u && dist2d(u, a) < (u.def.allyAuraRange || 80)) a.dmgMult = Math.max(a.dmgMult || 1, 1 + (u.def.allyAuraDmg || 0.08)); }); }
         // Warriors veteran stacks
         u.veteranTimer = (u.veteranTimer || 0) + dt;
-        if (u.veteranTimer >= 5) { u.veteranTimer = 0; u.veteranStacks = Math.min((u.veteranStacks || 0) + 1, 2); }
+        if (u.veteranTimer >= 5) { u.veteranTimer = 0; u.veteranStacks = Math.min((u.veteranStacks || 0) + 1, 4); }
         // Brutes Fortify — requires not being hit for 0.5s
         if (faction.id === 'brutes') {
           if (Math.abs(u.vx || 0) < 0.5) u.stillTimer = (u.stillTimer || 0) + dt; else { u.stillTimer = 0; u.fortified = false; }
@@ -14833,9 +15020,9 @@
           const atBase = Math.abs(u.x - ebaseCheck.baseX) < G.baseW * .7 + u.def.range;
           if (atBase && canAttackBase(u)) {
             if (u.attackCooldown <= 0) {
-              const baseMult = (G.players[u.player - 1]._baseDmgMult || 1) * 0.65;
-              const _rawBaseDmg = u.def.dmg * (u.dmgMult || 1) * baseMult;
-              const _armoredDmg = Math.max(0.5, _rawBaseDmg - getBaseArmor());
+              const baseMult = (G.players[u.player - 1]._baseDmgMult || 1) * 0.80;
+              const _rawBaseDmg = (u.def.dmg || 1) * (u.dmgMult || 1) * baseMult;
+              const _armoredDmg = Math.max(0.5, (Number.isFinite(_rawBaseDmg) ? _rawBaseDmg : 1) - getBaseArmor());
               if (!ebaseCheck._conquestShield) ebaseCheck.baseHp -= _armoredDmg;
               if (ebaseCheck.lastStandGrace > 0 && ebaseCheck.baseHp <= 0) ebaseCheck.baseHp = 1;
               if (!ebaseCheck.lastStandUsed && ebaseCheck.baseHp <= 0) ebaseCheck.baseHp = 1;
@@ -14863,42 +15050,46 @@
           } else {
             u.attackCooldown -= dt;
             u.chargeTimer = (u.chargeTimer || 0) + dt;
-            const chargeMult = u.chargeTimer > 1.2 ? 1.2 : 1.0;
             const dx = enemy.x - u.x;
-            const actualSpd = spd * chargeMult;
-            // Aerial: move ahead of target to intercept
-            if (u.def.aerial) {
-              const interceptX = enemy.x + (enemy.vx || 0) * 0.3;
-              const interceptDx = interceptX - u.x;
-              u.x += Math.sign(interceptDx) * actualSpd * dt;
-            } else {
-              u.x += Math.sign(dx) * actualSpd * dt;
-            }
-            u.vx = Math.sign(dx) * actualSpd;
-          }
-          // ── Ranged kiting — some archers back away, others hold their ground ──
-          if (u.def.type === 'rng' && !enemy.def.aerial && !u.def.aerial && !u.retreating && !u.healingPhase) {
-            const kc = u.kiteChance || 0;
-            const ownBase = G.players[u.player - 1].baseX;
-            const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
-            const dx2 = enemy.x - u.x;
-            // Trigger kite when melee gets within 65px — visible and responsive
-            const enemyMeleeClose = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 65);
-            // Only archers with kc > 0.50 kite at all (~50/50 split for natural variety)
-            const willKite = kc > 0.50;
-            const shouldKite = willKite && !nearOwnBase && enemyMeleeClose;
-            if (shouldKite) {
-              // Speed: 0.25–0.40x normal — visible but catchable by melee
-              const retreatSpd = spd * (0.25 + kc * 0.15); // 0.25–0.40x speed
-              u.x -= Math.sign(dx2) * retreatSpd * dt;
-              // High-kite archers try to stay behind ally melee
-              if (kc > 0.70) {
-                const allyMelee = G.units.find(a =>
-                  a.player === u.player && !a.def.isWorker && a.def.type === 'mel' &&
-                  Math.abs(a.x - u.x) < 160 && Math.sign(a.x - u.x) !== Math.sign(dx2)
-                );
-                if (allyMelee) u.x = u.x + (allyMelee.x - u.x) * 0.04 * dt * 60;
+            // ── Ranged kiting check BEFORE approach — prevents double-move teleporting ──
+            let _isKiting = false;
+            if (u.def.type === 'rng' && !enemy.def.aerial && !u.def.aerial && !u.retreating && !u.healingPhase) {
+              const kc = u.kiteChance || 0;
+              const ownBase = G.players[u.player - 1].baseX;
+              const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
+              const enemyMeleeClose = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 65);
+              const willKite = kc > 0.50;
+              _isKiting = willKite && !nearOwnBase && enemyMeleeClose;
+              if (_isKiting) {
+                // Kite: move away from enemy at 0.25–0.35x speed — smooth and catchable
+                const retreatSpd = spd * (0.20 + kc * 0.15);
+                u.x -= Math.sign(dx) * retreatSpd * dt;
+                u.vx = -Math.sign(dx) * retreatSpd;
+                // High-kite archers drift toward ally melee (capped lerp to prevent jumps)
+                if (kc > 0.70) {
+                  const allyMelee = G.units.find(a =>
+                    a.player === u.player && !a.def.isWorker && a.def.type === 'mel' &&
+                    Math.abs(a.x - u.x) < 160 && Math.sign(a.x - u.x) !== Math.sign(dx)
+                  );
+                  if (allyMelee) {
+                    const lerpAmt = Math.min(0.02, 0.02 * dt * 60);
+                    u.x = u.x + (allyMelee.x - u.x) * lerpAmt;
+                  }
+                }
               }
+            }
+            // Normal approach — only if NOT kiting
+            if (!_isKiting) {
+              const chargeMult = u.chargeTimer > 1.2 ? 1.2 : 1.0;
+              const actualSpd = spd * chargeMult;
+              if (u.def.aerial) {
+                const interceptX = enemy.x + (enemy.vx || 0) * 0.3;
+                const interceptDx = interceptX - u.x;
+                u.x += Math.sign(interceptDx) * actualSpd * dt;
+              } else {
+                u.x += Math.sign(dx) * actualSpd * dt;
+              }
+              u.vx = Math.sign(dx) * actualSpd;
             }
           }
         } else {
@@ -14956,9 +15147,9 @@
             const ebase = G.players[u.player === 1 ? 1 : 0];
             if (Math.abs(u.x - ebase.baseX) < G.baseW * .7 + u.def.range) {
               if (u.attackCooldown <= 0) {
-                const baseMult = (G.players[u.player - 1]._baseDmgMult || 1) * 0.65;
-                const _rawBaseDmg2 = u.def.dmg * (u.dmgMult || 1) * baseMult;
-                const _armoredDmg2 = Math.max(0.5, _rawBaseDmg2 - getBaseArmor());
+                const baseMult = (G.players[u.player - 1]._baseDmgMult || 1) * 0.80;
+                const _rawBaseDmg2 = (u.def.dmg || 1) * (u.dmgMult || 1) * baseMult;
+                const _armoredDmg2 = Math.max(0.5, (Number.isFinite(_rawBaseDmg2) ? _rawBaseDmg2 : 1) - getBaseArmor());
                 if (!ebase._conquestShield) ebase.baseHp -= _armoredDmg2;
                 // Grace period: base can't die while Last Stand guards are spawning
                 if (ebase.lastStandGrace > 0 && ebase.baseHp <= 0) {
@@ -15045,7 +15236,7 @@
         // ── Chrysalis: metamorphosis timer ──
         if (u._chrysPhase === 'larva') {
           u._chrysTimer += dt;
-          if (u._chrysTimer >= (u._chrysMorphTime || 12)) {
+          if (u._chrysTimer >= (u._chrysMorphTime || 15)) {
             u._chrysPhase = 'cocoon';
             u._chrysTimer = 0;
             spawnParticles(u.x, u.y, '#00b894', 12);
@@ -15053,7 +15244,7 @@
         } else if (u._chrysPhase === 'cocoon') {
           u._chrysTimer += dt;
           // Damage reduction while cocooning (upgraded: 60%→80%)
-          u._cocoonArmor = G.players[u.player - 1]._cocoonArmorUpgraded || 0.60;
+          u._cocoonArmor = G.players[u.player - 1]._cocoonArmorUpgraded || 0.45;
           if (u._chrysTimer >= 2.5) {
             u._chrysPhase = 'adult';
             u._cocoonArmor = 0;
@@ -15145,10 +15336,17 @@
             if (G._fortuneStreakTimer[si] <= 0) G._fortuneStreaks[si] = 0;
           }
         }
+        // NaN safety: reset corrupted values to sane defaults
+        if (!Number.isFinite(u.x)) u.x = G.players[u.player - 1].baseX;
+        if (!Number.isFinite(u.y)) u.y = G.groundY - (u.def.radius || 10);
+        if (!Number.isFinite(u.hp)) u.hp = 0;
+        if (!Number.isFinite(u.def.dmg)) u.def.dmg = 1;
+        if (!Number.isFinite(u.dmgMult)) u.dmgMult = 1.0;
+        if (!Number.isFinite(u.attackCooldown)) u.attackCooldown = 0;
         // Clamp X; aerial bobs
         const minX = G.players[0].baseX + G.baseW / 2 + 2, maxX = G.players[1].baseX - G.baseW / 2 - 2;
         u.x = Math.max(minX, Math.min(maxX, u.x));
-        if (u.def.aerial) u.y = G.groundY - 85 + (Math.sin(u.aliveSecs * 1.8 + u.id * .7) * 8);
+        if (u.def.aerial) { const _uid = typeof u.id === 'number' ? u.id : (u.id.length || 0); u.y = G.groundY - 85 + (Math.sin(u.aliveSecs * 1.8 + _uid * .7) * 8); }
         else u.y = G.groundY - (u.def.radius || 10);
       }
     }
@@ -15180,7 +15378,7 @@
         G.players.forEach(p => {
           if (p.baseHp <= 0 || p.baseHp >= p.baseMaxHp) return;
           const enemyNear = G.units.some(u => u.player !== p.id && !u.def.isWorker && Math.abs(u.x - p.baseX) < 200);
-          if (!enemyNear) p.baseHp = Math.min(p.baseMaxHp, p.baseHp + 1.5 * dt);
+          if (!enemyNear) p.baseHp = Math.min(p.baseMaxHp, p.baseHp + 0.8 * dt);
         });
       }
 
@@ -15216,13 +15414,14 @@
         const _eclipseActive = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
         // Mid income ramp: capped at 1.2/s for first 2 min, then normal 2.0/s max
         const _mhs = G.midOwnerTimer || 0;
-        const _midCap = gameSec < 120 ? 1.2 : 2.0; // rubber-band: weaker early mid income
+        const _midCap = gameSec < 90 ? 0.6 : gameSec < 150 ? 1.2 : 2.0; // slower early ramp
         const _midRaw = G.midOwner === p.id
           ? Math.min(_midCap, _mhs < 30 ? 0.8 + (_mhs / 30) * 0.7
             : _mhs < 60 ? 1.5 + ((_mhs - 30) / 30) * 0.5
               : 2.0) : 0;
         const midTaper = _midRaw * (_eclipseActive ? 0.5 : 1.0);
-        const baseTick = (0.5 + earlyBonus + midTaper) * sdMult * dt; // 0.6→0.5 base passive
+        const _basePassive = gameSec < 90 ? 0.35 : 0.5; // slower early passive income
+        const baseTick = (_basePassive + earlyBonus + midTaper) * sdMult * dt;
         const _eclipseDesp = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
         const despTick = (p.despStacks * (_eclipseDesp ? 2.0 : 1.0)) * dt;
         const soulTick = baseTick + despTick;
@@ -15489,33 +15688,34 @@
       const sec = G.elapsed;
       const siEl = document.getElementById('siege-indicator');
       const _isTourney = GAME_MODE === 'tournament';
-      const _decayStart = _isTourney ? 180 : 240;  // tournament: 3min, normal: 4min
-      const _decayWarn = _isTourney ? 150 : 210;
+      const _decayStart = _isTourney ? 180 : 210;  // tournament: 3min, normal: 3.5min
+      const _decayWarn = _isTourney ? 150 : 180;
+      // Conquest shield drops after 60s so units can eventually attack bases directly
+      if (GAME_MODE === 'conquest' && sec > 60) {
+        G.players.forEach(p => { p._conquestShield = false; });
+      }
       if (sec > _decayStart) {
-        // Only apply decay during stalemates — if one base is already below 55, let combat finish it
         const elapsed = sec - _decayStart;
         const bothHealthy = G.players.every(p => p.baseHp >= 55);
-        // After 5 minutes of total game time, force decay regardless of HP — prevents infinite stalemates
-        const forceDecay = sec > 300;
+        // After 4.5 minutes of total game time, force decay regardless of HP
+        const forceDecay = sec > 270;
         if (bothHealthy || forceDecay) {
           G.siegeDecay = true;
-          const elapsed = sec - _decayStart;
           // Tournament: faster escalating decay to keep matches 3–7 min
-          // Normal: gentle stalemate nudge, but accelerated when both bases full and game dragging
+          // Normal: meaningful decay that resolves stalemates within 4–8 min
           const bothFull = G.players.every(p => p.baseHp >= 95);
           let rate;
           if (_isTourney) {
-            rate = elapsed > 120 ? 0.15 : elapsed > 60 ? 0.09 : 0.05; // 3/5.4/9 HP/min
-          } else if (bothFull && sec > 300) {
-            rate = elapsed > 90 ? 0.12 : 0.07; // aggressive decay when completely stalemated
+            rate = elapsed > 120 ? 0.20 : elapsed > 60 ? 0.12 : 0.07;
+          } else if (bothFull && sec > 270) {
+            rate = elapsed > 60 ? 0.18 : 0.10; // aggressive when completely stalemated
           } else {
-            rate = elapsed > 90 ? 0.05 : 0.025;
+            rate = elapsed > 90 ? 0.10 : 0.05;
           }
           G.players.forEach(p => {
             if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt);
-            // After 15 minutes, lift the floor entirely so decay can terminate the game.
-            // This prevents the rare infinite-game case where both bases stall at 1 HP.
-            else if (sec > 900) p.baseHp = Math.max(0, p.baseHp - rate * dt * 4);
+            // After 8 minutes, lift the floor so decay can terminate the game
+            else if (sec > 480) p.baseHp = Math.max(0, p.baseHp - rate * dt * 4);
           });
           siEl.style.opacity = '1';
           const urgency = elapsed > 120 ? '🔥 TOURNAMENT PRESSURE — ACCELERATING' : elapsed > 60 ? '⏳ TOURNAMENT PRESSURE — ESCALATING' : '⏳ STALEMATE — BASES DECAYING';
@@ -15682,10 +15882,10 @@
           p._conquestBodyTimer = 0;
         }
 
-        // Sustained base damage based on zone weight (1 side zone = 0.2 dmg/s, mid = 0.4 dmg/s)
+        // Sustained base damage based on zone weight (1 side zone = 0.5 dmg/s, mid = 1.0 dmg/s)
         const dmgWeight = G.zones.reduce((sum, z, i) => sum + (z.owner === p.id ? _zWeights[i] : 0), 0);
         if (dmgWeight > 0 && G.running) {
-          const dmgTick = dmgWeight * 0.2 * dt;
+          const dmgTick = dmgWeight * 0.5 * dt;
           enemy.baseHp = Math.max(0, enemy.baseHp - dmgTick);
           if (!G._zDmgAccum) G._zDmgAccum = [0, 0];
           G._zDmgAccum[p.id - 1] = (G._zDmgAccum[p.id - 1] || 0) + dmgTick;
@@ -15739,7 +15939,7 @@
           if (Math.abs(u.x - tp.x) < r) {
             // Slow
             u.slowTimer = Math.max(u.slowTimer || 0, 0.4);
-            u._speedMult = Math.min(u._speedMult || 1, 0.55);
+            u._speedMult = Math.min(u._speedMult || 1, 0.70);
             // Root (web_root upgrade) — freeze unit on first contact
             if (tp.root && !u._tarRooted) { u._tarRooted = true; u.slowTimer = 2.0; u._speedMult = 0.0; }
             // Toxic DoT
@@ -15821,10 +16021,11 @@
       // Auto-deploy for Umbral players every 30s
       G.players.forEach((p, i) => {
         if (!G.factions[i] || G.factions[i].id !== 'umbral') return;
-        G._umbraTimer[i] = (G._umbraTimer[i] || 30) - dt;
+        G._umbraTimer[i] = (G._umbraTimer[i] || 20) - dt;
         if (G._umbraTimer[i] <= 0) {
-          G._umbraTimer[i] = 30;
-          G.darkZones.push({ x: G.midX, owner: i + 1, radius: 120, life: 12, auto: true, unitId: null });
+          G._umbraTimer[i] = 20;
+          const _umDurBonus = (G._umbraDurBonus && G._umbraDurBonus[i]) || 0;
+          G.darkZones.push({ x: G.midX, owner: i + 1, radius: 120, life: 18 + _umDurBonus, auto: true, unitId: null });
           showPopup(G.midX, G.groundY - 80, '🌑 DARKNESS', '#2d3436', i + 1);
         }
       });
@@ -15859,7 +16060,7 @@
       G.players.forEach((p, i) => {
         if (!p._psionicPassive) return;
         const corruptedCount = G.units.filter(u => u.player !== i + 1 && u._corrupted > 0.3).length;
-        if (corruptedCount > 0) p.souls = Math.min(900, p.souls + corruptedCount * 0.3 * dt);
+        if (corruptedCount > 0) p.souls = Math.min(900, p.souls + corruptedCount * 0.15 * dt);
       });
     }
 
@@ -16028,6 +16229,86 @@
       ctx.restore();
       // Units
       G.units.forEach(u => { if (!u.offscreen) drawUnit(u); });
+      // Spies — ghostly figure moving across the field
+      if (G.spies && G.spies.length) {
+        G.spies.forEach(spy => {
+          if (spy.phase === 'done') return;
+          const sx = spy.x, sy = G.groundY;
+          const pcol = spy.owner === 1 ? '#2471a3' : '#c0392b';
+          ctx.save();
+
+          if (spy.phase === 'transit') {
+            // Translucent silhouette dashing across the field
+            const t = 1 - Math.max(0, spy.transitTimer / (spy.transitDur || 5));
+            const flicker = 0.15 + Math.sin(Date.now() / 120) * 0.08;
+            ctx.globalAlpha = flicker + t * 0.15;
+            // Shadow trail
+            ctx.fillStyle = '#636e72';
+            ctx.beginPath(); ctx.ellipse(sx, sy - 2, 6, 3, 0, 0, Math.PI * 2); ctx.fill();
+            // Small cloaked figure
+            ctx.fillStyle = pcol;
+            ctx.beginPath(); ctx.arc(sx, sy - 12, 5, 0, Math.PI * 2); ctx.fill();
+            // Hat/cloak triangle
+            ctx.beginPath(); ctx.moveTo(sx - 6, sy - 8); ctx.lineTo(sx + 6, sy - 8); ctx.lineTo(sx, sy - 20); ctx.closePath(); ctx.fill();
+            // Dash lines behind
+            ctx.strokeStyle = pcol; ctx.lineWidth = 1; ctx.globalAlpha *= 0.5;
+            ctx.setLineDash([3, 5]);
+            const trailDir = spy.owner === 1 ? -1 : 1;
+            ctx.beginPath(); ctx.moveTo(sx + trailDir * 8, sy - 10); ctx.lineTo(sx + trailDir * 28, sy - 10); ctx.stroke();
+            ctx.setLineDash([]);
+          } else if (spy.phase === 'active') {
+            // Pulsing spy icon at enemy base
+            const pulse = 0.3 + Math.sin(Date.now() / 300) * 0.15;
+            const caught = spy._caughtFlash > 0;
+            const stealing = spy._stealFlash > 0;
+
+            // Stealth circle
+            ctx.globalAlpha = caught ? 0.7 : pulse;
+            ctx.strokeStyle = caught ? '#e74c3c' : stealing ? '#f1c40f' : pcol;
+            ctx.lineWidth = caught ? 2.5 : 1.5;
+            ctx.setLineDash(caught ? [] : [4, 4]);
+            ctx.beginPath(); ctx.arc(sx, sy - 14, 10, 0, Math.PI * 2); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Spy figure
+            ctx.globalAlpha = caught ? 0.9 : 0.35 + Math.sin(Date.now() / 250) * 0.1;
+            ctx.fillStyle = caught ? '#e74c3c' : '#636e72';
+            ctx.beginPath(); ctx.arc(sx, sy - 14, 5, 0, Math.PI * 2); ctx.fill();
+            // Hat
+            ctx.beginPath(); ctx.moveTo(sx - 5, sy - 10); ctx.lineTo(sx + 5, sy - 10); ctx.lineTo(sx, sy - 22); ctx.closePath(); ctx.fill();
+
+            // Steal flash — bright ring
+            if (stealing) {
+              ctx.globalAlpha = spy._stealFlash;
+              ctx.strokeStyle = '#f1c40f';
+              ctx.lineWidth = 2;
+              ctx.shadowBlur = 10; ctx.shadowColor = '#f1c40f';
+              ctx.beginPath(); ctx.arc(sx, sy - 14, 14 + (1 - spy._stealFlash) * 8, 0, Math.PI * 2); ctx.stroke();
+              ctx.shadowBlur = 0;
+            }
+
+            // Caught flash — red X
+            if (caught) {
+              ctx.globalAlpha = spy._caughtFlash;
+              ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 3;
+              ctx.shadowBlur = 12; ctx.shadowColor = '#e74c3c';
+              ctx.beginPath(); ctx.moveTo(sx - 8, sy - 22); ctx.lineTo(sx + 8, sy - 6); ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(sx + 8, sy - 22); ctx.lineTo(sx - 8, sy - 6); ctx.stroke();
+              ctx.shadowBlur = 0;
+            }
+
+            // Steals remaining indicator — small dots below spy
+            if (!caught) {
+              for (let si = 0; si < spy.stealsLeft; si++) {
+                ctx.globalAlpha = 0.5;
+                ctx.fillStyle = pcol;
+                ctx.beginPath(); ctx.arc(sx - 6 + si * 4, sy - 2, 1.5, 0, Math.PI * 2); ctx.fill();
+              }
+            }
+          }
+          ctx.restore();
+        });
+      }
       // Projectiles
       G.projectiles.forEach(p => {
         if (p.isHeal) {
@@ -23897,7 +24178,7 @@
         /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Tidal Dominion', icon: '👑', cost: 400, desc: 'The Colossus splits into 2 full-health Tidal Brutes on death. All Tideborn regen rate doubles to 8 HP/s near allies. The tide is unending.', req: [8, 10], effects: [{ type: 'flag', flag: 'tidalDominionMastery', value: true }] },
       ],
       echoes: [
-        /* 0 T1L */ { row: 1, col: 0, name: 'Echo Haste', icon: '⏱️', cost: 50, desc: 'Echo spawn delay reduced by 1s (8s→7s). The past catches up to the present faster.', req: [], effects: [{ type: 'flag', flag: 'echoDelayBonus', value: 1 }] },
+        /* 0 T1L */ { row: 1, col: 0, name: 'Echo Haste', icon: '⏱️', cost: 50, desc: 'Echo spawn delay reduced by 1s (10s→9s). The past catches up to the present faster.', req: [], effects: [{ type: 'flag', flag: 'echoDelayBonus', value: 1 }] },
         /* 1 T1R */ { row: 1, col: 4, name: 'Remnant Power', icon: '👁️', cost: 50, desc: 'The Remnant gains +15 HP. A sturdier original means the echo has more to mirror.', req: [], effects: [{ type: 'unit_hp_flat', target: 'ec_remnant', value: 15 }] },
         /* 2 T2L */ { row: 2, col: 0, name: 'Phantom Archers', icon: '🏹', cost: 100, desc: 'Echo Archer echoes spawn with 80% stats (up from 70%). More lethal echoes in the backline.', req: [0], effects: [{ type: 'flag', flag: 'echoArcherPower', value: 0.80 }] },
         /* 3 T2M */ { row: 2, col: 2, name: 'Time Investment', icon: '💰', cost: 100, desc: 'Start every match with +10 souls. Invest now, reap echoes later.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
@@ -23975,7 +24256,7 @@
         /* 5 T3L */ { row: 3, col: 0, name: 'Overmind Expansion', icon: '🧠', cost: 175, desc: 'Overmind corruption aura range expands by +25px. The mental reach extends further.', req: [2], effects: [{ type: 'flag', flag: 'psionicAuraRangeBonus', value: 25 }] },
         /* 6 T3M */ { row: 3, col: 2, name: 'Ghost Army', icon: '👁️', cost: 175, desc: 'Thought Ghosts gain +12 HP and +5 DMG. Your corrupted-death spawns become real threats.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'ps_ghost', value: 12 }, { type: 'unit_dmg_flat', target: 'ps_ghost', value: 5 }] },
         /* 7 T3R */ { row: 3, col: 4, name: 'Dominion Power', icon: '🦅', cost: 175, desc: 'Dominion Caster gains +12 HP. Corruption per hit: +0.10 (total 35%). Aerial mind control.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'ps_dom', value: 12 }, { type: 'flag', flag: 'dominionCorruptBonus', value: 0.10 }] },
-        /* 8 T4L */ { row: 4, col: 0, name: 'Mass Control', icon: '📡', cost: 275, desc: 'Passive soul income from corruption: +0.8/s per corrupted unit (up from +0.5/s).', req: [5], effects: [{ type: 'flag', flag: 'psionicIncomeBonus', value: 0.3 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Mass Control', icon: '📡', cost: 275, desc: 'Passive soul income from corruption: +0.30/s per corrupted unit (up from +0.15/s).', req: [5], effects: [{ type: 'flag', flag: 'psionicIncomeBonus', value: 0.15 }] },
         /* 9 T4M */ { row: 4, col: 2, name: 'Hivemind Elite', icon: '🧠', cost: 275, desc: 'The Hivemind gains +80 HP and +12 DMG. Corruption aura increases to 15%/s.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'ps_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'ps_guard', value: 12 }, { type: 'flag', flag: 'hivemindAuraBonus', value: 0.03 }] },
         /* 10 T4R */ { row: 4, col: 4, name: 'Extended Control', icon: '⏱️', cost: 275, desc: 'Mind-control duration: 20s→30s. You own their units for longer before they snap free.', req: [7], effects: [{ type: 'flag', flag: 'psionicControlDurBonus', value: 10 }] },
         /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Total Ascendancy', icon: '👑', cost: 400, desc: 'When a unit reaches 100% corruption, all nearby enemies gain +25% corruption instantly. Thought Ghosts gain +15 HP. The Hivemind dominates an additional 20px radius. All minds belong to you.', req: [8, 10], effects: [{ type: 'flag', flag: 'psionicAscendancy', value: true }, { type: 'unit_hp_flat', target: 'ps_ghost', value: 15 }] },
@@ -24151,7 +24432,7 @@
         const p = G.players[i];
         if (!fac || !p || !fac.masteryFlags) return;
         const f = fac.masteryFlags;
-        if (f.skyBountyBonus) p.skyBountyAmt = (p.skyBountyAmt || 6) + f.skyBountyBonus;
+        if (f.skyBountyBonus) p.skyBountyAmt = (p.skyBountyAmt || 3) + f.skyBountyBonus;
         if (f.bloodTitheBonus) p.bloodTitheRefund = (p.bloodTitheRefund || 1) + f.bloodTitheBonus;
         if (f.chainRateBonus) p.chainRate = Math.max(3, (p.chainRate || 10) + f.chainRateBonus);
         if (f.chillDurBonus) p.chillDur = (p.chillDur || 1.6) + f.chillDurBonus;
