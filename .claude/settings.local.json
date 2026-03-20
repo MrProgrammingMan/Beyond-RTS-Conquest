@@ -18,7 +18,13 @@
       "WebSearch",
       "Bash(grep -n \"case ''base_dmg''\" \"c:\\\\Users\\\\sande\\\\OneDrive\\\\Документы\\\\Beyond RTS Conquest\\\\public\\\\index.html\")",
       "Bash(grep -n \"id: ''human''\" \"c:\\\\Users\\\\sande\\\\OneDrive\\\\Документы\\\\Beyond RTS Conquest\\\\public\\\\index.html\")",
-      "Bash(grep -E \"^\\\\s+\\\\{$\" -A 1)"
+      "Bash(grep -E \"^\\\\s+\\\\{$\" -A 1)",
+      "Bash(ls -lah c:/Users/24TE_INF/Github/Beyond-RTS-Conquest/analyzer/*.json)",
+      "Bash(npm --version)",
+      "Bash(export PATH=\"/c/Users/24TE_INF/node:$PATH\")",
+      "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''server.js'',''utf8''\\)\")",
+      "Bash(node --check server.js)",
+      "Bash(node tools/generate-music.js)"
     ]
   }
 }

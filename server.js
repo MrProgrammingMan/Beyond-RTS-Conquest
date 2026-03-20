@@ -270,6 +270,33 @@ io.on('connection', (socket) => {
     io.to(room.code).emit('rogueSpawnPos', { spawnX });
   });
 
+  // ── REJOIN MATCH (during grace period) ─────────────────────────────────────
+  socket.on('rejoinMatch', ({ code }) => {
+    const room = rooms.get(code);
+    if (!room || !room._graceTimer) { socket.emit('error', { msg: 'Room expired' }); return; }
+    const dcPid = room._disconnectedPid;
+    if (!dcPid) { socket.emit('error', { msg: 'No slot to rejoin' }); return; }
+
+    // Clear grace timer — player is back
+    clearTimeout(room._graceTimer);
+    room._graceTimer = null;
+    room._disconnectedPid = null;
+
+    // Swap the disconnected socket for the new one
+    room.players[dcPid - 1] = socket;
+    socket.join(code);
+    socket._bkcRoom = code;
+    socket._bkcPid = dcPid;
+    myRoom = room;
+    myPid = dcPid;
+
+    // Tell both players
+    const other = room.players.find(p => p !== socket);
+    if (other) other.emit('opponentRejoined', { pid: dcPid });
+    socket.emit('rejoinSuccess', { code, pid: dcPid, gameMode: room.gameMode, factions: room.factions });
+    console.log(`[+] ${socket.id} rejoined room ${code} as P${dcPid}`);
+  });
+
   // ── OPPONENT DISCONNECTED ─────────────────────────────────────────────────
   socket.on('disconnect', () => {
     console.log(`[-] ${socket.id} disconnected`);
@@ -281,8 +308,29 @@ io.on('connection', (socket) => {
     const room = rooms.get(socket._bkcRoom);
     if (!room) return;
     const other = room.players.find(p => p !== socket);
-    if (other) other.emit('opponentDisconnected', { youWin: !!room.started });
-    cleanupRoom(room.code);
+
+    // If game is in progress, start 30s grace period instead of instant cleanup
+    if (room.started && other && other.connected) {
+      const dcPid = socket._bkcPid;
+      room._disconnectedPid = dcPid;
+      other.emit('opponentDisconnected', { youWin: false, grace: true, graceSeconds: 30 });
+      console.log(`[~] Room ${room.code} P${dcPid} disconnected — 30s grace period`);
+
+      room._graceTimer = setTimeout(() => {
+        // Grace period expired — award win
+        room._graceTimer = null;
+        room._disconnectedPid = null;
+        if (other && other.connected) {
+          other.emit('opponentDisconnected', { youWin: true, grace: false });
+        }
+        cleanupRoom(room.code);
+        console.log(`[x] Room ${room.code} grace expired — cleaned up`);
+      }, 30000);
+    } else {
+      // Not in game or opponent also gone — clean up immediately
+      if (other) other.emit('opponentDisconnected', { youWin: !!room.started, grace: false });
+      cleanupRoom(room.code);
+    }
   });
 });
 

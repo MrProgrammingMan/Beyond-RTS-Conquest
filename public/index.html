@@ -2179,7 +2179,7 @@
 
     #siege-indicator {
       position: absolute;
-      bottom: calc(var(--hud) + 4px);
+      top: clamp(22px, 3.5vh, 36px);
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Rajdhani', sans-serif;
@@ -6429,13 +6429,13 @@
             <div class="menu-btn-sub">Play vs a friend or stranger over the internet</div>
           </div>
           <div class="menu-btn-entry"><button class="btn btn-sudden" id="btn-sudden-death">⚡ SUDDEN DEATH</button>
-            <div class="menu-btn-sub">Both start at 30 HP — instant chaos</div>
+            <div class="menu-btn-sub">30 HP bases instead of 150 — 30 starting bodies, no workers</div>
           </div>
           <div class="menu-btn-entry"><button class="btn btn-conquest" id="btn-conquest">🏴 CONQUEST</button>
-            <div class="menu-btn-sub">Hold zones to drain enemy base</div>
+            <div class="menu-btn-sub">3 zones — bases immune to units, only zone pressure deals damage</div>
           </div>
           <div class="menu-btn-entry"><button class="btn" id="btn-draft" style="border-color:rgba(162,155,254,.5);color:#a29bfe;">🃏 DRAFT MODE</button>
-            <div class="menu-btn-sub">Ban 2, pick 1 — counter-pick your opponent</div>
+            <div class="menu-btn-sub">Ban 2 factions, pick 1 — counter-pick your opponent</div>
           </div>
           <div class="menu-btn-entry"><button class="btn" id="btn-campaign" style="border-color:rgba(255,200,50,.5);color:#f0c040;">📜 CAMPAIGN</button>
             <div class="menu-btn-sub">Fight every faction — unlock them all</div>
@@ -6592,9 +6592,9 @@
     <div id="online-badge" style="display:none;">🟢 ONLINE</div>
     <div id="online-dc-overlay">
       <div class="dc-title">⚠ OPPONENT DISCONNECTED</div>
-      <div style="font-family:Rajdhani,sans-serif;font-size:.95rem;color:var(--dim);">Your opponent left or lost
+      <div class="dc-sub" style="font-family:Rajdhani,sans-serif;font-size:.95rem;color:var(--dim);">Your opponent left or lost
         connection.</div>
-      <button class="btn" onclick="NET.cleanup()" style="margin-top:8px;">← RETURN TO MENU</button>
+      <button class="btn dc-btn" onclick="NET.cleanup()" style="margin-top:8px;">← RETURN TO MENU</button>
     </div>
   </div>
   <!-- FACTION -->
@@ -6971,6 +6971,10 @@
       <div
         style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
         <div style="font-size:1.1rem;letter-spacing:.12em;color:#e8e0d0;margin-bottom:4px;">MENU</div>
+        <div style="width:100%;display:flex;flex-direction:column;gap:6px;">
+          <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🔊 SFX <input type="range" class="sfx-vol-slider" min="0" max="1" step="0.05" value="1.0" oninput="setSfxVolume(+this.value)" style="width:60%;accent-color:#74b9ff;"></label>
+          <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🎵 MUSIC <input type="range" class="music-vol-slider" min="0" max="1" step="0.05" value="0.5" oninput="setMusicVolume(+this.value)" style="width:60%;accent-color:#a29bfe;"></label>
+        </div>
         <button class="btn mute-btn" onclick="toggleMute()" style="width:100%">🔊 MUTE</button>
         <button class="btn" onclick="_goFullscreen();_closeIngameMenu()" style="width:100%">⛶ FULLSCREEN</button>
         <button class="btn" id="ingame-menu-ragequit" onclick="_closeIngameMenu();triggerRagequit()"
@@ -7297,6 +7301,10 @@
           connected = true;
           _connectAttempts = 0;
           setStatus('✓ Connected — sending request…');
+          // Auto-rejoin if we disconnected mid-game
+          if (_onlineMode && roomCode && typeof G !== 'undefined' && G) {
+            socket.emit('rejoinMatch', { code: roomCode });
+          }
           if (onConnectCb) { onConnectCb(); onConnectCb = null; }
         });
         socket.on('connect_error', () => {
@@ -7315,15 +7323,34 @@
           if (_onlineMode) {
             const onGame = document.getElementById('sc-game')?.classList.contains('active');
             const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
-            if ((onGame || onFaction)) {
+            if (onGame && typeof G !== 'undefined' && G && G.running) {
+              // Mid-game disconnect — pause but keep game alive for rejoin
+              G.paused = true;
+              const dcOv = document.getElementById('online-dc-overlay');
+              dcOv.classList.add('show');
+              const dcTitle = dcOv.querySelector('.dc-title');
+              const dcSub = dcOv.querySelector('.dc-sub');
+              if (dcTitle) dcTitle.textContent = '⚠ CONNECTION LOST';
+              if (dcSub) dcSub.textContent = 'Attempting to reconnect…';
+            } else if (onFaction) {
               document.getElementById('online-dc-overlay').classList.add('show');
-              if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
             } else {
               setStatus('⚠ Connection lost', true);
             }
           } else {
             setStatus('⚠ Disconnected — click any option to reconnect', true);
           }
+        });
+
+        // Handle successful rejoin
+        socket.on('rejoinSuccess', ({ code, pid }) => {
+          connected = true;
+          myPid = pid;
+          roomCode = code;
+          document.getElementById('online-dc-overlay').classList.remove('show');
+          if (typeof G !== 'undefined' && G) { G.paused = false; }
+          if (pid === 1) _startStateSync();
+          setStatus('✓ Reconnected');
         });
 
         socket.on('waiting', () => {
@@ -7506,22 +7533,57 @@
           G._pendingRogueSpawnX = G.canvasW * spawnX;
         });
 
-        socket.on('opponentDisconnected', ({ youWin } = {}) => {
+        socket.on('opponentDisconnected', ({ youWin, grace, graceSeconds } = {}) => {
           if (_onlineMode) {
             const onGame = document.getElementById('sc-game')?.classList.contains('active');
             const onFaction = document.getElementById('sc-faction')?.classList.contains('active');
-            if (onGame && youWin && typeof G !== 'undefined' && G && G.running) {
-              // Opponent quit — kill their base and show win screen with a popup
+            if (grace && onGame) {
+              // Grace period — show countdown, game pauses but stays recoverable
+              if (typeof G !== 'undefined' && G) G.paused = true;
+              const dcOv = document.getElementById('online-dc-overlay');
+              dcOv.classList.add('show');
+              const dcTitle = dcOv.querySelector('.dc-title');
+              const dcSub = dcOv.querySelector('.dc-sub');
+              const dcBtn = dcOv.querySelector('.dc-btn');
+              if (dcTitle) dcTitle.textContent = '⏳ OPPONENT DISCONNECTED';
+              if (dcSub) dcSub.textContent = `Waiting for reconnection... ${graceSeconds || 30}s`;
+              if (dcBtn) dcBtn.style.display = 'none'; // hide return button during grace
+              let _graceLeft = graceSeconds || 30;
+              if (window._graceInterval) clearInterval(window._graceInterval);
+              window._graceInterval = setInterval(() => {
+                _graceLeft--;
+                if (dcSub) dcSub.textContent = `Waiting for reconnection... ${_graceLeft}s`;
+                if (_graceLeft <= 0) {
+                  clearInterval(window._graceInterval);
+                  window._graceInterval = null;
+                }
+              }, 1000);
+            } else if (onGame && youWin && typeof G !== 'undefined' && G && G.running) {
+              // Grace expired or instant win — kill their base
+              if (window._graceInterval) { clearInterval(window._graceInterval); window._graceInterval = null; }
+              document.getElementById('online-dc-overlay').classList.remove('show');
               const oppIdx = myPid === 1 ? 1 : 0;
               if (G.players[oppIdx]) G.players[oppIdx].baseHp = 0;
+              G.paused = false;
               showPopup(G.w / 2, G.groundY - 120, '⚠ OPPONENT LEFT — YOU WIN', '#f39c12', null);
               G.running = false;
-              setTimeout(() => checkWin(), 1200); // small delay so popup is visible
+              setTimeout(() => checkWin(), 1200);
             } else if (onGame || onFaction) {
               document.getElementById('online-dc-overlay').classList.add('show');
               if (typeof G !== 'undefined' && G && G.running) { G.running = false; G.paused = true; }
             }
           }
+        });
+
+        socket.on('opponentRejoined', () => {
+          // Opponent reconnected — resume game
+          if (window._graceInterval) { clearInterval(window._graceInterval); window._graceInterval = null; }
+          const dcOv = document.getElementById('online-dc-overlay');
+          dcOv.classList.remove('show');
+          const dcBtn = dcOv.querySelector('.dc-btn');
+          if (dcBtn) dcBtn.style.display = '';
+          if (typeof G !== 'undefined' && G) { G.paused = false; }
+          if (typeof showPopup === 'function') showPopup(G.w / 2, G.groundY - 120, '✅ OPPONENT RECONNECTED', '#27ae60', null);
         });
       }
 
@@ -8476,6 +8538,12 @@
 
     // Wire online lobby buttons + mode selectors
     document.addEventListener('DOMContentLoaded', () => {
+      // Start menu music on first user interaction
+      document.addEventListener('click', function _startMusic() {
+        if (AC.state === 'suspended') AC.resume();
+        if (!MUSIC.isPlaying()) MUSIC.start('menu');
+        document.removeEventListener('click', _startMusic);
+      }, { once: true });
       document.getElementById('btn-quickmatch').addEventListener('click', () => NET.quickMatch());
       document.getElementById('btn-createroom').addEventListener('click', () => NET.createRoom());
       document.getElementById('btn-joinroom').addEventListener('click', () => NET.joinRoom(document.getElementById('room-code-input').value));
@@ -8710,7 +8778,16 @@
     _compressor.attack.value = 0.003;
     _compressor.release.value = 0.08;
     _masterGain.gain.value = 0.55;
+    // Separate gain nodes for SFX and Music
+    const _sfxGain = AC.createGain();
+    const _musicGain = AC.createGain();
+    _sfxGain.gain.value = 1.0;
+    _musicGain.gain.value = 0.5;
+    _sfxGain.connect(_masterGain);
+    _musicGain.connect(_masterGain);
     let _muted = false;
+    let _sfxVol = 1.0;
+    let _musicVol = 0.5;
     function toggleMute() {
       _muted = !_muted;
       _masterGain.gain.value = _muted ? 0 : 0.55;
@@ -8720,6 +8797,8 @@
         b.style.color = _muted ? '#e74c3c' : '';
       });
     }
+    function setSfxVolume(v) { _sfxVol = v; _sfxGain.gain.value = v; document.querySelectorAll('.sfx-vol-slider').forEach(s => s.value = v); }
+    function setMusicVolume(v) { _musicVol = v; _musicGain.gain.value = v; document.querySelectorAll('.music-vol-slider').forEach(s => s.value = v); }
     _masterGain.connect(_compressor);
     _compressor.connect(AC.destination);
 
@@ -9293,8 +9372,8 @@
     let AI_FACTION_IDX = null;      // AI's chosen faction index
     let P1_SEL = 0, P2_SEL = 0;
     let P1_MODE = 0, P2_MODE = 0;
-    function beep(f, t, d, v) { try { const o = AC.createOscillator(), g = AC.createGain(); o.connect(g); g.connect(_masterGain); o.type = t; o.frequency.setValueAtTime(f, AC.currentTime); g.gain.setValueAtTime(0, AC.currentTime); g.gain.linearRampToValueAtTime(v * 0.6, AC.currentTime + .005); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d); o.start(); o.stop(AC.currentTime + d + .05); } catch (e) { } }
-    function noise(d, v) { try { const b = AC.createBuffer(1, AC.sampleRate * d, AC.sampleRate), dd = b.getChannelData(0); for (let i = 0; i < dd.length; i++)dd[i] = Math.random() * 2 - 1; const s = AC.createBufferSource(), g = AC.createGain(); s.buffer = b; s.connect(g); g.connect(_masterGain); g.gain.setValueAtTime(v * 0.5, AC.currentTime); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d); s.start(); } catch (e) { } }
+    function beep(f, t, d, v) { try { const o = AC.createOscillator(), g = AC.createGain(); o.connect(g); g.connect(_sfxGain); o.type = t; o.frequency.setValueAtTime(f, AC.currentTime); g.gain.setValueAtTime(0, AC.currentTime); g.gain.linearRampToValueAtTime(v * 0.6, AC.currentTime + .005); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d); o.start(); o.stop(AC.currentTime + d + .05); } catch (e) { } }
+    function noise(d, v) { try { const b = AC.createBuffer(1, AC.sampleRate * d, AC.sampleRate), dd = b.getChannelData(0); for (let i = 0; i < dd.length; i++)dd[i] = Math.random() * 2 - 1; const s = AC.createBufferSource(), g = AC.createGain(); s.buffer = b; s.connect(g); g.connect(_sfxGain); g.gain.setValueAtTime(v * 0.5, AC.currentTime); g.gain.exponentialRampToValueAtTime(.0001, AC.currentTime + d); s.start(); } catch (e) { } }
     const SFX = {
       spawn: () => beep(300, 'square', .12, .035),
       spawnWorker: () => beep(180, 'triangle', .08, .025),
@@ -9313,6 +9392,120 @@
       ironwall: () => beep(80, 'square', .35, .07),
       bodyboon: () => { beep(300, 'triangle', .1, .06); setTimeout(() => beep(500, 'triangle', .2, .07), 80); },
     };
+
+    // ── ADAPTIVE MUSIC ENGINE (WAV-based layered crossfading) ──
+    const MUSIC = (() => {
+      let _playing = false, _mood = 'menu', _loaded = false;
+      const FADE_TIME = 2.0; // seconds to crossfade between moods
+      // Three looping layers at same tempo/key — crossfade volumes for smooth transitions
+      const layers = {
+        calm:    { audio: null, gain: null, target: 1 },
+        battle:  { audio: null, gain: null, target: 0 },
+        intense: { audio: null, gain: null, target: 0 },
+      };
+      let _victoryAudio = null;
+      let _fadeInterval = null;
+
+      function _load() {
+        if (_loaded) return;
+        _loaded = true;
+        const basePath = 'music/';
+        for (const [name, layer] of Object.entries(layers)) {
+          const a = new Audio(basePath + name + '.wav');
+          a.loop = true;
+          a.volume = 0;
+          layer.audio = a;
+          // Create Web Audio nodes for precise volume control through the music gain
+          try {
+            const src = AC.createMediaElementSource(a);
+            const g = AC.createGain();
+            g.gain.value = 0;
+            src.connect(g);
+            g.connect(_musicGain);
+            layer.gain = g;
+          } catch (e) { /* fallback: just use audio.volume */ }
+        }
+        _victoryAudio = new Audio(basePath + 'victory.wav');
+        _victoryAudio.loop = false;
+        try {
+          const vs = AC.createMediaElementSource(_victoryAudio);
+          vs.connect(_musicGain);
+        } catch (e) {}
+
+        // Start crossfade ticker
+        _fadeInterval = setInterval(_fadeTick, 50);
+      }
+
+      function _fadeTick() {
+        const step = 0.05 / (FADE_TIME / 0.05); // per tick
+        for (const layer of Object.values(layers)) {
+          if (!layer.gain) continue;
+          const cur = layer.gain.gain.value;
+          const diff = layer.target - cur;
+          if (Math.abs(diff) < 0.005) {
+            layer.gain.gain.value = layer.target;
+          } else {
+            layer.gain.gain.value = cur + Math.sign(diff) * Math.min(Math.abs(diff), step);
+          }
+        }
+      }
+
+      function _setTargets(calm, battle, intense) {
+        layers.calm.target = calm;
+        layers.battle.target = battle;
+        layers.intense.target = intense;
+      }
+
+      function _syncStart() {
+        // Start all layers simultaneously so they stay in sync
+        const now = AC.currentTime + 0.05;
+        for (const layer of Object.values(layers)) {
+          if (layer.audio && layer.audio.paused) {
+            layer.audio.play().catch(() => {});
+          }
+        }
+      }
+
+      function start(mood) {
+        if (AC.state === 'suspended') AC.resume();
+        _load();
+        _mood = mood || 'menu';
+        _applyMood();
+        if (!_playing) {
+          _syncStart();
+          _playing = true;
+        }
+      }
+
+      function stop() {
+        for (const layer of Object.values(layers)) {
+          if (layer.audio) { layer.audio.pause(); layer.audio.currentTime = 0; }
+          if (layer.gain) layer.gain.gain.value = 0;
+        }
+        _playing = false;
+      }
+
+      function _applyMood() {
+        if (_mood === 'menu') {
+          _setTargets(1.0, 0, 0);
+        } else if (_mood === 'battle') {
+          _setTargets(0.15, 0.85, 0);
+        } else if (_mood === 'intense') {
+          _setTargets(0, 0.3, 1.0);
+        } else if (_mood === 'victory') {
+          _setTargets(0, 0, 0);
+          if (_victoryAudio) _victoryAudio.play().catch(() => {});
+        }
+      }
+
+      function setMood(mood) {
+        if (_mood === mood) return;
+        _mood = mood;
+        _applyMood();
+      }
+
+      return { start, stop, setMood, isPlaying: () => _playing, getMood: () => _mood };
+    })();
 
     // ── SESSION STATS (in-memory across rematches) ──
     const SESSION = { wins: [0, 0], games: 0, factions: [null, null], factionWins: {} };
@@ -15402,10 +15595,11 @@
               const willKite = kc > 0.50;
               _isKiting = willKite && !nearOwnBase && enemyMeleeClose;
               if (_isKiting) {
-                // Kite: move away from enemy at 0.25–0.35x speed — smooth and catchable
-                const retreatSpd = spd * (0.20 + kc * 0.15);
-                u.x -= Math.sign(dx) * retreatSpd * dt;
-                u.vx = -Math.sign(dx) * retreatSpd;
+                // Kite: retreat toward own base at 0.30–0.45x speed — visible and catchable
+                const retreatSpd = spd * (0.30 + kc * 0.15);
+                const baseDir = u.player === 1 ? -1 : 1; // always toward own base
+                u.x += baseDir * retreatSpd * dt;
+                u.vx = baseDir * retreatSpd;
                 // High-kite archers drift toward ally melee (capped lerp to prevent jumps)
                 if (kc > 0.70) {
                   const allyMelee = G.units.find(a =>
@@ -15422,14 +15616,16 @@
             // Normal approach — only if NOT kiting
             if (!_isKiting) {
               // Mid-linger override: hold uncapped mid instead of chasing far enemies
+              // Only ranged units linger — melee should keep marching to engage
               const _mlDist = Math.abs(u.x - G.midX);
               const _mlInside = _mlDist < G.midR;
-              const _mlNear = _mlDist < G.midR * 2.5;
+              const _mlNear = _mlDist < G.midR * 1.5;
               const _mlDir = u.player === 1 ? 1 : -1;
               const _mlApproaching = _mlDir === 1 ? u.x < G.midX + G.midR : u.x > G.midX - G.midR;
               const _mlHold = !_isConquest() && GAME_MODE !== 'tutorial' && !u.def.isWorker
+                && u.def.type === 'rng'
                 && G.midOwner !== u.player && (_mlInside || (_mlNear && _mlApproaching))
-                && rangeDist(u, enemy) > G.midR * 2; // enemy far — don't chase
+                && rangeDist(u, enemy) > G.midR * 3; // enemy far — don't chase
               if (_mlHold) {
                 const driftDx = G.midX - u.x;
                 u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 22 * dt);
@@ -15475,13 +15671,13 @@
           const midIsUncapped = G.midOwner === null; // nobody owns it
           const midOwnedByEnemy = G.midOwner !== null && G.midOwner !== u.player;
 
-          // Should this unit try to hold mid? Yes if: mid not ours, non-worker, non-tutorial, non-conquest
-          const _shouldLinger = GAME_MODE !== 'tutorial' && !_isConquest() && !u.def.isWorker && midNotOwned;
+          // Should this unit try to hold mid? Only ranged — melee march through to pressure
+          const _shouldLinger = GAME_MODE !== 'tutorial' && !_isConquest() && !u.def.isWorker && u.def.type === 'rng' && midNotOwned;
           if (_shouldLinger && insideCircle) {
             // Inside the circle — drift toward center regardless of contest status
             const driftDx = G.midX - u.x;
             u.x += Math.sign(driftDx) * Math.min(Math.abs(driftDx), 22 * dt);
-          } else if (_shouldLinger && !insideCircle && unitIsApproachingMid && distToMid < G.midR * 2.5) {
+          } else if (_shouldLinger && !insideCircle && unitIsApproachingMid && distToMid < G.midR * 1.5) {
             // Approaching uncapped/enemy mid — march to edge then stop
             const stopX = marchDir === 1 ? G.midX - G.midR * 0.4 : G.midX + G.midR * 0.4;
             const dxToStop = stopX - u.x;
@@ -19774,6 +19970,19 @@
       updateHUD();
       if (CAMPAIGN.active) _campDialogueCheck();
       checkWin();
+      // Music intensity — adaptive based on combat state
+      if (MUSIC.isPlaying() && MUSIC.getMood() !== 'victory') {
+        const lowHp = G.players.some(p => p.baseHp < p.baseMaxHp * 0.3);
+        const unitCount = G.units ? G.units.filter(u => !u.def.isWorker && !u.offscreen).length : 0;
+        const heavyCombat = unitCount > 10;
+        if (lowHp || (heavyCombat && G.elapsed > 60)) {
+          MUSIC.setMood('intense');
+        } else if (unitCount > 4 || G.elapsed > 30) {
+          MUSIC.setMood('battle');
+        } else {
+          MUSIC.setMood('menu'); // early game, no units out — stay calm
+        }
+      }
       // Auto-refresh dev panel every ~1s while it's open
       _devRefreshTick = (_devRefreshTick + 1) % 60;
       if (_devRefreshTick === 0 && document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
@@ -20732,6 +20941,14 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       if (wasGame && id !== 'sc-game') { _resetCanvas(); _onlineChatHide(); }
+      // Music mood transitions
+      if (id === 'sc-menu' || id === 'sc-online' || id === 'sc-faction' || id === 'sc-controls') {
+        if (!MUSIC.isPlaying()) MUSIC.start('menu'); else MUSIC.setMood('menu');
+      } else if (id === 'sc-game') {
+        MUSIC.setMood('battle');
+      } else if (id === 'sc-gameover') {
+        MUSIC.setMood('victory');
+      }
       if (id === 'sc-game' && typeof NET !== 'undefined' && NET.isOnline()) {
         setTimeout(() => _onlineChatShow(), 100);
       }
