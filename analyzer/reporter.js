@@ -751,7 +751,7 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Beyond RTS — QA Report</title>
+<title>Beyond RTS Conquest — QA Report</title>
 <style>
 /* ── Reset & base ── */
 :root{
@@ -1037,7 +1037,7 @@ details[open] .snip-summary::before{transform:rotate(90deg);}
 <div class="header">
   <div class="header-icon">⚔️</div>
   <div>
-    <div class="header-title">Beyond RTS — QA Report</div>
+    <div class="header-title">Beyond RTS Conquest — QA Report</div>
     <div class="header-meta">
       <span>🕐 ${escHtml(timestamp)}</span>
       <span>🎮 ${qa.totalGamesRun} games</span>

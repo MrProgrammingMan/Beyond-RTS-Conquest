@@ -15,7 +15,10 @@
       "Bash(node validate_dialogue.js)",
       "Bash(grep \"\\\\.js$\")",
       "Bash(node _validate.js)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(grep -n \"case ''base_dmg''\" \"c:\\\\Users\\\\sande\\\\OneDrive\\\\Документы\\\\Beyond RTS Conquest\\\\public\\\\index.html\")",
+      "Bash(grep -n \"id: ''human''\" \"c:\\\\Users\\\\sande\\\\OneDrive\\\\Документы\\\\Beyond RTS Conquest\\\\public\\\\index.html\")",
+      "Bash(grep -E \"^\\\\s+\\\\{$\" -A 1)"
     ]
   }
 }
