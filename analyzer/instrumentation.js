@@ -22,6 +22,19 @@ const INSTRUMENTATION_SCRIPT = `
       last_stand_triggered: 0,
       aerial_unit_spawned:  0,
       worker_sent_to_mid:   0,
+      // New faction mechanics
+      tar_patches_active:   0,
+      corpses_collected:    0,
+      echo_spawned:         0,
+      dark_zone_created:    0,
+      mutation_applied:     0,
+      metamorphosis_complete: 0,
+      decoy_spawned:        0,
+      phase_activated:      0,
+      corruption_applied:   0,
+      fortune_double:       0,
+      fortune_streak_activated: 0,
+      random_event_fired:   0,
     },
     performance: {
       frameTimes:  [],   // ms per frame
@@ -184,6 +197,10 @@ const INSTRUMENTATION_SCRIPT = `
     // FIX (worker_sent_to_mid): same presence-vs-transition issue as buffs.
     let _prevWorkerMidMode = [false, false];
 
+    // New faction delta tracking
+    let _prevCorpseCount = 0;
+    let _prevDarkZoneCount = 0;
+
     const _mechTimer = setInterval(() => {
       if (!window.G || !window.G.running) {
         clearInterval(_mechTimer);
@@ -258,6 +275,66 @@ const INSTRUMENTATION_SCRIPT = `
           window.__qa.mechanics.worker_sent_to_mid++;
         }
         _prevWorkerMidMode[i] = curr;
+      }
+
+      // ── New faction mechanic tracking ──────────────────────────────────
+
+      // Tar patches (Weavers)
+      window.__qa.mechanics.tar_patches_active = (G.tarPatches || []).length;
+
+      // Corpses (Reavers) — count new corpses collected via shrinking list
+      const corpseCount = (G.corpses || []).length;
+      if (corpseCount < (_prevCorpseCount || 0)) {
+        window.__qa.mechanics.corpses_collected += (_prevCorpseCount - corpseCount);
+      }
+      _prevCorpseCount = corpseCount;
+
+      // Dark zones (Umbral)
+      const dzCount = (G.darkZones || []).length;
+      if (dzCount > (_prevDarkZoneCount || 0)) {
+        window.__qa.mechanics.dark_zone_created += (dzCount - _prevDarkZoneCount);
+      }
+      _prevDarkZoneCount = dzCount;
+
+      // Fortune streak activations (Fortune Seekers)
+      const streaks = G._fortuneStreaks || [0, 0];
+      for (let i = 0; i < streaks.length; i++) {
+        if (streaks[i] >= 3 && !window.__qa['_fortuneStreakActive' + i]) {
+          window.__qa['_fortuneStreakActive' + i] = true;
+          window.__qa.mechanics.fortune_streak_activated++;
+        } else if (streaks[i] < 3) {
+          window.__qa['_fortuneStreakActive' + i] = false;
+        }
+      }
+
+      // Echo spawns, decoys, phase, mutations, corruption, fortune
+      // These are tracked by scanning units for flags (one-shot on first sight)
+      for (const u of (G.units || [])) {
+        if (u.__qaNewFacTracked) continue;
+        u.__qaNewFacTracked = true;
+
+        if (u._isEcho) window.__qa.mechanics.echo_spawned++;
+        if (u._isDecoy) window.__qa.mechanics.decoy_spawned++;
+        if (u._phased) window.__qa.mechanics.phase_activated++;
+        if (u._corrupted) window.__qa.mechanics.corruption_applied++;
+        if (u._mutations && u._mutations > 0) window.__qa.mechanics.mutation_applied += u._mutations;
+        if (u._fortuneDoubled) window.__qa.mechanics.fortune_double++;
+      }
+
+      // Chrysalis metamorphosis: track larva→adult TRANSITION, not one-shot.
+      // The one-shot pattern above always sees 'larva' at spawn, so it never
+      // catches the transition to 'adult'. Use a separate per-unit flag.
+      for (const u of (G.units || [])) {
+        if (u._chrysPhase === 'adult' && !u.__qaMetaTracked) {
+          u.__qaMetaTracked = true;
+          window.__qa.mechanics.metamorphosis_complete++;
+        }
+      }
+
+      // Random events
+      if (G.activeEvent && G.activeEvent._qaTracked !== true) {
+        G.activeEvent._qaTracked = true;
+        window.__qa.mechanics.random_event_fired++;
       }
 
     }, 2000);

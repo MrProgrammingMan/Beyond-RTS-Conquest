@@ -11,7 +11,7 @@
 const path = require('path');
 const { INSTRUMENTATION_SCRIPT } = require('./instrumentation');
 
-const SPEED = 30;   // Game-time multiplier. 30x = 1 real second = 30 game seconds.
+const SPEED = 50;   // Game-time multiplier. 50x = 1 real second = 50 game seconds.
 // Reliable range: 20–50. Higher = faster but may skip frames.
 
 async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
@@ -115,7 +115,7 @@ async function runGame(gameHtmlPath, p1FactionId, p2FactionId, opts = {}) {
       Date.now = () => _origDateNow() + _fakeOffset;
 
       // ── Start the game ────────────────────────────────────────────────────
-      window.__qaSpeedMultiplier = 30;
+      window.__qaSpeedMultiplier = 50;
 
       if (typeof window.__qaStartAiVsAi === 'function') {
         window.__qaStartAiVsAi(p1Idx, p2Idx, diff);

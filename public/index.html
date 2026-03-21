@@ -95,6 +95,37 @@
       .hud-meta {
         gap: clamp(4px, .5vw, 8px);
       }
+
+      .unit-stat-panel {
+        width: clamp(110px, 10vw, 160px);
+      }
+      .usp-label, .usp-val {
+        font-size: clamp(.62rem, .9vw, .82rem);
+      }
+      .usp-special {
+        font-size: clamp(.56rem, .8vw, .72rem);
+        max-height: 5em;
+      }
+      .usp-name {
+        font-size: clamp(.78rem, 1.1vw, 1.05rem);
+      }
+      .upcard-name {
+        white-space: normal;
+        word-wrap: break-word;
+      }
+      .upcard-desc {
+        font-size: clamp(.8rem, 1.15vw, 1rem);
+      }
+      .bfcard-name {
+        font-size: clamp(.82rem, 1.15vw, 1.05rem);
+      }
+      .bfcard-desc {
+        font-size: clamp(.75rem, 1.05vw, .95rem);
+      }
+      .hud-tab {
+        font-size: clamp(.68rem, 1vw, .88rem);
+        padding: 4px 12px;
+      }
     }
 
     /* ── EXTRA LARGE — 1440p / ultrawide ─────────────────────────────────────── */
@@ -260,17 +291,19 @@
       }
 
       .hud-tab {
-        font-size: clamp(.5rem, 2.5vw, .65rem);
-        padding: 1px 4px;
+        font-size: clamp(.52rem, 2.5vw, .68rem);
+        padding: 3px 6px;
+        min-height: 26px;
       }
 
       .unit-grid {
-        gap: 2px;
+        gap: 3px;
+        grid-template-columns: repeat(5, 1fr);
       }
 
       .ucard {
         min-height: clamp(38px, 9vw, 58px);
-        padding: 1px;
+        padding: 2px 1px;
       }
 
       .uicon {
@@ -289,6 +322,28 @@
       .utypetag {
         font-size: clamp(.38rem, 1.6vw, .5rem);
         padding: 1px 3px;
+      }
+    }
+
+    /* ── TABLET / SMALL DESKTOP (600–1024px) — bigger text, better spacing ──── */
+    @media (min-width: 601px) and (max-width: 1024px) {
+      .unit-stat-panel {
+        width: clamp(90px, 11vw, 140px);
+      }
+      .usp-label, .usp-val {
+        font-size: clamp(.58rem, .9vw, .78rem);
+      }
+      .usp-special {
+        font-size: clamp(.52rem, .8vw, .68rem);
+      }
+      .hud-tab {
+        font-size: clamp(.6rem, 1vw, .78rem);
+        padding: 4px 8px;
+        min-height: 28px;
+      }
+      .upcard-name {
+        white-space: normal;
+        word-wrap: break-word;
       }
     }
 
@@ -589,7 +644,7 @@
       align-items: center;
       gap: clamp(8px, 1.5vh, 36px);
       padding-top: clamp(16px, 3vh, 40px);
-      padding-bottom: clamp(90px, 14vh, 130px);
+      padding-bottom: clamp(10px, 2vh, 20px);
       flex-shrink: 0;
       width: 100%;
     }
@@ -617,6 +672,7 @@
       gap: clamp(4px, .7vh, 9px);
       align-items: center;
       width: clamp(260px, 30vw, 400px);
+      position: relative;
     }
 
     .menu-btns .btn {
@@ -625,6 +681,28 @@
       font-size: clamp(.88rem, 1.35vw, 1.08rem);
       padding: clamp(10px, 1.4vh, 16px) clamp(22px, 2.8vw, 44px);
       letter-spacing: .13em;
+    }
+
+    /* ── MENU — mobile improvements ────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .menu-btns {
+        width: clamp(280px, 85vw, 380px);
+      }
+      .menu-btns .btn {
+        font-size: clamp(.82rem, 3.8vw, 1.02rem);
+        padding: clamp(10px, 2.5vh, 14px) 16px;
+        min-height: 44px;
+      }
+    }
+    @media (min-width: 601px) and (max-width: 1024px) {
+      .menu-btns {
+        width: clamp(320px, 50vw, 440px);
+      }
+    }
+    @media (min-width: 1200px) {
+      .menu-btns {
+        width: clamp(340px, 28vw, 460px);
+      }
     }
 
     /* FACTION */
@@ -955,6 +1033,32 @@
       padding: 5px;
       border: 1px dashed var(--border);
       border-radius: 3px;
+    }
+
+    /* ── FACTION SELECT — mobile stack ─────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .faction-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .faction-side {
+        max-width: 100%;
+        width: 100%;
+      }
+      .faction-vs {
+        font-size: 1.2rem;
+        padding: 2px 0;
+      }
+      .faction-cards {
+        max-height: clamp(200px, 40vh, 400px);
+      }
+      .fcard-passive {
+        font-size: clamp(.7rem, 3vw, .9rem);
+      }
+      .pro, .con {
+        font-size: clamp(.68rem, 2.8vw, .85rem);
+      }
     }
 
     .faction-footer {
@@ -3057,6 +3161,10 @@
       line-height: 1.15;
       flex-shrink: 1;
       text-shadow: 0 1px 2px rgba(0,0,0,.5);
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .ucost {
@@ -3189,6 +3297,11 @@
       color: var(--gold);
       letter-spacing: .06em;
       line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     .upcard-desc {
@@ -4451,8 +4564,14 @@
     .go-row {
       display: flex;
       justify-content: space-between;
-      font-size: clamp(.7rem, 1vw, .9rem);
+      font-size: clamp(.72rem, 1.05vw, .95rem);
       color: var(--dim);
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .go-row:nth-child(even) {
+      background: rgba(255,255,255,.03);
     }
 
     .go-row b {
@@ -4498,6 +4617,42 @@
     .go-btns {
       display: flex;
       gap: clamp(10px, 2vw, 22px);
+    }
+
+    /* ── GAME OVER — mobile stack ──────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .go-stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .go-stat-col {
+        width: 100%;
+        max-width: 360px;
+        min-width: unset;
+      }
+      .go-row {
+        font-size: clamp(.72rem, 3.2vw, .92rem);
+        padding: 3px 0;
+      }
+      .go-row:nth-child(even) {
+        background: rgba(255,255,255,.03);
+      }
+      .go-btns {
+        flex-direction: column;
+        width: 100%;
+        max-width: 360px;
+        gap: 8px;
+      }
+      .go-btns .btn {
+        width: 100%;
+        min-height: 48px;
+        font-size: clamp(.8rem, 3.5vw, 1rem);
+      }
+      .go-wrap {
+        gap: clamp(8px, 2vh, 16px);
+        padding-bottom: 16px;
+      }
     }
 
     /* TOOLTIP */
@@ -5118,34 +5273,58 @@
      *    fixes them without changing desktop layout.
      * ─────────────────────────────────────────────────────────────────────── */
 
-    /* Extra bottom padding on viewports where footer would overlap buttons */
+    /* Viewports ≤1080px high: tighten gaps */
+    @media (max-height: 1080px) {
+      .menu-btns {
+        gap: clamp(2px, .5vh, 6px);
+      }
+    }
+
+    /* Viewports ≤820px: hide subtitles, compact buttons further */
     @media (max-height: 820px) {
       .menu-content {
-        padding-bottom: clamp(100px, 15vh, 140px);
+        gap: clamp(4px, .8vh, 8px);
+        padding-top: clamp(8px, 1.5vh, 14px);
       }
-    }
-
-    /* Short viewports — tighten menu title and gaps so fewer buttons go offscreen */
-    @media (max-height: 650px) {
-      .menu-content {
-        gap: clamp(4px, 1vh, 10px);
-        padding-top: clamp(8px, 1.5vh, 16px);
-        padding-bottom: clamp(80px, 12vh, 110px);
+      .menu-btn-sub {
+        display: none;
       }
-
       .menu-title {
-        font-size: clamp(1rem, 2.5vh, 1.6rem);
+        font-size: clamp(1.1rem, 3vh, 1.6rem);
       }
-
+      .menu-eyebrow {
+        font-size: clamp(.5rem, .8vh, .65rem);
+      }
       .menu-btns .btn {
-        padding: clamp(6px, 1vh, 10px) clamp(16px, 2vw, 32px);
-        font-size: clamp(.78rem, 1.2vw, .95rem);
+        padding: clamp(7px, 1vh, 12px) clamp(16px, 2vw, 32px);
+        font-size: clamp(.8rem, 1.3vw, .98rem);
       }
     }
 
-    /* Menu footer only visible on the menu screen */
+    /* Very short viewports (≤667px) — maximum compaction */
+    @media (max-height: 667px) {
+      .menu-content {
+        gap: clamp(2px, .5vh, 6px);
+        padding-top: clamp(4px, 1vh, 10px);
+      }
+      .menu-title {
+        font-size: clamp(.9rem, 2.5vh, 1.3rem);
+      }
+      .menu-btns .btn {
+        padding: clamp(5px, .8vh, 9px) clamp(14px, 2vw, 28px);
+        font-size: clamp(.72rem, 1.1vw, .88rem);
+      }
+    }
+
+    /* Menu footer: sticky at bottom of scroll instead of fixed overlay.
+       This prevents overlap with scrollable menu buttons. */
     #menu-footer {
       display: none !important;
+      position: sticky !important;
+      bottom: 0 !important;
+      z-index: 3;
+      margin-top: auto; /* push to bottom when content is shorter than viewport */
+      flex-shrink: 0;
     }
 
     #sc-menu.active #menu-footer {
@@ -6470,7 +6649,7 @@
       </div>
     </div>
     <div id="menu-footer"
-      style="position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.6vw,18px);z-index:3;flex-wrap:wrap;pointer-events:auto;padding:clamp(8px,1.2vh,14px) 12px;background:linear-gradient(transparent,rgba(7,7,15,.92) 40%);backdrop-filter:blur(2px);">
+      style="left:0;right:0;display:flex;justify-content:center;align-items:center;gap:clamp(8px,1.6vw,18px);flex-wrap:wrap;pointer-events:auto;padding:clamp(8px,1.2vh,14px) 12px;background:linear-gradient(transparent,rgba(7,7,15,.92) 40%);backdrop-filter:blur(2px);">
       <button class="btn mute-btn" onclick="toggleMute()"
         style="font-size:clamp(.52rem,.78vw,.68rem);padding:3px 10px;letter-spacing:.1em;background:transparent;">🔊
         MUTE</button>
@@ -6669,14 +6848,14 @@
     <div id="online-faction-countdown"
       style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.82);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
       <div
-        style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;background:transparent;">
+        style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;">
         BOTH PLAYERS
         READY</div>
       <div id="online-faction-countdown-num"
         style="font-family:Rajdhani,sans-serif;font-size:6rem;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(212,168,67,.6);min-height:1px;">
       </div>
       <div
-        style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;background:transparent;">
+        style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;">
         BATTLE
         STARTING…</div>
     </div>
@@ -6973,7 +7152,7 @@
         <div style="font-size:1.1rem;letter-spacing:.12em;color:#e8e0d0;margin-bottom:4px;">MENU</div>
         <div style="width:100%;display:flex;flex-direction:column;gap:6px;">
           <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🔊 SFX <input type="range" class="sfx-vol-slider" min="0" max="1" step="0.05" value="1.0" oninput="setSfxVolume(+this.value)" style="width:60%;accent-color:#74b9ff;"></label>
-          <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🎵 MUSIC <input type="range" class="music-vol-slider" min="0" max="1" step="0.05" value="0.5" oninput="setMusicVolume(+this.value)" style="width:60%;accent-color:#a29bfe;"></label>
+          <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🎵 MUSIC <input type="range" class="music-vol-slider" min="0" max="1" step="0.05" value="0.4" oninput="setMusicVolume(+this.value)" style="width:60%;accent-color:#a29bfe;"></label>
         </div>
         <button class="btn mute-btn" onclick="toggleMute()" style="width:100%">🔊 MUTE</button>
         <button class="btn" onclick="_goFullscreen();_closeIngameMenu()" style="width:100%">⛶ FULLSCREEN</button>
@@ -7908,6 +8087,10 @@
               id: s.id, x: Math.round(s.x), y: Math.round(s.y),
               owner: s.owner, hp: Math.round(s.hp || 0), dead: s.dead,
             })),
+            // New faction visual state (P2 needs these for rendering)
+            tp: (G.tarPatches || []).map(t => [Math.round(t.x), Math.round(t.life * 10), Math.round(t.dur * 10), t.toxic ? 1 : 0, t.owner || 0, t.radius || 22]),
+            co: (G.corpses || []).map(c => [Math.round(c.x), Math.round(c.y), Math.round((c.life || c.timer || 0) * 10)]),
+            dz: (G.darkZones || []).map(z => [Math.round(z.x), z.radius || 120, Math.round((z.life || z.timer || 0) * 10), z.player]),
           };
           socket.emit('stateUpdate', payload);
         } catch (e) { /* serialisation error — skip frame */ }
@@ -8008,6 +8191,10 @@
           if (snap.lsTriggered && snap.lsTriggered.length) {
             snap.lsTriggered.forEach(({ pid, isSuddenDeath }) => _p2FireLastStand(pid, isSuddenDeath === 1));
           }
+          // Sync new faction visual state from P1
+          if (snap.tp) G.tarPatches = snap.tp.map(t => ({ x: t[0], life: t[1] / 10, dur: t[2] / 10, toxic: t[3] === 1, owner: t[4], radius: t[5] }));
+          if (snap.co) G.corpses = snap.co.map(c => ({ x: c[0], y: c[1], life: c[2] / 10 }));
+          if (snap.dz) G.darkZones = snap.dz.map(z => ({ x: z[0], radius: z[1], life: z[2] / 10, player: z[3] }));
           if (snap.r === 0 && G.running !== false) { G.running = false; checkWin(); }
         } catch (e) { /* ignore */ }
       }
@@ -8164,6 +8351,8 @@
           passiveSummonTimer: 0, aerial: isAerial === 1,
           isWorker: isWorker === 1, goToMid: goToMid === 1,
           isGuard: def.isSpawned || false, aliveSecs: 0, vx: 0,
+          hitFlash: 0, hitShake: 0, spawnTime: Date.now(),
+          killCount: 0, lastHitTime: 0, fortified: false,
         };
         G.units.push(u);
         _p2UnitMap.set(id, u);
@@ -8442,6 +8631,31 @@
         socket.emit('factionCursor', { cursorIdx });
       }
 
+      // QA hook: force NET into P1-online mode so _broadcastFullState fires.
+      // Called by the online tester after __qaStartAiVsAi so P1 emits snapshots
+      // that the relay loop can forward to P2.
+      function _qaForceP1Online() {
+        _onlineMode = true;
+        myPid = 1;
+        connected = true;
+        socket = window.__qaSocket || { _h: {}, on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); }, off() {}, emit() {}, dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) {} }); } };
+        _startStateSync(); // begin 30fps snapshot broadcasts
+      }
+
+      // QA hook: force NET into P2-online mode without real matchmaking.
+      // Called by __qaStartP2Online so the game loop enters the P2 render-only path.
+      function _qaForceP2Online() {
+        _onlineMode = true;
+        myPid = 2;
+        connected = true;
+        socket = window.__qaSocket || { _h: {}, on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); }, off() {}, emit() {}, dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) {} }); } };
+        // Register the stateUpdate handler on the fake socket so dispatched
+        // snapshots reach _receiveStateSnapshot → _applyInstantState.
+        socket.on('stateUpdate', (snap) => { _receiveStateSnapshot(snap); });
+        // P2 doesn't broadcast; only P1 does. But start the sync timer
+        // so _p2SnapBuffer / interpolation infra is ready.
+      }
+
       function cleanup() {
         clearTimeout(_qmTimeout);
         _stopStateSync();
@@ -8532,6 +8746,7 @@
         sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone,
         recordLocalAction,
         queuePopupForP2, queueLastStandForP2,
+        _qaForceP1Online, _qaForceP2Online,
       };
     })();
     window.NET = NET; // expose for QA tester and debug console
@@ -8777,20 +8992,20 @@
     _compressor.ratio.value = 12;
     _compressor.attack.value = 0.003;
     _compressor.release.value = 0.08;
-    _masterGain.gain.value = 0.55;
+    _masterGain.gain.value = 0.38;
     // Separate gain nodes for SFX and Music
     const _sfxGain = AC.createGain();
     const _musicGain = AC.createGain();
     _sfxGain.gain.value = 1.0;
-    _musicGain.gain.value = 0.5;
+    _musicGain.gain.value = 0.4;
     _sfxGain.connect(_masterGain);
     _musicGain.connect(_masterGain);
     let _muted = false;
     let _sfxVol = 1.0;
-    let _musicVol = 0.5;
+    let _musicVol = 0.4;
     function toggleMute() {
       _muted = !_muted;
-      _masterGain.gain.value = _muted ? 0 : 0.55;
+      _masterGain.gain.value = _muted ? 0 : 0.38;
       document.querySelectorAll('.mute-btn').forEach(b => {
         b.textContent = _muted ? '🔇 UNMUTE' : '🔊 MUTE';
         b.style.borderColor = _muted ? '#e74c3c' : '';
@@ -8883,7 +9098,15 @@
     }
 
     // Live resize: just re-scale the canvas visually — game coords never change
-    document.addEventListener('visibilitychange', () => { if (!document.hidden && G) G.lastTime = null; });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && G) G.lastTime = null;
+      // Mute music when tab loses focus, restore when regained
+      if (document.hidden) {
+        _musicGain.gain.setTargetAtTime(0, AC.currentTime, 0.08);
+      } else {
+        _musicGain.gain.setTargetAtTime(_musicVol, AC.currentTime, 0.15);
+      }
+    });
 
     window.addEventListener('resize', _debouncedResize);
 
@@ -9393,118 +9616,311 @@
       bodyboon: () => { beep(300, 'triangle', .1, .06); setTimeout(() => beep(500, 'triangle', .2, .07), 80); },
     };
 
-    // ── ADAPTIVE MUSIC ENGINE (WAV-based layered crossfading) ──
+    // ── ADAPTIVE PROCEDURAL MUSIC ENGINE ──
+    // Each faction has a unique musical theme generated via Web Audio oscillators.
+    // In-game, both factions' themes play; dominant faction's music is louder based on frontline.
+    // Mood (menu/battle/intense/victory) controls layer volumes and feel.
     const MUSIC = (() => {
-      let _playing = false, _mood = 'menu', _loaded = false;
-      const FADE_TIME = 2.0; // seconds to crossfade between moods
-      // Three looping layers at same tempo/key — crossfade volumes for smooth transitions
-      const layers = {
-        calm:    { audio: null, gain: null, target: 1 },
-        battle:  { audio: null, gain: null, target: 0 },
-        intense: { audio: null, gain: null, target: 0 },
+      // ── Scales (semitone intervals from root) ──
+      const _SC = {
+        maj:[0,2,4,5,7,9,11], min:[0,2,3,5,7,8,10], pent:[0,2,4,7,9], minP:[0,3,5,7,10],
+        dor:[0,2,3,5,7,9,10], phry:[0,1,3,5,7,8,10], lyd:[0,2,4,6,7,9,11], mix:[0,2,4,5,7,9,10],
+        loc:[0,1,3,5,6,8,10], hmin:[0,2,3,5,7,8,11], wt:[0,2,4,6,8,10], dim:[0,2,3,5,6,8,9,11],
+        phdom:[0,1,4,5,7,8,10], chr:[0,1,2,3,4,5,6,7,8,9,10,11],
       };
-      let _victoryAudio = null;
-      let _fadeInterval = null;
 
-      function _load() {
-        if (_loaded) return;
-        _loaded = true;
-        const basePath = 'music/';
-        for (const [name, layer] of Object.entries(layers)) {
-          const a = new Audio(basePath + name + '.wav');
-          a.loop = true;
-          a.volume = 0;
-          layer.audio = a;
-          // Create Web Audio nodes for precise volume control through the music gain
-          try {
-            const src = AC.createMediaElementSource(a);
-            const g = AC.createGain();
-            g.gain.value = 0;
-            src.connect(g);
-            g.connect(_musicGain);
-            layer.gain = g;
-          } catch (e) { /* fallback: just use audio.volume */ }
-        }
-        _victoryAudio = new Audio(basePath + 'victory.wav');
-        _victoryAudio.loop = false;
-        try {
-          const vs = AC.createMediaElementSource(_victoryAudio);
-          vs.connect(_musicGain);
-        } catch (e) {}
+      // ── Faction Theme Definitions ──
+      // r=root MIDI, s=scale, bpm=tempo, v=melody oscillator type, f=filter cutoff Hz,
+      // mel=melody (16 scale degrees, -1=rest), bas=bass (4 degrees), p=percussion intensity 0-3
+      const _T = {
+        warriors:      {r:62,s:'maj',  bpm:108,v:'triangle', f:1800,mel:[0,2,4,4,5,4,2,0,2,4,5,6,7,6,4,0],  bas:[0,4,3,4],p:2},
+        summoners:     {r:61,s:'min',  bpm:80, v:'triangle', f:1000,mel:[0,-1,2,3,2,0,-1,5,4,3,-1,2,0,-1,-1,0],bas:[0,5,3,2],p:1},
+        brutes:        {r:57,s:'minP', bpm:96, v:'triangle', f:1400,mel:[0,0,2,3,2,0,-1,4,3,2,0,-1,3,2,0,0],  bas:[0,0,3,2],p:3},
+        spirits:       {r:64,s:'lyd',  bpm:72, v:'sine',     f:2400,mel:[0,2,4,6,4,2,0,4,6,7,6,4,2,0,-1,0],  bas:[0,4,2,6],p:0},
+        verdant:       {r:67,s:'pent', bpm:92, v:'sine',     f:2200,mel:[0,1,2,3,4,3,2,1,0,2,4,3,2,1,0,-1],  bas:[0,2,3,1],p:1},
+        infernal:      {r:62,s:'hmin', bpm:132,v:'triangle', f:1200,mel:[0,4,5,4,6,5,4,0,5,6,5,4,2,0,6,0],  bas:[0,5,4,6],p:3},
+        glacial:       {r:66,s:'lyd',  bpm:76, v:'sine',     f:3000,mel:[0,-1,3,4,6,-1,4,3,0,-1,6,4,3,-1,0,-1],bas:[0,3,4,0],p:0},
+        voltborn:      {r:64,s:'wt',   bpm:120,v:'triangle', f:1600,mel:[0,1,2,3,4,3,2,0,1,3,5,3,2,1,0,-1],  bas:[0,2,4,1],p:2},
+        bloodpact:     {r:59,s:'phry', bpm:84, v:'triangle', f:1100,mel:[0,1,0,4,3,1,0,-1,5,4,3,1,0,-1,0,-1],bas:[0,4,1,3],p:2},
+        menders:       {r:67,s:'maj',  bpm:88, v:'sine',     f:2000,mel:[0,2,4,6,4,2,0,-1,2,4,6,4,2,0,4,0],  bas:[0,4,2,5],p:0},
+        weavers:       {r:65,s:'min',  bpm:116,v:'triangle', f:1800,mel:[0,2,4,2,0,4,2,4,5,4,2,0,4,2,0,2],  bas:[0,4,2,5],p:2},
+        merchants:     {r:70,s:'mix',  bpm:108,v:'sine',     f:2200,mel:[0,2,4,6,5,4,2,4,6,5,4,2,0,2,4,0],  bas:[0,4,2,6],p:1},
+        reavers:       {r:55,s:'minP', bpm:100,v:'triangle', f:1200,mel:[0,3,2,0,-1,4,3,0,2,0,3,4,3,2,0,-1],bas:[0,3,4,2],p:3},
+        fortune:       {r:72,s:'mix',  bpm:112,v:'triangle', f:2200,mel:[0,4,2,6,4,0,2,4,6,4,2,0,4,6,4,0],  bas:[0,4,6,2],p:1},
+        plagued:       {r:63,s:'loc',  bpm:72, v:'sine',     f:900, mel:[0,1,3,-1,5,3,1,0,-1,3,1,0,5,-1,0,-1],bas:[0,3,5,1],p:1},
+        chrysalis:     {r:69,s:'dor',  bpm:88, v:'sine',     f:1600,mel:[0,2,3,5,6,5,3,2,0,3,5,6,5,3,2,0],  bas:[0,3,5,2],p:1},
+        tideborn:      {r:62,s:'lyd',  bpm:80, v:'sine',     f:1800,mel:[0,2,4,6,7,6,4,2,0,4,7,6,4,2,0,-1],  bas:[0,4,6,2],p:0},
+        echoes:        {r:66,s:'wt',   bpm:76, v:'sine',     f:1400,mel:[0,-1,2,-1,4,-1,2,0,-1,3,-1,5,-1,2,-1,0],bas:[0,2,4,0],p:0},
+        veilborn:      {r:61,s:'phdom',bpm:84, v:'triangle', f:1100,mel:[0,1,4,5,4,1,0,-1,5,4,1,0,-1,4,1,0],bas:[0,4,1,5],p:1},
+        chronomancers: {r:71,s:'hmin', bpm:120,v:'triangle', f:1800,mel:[0,2,4,5,6,5,4,2,0,4,6,5,4,2,0,0],  bas:[0,4,5,2],p:2},
+        illusionists:  {r:63,s:'dim',  bpm:96, v:'sine',     f:1600,mel:[0,2,4,6,5,3,1,0,6,4,2,0,3,5,1,0],  bas:[0,4,2,6],p:1},
+        pandemonium:   {r:60,s:'chr',  bpm:108,v:'triangle', f:1400,mel:[0,5,2,8,3,10,1,7,4,9,0,6,11,3,7,0],bas:[0,5,3,7],p:3},
+        psionics:      {r:68,s:'lyd',  bpm:100,v:'sine',     f:2000,mel:[0,0,4,4,6,6,4,0,2,2,6,6,4,4,0,0],  bas:[0,4,6,2],p:1},
+        umbral:        {r:49,s:'min',  bpm:64, v:'triangle', f:800, mel:[0,-1,-1,2,-1,3,-1,0,-1,-1,5,-1,3,-1,0,-1],bas:[0,0,2,0],p:0},
+      };
+      // Generic menu theme (calm ambient, no faction — higher register, gentle)
+      const _MENU = {r:60,s:'maj',bpm:68,v:'sine',f:1200,mel:[0,2,4,7,4,2,0,-1,4,7,9,7,4,2,0,-1],bas:[0,4,0,4],p:0};
 
-        // Start crossfade ticker
-        _fadeInterval = setInterval(_fadeTick, 50);
+      // ── State ──
+      let _playing = false, _mood = 'menu';
+      let _fac1Id = null, _fac2Id = null;
+      let _voices = null, _schedTimer = null;
+      let _seqPos = { f1: 0, f2: 0, pc: 0 };
+      let _nextNote = { f1: 0, f2: 0, pc: 0 };
+      let _moodTgt = { mel: 0.06, bass: 0, pad: 0.12, perc: 0 };
+      let _moodCur = { mel: 0.06, bass: 0, pad: 0.12, perc: 0 };
+
+      // Mood volume presets (kept low — raw oscillators are harsh at high gain)
+      // Each mood has distinct character: menu=ambient pad, battle=melody+bass kick in,
+      // intense=full layers+double-time hats, victory=triumphant arpeggio
+      const _MV = {
+        menu:    { mel: 0.018, bass: 0,     pad: 0.035, perc: 0 },
+        battle:  { mel: 0.05,  bass: 0.03,  pad: 0.022, perc: 0.02 },
+        intense: { mel: 0.075, bass: 0.045, pad: 0.035, perc: 0.04 },
+        victory: { mel: 0.08,  bass: 0.035, pad: 0.05,  perc: 0.012 },
+      };
+
+      // ── Utility ──
+      function _mtof(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+      function _sn(root, scaleName, deg) {
+        if (deg < 0) return 0;
+        const s = _SC[scaleName]; if (!s) return _mtof(root);
+        const oct = Math.floor(deg / s.length);
+        const idx = ((deg % s.length) + s.length) % s.length;
+        return _mtof(root + s[idx] + oct * 12);
+      }
+      function _theme(key) {
+        if (key === 'f1') return _T[_fac1Id] || _MENU;
+        if (key === 'f2') return _fac2Id ? (_T[_fac2Id] || _MENU) : null;
+        return _MENU;
       }
 
-      function _fadeTick() {
-        const step = 0.05 / (FADE_TIME / 0.05); // per tick
-        for (const layer of Object.values(layers)) {
-          if (!layer.gain) continue;
-          const cur = layer.gain.gain.value;
-          const diff = layer.target - cur;
-          if (Math.abs(diff) < 0.005) {
-            layer.gain.gain.value = layer.target;
-          } else {
-            layer.gain.gain.value = cur + Math.sign(diff) * Math.min(Math.abs(diff), step);
+      // ── Voice creation ──
+      function _mkVoice(type, filterFreq) {
+        const osc = AC.createOscillator();
+        osc.type = type; osc.frequency.value = 220;
+        const flt = AC.createBiquadFilter();
+        flt.type = 'lowpass'; flt.frequency.value = filterFreq || 2000; flt.Q.value = 0.4;
+        const g = AC.createGain(); g.gain.value = 0;
+        osc.connect(flt); flt.connect(g);
+        g.connect(_musicGain);
+        osc.start();
+        return { osc, flt, g };
+      }
+      function _mkNoise(freq, q) {
+        const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+        const src = AC.createBufferSource(); src.buffer = buf; src.loop = true;
+        const bp = AC.createBiquadFilter(); bp.type = 'bandpass';
+        bp.frequency.value = freq; bp.Q.value = q || 1.5;
+        const g = AC.createGain(); g.gain.value = 0;
+        src.connect(bp); bp.connect(g); g.connect(_musicGain);
+        src.start();
+        return { src, bp, g };
+      }
+
+      // Exclusive crossfade: only one faction's theme plays at a time.
+      // _facBlend: 0 = f1 playing, 1 = f2 playing (smoothly animated)
+      let _facBlend = 0;
+      let _facBlendTgt = 0;
+      let _frontRaw = 0; // raw frontline reading: -1 = P1 dominant, +1 = P2 dominant
+
+      function _build() {
+        _kill();
+        const t1 = _theme('f1'), t2 = _theme('f2'), has2 = !!t2;
+        _voices = {
+          f1m: _mkVoice(t1.v, t1.f),
+          f1b: _mkVoice('triangle', 600),
+          f1p: _mkVoice('sine', Math.min((t1.f || 1500) * 0.6, 1500)),
+          kick: _mkNoise(100, 2), snare: _mkNoise(350, 1.5), hat: _mkNoise(5000, 2),
+        };
+        if (has2) {
+          _voices.f2m = _mkVoice(t2.v, t2.f);
+          _voices.f2b = _mkVoice('triangle', 600);
+          _voices.f2p = _mkVoice('sine', Math.min((t2.f || 1500) * 0.6, 1500));
+        }
+        _facBlend = 0; _facBlendTgt = 0; _frontRaw = 0; // starts with P1 theme
+      }
+      function _kill() {
+        if (!_voices) return;
+        for (const v of Object.values(_voices)) {
+          if (!v) continue;
+          try { v.osc && v.osc.stop(); } catch(e) {}
+          try { v.src && v.src.stop(); } catch(e) {}
+          try { v.osc && v.osc.disconnect(); } catch(e) {}
+          try { v.src && v.src.disconnect(); } catch(e) {}
+          try { v.flt && v.flt.disconnect(); } catch(e) {}
+          try { v.bp && v.bp.disconnect(); } catch(e) {}
+          try { v.g && v.g.disconnect(); } catch(e) {}
+        }
+        _voices = null;
+      }
+
+      // ── Note scheduling ──
+      function _note(voice, freq, time, dur, vol) {
+        if (!voice || freq <= 0 || vol < 0.001) return;
+        const g = voice.g.gain;
+        const atk = 0.05; // soft attack prevents clicks
+        const rel = 0.08; // gentle release for smooth transitions
+        const sustEnd = Math.max(time + atk + 0.01, time + dur - rel);
+        voice.osc.frequency.setValueAtTime(freq, time);
+        g.cancelScheduledValues(time);
+        g.setValueAtTime(0.001, time);
+        g.linearRampToValueAtTime(vol, time + atk);
+        g.linearRampToValueAtTime(vol * 0.7, sustEnd);
+        g.linearRampToValueAtTime(0.001, sustEnd + rel);
+      }
+      function _hit(voice, time, dur, vol) {
+        if (!voice || vol < 0.002) return;
+        const g = voice.g.gain;
+        g.cancelScheduledValues(time);
+        g.setValueAtTime(0.001, time);
+        g.linearRampToValueAtTime(vol, time + 0.005);
+        g.linearRampToValueAtTime(0.001, time + dur);
+      }
+
+      // ── Sequencer tick (runs every 50ms) ──
+      function _tick() {
+        if (!_playing || !_voices) return;
+        if (_mood === 'victory') return;
+        const now = AC.currentTime, ahead = 0.2;
+        // Smooth mood crossfade (0.12 per 50ms ≈ 1s transition — fast enough to feel responsive)
+        for (const k of ['mel','bass','pad','perc'])
+          _moodCur[k] += (_moodTgt[k] - _moodCur[k]) * 0.12;
+
+        // Frontline-based exclusive crossfade: sample every ~500ms
+        if (!_tick._cnt) _tick._cnt = 0;
+        if (++_tick._cnt % 10 === 0 && typeof G !== 'undefined' && G && G.units && G.players && _mood !== 'menu') {
+          let p1Max = -Infinity, p2Min = Infinity;
+          for (let i = 0; i < G.units.length; i++) {
+            const u = G.units[i];
+            if (u.offscreen || u.def.isWorker || u.retreating) continue;
+            if (u.player === 1 && u.x > p1Max) p1Max = u.x;
+            if (u.player === 2 && u.x < p2Min) p2Min = u.x;
           }
+          const b1 = G.players[0].baseX, b2 = G.players[1].baseX;
+          if (p1Max === -Infinity) p1Max = b1;
+          if (p2Min === Infinity) p2Min = b2;
+          const mid = (p1Max + p2Min) / 2;
+          const pct = Math.max(0, Math.min(1, (mid - b1) / (b2 - b1)));
+          _frontRaw = (pct - 0.5) * -2; // -1 = P1 dominant, +1 = P2 dominant
+          // Hysteresis: only switch when frontline crosses threshold to avoid flicker
+          if (_frontRaw < -0.08) _facBlendTgt = 0;       // P1 dominant → play P1
+          else if (_frontRaw > 0.08) _facBlendTgt = 1;    // P2 dominant → play P2
+          // else stay with current target (dead zone prevents rapid switching)
         }
+        // Smooth blend (0.03 per 50ms ≈ 1.5s full transition)
+        _facBlend += (_facBlendTgt - _facBlend) * 0.03;
+
+        _seqFac('f1', now, ahead);
+        if (_voices.f2m) _seqFac('f2', now, ahead);
+        _seqPerc(now, ahead);
       }
 
-      function _setTargets(calm, battle, intense) {
-        layers.calm.target = calm;
-        layers.battle.target = battle;
-        layers.intense.target = intense;
-      }
-
-      function _syncStart() {
-        // Start all layers simultaneously so they stay in sync
-        const now = AC.currentTime + 0.05;
-        for (const layer of Object.values(layers)) {
-          if (layer.audio && layer.audio.paused) {
-            layer.audio.play().catch(() => {});
+      function _seqFac(key, now, ahead) {
+        const t = _theme(key); if (!t) return;
+        const bd = 60 / t.bpm;
+        const vm = _voices[key + 'm'], vb = _voices[key + 'b'], vp = _voices[key + 'p'];
+        // Exclusive crossfade: only one faction theme audible at a time
+        // _facBlend: 0 = f1 playing, 1 = f2 playing
+        let facVol = 1;
+        if (_voices.f2m && _mood !== 'menu') {
+          facVol = (key === 'f1') ? (1 - _facBlend) : _facBlend;
+        }
+        while (_nextNote[key] < now + ahead) {
+          const nt = _nextNote[key], pos = _seqPos[key];
+          // Melody (0.7 of beat = gap before next note for clean separation)
+          const md = t.mel[pos % t.mel.length];
+          if (md >= 0) _note(vm, _sn(t.r, t.s, md), nt, bd * 0.7, _moodCur.mel * facVol);
+          // Bass (every 4 beats, sustained)
+          if (pos % 4 === 0 && _moodCur.bass > 0.005) {
+            const bsd = t.bas[Math.floor(pos / 4) % t.bas.length];
+            _note(vb, _sn(t.r - 12, t.s, bsd), nt, bd * 3.5, _moodCur.bass * facVol);
           }
+          // Pad (every 8 beats — long sustained harmonic bed, wraps seamlessly)
+          if (pos % 8 === 0 && _moodCur.pad > 0.005) {
+            const pd = t.bas[Math.floor(pos / 4) % t.bas.length];
+            _note(vp, _sn(t.r, t.s, pd), nt, bd * 7.8, _moodCur.pad * facVol);
+          }
+          _seqPos[key] = pos + 1;
+          _nextNote[key] = nt + bd;
         }
+      }
+
+      function _seqPerc(now, ahead) {
+        const t1 = _theme('f1'), t2 = _theme('f2');
+        const bpm = t2 ? Math.round((t1.bpm + t2.bpm) / 2) : t1.bpm;
+        const bd = 60 / bpm, pLev = Math.max(t1.p || 0, t2 ? (t2.p || 0) : 0);
+        while (_nextNote.pc < now + ahead) {
+          const nt = _nextNote.pc, pos = _seqPos.pc % 16;
+          const vol = _moodCur.perc * (pLev / 3);
+          if (vol > 0.003) {
+            if (pos % 4 === 0) _hit(_voices.kick, nt, 0.15, vol * 1.2);
+            if (pos === 4 || pos === 12) _hit(_voices.snare, nt, 0.10, vol * 0.9);
+            if (pos % 2 === 0) _hit(_voices.hat, nt, 0.04, vol * 0.35);
+            if (_mood === 'intense' && pos % 2 === 1) _hit(_voices.hat, nt, 0.025, vol * 0.15);
+          }
+          _seqPos.pc = (_seqPos.pc + 1) % 16;
+          _nextNote.pc = nt + bd;
+        }
+      }
+
+      // ── Public API ──
+      function _resetSeq() {
+        const now = AC.currentTime + 0.1;
+        _seqPos = { f1: 0, f2: 0, pc: 0 };
+        _nextNote = { f1: now, f2: now, pc: now };
+      }
+
+      function setFactions(id1, id2) {
+        const changed = _fac1Id !== id1 || _fac2Id !== id2;
+        _fac1Id = id1; _fac2Id = id2;
+        if (changed && _playing) { _build(); _resetSeq(); }
       }
 
       function start(mood) {
         if (AC.state === 'suspended') AC.resume();
-        _load();
         _mood = mood || 'menu';
-        _applyMood();
+        _moodTgt = { ...(_MV[_mood] || _MV.menu) };
+        _moodCur = { ..._moodTgt };
         if (!_playing) {
-          _syncStart();
+          _build(); _resetSeq();
+          _schedTimer = setInterval(_tick, 50);
           _playing = true;
         }
       }
 
       function stop() {
-        for (const layer of Object.values(layers)) {
-          if (layer.audio) { layer.audio.pause(); layer.audio.currentTime = 0; }
-          if (layer.gain) layer.gain.gain.value = 0;
-        }
         _playing = false;
-      }
-
-      function _applyMood() {
-        if (_mood === 'menu') {
-          _setTargets(1.0, 0, 0);
-        } else if (_mood === 'battle') {
-          _setTargets(0.15, 0.85, 0);
-        } else if (_mood === 'intense') {
-          _setTargets(0, 0.3, 1.0);
-        } else if (_mood === 'victory') {
-          _setTargets(0, 0, 0);
-          if (_victoryAudio) _victoryAudio.play().catch(() => {});
-        }
+        if (_schedTimer) { clearInterval(_schedTimer); _schedTimer = null; }
+        _kill();
       }
 
       function setMood(mood) {
         if (_mood === mood) return;
         _mood = mood;
-        _applyMood();
+        _moodTgt = { ...(_MV[mood] || _MV.menu) };
+        // Return to menu: clear faction themes
+        if (mood === 'menu') {
+          _fac1Id = null; _fac2Id = null;
+          if (_playing) { _build(); _resetSeq(); }
+        }
+        // Victory: play triumphant arpeggio then fade
+        if (mood === 'victory' && _voices && _voices.f1m) {
+          const th = _theme('f1'), now = AC.currentTime + 0.1;
+          [0, 4, 7, 12, 16, 19, 24].forEach((semi, i) => {
+            _note(_voices.f1m, _mtof((th ? th.r : 48) + semi), now + i * 0.22, 0.6, 0.16);
+          });
+          // Fade all other voices
+          for (const v of Object.values(_voices)) {
+            if (v && v.g && v !== _voices.f1m)
+              try { v.g.gain.linearRampToValueAtTime(0, now + 1.5); } catch(e) {}
+          }
+        }
       }
 
-      return { start, stop, setMood, isPlaying: () => _playing, getMood: () => _mood };
+      return { start, stop, setMood, setFactions, isPlaying: () => _playing, getMood: () => _mood };
     })();
 
     // ── SESSION STATS (in-memory across rematches) ──
@@ -9628,11 +10044,11 @@
         startSouls: 8, startBodies: 6,
         units: [
           { id: 'br_worker', name: 'Grunt', icon: '💪', souls: 2, bodies: 1, hp: 30, speed: 45, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#e67e22', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Sturdier than average.' },
-          { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 75, speed: 48, dmg: 13, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
-          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 50, speed: 46, dmg: 22, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
-          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 145, speed: 42, dmg: 25, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_soldier', name: 'Brute', icon: '🪨', souls: 6, bodies: 2, hp: 68, speed: 48, dmg: 12, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#d35400', type: 'mel', desc: 'Heavy melee. Immune to knockback. Benefits from Fortify.', immuneKnockback: true },
+          { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 50, speed: 46, dmg: 19, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
+          { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 130, speed: 42, dmg: 23, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 11, bodies: 3, hp: 42, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
-          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 22, bodies: 5, hp: 125, speed: 38, dmg: 23, range: 34, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 22, bodies: 5, hp: 115, speed: 38, dmg: 23, range: 34, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
         ],
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 210, speed: 40, dmg: 32, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
@@ -9645,17 +10061,17 @@
 
       {
         id: 'spirits', name: 'Spirits', icon: '✨', tagline: 'Swift sky hunters. Masters of aerial combat and soul gathering.',
-        passive: 'Ethereal: all units take 15% less damage from melee attacks. Sky Bounty: killing any aerial unit grants +3 souls instantly.',
-        pros: ['Phantom ranged unit is the fastest-firing ranged in the game', 'Sky Bounty passive generates huge soul income against aerial-heavy factions', 'Specter aerial unit has the highest base speed of all aerial units'],
-        cons: ['All units have lower HP than average — can be overwhelmed by heavy melee', 'No healing — once a unit is low, it will die', 'Sky Bounty only triggers on aerial kills — worthless vs ground-only factions'],
+        passive: 'Ethereal: all units take 15% less damage from all attacks. Sky Bounty: killing any enemy grants +2 souls (aerial kills grant +3).',
+        pros: ['Phantom ranged unit is the fastest-firing ranged in the game', 'Sky Bounty passive generates soul income on every kill (bonus on aerial)', 'Ethereal passive gives 15% DR on all damage types'],
+        cons: ['All units have lower HP than average — can be overwhelmed by heavy melee', 'No healing — once a unit is low, it will die', 'Relies on aggression to fund economy via Sky Bounty'],
         matchup: 'Best against: aerial-heavy factions, Chrysalis (kill cocoons), Umbral (aerial ignores dark zones) | Weak to: Brutes, Glacial, Reavers (tanky ground), Voltborn (chain hits aerial)',
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Slightly faster.' },
-          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 40, speed: 75, dmg: 11, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
-          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 38, speed: 70, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
-          { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 10, bodies: 2, hp: 39, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
-          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 13, bodies: 4, hp: 45, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.3× damage bonus vs aerial enemies.', aerialBonus: 1.3 },
+          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 52, speed: 75, dmg: 12, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
+          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 48, speed: 70, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
+          { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 10, bodies: 2, hp: 50, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
+          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 13, bodies: 4, hp: 58, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.3× damage bonus vs aerial enemies.', aerialBonus: 1.3 },
         ],
         extraUnits: [{ id: 'sp_guard', name: 'Spirit Lord', icon: '✨', souls: 0, bodies: 0, hp: 180, speed: 85, dmg: 30, range: 60, aerial: true, isWorker: false, attackRate: 1.4, radius: 16, color: '#a29bfe', type: 'air', desc: 'Royal Guard. Aerial. Sky Bounty gives +18 souls. Despawns 30s.', isSpawned: true }],
         guardUnit: 'sp_guard',
@@ -9760,22 +10176,22 @@
 
       {
         id: 'bloodpact', name: 'Bloodpact', icon: '🩸', tagline: 'Blood sacrifice. Spend HP to grow stronger. Kill or be killed.',
-        passive: 'Blood Tithe: each unit spawned refunds 1 soul. Blood Pool: unit deaths leave slowing puddles for 8 seconds.',
-        pros: ['Blood Tithe passive refunds 1 soul per spawn — effective discount on everything', 'Dire Wolf grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 30% HP, doubling attack rate when near death'],
+        passive: 'Blood Tithe: each unit spawned refunds 2 souls. Blood Pool: unit deaths leave slowing puddles for 10 seconds.',
+        pros: ['Blood Tithe passive refunds 2 souls per spawn — effective discount on everything', 'Dire Wolf grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 40% HP, doubling attack rate when near death'],
         cons: ['Wolfborn melee unit must kill to "grow" — weak until it has kills', 'No ranged options beyond the Plague Archer — limited damage at range', 'Army power depends heavily on kills — losing fights means losing your edge'],
         matchup: 'Best against: equal/smaller armies, Fortune Seekers (burst kills before luck procs), Merchants (aggression outpaces economy) | Weak to: Warriors, Spirits, Weavers (tar roots berserkers), Tideborn (high HP tanks burst)',
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 1, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 6, bodies: 1, hp: 60, speed: 72, dmg: 9, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 4 stacks).', growOnKill: 2, growMaxStacks: 4 },
+          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 6, bodies: 1, hp: 65, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 4 stacks).', growOnKill: 2, growMaxStacks: 4 },
           { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 9, bodies: 2, hp: 42, speed: 62, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
-          { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 13, bodies: 3, hp: 72, speed: 58, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 30% HP: attack rate doubles (Berserk).', berserkThreshold: 0.3 },
+          { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 13, bodies: 3, hp: 72, speed: 58, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 40% HP: attack rate doubles (Berserk).', berserkThreshold: 0.4 },
           { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 12, bodies: 3, hp: 38, speed: 88, dmg: 17, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
         ],
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
         guardUnit: 'bp_guard',
         upgrades: [
-          { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 33, bodies: 5 }, desc: 'Blood Tithe refund increases to 4 souls per spawn. Also refunds 1 body.', effect: 'blood_tithe', value: 4 },
+          { id: 'crimson_pact', name: 'Crimson Pact', cost: { souls: 33, bodies: 5 }, desc: 'Blood Tithe refund increases to 5 souls per spawn. Also refunds 1 body.', effect: 'blood_tithe', value: 5 },
           { id: 'pack_alpha', name: 'Pack Alpha', cost: { souls: 55, bodies: 10 }, desc: 'Wolfborn grow-on-kill becomes +4 DMG per kill and max stacks increase from 4 to 6.', effect: 'wolf_grow', value: 6, newMax: 7 },
           { id: 'death_rage', name: 'Death Rage', cost: { souls: 85, bodies: 14 }, desc: 'BLOOD FRENZY: Berserk threshold 65% HP, grants +30% DMG and +20% speed. Wolf kills now grant +6 DMG (max 8 stacks). All melee lifesteal 10% of damage dealt.', effect: 'berserk_thresh', value: 0.6 },
         ]
@@ -9807,14 +10223,14 @@
       // ─── NEW FACTIONS ────────────────────────────────────────────────────────────
       {
         id: 'weavers', name: 'Weavers', icon: '🕸️', tagline: 'The battlefield is their trap',
-        passive: 'Silk Road: units leave web zones as they move. Enemy units in webs move at 70% speed. Own units immune to own webs.',
-        pros: ['Web zones persist 8s covering large sections', 'Tar Caster shots create sticky patches on impact', 'Silk Wyrm drops huge web zone on death'],
+        passive: 'Silk Road: units leave web zones as they move. Enemy units in webs move at 80% speed. Own units immune to own webs.',
+        pros: ['Web zones persist 5s covering large sections', 'Tar Caster shots create sticky patches on impact', 'Silk Wyrm drops huge web zone on death'],
         cons: ['Low base damage — relies on slow debuffs', 'Aerial units bypass ground zones', 'No healing mechanics'],
         matchup: 'Best against: slow melee (Brutes, Glacial), Bloodpact (tar roots berserkers), Warriors (slows charge) | Weak to: Spirits (aerial bypasses tar), Echoes (delayed spawns avoid zones)',
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'wv_worker', name: 'Spinner', icon: '🕷️', souls: 2, bodies: 1, hp: 22, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#a29bfe', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'wv_spindler', name: 'Spindler', icon: '🕸️', souls: 5, bodies: 1, hp: 65, speed: 58, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Leaves web trail. Enemies in webs move at 70% speed.', webTrail: true },
+          { id: 'wv_spindler', name: 'Spindler', icon: '🕸️', souls: 5, bodies: 1, hp: 55, speed: 58, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Melee. Leaves web trail. Enemies in webs move at 80% speed.', webTrail: true },
           { id: 'wv_tar', name: 'Tar Caster', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 58, dmg: 14, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Ranged. Shots create tar patches at impact — slow enemies on entry.', tarShot: true },
           { id: 'wv_runner', name: 'Web Runner', icon: '🦋', souls: 9, bodies: 2, hp: 34, speed: 90, dmg: 14, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c5ce7', type: 'air', desc: 'Fast aerial. Leaves wide web trail.', webTrail: true, webTrailRadius: 26 },
           { id: 'wv_wyrm', name: 'Silk Wyrm', icon: '🐛', souls: 20, bodies: 5, hp: 155, speed: 38, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#4834d4', type: 'mel', desc: 'Massive melee. Aura slows nearby enemies. Drops huge web zone on death.', bearAura: true, cocoonsOnDeath: true },
@@ -9824,7 +10240,7 @@
         upgrades: [
           { id: 'toxic_silk', name: 'Toxic Silk', cost: { souls: 33, bodies: 5 }, desc: 'Web zones deal 4 DPS to all enemies inside them.', effect: 'web_toxic', value: 4 },
           { id: 'entangle', name: 'Entangle', cost: { souls: 52, bodies: 9 }, desc: 'Web zones root enemies for 1.2s on first entry (once per unit per zone).', effect: 'web_root', value: 1 },
-          { id: 'spider_silk', name: 'Spider Silk', cost: { souls: 85, bodies: 15 }, desc: 'WEB MOTHER: Web zones last 20s, deal 6 DPS, and root for 1.8s. Silk Wyrm gains +80 HP. Webs now slow enemies by 60%.', effect: 'web_dur', value: 16 },
+          { id: 'spider_silk', name: 'Spider Silk', cost: { souls: 85, bodies: 15 }, desc: 'WEB MOTHER: Web zones last 12s, deal 6 DPS, and root for 1.8s. Silk Wyrm gains +80 HP. Webs now slow enemies by 65%.', effect: 'web_dur', value: 7 },
         ]
       },
       {
@@ -10078,7 +10494,7 @@
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'ps_worker', name: 'Mind Probe', icon: '🔮', souls: 2, bodies: 1, hp: 22, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#c39bd3', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 58, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Melee. Each hit adds 15% corruption to target.' },
+          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 58, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Melee. Each hit adds 15% corruption to target.', corruptOnHit: true, corruptAmt: 0.15 },
           { id: 'ps_thief', name: 'Thought Thief', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 13, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged. Shots add 20% corruption to target.', corruptOnHit: true, corruptAmt: 0.20 },
           { id: 'ps_dom', name: 'Dominion Caster', icon: '🦅', souls: 11, bodies: 3, hp: 36, speed: 82, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#d2b4de', type: 'air', desc: 'Aerial. Shots add 25% corruption.', corruptOnHit: true, corruptAmt: 0.25 },
           { id: 'ps_mind', name: 'The Overmind', icon: '🧠', souls: 20, bodies: 5, hp: 100, speed: 46, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#7d3c98', type: 'mel', desc: 'Heavy melee. Aura corrupts enemies within 65px at 10%/s.', psionicAura: true, psionicAuraRange: 65, psionicAuraRate: 0.10 },
@@ -10122,15 +10538,21 @@
     // QA automation helper — lets the test runner start aivsai games
     // without needing access to the closed-over let variables
     window.__qaStartAiVsAi = function (p1Idx, p2Idx, diff) {
-      window.__qaSpeedMultiplier = 30;
-      let _fakeTs = performance.now();
-      window.requestAnimationFrame = (cb) => {
-        const ch = new MessageChannel();
-        _fakeTs += 16.667 * 30;
-        const ts = _fakeTs;
-        ch.port1.onmessage = () => cb(ts);
-        ch.port2.postMessage(0);
-      };
+      // Only install our own rAF speed hack if the external caller (game-runner.js /
+      // online-tester.js) hasn't already patched all timers at a unified speed.
+      const _extSpeed = window.__qaSpeedMultiplier;
+      if (!_extSpeed) {
+        const _qaSpd = 50;
+        window.__qaSpeedMultiplier = _qaSpd;
+        let _fakeTs = performance.now();
+        window.requestAnimationFrame = (cb) => {
+          const ch = new MessageChannel();
+          _fakeTs += 16.667 * _qaSpd;
+          const ts = _fakeTs;
+          ch.port1.onmessage = () => cb(ts);
+          ch.port2.postMessage(0);
+        };
+      }
       AI1_FACTION_IDX = p1Idx;
       AI_FACTION_IDX = p2Idx;
       AI_DIFFICULTY = diff;
@@ -10154,15 +10576,20 @@
     // The online tester calls this so _receiveStateSnapshot is wired up
     // and G is initialised — snapshots from P1 are then injected via __qaInjectSnap.
     window.__qaStartP2Online = function (p1Idx, p2Idx, diff) {
-      window.__qaSpeedMultiplier = 30;
-      let _fakeTs = performance.now();
-      window.requestAnimationFrame = (cb) => {
-        const ch = new MessageChannel();
-        _fakeTs += 16.667 * 30;
-        const ts = _fakeTs;
-        ch.port1.onmessage = () => cb(ts);
-        ch.port2.postMessage(0);
-      };
+      // Only install our own rAF speed hack if the external caller hasn't already.
+      const _extSpeed = window.__qaSpeedMultiplier;
+      if (!_extSpeed) {
+        const _qaSpd = 50;
+        window.__qaSpeedMultiplier = _qaSpd;
+        let _fakeTs = performance.now();
+        window.requestAnimationFrame = (cb) => {
+          const ch = new MessageChannel();
+          _fakeTs += 16.667 * _qaSpd;
+          const ts = _fakeTs;
+          ch.port1.onmessage = () => cb(ts);
+          ch.port2.postMessage(0);
+        };
+      }
       AI1_FACTION_IDX = p1Idx;
       AI_FACTION_IDX = p2Idx;
       AI_DIFFICULTY = diff;
@@ -10175,6 +10602,11 @@
         initGame();
         window.G = G;
         G._speedMult = 40;
+        // Force NET into P2 online mode so the game loop enters the
+        // P2 render-only path (interpolate + draw, no physics/economy).
+        if (typeof NET !== 'undefined' && NET._qaForceP2Online) {
+          NET._qaForceP2Online();
+        }
         window.__qaInitError = null;
       } catch (e) {
         window.__qaInitError = e.message + '\n' + (e.stack || '');
@@ -11937,7 +12369,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.25,
-            bloodTitheRefund: 1, skyBountyAmt: 3,
+            bloodTitheRefund: 2, skyBountyAmt: 3,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -11958,7 +12390,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.25,
-            bloodTitheRefund: 1, skyBountyAmt: 3,
+            bloodTitheRefund: 2, skyBountyAmt: 3,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -11984,6 +12416,8 @@
       };
       // Apply mastery flag-based player stats (skyBounty, chainRate, etc.)
       if (typeof _applyMasteryPlayerStats === 'function') _applyMasteryPlayerStats(G);
+      // Set faction-specific music themes
+      MUSIC.setFactions(P1_FACTION.id, P2_FACTION.id);
       // Sudden Death — both bases start at 30 HP (Last Stand triggers immediately)
       if (GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai') {
         G.players.forEach(p => {
@@ -12807,7 +13241,7 @@
       if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
       // Blood Tithe refund
       if (G.factions[pid - 1].id === 'bloodpact') {
-        const refund = p.bloodTitheRefund || 1;
+        const refund = p.bloodTitheRefund || 2;
         p.souls += refund;
         showPopup(p.baseX, G.groundY - 85, `🩸 +${refund}💀 TITHE`, '#c0392b', pid);
       }
@@ -13026,8 +13460,8 @@
         case 'web_toxic': p._webToxic = up.value || up.val || 4; break;
         case 'web_root': p._webRoot = true; break;
         case 'web_dur':
-          // WEB MOTHER: 20s webs, 6 DPS, 1.8s root, Silk Wyrm +80 HP, 60% slow
-          p._webDur = 20; p._webToxic = 6; p._webRoot = true; p._webRootDur = 1.8; p._webSlow = 0.60;
+          // WEB MOTHER: 12s webs, 6 DPS, 1.8s root, Silk Wyrm +80 HP, 65% slow
+          p._webDur = 12; p._webToxic = 6; p._webRoot = true; p._webRootDur = 1.8; p._webSlow = 0.65;
           modDef('wv_wyrm', (def, u) => { def.hp += 80; if (u) { u.maxHp += 80; u.hp += 80; } });
           break;
         // ── Merchants ──
@@ -13390,6 +13824,7 @@
         if (p._fortuneDouble && roll < 0.15) {
           // Double stats luck
           u.hp = u.hp * 2; u.maxHp = u.maxHp * 2; u.def.dmg = u.def.dmg * 2;
+          u._fortuneDoubled = true;
           showPopup(x, u.y, '🎰 Lucky!', '#FFD700', pid);
         } else if (p._fortuneRefund && roll < 0.10) {
           // Half cost refund
@@ -13445,7 +13880,10 @@
       if (def.chrysalis) {
         u._chrysPhase = 'larva';
         u._chrysTimer = 0;
-        u._chrysMorphTime = 15;
+        // Apply Rapid Metamorphosis upgrade if purchased (reduces by 5s)
+        const _chrysPlayer = G.players[pid - 1];
+        const _hasSpeed = _chrysPlayer && _chrysPlayer.ownedUpgrades && _chrysPlayer.ownedUpgrades.has('rapid_metamorph');
+        u._chrysMorphTime = _hasSpeed ? 10 : 15;
       }
       // ── Plagued: apply initial mutations ──
       if (def.plagueStartMutation && def.plagueStartMutation > 0) {
@@ -13832,9 +14270,9 @@
       const _fsMult = attacker._finalStand > 0 ? 1.3 : 1.0;
       let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0) * berserkHPMult * (G._dmgEscalation || 1) * _fsMult;
       if (isRanged && target.def.aerial && !attacker.def.aerial) {
-        dmg *= 2.2; // Ranged hard-counters aerial (ground ranged only)
+        dmg *= 1.8; // Ground ranged counters aerial (reduced from 2.2 — was too punishing for aerial factions)
         // Extra attack rate for ranged vs aerial — simulate faster targeting
-        if (attacker.attackCooldown > 0) attacker.attackCooldown *= 0.75; // 33% faster attacks vs aerial
+        if (attacker.attackCooldown > 0) attacker.attackCooldown *= 0.80; // 25% faster attacks vs aerial (was 33%)
       } else if (isRanged && target.def.aerial && attacker.def.aerial) {
         dmg *= 1.3; // Aerial ranged vs aerial: modest bonus
       }
@@ -13985,8 +14423,8 @@
           spawnParticles(target.x, target.y, '#f39c12', 8);
           showPopup(attacker.x, attacker.y - 32, '⚡ CHARGE!', '#f1c40f', attacker.player);
         }
-        // Spirits Ethereal — 15% resistance to melee-type attacks
-        if (attacker.def.type === 'mel' && G.factions[target.player - 1] && G.factions[target.player - 1].id === 'spirits') {
+        // Spirits Ethereal — 15% resistance to all attacks
+        if (G.factions[target.player - 1] && G.factions[target.player - 1].id === 'spirits') {
           dmg *= 0.85;
         }
         // Warriors Iron Resolve — 15% resistance when below 50% HP
@@ -14004,6 +14442,11 @@
         if (_tOwner && Math.abs(target.x - _tOwner.baseX) < 180) actualDmg *= 0.88;
         if (target._ironwalled > 0) actualDmg *= 0.6;
         if (target._cocoonArmor) actualDmg *= (1 - target._cocoonArmor); // Chrysalis cocoon damage reduction
+        // Brutes Fortify — 30% DR when standing still (+ mastery bonus)
+        if (target.fortified) {
+          const _fortDR = 0.30 + (G.factions[target.player - 1]?.masteryFlags?.fortifyDmgReduce || 0);
+          actualDmg *= (1 - _fortDR);
+        }
         if (target.spawnProtectionTimer > 0) actualDmg = 0;// spawn protect
         else {
           actualDmg = Math.max(1, actualDmg - (target.def.armor || 0));
@@ -14169,10 +14612,14 @@
         kp.souls += killer.def.soulsOnKill;
         showPopup(u.x, u.y - 30, `+${killer.def.soulsOnKill}💀`, '#a29bfe', killer.player);
       }
-      // Sky Bounty
-      if (u.def.aerial && killer && G.factions[killer.player - 1].id === 'spirits') {
-        const bonus = kp.skyBountyAmt || 3;
-        kp.souls += bonus; showPopup(u.x, u.y - 30, `✦ SKY BOUNTY +${bonus}💀`, '#fd79a8', killer.player);
+      // Sky Bounty — Spirits get souls on ALL kills; aerial kills give full bonus
+      if (killer && G.factions[killer.player - 1].id === 'spirits') {
+        if (u.def.aerial) {
+          const bonus = kp.skyBountyAmt || 3;
+          kp.souls += bonus; showPopup(u.x, u.y - 30, `✦ SKY BOUNTY +${bonus}💀`, '#fd79a8', killer.player);
+        } else {
+          kp.souls += 2; showPopup(u.x, u.y - 30, `✦ +2💀`, '#fd79a8', killer.player);
+        }
       }
       // Summoner summons on kill
       if (killer && killer.def.summons && !killer.def.isSpawned) {
@@ -14200,7 +14647,7 @@
       }
       // Bloodpact Blood Pool — leaves a slow-zone at death location for 8s
       if (G.factions[u.player - 1].id === 'bloodpact' && !u.def.isWorker && !u.def.isSpawned && G.bloodPools) {
-        G.bloodPools.push({ x: u.x, y: G.groundY - 4, r: 30, life: 8.0, owner: u.player });
+        G.bloodPools.push({ x: u.x, y: G.groundY - 4, r: 30, life: 10.0, owner: u.player });
         spawnParticles(u.x, G.groundY - 8, '#b71c1c', 12);
       }
       // Glacial Permafrost
@@ -14336,7 +14783,8 @@
       // ── Weavers cocoonsOnDeath: spawn tar patches ──
       if (u.def.cocoonsOnDeath && G.tarPatches) {
         for (let ci = 0; ci < 3; ci++) {
-          G.tarPatches.push({ x: u.x + (ci - 1) * 28, life: 8, dur: 8, toxic: G.players[u.player - 1]._webToxic, owner: u.player, radius: 26 });
+          const _dWd = G.players[u.player - 1]._webDur || 5;
+          G.tarPatches.push({ x: u.x + (ci - 1) * 28, life: _dWd, dur: _dWd, toxic: G.players[u.player - 1]._webToxic, owner: u.player, radius: 26 });
         }
         spawnParticles(u.x, u.y, '#2d3436', 16);
       }
@@ -14847,7 +15295,7 @@
       // Wanderer picks a random direction and runs
       const courierDir = Math.random() < 0.5 ? 1 : -1;
       const rogUnit = {
-        id: ++G.nextId, def: rogDef, player: 3, isRogue: true,
+        id: ++G.nextId, defId: rogDef.id, def: rogDef, player: 3, isRogue: true,
         isChampion, rogueReward: reward, _courierDir: courierDir,
         x: G.midX + (Math.random() - 0.5) * 40,
         y: G.groundY - rogDef.radius,
@@ -15290,6 +15738,13 @@
           let dmg = Number.isFinite(p.dmg) ? p.dmg : 1;
           if (t._ironwalled > 0) dmg *= 0.6;
           if (t._cocoonArmor) dmg *= (1 - t._cocoonArmor); // Chrysalis cocoon damage reduction
+          // Brutes Fortify — 30% DR when standing still (+ mastery bonus)
+          if (t.fortified) {
+            const _fortDR = 0.30 + (G.factions[t.player - 1]?.masteryFlags?.fortifyDmgReduce || 0);
+            dmg *= (1 - _fortDR);
+          }
+          // Spirits Ethereal — 15% resistance to all attacks (projectile path)
+          if (G.factions[t.player - 1] && G.factions[t.player - 1].id === 'spirits') dmg *= 0.85;
           // Warriors Iron Resolve — 15% resistance when below 50% HP
           if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * 0.50) {
             dmg *= 0.85;
@@ -15337,7 +15792,7 @@
           // Weavers: tarShot — create tar patch on impact
           if (atkDef && atkDef.tarShot && G.tarPatches) {
             const pr = G.players[p.player - 1];
-            G.tarPatches.push({ x: p.x, life: pr._webDur || 8, dur: pr._webDur || 8, toxic: pr._webToxic || 0, root: pr._webRoot || false, owner: p.player, radius: 28 });
+            G.tarPatches.push({ x: p.x, life: pr._webDur || 5, dur: pr._webDur || 5, toxic: pr._webToxic || 0, root: pr._webRoot || false, owner: p.player, radius: 28 });
             spawnParticles(p.x, p.y - 5, '#2d3436', 8);
           }
           // Melee slow from ranged hit? No — only melee hits slow
@@ -15391,7 +15846,7 @@
 
     function updateUnits(dt) {
       // Update buff timers
-      G.players.forEach(p => {
+      G.players.forEach((p, si) => {
         for (let i = 0; i < (p.buffCooldowns.length || 5); i++)if (p.buffCooldowns[i] > 0) p.buffCooldowns[i] = Math.max(0, p.buffCooldowns[i] - dt);
         if (p.activeBuffs.warcry > 0) p.activeBuffs.warcry = Math.max(0, p.activeBuffs.warcry - dt);
         if (p.activeBuffs.blitz > 0) p.activeBuffs.blitz = Math.max(0, p.activeBuffs.blitz - dt);
@@ -15400,6 +15855,11 @@
           p.souls = Math.min(900, p.souls + 3.0 * dt);
         }
         if (p.activeBuffs.ironwall > 0) p.activeBuffs.ironwall = Math.max(0, p.activeBuffs.ironwall - dt);
+        // Fortune Seekers: streak timer decay (once per player per frame, NOT per unit)
+        if (G._fortuneStreakTimer && G._fortuneStreakTimer[si] > 0) {
+          G._fortuneStreakTimer[si] -= dt;
+          if (G._fortuneStreakTimer[si] <= 0) G._fortuneStreaks[si] = 0;
+        }
       });
       for (let i = G.units.length - 1; i >= 0; i--) {
         const u = G.units[i]; if (!u || u.hp <= 0) continue;
@@ -15785,10 +16245,10 @@
         // ── Weavers: web trail (tar patch deposit while moving) ──
         if (u.def.webTrail && Math.abs(u.vx || 0) > 5) {
           u._tarTrailTimer = (u._tarTrailTimer || 0) + dt;
-          if (u._tarTrailTimer >= 0.8) {
+          if (u._tarTrailTimer >= 1.5) {
             u._tarTrailTimer = 0;
             const tr = G.players[u.player - 1];
-            G.tarPatches.push({ x: u.x, life: tr._webDur || 8, dur: tr._webDur || 8, toxic: tr._webToxic || 0, root: tr._webRoot || false, owner: u.player, radius: u.def.webTrailRadius || 20 });
+            G.tarPatches.push({ x: u.x, life: tr._webDur || 5, dur: tr._webDur || 5, toxic: tr._webToxic || 0, root: tr._webRoot || false, owner: u.player, radius: u.def.webTrailRadius || 20 });
           }
         }
         // ── Merchants: Banker passive soul income ──
@@ -15825,16 +16285,24 @@
         // ── Chrysalis: metamorphosis timer ──
         if (u._chrysPhase === 'larva') {
           u._chrysTimer += dt;
-          if (u._chrysTimer >= (u._chrysMorphTime || 15)) {
+          const _morphTime = G.players[u.player - 1]._chrysHalveTransform
+            ? (u._chrysMorphTime || 15) * 0.5
+            : (u._chrysMorphTime || 15);
+          if (u._chrysTimer >= _morphTime) {
             u._chrysPhase = 'cocoon';
             u._chrysTimer = 0;
             spawnParticles(u.x, u.y, '#00b894', 12);
           }
         } else if (u._chrysPhase === 'cocoon') {
           u._chrysTimer += dt;
-          // Damage reduction while cocooning (upgraded: 60%→80%)
-          u._cocoonArmor = G.players[u.player - 1]._cocoonArmorUpgraded || 0.45;
-          if (u._chrysTimer >= 2.5) {
+          // Damage reduction while cocooning; invulnerable if Perfect Evolution upgrade
+          if (G.players[u.player - 1]._chrysInvulnCocoon) {
+            u._cocoonArmor = 1.0; // full damage immunity
+          } else {
+            u._cocoonArmor = G.players[u.player - 1]._cocoonArmorUpgraded || 0.45;
+          }
+          const _cocoonDur = (G.players[u.player - 1].ownedUpgrades && G.players[u.player - 1].ownedUpgrades.has('rapid_metamorph')) ? 1.5 : 2.5;
+          if (u._chrysTimer >= _cocoonDur) {
             u._chrysPhase = 'adult';
             u._cocoonArmor = 0;
             const d = u.def;
@@ -15917,18 +16385,10 @@
           const ageBonus = Math.min(0.50, u.aliveSecs * 0.005);
           u.dmgMult = 1.0 + ageBonus;
         }
-        // ── Fortune Seekers: streak timer decay ──
-        {
-          const si = u.player - 1;
-          if (G._fortuneStreakTimer && G._fortuneStreakTimer[si] > 0) {
-            G._fortuneStreakTimer[si] -= dt;
-            if (G._fortuneStreakTimer[si] <= 0) G._fortuneStreaks[si] = 0;
-          }
-        }
+        // Fortune streak timer decay moved to player-level loop (was here per-unit, draining Nx too fast)
         // NaN safety: reset corrupted values to sane defaults
-        if (!Number.isFinite(u.x)) u.x = G.players[u.player - 1].baseX;
-        if (!Number.isFinite(u.y)) u.y = G.groundY - (u.def.radius || 10);
         if (!Number.isFinite(u.hp)) u.hp = 0;
+        if (!Number.isFinite(u.aliveSecs)) u.aliveSecs = 0;
         if (!Number.isFinite(u.def.dmg)) u.def.dmg = 1;
         if (!Number.isFinite(u.dmgMult)) u.dmgMult = 1.0;
         if (!Number.isFinite(u.attackCooldown)) u.attackCooldown = 0;
@@ -15937,6 +16397,9 @@
         u.x = Math.max(minX, Math.min(maxX, u.x));
         if (u.def.aerial) { const _uid = typeof u.id === 'number' ? u.id : (u.id.length || 0); u.y = G.groundY - 85 + (Math.sin(u.aliveSecs * 1.8 + _uid * .7) * 8); }
         else u.y = G.groundY - (u.def.radius || 10);
+        // Post-position NaN safety (after x/y are computed)
+        if (!Number.isFinite(u.x)) u.x = G.players[u.player - 1].baseX;
+        if (!Number.isFinite(u.y)) u.y = G.groundY - (u.def.radius || 10);
       }
     }
 
@@ -16305,10 +16768,27 @@
           } else {
             rate = elapsed > 90 ? 0.10 : 0.05;
           }
+          // Hard timeout: at 10 min, force the weaker base to 0 HP to end the game
+          if (sec > 600) {
+            const [a, b] = G.players;
+            if (a.baseHp > 0 && b.baseHp > 0) {
+              const loser = a.baseHp <= b.baseHp ? a : b;
+              loser.baseHp = 0;
+            }
+          }
           G.players.forEach(p => {
-            if (p.baseHp > 1) p.baseHp = Math.max(1, p.baseHp - rate * dt);
-            // After 8 minutes, lift the floor so decay can terminate the game
-            else if (sec > 480) p.baseHp = Math.max(0, p.baseHp - rate * dt * 4);
+            if (p.baseHp <= 0) return;
+            // After 5.5 min total, lift the HP floor entirely
+            // so siege decay can end the game. Before that, floor at 1 HP
+            // to give players a chance to break the stalemate.
+            const liftFloor = sec > 330;
+            if (liftFloor) {
+              // Accelerating final decay — game must end
+              const finalRate = rate * (1 + (sec - 330) / 60); // ramps up over time
+              p.baseHp = Math.max(0, p.baseHp - finalRate * dt);
+            } else {
+              p.baseHp = Math.max(1, p.baseHp - rate * dt);
+            }
           });
           siEl.style.opacity = '1';
           const urgency = elapsed > 120 ? '🔥 TOURNAMENT PRESSURE — ACCELERATING' : elapsed > 60 ? '⏳ TOURNAMENT PRESSURE — ESCALATING' : '⏳ STALEMATE — BASES DECAYING';
@@ -16402,7 +16882,7 @@
           faction._bastionDef = _bastionDef;
           // Spawn bastion directly
           const bUnit = {
-            id: G.nextId++, player: p.id, def: _bastionDef,
+            id: G.nextId++, player: p.id, defId: 'ultra_guard', def: _bastionDef,
             hp: _bastionDef.hp, maxHp: _bastionDef.hp,
             x: p.baseX + (p.id === 1 ? 30 : -30), y: G.groundY - _bastionDef.radius,
             vx: 0, attackCooldown: 0, dmgMult: 1, slowTimer: 0,
@@ -16411,6 +16891,8 @@
             fortified: false, frenzyTimer: 0, chargeTimer: 0,
             offscreen: false, retreating: false, kiteChance: 0,
             _speedMult: 1.0, _densitySlowMult: 1,
+            hitFlash: 0, hitShake: 0, aliveSecs: 0, spawnTime: Date.now(),
+            dead: false, target: null, lastHitTime: 0, killCount: 0,
           };
           G.units.push(bUnit);
           SFX.lastStand && SFX.lastStand();
@@ -16559,8 +17041,9 @@
           if (u.player === tp.owner || u.def.isWorker || u._phased) return;
           if (Math.abs(u.x - tp.x) < r) {
             // Slow
-            u.slowTimer = Math.max(u.slowTimer || 0, 0.4);
-            u._speedMult = Math.min(u._speedMult || 1, 0.70);
+            u.slowTimer = Math.max(u.slowTimer || 0, 0.3);
+            const _webSlowAmt = G.players[tp.owner - 1]?._webSlow || 0.80;
+            u._speedMult = Math.min(u._speedMult || 1, _webSlowAmt);
             // Root (web_root upgrade) — freeze unit on first contact
             if (tp.root && !u._tarRooted) { u._tarRooted = true; u.slowTimer = 2.0; u._speedMult = 0.0; }
             // Toxic DoT
@@ -16661,7 +17144,7 @@
       // Merchants: passive soul income when rich
       G.players.forEach((p, i) => {
         if (!G.factions[i] || G.factions[i].id !== 'merchants') return;
-        if (p.souls > 30 && p._merchantPassive) p.souls = Math.min(900, p.souls + p._merchantPassive * dt);
+        if (p._merchantPassive) p.souls = Math.min(900, p.souls + p._merchantPassive * dt);
       });
       // Chronomancers: Time Tax — enemies near own base of chrono player are slowed
       G.players.forEach((p, i) => {
@@ -19893,9 +20376,8 @@
       // between the two most recently received snapshots, then just renders.
       if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2) {
         NET.interpolateUnits();  // smooth 60fps rendering between 30fps snapshots via dead reckoning
-        // Run economy locally so soul income ticks every frame instead of
-        // snapping on each P1 snapshot. P1's authoritative values correct drift.
-        updateEconomy(G.dt);
+        // P2 does NOT run updateEconomy — P1 is authoritative for souls, bodies,
+        // baseHp, mid timers. Running it here causes drift/divergence.
         // Drain buff cooldowns locally for smooth 60fps bar animations.
         // The protection window keeps these from being overwritten after a spend.
         if (G.players) G.players.forEach(p => {
@@ -25066,6 +25548,11 @@
         if (f.hellfireRateBonus) p.hellfireRate = Math.max(4, (p.hellfireRate || 8) + f.hellfireRateBonus);
         if (f.maxShades) p.maxShades = f.maxShades;
         if (fac.masteryBaseHp) { p.baseHp += fac.masteryBaseHp; p.baseMaxHp += fac.masteryBaseHp; }
+        // Psionics: whisperCorruptBonus mastery applies to ps_whisper's corruptAmt
+        if (f.whisperCorruptBonus && G.unitDefs && G.unitDefs[i]) {
+          const wd = G.unitDefs[i].find(d => d.id === 'ps_whisper');
+          if (wd) wd.corruptAmt = (wd.corruptAmt || 0.15) + f.whisperCorruptBonus;
+        }
       });
     }
 
@@ -25904,7 +26391,7 @@
     <div id="newplayer-box">
       <div id="newplayer-icon">⚔️</div>
       <div id="newplayer-title">LOOKS LIKE YOU'RE NEW HERE</div>
-      <div id="newplayer-body">Beyond RTS Conquest is a two-player keyboard RTS with 10 factions, upgrades, and a
+      <div id="newplayer-body">Beyond RTS Conquest is a two-player keyboard RTS with 24 factions, upgrades, and a
         mid-zone economy. The tutorial takes about 5 minutes and covers everything you need to know.</div>
       <div id="newplayer-btns">
         <button class="btn primary" id="btn-newplayer-yes">📖 TAKE THE TUTORIAL</button>

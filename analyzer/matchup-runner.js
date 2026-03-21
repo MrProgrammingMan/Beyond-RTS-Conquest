@@ -63,6 +63,18 @@ async function runAllMatchups(cfg, onProgress = () => { }) {
       last_stand_triggered: 0,
       aerial_unit_spawned: 0,
       worker_sent_to_mid: 0,
+      // New faction mechanics
+      tar_patches_active: 0,
+      corpses_collected: 0,
+      echo_spawned: 0,
+      dark_zone_created: 0,
+      mutation_applied: 0,
+      metamorphosis_complete: 0,
+      decoy_spawned: 0,
+      phase_activated: 0,
+      corruption_applied: 0,
+      fortune_double: 0,
+      random_event_fired: 0,
     },
     mechanicByMatchup: {},  // mechanic usage per p1-vs-p2 matchup
     // #17: mechanic usage broken down by faction — reveals whether underuse
@@ -86,6 +98,10 @@ async function runAllMatchups(cfg, onProgress = () => { }) {
     spy_deployed: 0, mid_captured: 0, upgrade_purchased: 0,
     buff_activated: 0, last_stand_triggered: 0,
     aerial_unit_spawned: 0, worker_sent_to_mid: 0,
+    tar_patches_active: 0, corpses_collected: 0, echo_spawned: 0,
+    dark_zone_created: 0, mutation_applied: 0, metamorphosis_complete: 0,
+    decoy_spawned: 0, phase_activated: 0, corruption_applied: 0,
+    fortune_double: 0, random_event_fired: 0,
   };
 
   const ssDir = path.resolve(cfg.output.screenshotsDir || './screenshots');

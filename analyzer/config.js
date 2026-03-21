@@ -1,9 +1,9 @@
 // ─── BEYOND RTS QA SYSTEM — CONFIGURATION ─────────────────────────────────────
 //
 // QUICK GUIDE:
-//   Full 10-faction run (270 games):  ~8–12 min  → gamesPerMatchup:3, parallelGames:4
-//   Quick sanity check (50 games):    ~2–3 min   → run: node run.js --quick
-//   UI only (no games):               ~1 min     → run: node run.js --skip-balance
+//   Full 24-faction run (~4000 games): ~25–40 min → gamesPerMatchup:3, parallelGames:4
+//   Quick sanity check (~276 games):   ~4–6 min   → run: node run.js --quick
+//   UI only (no games):                ~1 min     → run: node run.js --skip-balance
 
 module.exports = {
 
@@ -27,7 +27,7 @@ module.exports = {
     // Latency profiles to test (ideal/good/average/bad/awful)
     latencyProfiles: ['ideal', 'good', 'average'],
     // Faction pairs to test sync with (pick representative matchups)
-    factionPairs: [['warriors', 'brutes'], ['summoners', 'spirits'], ['glacial', 'infernal'], ['weavers', 'merchants'], ['plagued', 'chronomancers'], ['psionics', 'umbral'], ['pandemonium', 'illusionists']],
+    factionPairs: [['warriors', 'brutes'], ['summoners', 'spirits'], ['glacial', 'infernal'], ['weavers', 'merchants'], ['plagued', 'chronomancers'], ['psionics', 'umbral'], ['pandemonium', 'illusionists'], ['reavers', 'fortune'], ['chrysalis', 'tideborn'], ['echoes', 'veilborn']],
     // Real seconds before giving up on a test scenario
     testTimeoutSecs: 40,
   },
@@ -39,8 +39,8 @@ module.exports = {
     parallelGames: 4,       // Recommended: 3-4. Each tab ~300MB RAM. 6 = lag city.
     mirrorMatchups: true,    // run A-vs-B AND B-vs-A (doubles accuracy, doubles time)
     factionFilter: null,    // null=all factions, or ['warriors','brutes',...]
-    gameTimeoutSecs: 45,      // Real seconds before giving up. With 30x speed hack
-    // this represents ~22 in-game minutes — more than enough.
+    gameTimeoutSecs: 45,      // Real seconds before giving up. With 50x speed hack
+    // this represents ~37 in-game minutes — more than enough.
   },
 
   // ── BUG DETECTION ─────────────────────────────────────────────────────────
@@ -107,6 +107,17 @@ module.exports = {
       'last_stand_triggered',
       'aerial_unit_spawned',
       'worker_sent_to_mid',
+      'tar_patches_active',
+      'corpses_collected',
+      'echo_spawned',
+      'dark_zone_created',
+      'mutation_applied',
+      'metamorphosis_complete',
+      'decoy_spawned',
+      'phase_activated',
+      'corruption_applied',
+      'fortune_double',
+      'random_event_fired',
     ],
   },
 

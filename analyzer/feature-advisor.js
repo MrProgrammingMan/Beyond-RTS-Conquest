@@ -1,9 +1,12 @@
 /**
  * feature-advisor.js — Beyond RTS Conquest Feature Advisor
  *
- * Uses game-context.js so Claude knows exactly what mechanics exist,
- * how they're implemented, and what each faction's identity is — enabling
- * suggestions that reference actual code rather than vague RTS generalities.
+ * Generates genuinely exciting new feature ideas — not bug fixes or minor
+ * tweaks, but the kind of additions that make you go "oh shit, that's good".
+ *
+ * Uses game-context.js so Claude knows exactly what already exists, avoiding
+ * duplicate suggestions. Provides each feature as an individual Claude prompt
+ * AND a combined mega-prompt so the user can pick and choose.
  */
 
 const Anthropic = require('@anthropic-ai/sdk');
@@ -14,97 +17,98 @@ async function generateFeatureAdvice(rawData, aggStats, anomalyReport, onlineRep
   const { factions, qa } = rawData;
   const totalGames = qa.totalGamesRun || 0;
 
-  // ── Data summaries ────────────────────────────────────────────────────────
+  // ── Data summaries (for context, NOT the focus) ─────────────────────────────
   const factionSummary = factions.map(f => {
     const s = aggStats[f]; if (!s) return '';
     const tier = s.overallWinRate >= 60 ? 'S' : s.overallWinRate >= 55 ? 'A'
                : s.overallWinRate >= 48 ? 'B' : s.overallWinRate >= 43 ? 'C' : 'D';
-    return `  ${f.padEnd(12)} ${s.overallWinRate}% win  tier-${tier}  avg ${Math.floor(s.avgGameDuration/60)}m${s.avgGameDuration%60}s  best:${s.bestMatchup?.faction}(${Math.round((s.bestMatchup?.rate||0)*100)}%)  worst:${s.worstMatchup?.faction}(${Math.round((s.worstMatchup?.rate||0)*100)}%)`;
+    return `  ${f.padEnd(14)} ${s.overallWinRate}% win (tier-${tier})  best vs ${s.bestMatchup?.faction}  worst vs ${s.worstMatchup?.faction}`;
   }).filter(Boolean).join('\n');
 
   const mechSummary = Object.entries(qa.mechanicUsage || {}).map(([k, v]) => {
-    const pct  = totalGames > 0 ? Math.round(v / totalGames * 100) : 0;
-    const flag = pct === 0 ? '❌ NEVER USED' : pct < 15 ? '⚠ underused' : '';
-    return `  ${k.padEnd(28)} ${pct}%  (${v}×) ${flag}`;
+    const pct = totalGames > 0 ? Math.round(v / totalGames * 100) : 0;
+    return `  ${k.padEnd(28)} ${pct}%`;
   }).join('\n');
 
-  const bugSummary = diagnosedBugs.length === 0 ? '  None detected' :
-    diagnosedBugs.slice(0, 8).map(b =>
-      `  [${(b.diagnosis?.severity || '?')}] ${b.type}: ${(b.message || '').slice(0, 90)}`
-    ).join('\n');
+  const bugCount = diagnosedBugs.length;
+  const anomalyCount = (anomalyReport?.anomalies || []).length;
 
-  const anomalySummary = !(anomalyReport?.anomalies?.length) ? '  None' :
-    anomalyReport.anomalies.slice(0, 6).map(a =>
-      `  [${a.severity}] ${a.title}: ${a.detail.slice(0, 100)}`
-    ).join('\n');
+  // ── Core prompt ─────────────────────────────────────────────────────────────
+  const corePrompt = `You are a visionary game designer brainstorming NEW FEATURES for "Beyond RTS Conquest" — a browser-based 2D side-scroller RTS with 24 factions.
 
-  const uiSummary = !(uiAuditResult?.issues?.length) ? '  No UI issues' :
-    `  ${uiAuditResult.issues.filter(i => i.severity === 'error').length} errors, ` +
-    `${uiAuditResult.issues.filter(i => i.severity === 'warning').length} warnings`;
+You have complete knowledge of the game above — every faction, unit, passive, upgrade, mechanic, and code logic. Use this to suggest features that SYNERGIZE with what exists, not duplicate it.
 
-  const onlineSummary = onlineReport
-    ? `  Grade: ${onlineReport.overallGrade}  ${onlineReport.summary}\n` +
-      (onlineReport.issues || []).slice(0, 3).map(i => `  [${i.severity}] ${i.message.slice(0, 80)}`).join('\n')
-    : '  Not run';
+══ CURRENT STATE (${totalGames} AI vs AI games run) ══
 
-  // ── Core prompt ───────────────────────────────────────────────────────────
-  // The game context block is injected above this by injectContext().
-  // Claude can reference actual faction mechanics, unit flags, function names
-  // from that context without us re-summarising the game here.
-  const corePrompt = `You are a senior game designer reviewing a complete automated QA report for "Beyond RTS Conquest".
+FACTIONS & BALANCE:
+${factionSummary || '  No balance data yet'}
 
-You have complete knowledge of the game above — every faction's units, passives, upgrades, mechanic implementations, and exact code logic. Use this knowledge when making suggestions. Reference specific mechanic names, unit names, upgrade names, and function names from the game context. Do not suggest mechanics that already exist.
+MECHANICS IN USE:
+${mechSummary || '  No mechanic data'}
 
-══ QA RUN RESULTS (${totalGames} AI vs AI games) ══
+GAME HEALTH: ${bugCount} bugs found, ${anomalyCount} anomalies detected
 
-FACTION BALANCE:
-${factionSummary || '  No data'}
+══ YOUR MISSION ══
 
-MECHANIC USAGE (% of games where mechanic activated at least once):
-${mechSummary || '  No data'}
+Generate as many genuinely EXCITING new feature ideas as you can think of — quality over quantity, but don't hold back if you have more good ideas. These should be the kind of features that make the developer go "oh shit, I need to build this". Think big, think creative, think about what would make this game UNFORGETTABLE.
 
-BUGS FOUND:
-${bugSummary}
+WHAT I WANT:
+- Brand new game mechanics that don't exist yet
+- New game modes that leverage the 24-faction system
+- Innovative UI features that feel premium
+- Social/competitive features that create emergent gameplay
+- Clever systems that create "one more game" addiction
+- Features that make the 24 factions feel even more distinct
 
-BEHAVIORAL ANOMALIES:
-${anomalySummary}
+WHAT I DON'T WANT:
+- Bug fixes or patches to existing issues
+- Minor balance tweaks (nerfs/buffs)
+- Small QoL improvements that are obvious
+- Features that already exist (check the game context carefully)
+- Generic RTS suggestions — be specific to THIS game and its unique identity
 
-UI ISSUES:
-${uiSummary}
+For each feature, think about:
+- How COOL would this feel to discover as a player?
+- Does it create interesting decisions or just more complexity?
+- Does it leverage the game's unique strengths (24 factions, side-scroller format, soul economy)?
+- Would watching this in an AI vs AI match be entertaining?
 
-ONLINE SYNC:
-${onlineSummary}
+EXCITEMENT RATINGS:
+- 🔥🔥🔥 GAME-CHANGER — "This alone would make me tell friends about the game"
+- 🔥🔥 AWESOME — "This would significantly elevate the experience"
+- 🔥 COOL — "Nice addition that adds real depth"
 
-══ TASK ══
-
-Generate 8–12 prioritized feature suggestions and improvements. Ground each suggestion in the QA data above AND the game mechanics in the context. For every suggestion:
-
-- Reference the specific QA metric that motivated it (mechanic usage %, win rate, specific bug)
-- Reference the specific game mechanic, faction, unit, or function it improves
-- For implementation: name the actual function(s) to modify, not just a description
-- Do NOT suggest things that already exist in the game (check the mechanic list and faction context)
-- Distinguish clearly between quick wins (< 4 hours), medium (1–2 days), large (3–7 days)
-
-Output ONLY a JSON array:
+Output ONLY a valid JSON array — no markdown fences, no preamble:
 
 [
   {
     "priority": 1,
-    "category": "gameplay|ux|balance|online|performance|polish",
-    "title": "Short feature title",
-    "rationale": "1-2 sentences citing specific QA data (e.g. 'spy_deployed used in only 8% of games') and the game mechanic it relates to",
+    "category": "mechanic|mode|ui|social|meta|economy|visual",
+    "title": "Short punchy feature name",
+    "pitch": "2-3 sentence elevator pitch. Sell me on WHY this is exciting. Be specific to the game — reference faction names, existing mechanics, the soul economy, etc.",
+    "excitement": "game-changer|awesome|cool",
+    "howItWorks": "3-5 sentences explaining the mechanic in detail. How does it interact with existing systems? What decisions does it create?",
+    "factionSynergies": "Which of the 24 factions benefit most or interact interestingly with this feature? Be specific.",
     "effort": "quick|medium|large",
-    "impact": "high|medium|low",
-    "implementation": "Concrete steps referencing actual function names and variable names from the game context. 3-5 sentences.",
-    "pasteToClaudePrompt": "Self-contained implementation request. Include: game is a single HTML file ~15k lines vanilla JS + Canvas. State exact mechanic to add/change, which functions to modify (by name), and what the change should do. End with 'Please implement this in index.html.' Max 1000 chars. Escape newlines as \\n."
+    "implementation": "Concrete steps referencing actual function names and variable names from the game context. Which files/functions to modify, what new state to add to G, etc.",
+    "pasteToClaudePrompt": "Self-contained implementation request. Include: game is a single HTML file, vanilla JS + Canvas, ~20k lines. State the exact feature to add, which functions to modify (by name), what new state/logic is needed, and how it integrates with existing mechanics. End with 'Please implement this in index.html.' Max 1200 chars."
   }
-]`;
+]
+
+Rules:
+- Output ONLY the JSON array
+- Include a mix of game-changers, awesome features, and quick wins — but only if each one genuinely deserves to be on the list
+- Don't pad the list with filler — every suggestion should make the developer excited
+- Reference specific faction names, mechanic names, and function names from the game context
+- Do NOT suggest anything that already exists — check the mechanic list and faction context
+- Each pasteToClaudePrompt must be fully self-contained (someone with no context should understand it)
+- Think like a player who loves this game and wants it to be INCREDIBLE`;
 
   try {
     const fullPrompt = injectContext(corePrompt, gameContext, 'factions');
     const response = await client.messages.create({
-      model:      'claude-sonnet-4-20250514',
-      max_tokens: 5000,
+      model:      'claude-sonnet-4-6',
+      max_tokens: 6000,
       messages:   [{ role: 'user', content: fullPrompt }],
     });
 
@@ -117,65 +121,118 @@ Output ONLY a JSON array:
       if (m) try { suggestions = JSON.parse(m[0]); } catch (_) {}
     }
 
-    suggestions = (Array.isArray(suggestions) ? suggestions : []).map((s, i) => ({
+    if (!Array.isArray(suggestions) || suggestions.length === 0) {
+      console.error('  ⚠️  Feature advisor: Claude returned no parseable suggestions, falling back to heuristics');
+      console.error('  ⚠️  Raw response (first 300 chars):', rawText.slice(0, 300));
+      const fallback = _heuristicFallback(rawData, aggStats, qa);
+      return { suggestions: fallback, megaPrompt: _buildMegaPrompt(fallback), summary: `${fallback.length} heuristic features (API response was not parseable)` };
+    }
+
+    suggestions = suggestions.map((s, i) => ({
       priority:            s.priority || i + 1,
-      category:            s.category || 'gameplay',
-      title:               s.title || 'Unnamed suggestion',
-      rationale:           s.rationale || '',
+      category:            s.category || 'mechanic',
+      title:               s.title || 'Unnamed feature',
+      pitch:               s.pitch || s.rationale || '',
+      excitement:          (s.excitement || 'cool').toLowerCase(),
+      howItWorks:          s.howItWorks || '',
+      factionSynergies:    s.factionSynergies || '',
       effort:              (s.effort || 'medium').toLowerCase(),
-      impact:              (s.impact || 'medium').toLowerCase(),
       implementation:      s.implementation || '',
       pasteToClaudePrompt: s.pasteToClaudePrompt
         ? s.pasteToClaudePrompt.replace(/\\n/g, '\n') : null,
     }));
 
+    // Build combined mega-prompt
+    const megaPrompt = _buildMegaPrompt(suggestions);
+
     return {
       suggestions,
-      summary: `${suggestions.length} suggestions — ${suggestions.filter(s => s.impact === 'high').length} high impact, ${suggestions.filter(s => s.effort === 'quick').length} quick wins`,
+      megaPrompt,
+      summary: `${suggestions.length} features — ${suggestions.filter(s => s.excitement === 'game-changer').length} game-changers, ${suggestions.filter(s => s.effort === 'quick').length} quick wins`,
     };
 
   } catch (err) {
     console.error('  ⚠️  Feature advisor API failed:', err.message);
-    return { suggestions: _heuristicFallback(rawData, aggStats, anomalyReport, qa), summary: 'Heuristic suggestions (API unavailable)' };
+    const fallback = _heuristicFallback(rawData, aggStats, qa);
+    return {
+      suggestions: fallback,
+      megaPrompt: _buildMegaPrompt(fallback),
+      summary: `${fallback.length} heuristic features (API error: ${err.message.slice(0, 60)})`,
+    };
   }
 }
 
-function _heuristicFallback(rawData, aggStats, anomalyReport, qa) {
+function _buildMegaPrompt(suggestions) {
+  if (suggestions.length === 0) return null;
+  const featureList = suggestions.map((s, i) =>
+    `${i + 1}. **${s.title}** (${s.excitement})\n   ${s.howItWorks || s.pitch}`
+  ).join('\n\n');
+
+  return `I'm building "Beyond RTS Conquest" — a browser-based 2D side-scroller RTS game with 24 factions, built as a single HTML file (~20k lines, vanilla JS + Canvas).
+
+I want to implement the following new features. Please implement them one at a time, starting with #1. For each feature, modify the existing code in index.html. The game uses a global G object for state, requestAnimationFrame game loop, and has functions like spawnUnit(), handleDeath(), doAttack(), updateUnits(), updateHUD(), drawGame().
+
+FEATURES TO IMPLEMENT:
+
+${featureList}
+
+Please start with feature #1. After implementing each one, I'll confirm before moving to the next. For each feature:
+- Add any new state to the initGame() function where G is initialised
+- Add update logic to the game loop or a new update function wired into the loop
+- Add any UI elements needed
+- Make sure it integrates cleanly with existing mechanics
+
+Let's begin with #1.`;
+}
+
+function _heuristicFallback(rawData, aggStats, qa) {
+  // Even without API, suggest creative ideas based on game state
   const suggestions = [];
-  const totalGames  = qa.totalGamesRun || 1;
+  const factionCount = rawData.factions?.length || 0;
 
-  for (const [key, count] of Object.entries(qa.mechanicUsage || {})) {
-    const pct = count / totalGames * 100;
-    if (pct < 10) suggestions.push({
-      priority: suggestions.length + 1, category: 'ux',
-      title: `Improve discoverability: ${key.replace(/_/g, ' ')}`,
-      rationale: `Used in only ${pct.toFixed(1)}% of games.`,
-      effort: 'quick', impact: 'medium',
-      implementation: 'Add tooltip or visual indicator. Ensure AI logic considers this mechanic.',
+  if (factionCount >= 10) {
+    suggestions.push({
+      priority: 1, category: 'mode', title: 'Faction Draft Mode with Bans',
+      pitch: `With ${factionCount} factions, a draft system where each player bans 2-3 factions then picks from the remaining pool would add incredible strategic depth before the game even starts.`,
+      excitement: 'game-changer', effort: 'medium',
+      howItWorks: 'Pre-game phase: P1 bans, P2 bans, P1 picks, P2 picks. Banned factions greyed out with X overlay. Could have ranked draft and casual draft variants.',
+      factionSynergies: 'Creates meta around "must-ban" factions and pocket picks. Factions with hard counters become more valuable.',
+      implementation: 'Add draft state to G, new screen sc-draft, ban/pick phase logic, timer per pick.',
       pasteToClaudePrompt: null,
     });
   }
 
-  for (const [f, s] of Object.entries(aggStats)) {
-    if (s.overallWinRate >= 60) suggestions.push({
-      priority: suggestions.length + 1, category: 'balance',
-      title: `Nerf ${f} (${s.overallWinRate}% win rate)`,
-      rationale: `Win rate exceeds 55% threshold.`,
-      effort: 'quick', impact: 'high',
-      implementation: `Reduce ${f}'s primary economic or unit power advantage by 5–10%.`,
-      pasteToClaudePrompt: null,
-    });
-    if (s.overallWinRate <= 42) suggestions.push({
-      priority: suggestions.length + 1, category: 'balance',
-      title: `Buff ${f} (${s.overallWinRate}% win rate)`,
-      rationale: `Win rate below 45% concern threshold.`,
-      effort: 'quick', impact: 'high',
-      implementation: `Increase ${f}'s primary strength by 5–8%.`,
-      pasteToClaudePrompt: null,
-    });
-  }
+  suggestions.push({
+    priority: 2, category: 'mechanic', title: 'Dynamic Weather System',
+    pitch: 'Random weather events (sandstorm, rain, fog of war) that affect gameplay differently per faction — Glacial thrives in storms, Infernal weakened by rain.',
+    excitement: 'awesome', effort: 'medium',
+    howItWorks: 'Every 60-90s a weather event rolls. Each weather type applies global modifiers. Some factions get bonuses, others penalties. Visual overlay on canvas.',
+    factionSynergies: 'Glacial: ice storm bonus. Infernal: weakened in rain. Umbral: fog of war amplified. Tideborn: rain gives regen boost.',
+    implementation: 'Add G.weather state, updateWeather(dt) function, per-faction weather modifiers, canvas overlay rendering.',
+    pasteToClaudePrompt: null,
+  });
 
-  return suggestions.slice(0, 10);
+  suggestions.push({
+    priority: 3, category: 'visual', title: 'Kill Replay Highlights',
+    pitch: 'After game-over, show a "Top Plays" replay of the 3 most impactful moments — biggest multi-kill, closest base save, most souls earned in one fight.',
+    excitement: 'awesome', effort: 'large',
+    howItWorks: 'Record key events with timestamps during gameplay. Post-game, reconstruct and replay the top moments with slow-mo and zoom effects.',
+    factionSynergies: 'Pandemonium chaos multi-kills, Tideborn split plays, Chrysalis metamorphosis moments would all look incredible.',
+    implementation: 'Add event recording to G.replayLog, post-game replay renderer, highlight selection algorithm.',
+    pasteToClaudePrompt: null,
+  });
+
+  suggestions.push({
+    priority: 4, category: 'meta', title: 'Faction Mastery Prestige System',
+    pitch: 'After maxing mastery on a faction, prestige it for a unique visual effect (golden units, special death animations) that carries across all modes.',
+    excitement: 'cool', effort: 'medium',
+    howItWorks: 'Track total wins per faction in localStorage. At milestones (10, 25, 50, 100 wins), unlock cosmetic tiers. Prestige resets mastery but grants permanent visual flair.',
+    factionSynergies: 'All 24 factions get unique prestige visuals. Creates long-term progression and faction loyalty.',
+    implementation: 'Add localStorage mastery tracking, prestige state, golden unit rendering variants, mastery UI screen.',
+    pasteToClaudePrompt: null,
+  });
+
+  return suggestions;
 }
 
 module.exports = { generateFeatureAdvice };

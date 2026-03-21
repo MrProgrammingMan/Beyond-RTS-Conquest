@@ -25,6 +25,7 @@ const path = require('path');
 // These are the core game logic functions Claude needs to reason about bugs
 // and balance. Each entry: { name, searchFor, contextLines }
 const MECHANIC_EXTRACTS = [
+  // ── Core systems ──
   { name: 'handleDeath',       searchFor: 'function handleDeath(',          lines: 100 },
   { name: 'doAttack',          searchFor: 'function doAttack(',              lines: 80  },
   { name: 'updateSiege',       searchFor: 'function updateSiege(',           lines: 55  },
@@ -33,6 +34,9 @@ const MECHANIC_EXTRACTS = [
   { name: 'spawnUnit',         searchFor: 'function spawnUnit(',             lines: 40  },
   { name: 'updateEconomy',     searchFor: 'function updateEconomy(',         lines: 40  },
   { name: 'updateMid',         searchFor: 'function updateMid(',             lines: 40  },
+  { name: 'checkWin',          searchFor: 'function checkWin(',              lines: 30  },
+  { name: 'siegeDecayRates',   searchFor: 'rate = elapsed',                  lines: 12  },
+  // ── Original 10 faction mechanics ──
   { name: 'pitAura',           searchFor: 'if (u.def.pitAura)',              lines: 4   },
   { name: 'chainLightning',    searchFor: '// Chain lightning (melee)',      lines: 12  },
   { name: 'deathSplash',       searchFor: '// Infernal death explosion',     lines: 16  },
@@ -43,8 +47,25 @@ const MECHANIC_EXTRACTS = [
   { name: 'ironResolve',       searchFor: '// Warriors Iron Resolve',        lines: 6   },
   { name: 'growOnKill',        searchFor: 'killer.def.growOnKill',           lines: 10  },
   { name: 'passiveSummon',     searchFor: 'passiveSummon',                   lines: 15  },
-  { name: 'siegeDecayRates',   searchFor: 'rate = elapsed',                  lines: 12  },
-  { name: 'checkWin',          searchFor: 'function checkWin(',              lines: 30  },
+  // ── New 14 faction systems ──
+  { name: 'updateTarPatches',       searchFor: 'function updateTarPatches(',      lines: 40  },
+  { name: 'updateCorpses',          searchFor: 'function updateCorpses(',         lines: 35  },
+  { name: 'updateEchoSchedule',     searchFor: 'function updateEchoSchedule(',    lines: 30  },
+  { name: 'updateDarkZones',        searchFor: 'function updateDarkZones(',       lines: 35  },
+  { name: 'updateNewFactionSystems',searchFor: 'function updateNewFactionSystems(', lines: 50 },
+  { name: 'plagueMutation',         searchFor: '_applyPlagueMutation',            lines: 25  },
+  { name: 'chrysalisMetamorphosis', searchFor: '_chrysPhase',                     lines: 20  },
+  { name: 'tidebornSplit',          searchFor: 'tideHighHP',                      lines: 15  },
+  { name: 'veilbornPhase',          searchFor: '_phased',                         lines: 15  },
+  { name: 'chronoRewind',           searchFor: 'chronoElite',                     lines: 15  },
+  { name: 'illusionistDecoy',       searchFor: '_isDecoy',                        lines: 15  },
+  { name: 'pandemoniumChaos',       searchFor: '_panWildfire',                    lines: 15  },
+  { name: 'psionicsCorruption',     searchFor: 'corruptOnHit',                   lines: 15  },
+  { name: 'fortuneLuckRolls',       searchFor: 'fortuneDouble',                  lines: 15  },
+  { name: 'reaverCorpseFeed',       searchFor: 'corpseFeed',                     lines: 15  },
+  { name: 'merchantAuraIncome',     searchFor: 'merchantAura',                   lines: 15  },
+  // ── Random events ──
+  { name: 'fireRandomEvent',        searchFor: 'function fireRandomEvent(',      lines: 40  },
 ];
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
@@ -145,6 +166,33 @@ async function _extractFactions(gamePath) {
           ...(u.thornslow       ? { thornslow: true } : {}),
           ...(u.frostMidBonus   ? { frostMidBonus: true } : {}),
           ...(u.groveMidBonus   ? { groveMidBonus: true } : {}),
+          // ── New faction flags (14 new factions) ──
+          ...(u.webTrail        ? { webTrail: true } : {}),
+          ...(u.tarShot         ? { tarShot: true } : {}),
+          ...(u.cocoonsOnDeath  ? { cocoonsOnDeath: true } : {}),
+          ...(u.merchantAura    ? { merchantAura: true } : {}),
+          ...(u.merchantMidBonus ? { merchantMidBonus: true } : {}),
+          ...(u.corpseFeed      ? { corpseFeed: true } : {}),
+          ...(u.bodyOnKill      ? { bodyOnKill: u.bodyOnKill } : {}),
+          ...(u.reaverWorker    ? { reaverWorker: true } : {}),
+          ...(u.reaverKillBonus ? { reaverKillBonus: u.reaverKillBonus } : {}),
+          ...(u.fortuneDouble   ? { fortuneDouble: u.fortuneDouble } : {}),
+          ...(u.fortuneRefund   ? { fortuneRefund: u.fortuneRefund } : {}),
+          ...(u.fortuneStreak   ? { fortuneStreak: true } : {}),
+          ...(u.plagued         ? { plagued: true } : {}),
+          ...(u.plagueMaxMutations ? { plagueMaxMutations: u.plagueMaxMutations } : {}),
+          ...(u.chrysalis       ? { chrysalis: true } : {}),
+          ...(u.tideborn        ? { tideborn: true } : {}),
+          ...(u.tideHighHP      ? { tideHighHP: u.tideHighHP } : {}),
+          ...(u.chronoElite     ? { chronoElite: true } : {}),
+          ...(u.chronoBonus     ? { chronoBonus: u.chronoBonus } : {}),
+          ...(u.veilborn        ? { veilborn: true } : {}),
+          ...(u.umbral          ? { umbral: true } : {}),
+          ...(u.umbralAura      ? { umbralAura: true } : {}),
+          ...(u.darkOnDeath     ? { darkOnDeath: true } : {}),
+          ...(u.pandemonium     ? { pandemonium: true } : {}),
+          ...(u.corruptOnHit    ? { corruptOnHit: true } : {}),
+          ...(u.psionicAura     ? { psionicAura: true } : {}),
         })),
         upgrades: (f.upgrades || []).map(u => ({
           id: u.id, name: u.name,
@@ -312,7 +360,7 @@ function _buildFullPromptBlock(factions, rules, mechanics) {
     '║          BEYOND RTS CONQUEST — FULL GAME CONTEXT                    ║',
     '╚══════════════════════════════════════════════════════════════════════╝',
     '',
-    'ARCHITECTURE: Single-file browser RTS (~15,000 lines, vanilla JS + Canvas).',
+    'ARCHITECTURE: Single-file browser RTS (~25,000 lines, vanilla JS + Canvas, 24 factions).',
     'Players spend Souls💀 + Bodies🦴 to spawn units. Mid capture gives income bonus.',
     'Base HP reaches 0 → lose. Last Stand triggers at ≤30 HP (3 guards + 40💀 + grace).',
     '',

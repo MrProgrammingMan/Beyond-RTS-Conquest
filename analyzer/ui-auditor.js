@@ -14,6 +14,10 @@ const path = require('path');
 const fs = require('fs');
 const { INSTRUMENTATION_SCRIPT } = require('./instrumentation');
 
+// UI-audit speed: lower than game-runner (50x) so games don't end before
+// we take the in-game screenshot. 10x → ~20-40 game-seconds per real second.
+const UI_SPEED = 10;
+
 async function runUiAudit(gameHtmlPath, cfg, browser) {
   const fileUrl = `file://${path.resolve(gameHtmlPath)}`;
   const issues = [];
@@ -57,7 +61,22 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           continue;
         }
 
-        await sleep(600); // let animations settle
+        // For sc-game: wait for the AI to play so screenshot shows actual combat
+        if (screenId === 'sc-game') {
+          // The speed hack is set inside _navigateToScreen before initGame().
+          // Wait ~2s real time ≈ 60-120 game-seconds at 10x (enough for combat)
+          await sleep(2000);
+          // Pause game and force full visual refresh (canvas + HUD DOM elements)
+          await page.evaluate(() => {
+            if (window.G) window.G.paused = true;
+            try { window.resizeGameCanvas(); } catch (_) {}
+            try { window.drawGame(); } catch (_) {}
+            try { window.updateHUD(); } catch (_) {}
+          });
+          await sleep(200);
+        } else {
+          await sleep(screenId === 'sc-gameover' ? 800 : 600);
+        }
 
         // Screenshot
         if (cfg.output.saveScreenshots) {
@@ -66,6 +85,58 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           const ssFile = path.join(ssDir, `${screenId}-${vp.label}.png`);
           await page.screenshot({ path: ssFile, fullPage: false });
           screenshots.push({ screen: screenId, viewport: vp.label, path: ssFile, width: vp.width, height: vp.height });
+
+          // ── Additional focused screenshots for game screen ──────────────
+          if (screenId === 'sc-game') {
+            // HUD panel close-up (bottom ~42% of viewport)
+            const hudFile = path.join(ssDir, `sc-game-hud-${vp.label}.png`);
+            const hudY = Math.round(vp.height * 0.58);
+            await page.screenshot({
+              path: hudFile,
+              clip: { x: 0, y: hudY, width: vp.width, height: vp.height - hudY },
+            });
+            screenshots.push({ screen: 'sc-game-hud', viewport: vp.label, path: hudFile, width: vp.width, height: vp.height - hudY });
+
+            // Upgrades tab (P1 side) — only if game is still alive
+            const canSwitchTabs = await page.evaluate(() => !!(window.G && window.G.factions));
+            if (canSwitchTabs) {
+              await page.evaluate(() => { try { switchMode(1, 1); } catch(_){} });
+              await sleep(200);
+              const upgFile = path.join(ssDir, `sc-game-upgrades-${vp.label}.png`);
+              await page.screenshot({
+                path: upgFile,
+                clip: { x: 0, y: hudY, width: vp.width, height: vp.height - hudY },
+              });
+              screenshots.push({ screen: 'sc-game-upgrades', viewport: vp.label, path: upgFile, width: vp.width, height: vp.height - hudY });
+
+              // Buffs tab (P1 side)
+              await page.evaluate(() => { try { switchMode(1, 2); } catch(_){} });
+              await sleep(200);
+              const bufFile = path.join(ssDir, `sc-game-buffs-${vp.label}.png`);
+              await page.screenshot({
+                path: bufFile,
+                clip: { x: 0, y: hudY, width: vp.width, height: vp.height - hudY },
+              });
+              screenshots.push({ screen: 'sc-game-buffs', viewport: vp.label, path: bufFile, width: vp.width, height: vp.height - hudY });
+
+              // Restore units tab
+              await page.evaluate(() => { try { switchMode(1, 0); } catch(_){} });
+            }
+
+            // Unpause so the game can continue (needed for sc-gameover later)
+            await page.evaluate(() => { if (window.G) window.G.paused = false; });
+          }
+
+          // ── Game-over: focused screenshot of just the stats panel ──────
+          if (screenId === 'sc-gameover') {
+            const goFile = path.join(ssDir, `sc-gameover-stats-${vp.label}.png`);
+            const goWrap = await page.$('.go-wrap');
+            if (goWrap) {
+              await goWrap.screenshot({ path: goFile });
+              const box = await goWrap.boundingBox();
+              screenshots.push({ screen: 'sc-gameover-stats', viewport: vp.label, path: goFile, width: Math.round(box?.width || vp.width), height: Math.round(box?.height || vp.height) });
+            }
+          }
         }
 
         // ── Programmatic checks ─────────────────────────────────────────────
@@ -259,43 +330,40 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
 
 // Navigate to a specific screen by manipulating the game's screen system
 async function _navigateToScreen(page, screenId) {
-  return await page.evaluate((id) => {
-    // Method 1: use showScreen if it exists
+  return await page.evaluate(({ id, speed }) => {
+    const target = document.getElementById(id);
+    if (!target) return false;
+
+    // For game screen: use __qaStartAiVsAi to properly start a game with speed hack
+    if (id === 'sc-game') {
+      if (!window.G || !window.G.running) {
+        window.__qaSpeedMultiplier = speed;
+        if (typeof window.__qaStartAiVsAi === 'function') {
+          try { window.__qaStartAiVsAi(0, 1, 'easy'); } catch (_) { }
+        }
+        try { window.resizeGameCanvas(); } catch (_) { }
+        try { window.drawGame(); } catch (_) { }
+      }
+      return true;
+    }
+
+    // For game-over: force a game end — the speed hack is already active from sc-game
+    if (id === 'sc-gameover') {
+      if (window.G && window.G.running) {
+        window.G.players[1].baseHp = 0;
+        try { window.checkWin(); } catch (_) { }
+      }
+      return true;
+    }
+
+    // For other screens: use showScreen if available, else direct DOM manipulation
     if (typeof window.showScreen === 'function') {
       try { window.showScreen(id); return true; } catch (_) { }
     }
-    // Method 2: direct DOM manipulation
-    const target = document.getElementById(id);
-    if (!target) return false;
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     target.classList.add('active');
-    // For game screen: need G to be initialized
-    if (id === 'sc-game') {
-      if (!window.G || !window.G.running) {
-        // Start a quick aivsai game to get to game screen
-        const f1 = window.FACTIONS?.[0];
-        const f2 = window.FACTIONS?.[1];
-        if (f1 && f2) {
-          window.P1_FACTION = f1;
-          window.P2_FACTION = f2;
-          window.GAME_MODE = 'aivsai';
-          window.AI_DIFFICULTY = 'easy';
-          window._pendingPlayerSetup = 'aivsai';
-          try { window.initGame(); } catch (_) { }
-        }
-      }
-    }
-    if (id === 'sc-gameover') {
-      // Force a quick game end
-      if (window.G && window.G.running) {
-        try {
-          window.G.players[1].baseHp = 0;
-          if (typeof window.checkWin === 'function') window.checkWin();
-        } catch (_) { }
-      }
-    }
-    return !!document.getElementById(id);
-  }, screenId);
+    return true;
+  }, { id: screenId, speed: UI_SPEED });
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

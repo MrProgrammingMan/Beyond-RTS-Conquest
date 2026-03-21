@@ -26,12 +26,12 @@ const PROFILES = {
 };
 
 // #23: SPEED is the time-warp multiplier used in this file.
-// GAME_RUNNER_SPEED is the value used by game-runner.js (currently 30).
+// GAME_RUNNER_SPEED is the value used by game-runner.js (currently 50).
 // If they differ, we report it as an explicit finding — a 2× speed gap means
 // the online tester may miss timing-sensitive sync bugs that only appear at
 // the faster pace used during balance testing.
-const SPEED = 15;   // online tester speed
-const GAME_RUNNER_SPEED = 30;   // must match the SPEED constant in game-runner.js
+const SPEED = 50;   // online tester speed — must match game-runner.js
+const GAME_RUNNER_SPEED = 50;   // must match the SPEED constant in game-runner.js
 
 async function runOnlineTests(gameHtmlPath, cfg) {
   const ocfg = cfg.online || {};
@@ -131,6 +131,11 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
       if (i1 === -1 || i2 === -1) return { error: `Faction not found: ${f1}/${f2}` };
       window.__qaSpeedMultiplier = SPEED;
       window.__qaStartAiVsAi(i1, i2, 'hard');
+      // Force P1 into online broadcast mode so _broadcastFullState sends snapshots
+      // to our fake socket, which the relay loop captures and forwards to P2.
+      if (typeof window.NET !== 'undefined' && window.NET._qaForceP1Online) {
+        window.NET._qaForceP1Online();
+      }
       return { ok: !!window.G };
     }, { f1, f2, SPEED });
 
@@ -148,6 +153,7 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
       window.setInterval = (fn, d = 16, ...a) => _si(fn, Math.max(1, d / SPEED), ...a);
       const _pn = performance.now.bind(performance);
       performance.now = () => _pn() + _off;
+      const _dn = Date.now; Date.now = () => _dn() + _off;
 
       const sock = {
         connected: true, _h: {},
@@ -160,16 +166,26 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
       window.__qaSocket = sock;
       window.io = () => sock;
 
-      // Boot P2 game (same factions) so G and NET are initialized
-      if (typeof window.__qaStartAiVsAi === 'function') {
-        const fl = window.FACTIONS;
-        const i1 = fl.findIndex(f => f.id === f1), i2 = fl.findIndex(f => f.id === f2);
-        if (i1 !== -1 && i2 !== -1) {
-          window.__qaSpeedMultiplier = SPEED;
+      // Boot P2 as online receiver — NOT as an independent AI vs AI game.
+      // __qaStartP2Online sets GAME_MODE='vs' and calls NET._qaForceP2Online()
+      // so the game loop enters the P2 render-only path (no physics/economy).
+      const fl = window.FACTIONS;
+      const i1 = fl.findIndex(f => f.id === f1), i2 = fl.findIndex(f => f.id === f2);
+      if (i1 !== -1 && i2 !== -1) {
+        window.__qaSpeedMultiplier = SPEED;
+        if (typeof window.__qaStartP2Online === 'function') {
+          try { window.__qaStartP2Online(i1, i2, 'hard'); } catch (_) { }
+        } else if (typeof window.__qaStartAiVsAi === 'function') {
+          // Fallback for older game builds without __qaStartP2Online
           try { window.__qaStartAiVsAi(i1, i2, 'hard'); } catch (_) { }
         }
       }
-      return { hasNet: typeof window.NET !== 'undefined', hasG: !!window.G };
+      return {
+        hasNet: typeof window.NET !== 'undefined',
+        hasG: !!window.G,
+        isOnline: typeof window.NET !== 'undefined' && window.NET.isOnline(),
+        pid: typeof window.NET !== 'undefined' ? window.NET.getPid() : null,
+      };
     }, { f1, f2, SPEED });
 
     // Relay loop
@@ -188,9 +204,14 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
             relayMetrics.delivered++;
             try {
               await p2.evaluate(({ type, payloadStr }) => {
-                if (!window.__qaSocket) return;
                 const data = JSON.parse(payloadStr);
-                window.__qaSocket.dispatch(type, data);
+                // Prefer __qaInjectSnap (calls _receiveStateSnapshot directly);
+                // fall back to socket dispatch for older game builds.
+                if (typeof window.__qaInjectSnap === 'function') {
+                  window.__qaInjectSnap(type, data);
+                } else if (window.__qaSocket) {
+                  window.__qaSocket.dispatch(type, data);
+                }
               }, { type: snap.type, payloadStr: snap.payloadStr });
             } catch (_) { }
           }, Math.max(0, delay));
@@ -210,7 +231,9 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
         if (!s1?.running || !s2) return;
         checkCount++;
         const diffs = [];
-        const numTol = { midCapTimer: 0.5, p1BaseHp: 5, p2BaseHp: 5, p1Souls: 10, p2Souls: 10, unitCount: 3 };
+        // Tolerances account for snapshot delay at high speed (50×).
+        // Souls drift ~0.5/s base + mid income between snapshots.
+        const numTol = { midCapTimer: 1.0, p1BaseHp: 8, p2BaseHp: 8, p1Souls: 20, p2Souls: 20, unitCount: 5, tarPatchCount: 3, corpseCount: 2, darkZoneCount: 2, bloodPoolCount: 3 };
         for (const [f, tol] of Object.entries(numTol)) {
           if (s1[f] == null || s2[f] == null) continue;
           if (Math.abs((+s1[f] || 0) - (+s2[f] || 0)) > tol) diffs.push({ field: f, p1: s1[f], p2: s2[f] });
@@ -258,7 +281,7 @@ async function _runScenario(gameHtmlPath, cfg, browser, profileName, profile, f1
     // A blank (all-black) canvas means rendering is broken even when G-state
     // syncs correctly. Samples a 10×10 grid of pixels across the game canvas.
     const renderCheck = await p2.evaluate(() => {
-      const canvas = document.querySelector('canvas');
+      const canvas = document.getElementById('battlefield') || document.querySelector('canvas');
       if (!canvas) return { checked: false, reason: 'No canvas element found on P2' };
 
       let ctx;
@@ -329,6 +352,10 @@ function _captureState() {
     p1Souls: Math.round(G.players?.[0]?.souls || 0),
     p2Souls: Math.round(G.players?.[1]?.souls || 0),
     unitCount: G.units?.length || 0,
+    tarPatchCount: (G.tarPatches || []).length,
+    corpseCount: (G.corpses || []).length,
+    darkZoneCount: (G.darkZones || []).length,
+    bloodPoolCount: (G.bloodPools || []).length,
     zoneOwners: (G.zones || []).map(z => z.owner || null),
   };
 }
@@ -385,6 +412,8 @@ function _compileResult(profileName, profile, f1, f2, metrics, gameResult, p2Err
 
   if (!p2Init?.hasNet) {
     checks.push({ name: 'NET module on P2', passed: false, details: 'window.NET not found — _applyInstantState may not exist', critical: true });
+  } else if (!p2Init?.isOnline || p2Init?.pid !== 2) {
+    checks.push({ name: 'P2 online mode', passed: false, details: `P2 not in online mode (isOnline=${p2Init?.isOnline}, pid=${p2Init?.pid}) — running independent simulation instead of receiving P1 snapshots`, critical: true });
   }
 
   // #22: P2 canvas render check

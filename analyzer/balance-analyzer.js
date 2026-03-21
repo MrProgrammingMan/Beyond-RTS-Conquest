@@ -115,7 +115,9 @@ async function analyzeBalance(balanceData, aggStats, mechanicsData, cfg, gameCon
     }
   }
   const p1Rate = totalDecisive > 0 ? Math.round(p1Wins / totalDecisive * 100) : 50;
-  const biasLine = `P1 wins ${p1Rate}% of decisive games (P2: ${100-p1Rate}%) across ${totalDecisive} games`;
+  const expectedMatchups = factions.length * (factions.length - 1);
+  const completionPct = expectedMatchups > 0 ? Math.round(totalDecisive / expectedMatchups * 100) : 0;
+  const biasLine = `P1 wins ${p1Rate}% of decisive games (P2: ${100-p1Rate}%) across ${totalDecisive} of ${expectedMatchups} matchups (${completionPct}% completion)`;
 
   // ── The core analysis prompt ───────────────────────────────────────────────
   const analyticsPrompt = `You are a senior game balance designer analysing "Beyond RTS Conquest" after an automated AI vs AI test run.
@@ -197,7 +199,7 @@ Wrap in: ===BALANCE PROMPT START=== and ===BALANCE PROMPT END===`;
   const fullPrompt = injectContext(analyticsPrompt, gameContext, 'full');
 
   const response = await client.messages.create({
-    model:      'claude-sonnet-4-20250514',
+    model:      'claude-sonnet-4-6',
     max_tokens: 5000,
     messages:   [{ role: 'user', content: fullPrompt }],
   });

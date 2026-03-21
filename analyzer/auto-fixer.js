@@ -88,7 +88,7 @@ CONFIDENCE HINT (include as a comment on the very first line of your diff):
   let rawText;
   try {
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }],
     });
@@ -419,6 +419,153 @@ function _buildSummary(bug, diff) {
   return `Fix ${sev} ${type}: +${adds} / -${dels} lines`;
 }
 
+// ── Generic fix (UI issues, vision issues, anomalies) ────────────────────────
+
+/**
+ * Generate a fix for any report item — not just diagnosed bugs.
+ * Accepts a free-form issue description + optional CSS selectors / function
+ * hints and searches the game source for relevant code.
+ *
+ * @param {object} issue - { type, severity, message, suggestion, elementHint, searchHints[] }
+ * @param {string} gamePath
+ * @param {object} cfg
+ * @returns {Promise<{ok, summary, diff, confidence, linesChanged}>}
+ */
+async function generateGenericFix(issue, gamePath, cfg) {
+  const apiKey = cfg.anthropicApiKey || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return { ok: false, summary: 'No Anthropic API key configured' };
+
+  const gameSource = _readGame(gamePath);
+  if (!gameSource) return { ok: false, summary: `Could not read game file: ${gamePath}` };
+
+  const lines = gameSource.split('\n');
+  const totalLines = lines.length;
+
+  // ── Find relevant code using search hints ──────────────────────────────────
+  const snippets = [];
+  const seenLines = new Set();
+  const hints = issue.searchHints || [];
+
+  // Add element_hint as a search term (CSS selectors → ID/class names)
+  if (issue.elementHint) {
+    // Extract IDs and class names from CSS selectors
+    const ids = [...issue.elementHint.matchAll(/#([\w-]+)/g)].map(m => m[1]);
+    const classes = [...issue.elementHint.matchAll(/\.([\w-]+)/g)].map(m => m[1]);
+    hints.push(...ids, ...classes);
+  }
+
+  // Search for each hint in the source
+  for (const hint of hints) {
+    if (snippets.length >= 3) break;
+    if (!hint || hint.length < 3) continue;
+    const escaped = hint.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(escaped, 'i');
+    for (let i = 0; i < lines.length; i++) {
+      if (re.test(lines[i]) && !seenLines.has(i)) {
+        seenLines.add(i);
+        snippets.push(_makeWindow(lines, i, 25, `"${hint}" (line ${i + 1})`));
+        break;
+      }
+    }
+  }
+
+  // Fallback: search for keywords from the message/suggestion
+  if (snippets.length === 0) {
+    const text = `${issue.message || ''} ${issue.suggestion || ''}`;
+    const keywords = [...text.matchAll(/\b([a-zA-Z_][\w-]{4,})\b/g)]
+      .map(m => m[1])
+      .filter(w => !_SKIP.has(w.toLowerCase()))
+      .slice(0, 5);
+    for (const kw of keywords) {
+      if (snippets.length >= 2) break;
+      const re = new RegExp(kw, 'i');
+      for (let i = 0; i < lines.length; i++) {
+        if (re.test(lines[i]) && !seenLines.has(i)) {
+          seenLines.add(i);
+          snippets.push(_makeWindow(lines, i, 20, `"${kw}" (line ${i + 1})`));
+          break;
+        }
+      }
+    }
+  }
+
+  if (snippets.length === 0) {
+    return { ok: false, summary: 'Could not locate relevant code for this issue' };
+  }
+
+  const snippetBlock = snippets.map(s => {
+    const loc = (s.startLine !== '?' && s.endLine !== '?')
+      ? `lines ${s.startLine}–${s.endLine} of ${totalLines}`
+      : `of ${totalLines} total lines`;
+    return `[${s.label}  —  ${loc}]\n${s.code}`;
+  }).join('\n\n');
+
+  // ── Prompt ──────────────────────────────────────────────────────────────────
+  const prompt = `You are patching "Beyond RTS Conquest" — a single-file browser RTS game (index.html, ${totalLines} lines, vanilla JS + Canvas + inline CSS).
+
+ISSUE REPORT
+Type       : ${issue.type || 'ui_issue'}
+Severity   : ${issue.severity || 'MEDIUM'}
+Message    : ${(issue.message || '').slice(0, 400)}
+Suggestion : ${(issue.suggestion || '').slice(0, 400)}
+Element    : ${issue.elementHint || 'unknown'}
+
+RELEVANT CODE FROM THE FILE
+${snippetBlock}
+
+TASK
+Produce a minimal unified diff that fixes this issue. Requirements:
+- Output ONLY the unified diff, nothing else — no explanation, no markdown fences
+- Use standard unified diff format (--- a/index.html, +++ b/index.html, @@ hunks)
+- Each hunk must include 3 lines of unchanged context before and after the change
+- Make the smallest possible change — do not refactor surrounding code
+- For CSS issues, modify the inline <style> section
+- For layout/responsive issues, use media queries or clamp() where appropriate
+- If you cannot produce a confident fix, output exactly: CANNOT_FIX: <reason>
+
+CONFIDENCE HINT (include as a comment on the very first line of your diff):
+# CONFIDENCE: HIGH   ← you are certain this fixes the issue
+# CONFIDENCE: MEDIUM ← likely correct but edge cases possible
+# CONFIDENCE: LOW    ← uncertain, manual review strongly recommended`;
+
+  const client = new Anthropic({ apiKey });
+
+  let rawText;
+  try {
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    rawText = response.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
+  } catch (err) {
+    return { ok: false, summary: `Claude API error: ${err.message}` };
+  }
+
+  if (rawText.startsWith('CANNOT_FIX:')) {
+    return { ok: false, summary: rawText.slice('CANNOT_FIX:'.length).trim().slice(0, 200) };
+  }
+
+  let confidence = 'MEDIUM';
+  const confMatch = rawText.match(/^#\s*CONFIDENCE:\s*(HIGH|MEDIUM|LOW)/im);
+  if (confMatch) confidence = confMatch[1].toUpperCase();
+
+  const diff = rawText.replace(/^#\s*CONFIDENCE:.*\n?/im, '').trim();
+  const validation = _validateDiff(diff);
+  if (!validation.ok) {
+    return { ok: false, summary: `Claude produced an invalid diff: ${validation.reason}` };
+  }
+
+  const linesChanged = diff.split('\n').filter(l => l.startsWith('+') || l.startsWith('-'))
+    .filter(l => !l.startsWith('+++') && !l.startsWith('---')).length;
+
+  const adds = diff.split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).length;
+  const dels = diff.split('\n').filter(l => l.startsWith('-') && !l.startsWith('---')).length;
+  const summary = `Fix ${(issue.severity || 'MEDIUM').toUpperCase()} ${issue.type || 'issue'}: +${adds} / -${dels} lines`;
+
+  return { ok: true, summary, diff, confidence, linesChanged };
+}
+
 // ── Exports ───────────────────────────────────────────────────────────────────
 
-module.exports = { generateFix, applyDiff };
+module.exports = { generateFix, generateGenericFix, applyDiff };

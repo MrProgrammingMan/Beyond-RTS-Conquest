@@ -41,7 +41,7 @@ function extractCodeSnippets(bug, cfg, CONTEXT = 18, MAX_SNIPPETS = 3) {
   const seenLines  = new Set();
 
   // 1. Extract line numbers from stack trace
-  const lineNumRe = /:(\\d{3,5}):\\d+/g;
+  const lineNumRe = /:(\\d{3,6}):\\d+/g;
   const stack     = bug.stack || '';
   let m;
   while ((m = lineNumRe.exec(stack)) !== null) {
@@ -116,7 +116,7 @@ async function analyzeBugs(allErrors, allNaNs, allTimedOut, cfg, gameContext) {
       occurrences: allTimedOut.length,
       examples:   allTimedOut.slice(0, 3),
       isSoftlock: true,
-      whereToLook: 'canAttackBase checkWin updateSiege checkLastStand G.running gameLoop',
+      whereToLook: 'canAttackBase checkWin updateSiege checkLastStand G.running gameLoop updateTarPatches updateCorpses updateEchoSchedule updateDarkZones updateNewFactionSystems updateBloodPools',
     });
   }
 
@@ -196,7 +196,7 @@ Rules:
   const fullPrompt = injectContext(corePrompt, gameContext, 'full');
 
   const response = await client.messages.create({
-    model:      'claude-sonnet-4-20250514',
+    model:      'claude-sonnet-4-6',
     max_tokens: Math.min(8000, bugs.length * 1200 + 800),
     messages:   [{ role: 'user', content: fullPrompt }],
   });

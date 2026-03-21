@@ -1,130 +1,15 @@
 {
   "issues": [
     {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "1080p",
-      "viewportSize": "1920×1080"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "1080p",
-      "viewportSize": "1920×1080"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "1080p",
-      "viewportSize": "1920×1080"
-    },
-    {
-      "type": "low_contrast",
-      "severity": "info",
-      "screen": "sc-faction",
-      "element": "DIV",
-      "contrast": 1,
-      "color": "rgb(212, 168, 67)",
-      "bg": "rgba(212, 168, 67, 0.18)",
-      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
-      "viewport": "1080p",
-      "viewportSize": "1920×1080"
-    },
-    {
-      "type": "element_offscreen",
-      "severity": "error",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-controls.btn",
-      "bounds": {
-        "left": 483,
-        "top": 777,
-        "right": 883,
-        "bottom": 825
-      },
-      "viewport": "laptop",
-      "message": "Interactive element is outside viewport",
-      "viewportSize": "1366×768"
-    },
-    {
-      "type": "element_overlap",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "elementA": "BUTTON#btn-tutorial",
-      "elementB": "BUTTON",
-      "overlapPx": 1492,
-      "message": "Two interactive elements overlap by 1492px²",
-      "viewport": "laptop",
-      "viewportSize": "1366×768"
-    },
-    {
-      "type": "element_overlap",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "elementA": "BUTTON#btn-tutorial",
-      "elementB": "BUTTON#btn-fullscreen-menu",
-      "overlapPx": 3414,
-      "message": "Two interactive elements overlap by 3414px²",
-      "viewport": "laptop",
-      "viewportSize": "1366×768"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "laptop",
-      "viewportSize": "1366×768"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "laptop",
-      "viewportSize": "1366×768"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "laptop",
-      "viewportSize": "1366×768"
-    },
-    {
-      "type": "low_contrast",
-      "severity": "info",
-      "screen": "sc-faction",
-      "element": "DIV",
-      "contrast": 1,
-      "color": "rgb(212, 168, 67)",
-      "bg": "rgba(212, 168, 67, 0.18)",
-      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
-      "viewport": "laptop",
-      "viewportSize": "1366×768"
-    },
-    {
       "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
       "elementA": "BUTTON#btn-controls",
       "elementB": "BUTTON",
-      "overlapPx": 1060,
-      "message": "Two interactive elements overlap by 1060px²",
-      "viewport": "tablet-landscape",
-      "viewportSize": "1024×768"
+      "overlapPx": 1674,
+      "message": "Two interactive elements overlap by 1674px²",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
     },
     {
       "type": "element_overlap",
@@ -132,37 +17,94 @@
       "screen": "sc-menu",
       "elementA": "BUTTON#btn-controls",
       "elementB": "BUTTON#btn-fullscreen-menu",
-      "overlapPx": 2437,
-      "message": "Two interactive elements overlap by 2437px²",
-      "viewport": "tablet-landscape",
-      "viewportSize": "1024×768"
+      "overlapPx": 4260,
+      "message": "Two interactive elements overlap by 4260px²",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
     },
     {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "tablet-landscape",
-      "viewportSize": "1024×768"
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "1080p",
+      "viewportSize": "1920×1080"
     },
     {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "tablet-landscape",
-      "viewportSize": "1024×768"
+      "type": "low_contrast",
+      "severity": "info",
+      "screen": "sc-faction",
+      "element": "DIV",
+      "contrast": 1,
+      "color": "rgb(212, 168, 67)",
+      "bg": "rgba(212, 168, 67, 0.18)",
+      "message": "Text contrast ratio 1:1 is below threshold of 2.5:1",
+      "viewport": "laptop",
+      "viewportSize": "1366×768"
     },
     {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "tablet-landscape",
-      "viewportSize": "1024×768"
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch.btn",
+      "bounds": {
+        "left": 224,
+        "top": 854,
+        "right": 408,
+        "bottom": 899
+      },
+      "viewport": "laptop",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction.btn",
+      "bounds": {
+        "left": 430,
+        "top": 854,
+        "right": 692,
+        "bottom": 899
+      },
+      "viewport": "laptop",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu.btn",
+      "bounds": {
+        "left": 714,
+        "top": 854,
+        "right": 877,
+        "bottom": 899
+      },
+      "viewport": "laptop",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1366×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-go-mastery.btn",
+      "bounds": {
+        "left": 899,
+        "top": 854,
+        "right": 1142,
+        "bottom": 899
+      },
+      "viewport": "laptop",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1366×768"
     },
     {
       "type": "low_contrast",
@@ -177,29 +119,39 @@
       "viewportSize": "1024×768"
     },
     {
-      "type": "empty_button",
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls.btn",
+      "bounds": {
+        "left": 65,
+        "top": 894,
+        "right": 325,
+        "bottom": 939
+      },
+      "viewport": "iphone-14",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
+      "elementA": "BUTTON#btn-mastery",
+      "elementB": "BUTTON",
+      "overlapPx": 979,
+      "message": "Two interactive elements overlap by 979px²",
       "viewport": "iphone-14",
       "viewportSize": "390×844"
     },
     {
-      "type": "empty_button",
+      "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "iphone-14",
-      "viewportSize": "390×844"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
+      "elementA": "BUTTON#btn-mastery",
+      "elementB": "BUTTON#btn-fullscreen-menu",
+      "overlapPx": 2596,
+      "message": "Two interactive elements overlap by 2596px²",
       "viewport": "iphone-14",
       "viewportSize": "390×844"
     },
@@ -216,29 +168,99 @@
       "viewportSize": "390×844"
     },
     {
-      "type": "empty_button",
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch.btn",
+      "bounds": {
+        "left": -10,
+        "top": 1079,
+        "right": 93,
+        "bottom": 1154
+      },
+      "viewport": "iphone-14",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction.btn",
+      "bounds": {
+        "left": 103,
+        "top": 1079,
+        "right": 199,
+        "bottom": 1154
+      },
+      "viewport": "iphone-14",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu.btn",
+      "bounds": {
+        "left": 209,
+        "top": 1079,
+        "right": 288,
+        "bottom": 1154
+      },
+      "viewport": "iphone-14",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-go-mastery.btn",
+      "bounds": {
+        "left": 298,
+        "top": 1079,
+        "right": 400,
+        "bottom": 1154
+      },
+      "viewport": "iphone-14",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "390×844"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-menu",
+      "element": "BUTTON#btn-controls.btn",
+      "bounds": {
+        "left": 76,
+        "top": 922,
+        "right": 336,
+        "bottom": 970
+      },
+      "viewport": "android-xl",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
+      "elementA": "BUTTON#btn-mastery",
+      "elementB": "BUTTON",
+      "overlapPx": 1151,
+      "message": "Two interactive elements overlap by 1151px²",
       "viewport": "android-xl",
       "viewportSize": "412×915"
     },
     {
-      "type": "empty_button",
+      "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "android-xl",
-      "viewportSize": "412×915"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
+      "elementA": "BUTTON#btn-mastery",
+      "elementB": "BUTTON#btn-fullscreen-menu",
+      "overlapPx": 3050,
+      "message": "Two interactive elements overlap by 3050px²",
       "viewport": "android-xl",
       "viewportSize": "412×915"
     },
@@ -257,26 +279,71 @@
     {
       "type": "element_offscreen",
       "severity": "error",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-controls.btn",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch.btn",
       "bounds": {
-        "left": 58,
-        "top": 686,
-        "right": 318,
-        "bottom": 730
+        "left": 0,
+        "top": 1096,
+        "right": 103,
+        "bottom": 1173
       },
-      "viewport": "iphone-se",
+      "viewport": "android-xl",
       "message": "Interactive element is outside viewport",
-      "viewportSize": "375×667"
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction.btn",
+      "bounds": {
+        "left": 113,
+        "top": 1096,
+        "right": 212,
+        "bottom": 1173
+      },
+      "viewport": "android-xl",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu.btn",
+      "bounds": {
+        "left": 222,
+        "top": 1096,
+        "right": 300,
+        "bottom": 1173
+      },
+      "viewport": "android-xl",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "412×915"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-go-mastery.btn",
+      "bounds": {
+        "left": 310,
+        "top": 1096,
+        "right": 412,
+        "bottom": 1173
+      },
+      "viewport": "android-xl",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "412×915"
     },
     {
       "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "elementA": "BUTTON#btn-tutorial",
+      "elementA": "BUTTON#btn-controls",
       "elementB": "BUTTON",
-      "overlapPx": 1720,
-      "message": "Two interactive elements overlap by 1720px²",
+      "overlapPx": 356,
+      "message": "Two interactive elements overlap by 356px²",
       "viewport": "iphone-se",
       "viewportSize": "375×667"
     },
@@ -284,37 +351,10 @@
       "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "elementA": "BUTTON#btn-tutorial",
+      "elementA": "BUTTON#btn-controls",
       "elementB": "BUTTON#btn-fullscreen-menu",
-      "overlapPx": 4560,
-      "message": "Two interactive elements overlap by 4560px²",
-      "viewport": "iphone-se",
-      "viewportSize": "375×667"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "iphone-se",
-      "viewportSize": "375×667"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "iphone-se",
-      "viewportSize": "375×667"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
+      "overlapPx": 944,
+      "message": "Two interactive elements overlap by 944px²",
       "viewport": "iphone-se",
       "viewportSize": "375×667"
     },
@@ -331,29 +371,84 @@
       "viewportSize": "375×667"
     },
     {
-      "type": "empty_button",
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch.btn",
+      "bounds": {
+        "left": -17,
+        "top": 1035,
+        "right": 85,
+        "bottom": 1106
+      },
+      "viewport": "iphone-se",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction.btn",
+      "bounds": {
+        "left": 95,
+        "top": 1035,
+        "right": 192,
+        "bottom": 1106
+      },
+      "viewport": "iphone-se",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu.btn",
+      "bounds": {
+        "left": 202,
+        "top": 1035,
+        "right": 280,
+        "bottom": 1106
+      },
+      "viewport": "iphone-se",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-go-mastery.btn",
+      "bounds": {
+        "left": 290,
+        "top": 1035,
+        "right": 392,
+        "bottom": 1106
+      },
+      "viewport": "iphone-se",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "375×667"
+    },
+    {
+      "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "element": "BUTTON#mode-vs",
-      "message": "Button has no visible text, aria-label, or title",
+      "elementA": "BUTTON#btn-controls",
+      "elementB": "BUTTON",
+      "overlapPx": 1749,
+      "message": "Two interactive elements overlap by 1749px²",
       "viewport": "ipad-portrait",
       "viewportSize": "768×1024"
     },
     {
-      "type": "empty_button",
+      "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "element": "BUTTON#mode-solo",
-      "message": "Button has no visible text, aria-label, or title",
-      "viewport": "ipad-portrait",
-      "viewportSize": "768×1024"
-    },
-    {
-      "type": "empty_button",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "element": "BUTTON#btn-rebind",
-      "message": "Button has no visible text, aria-label, or title",
+      "elementA": "BUTTON#btn-controls",
+      "elementB": "BUTTON#btn-fullscreen-menu",
+      "overlapPx": 5127,
+      "message": "Two interactive elements overlap by 5127px²",
       "viewport": "ipad-portrait",
       "viewportSize": "768×1024"
     },
@@ -393,11 +488,39 @@
       "height": 1080
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-1080p.png",
+      "width": 1920,
+      "height": 454
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-1080p.png",
+      "width": 1920,
+      "height": 454
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-1080p.png",
+      "width": 1920,
+      "height": 454
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "1080p",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-1080p.png",
       "width": 1920,
       "height": 1080
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "1080p",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-1080p.png",
+      "width": 990,
+      "height": 991
     },
     {
       "screen": "sc-menu",
@@ -421,10 +544,38 @@
       "height": 768
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-laptop.png",
+      "width": 1366,
+      "height": 323
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-laptop.png",
+      "width": 1366,
+      "height": 323
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-laptop.png",
+      "width": 1366,
+      "height": 323
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "laptop",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-laptop.png",
       "width": 1366,
+      "height": 768
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "laptop",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-laptop.png",
+      "width": 918,
       "height": 768
     },
     {
@@ -449,10 +600,38 @@
       "height": 768
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-tablet-landscape.png",
+      "width": 1024,
+      "height": 323
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-tablet-landscape.png",
+      "width": 1024,
+      "height": 323
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-tablet-landscape.png",
+      "width": 1024,
+      "height": 323
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "tablet-landscape",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-tablet-landscape.png",
       "width": 1024,
+      "height": 768
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "tablet-landscape",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-tablet-landscape.png",
+      "width": 712,
       "height": 768
     },
     {
@@ -477,10 +656,38 @@
       "height": 844
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-iphone-14.png",
+      "width": 390,
+      "height": 354
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-iphone-14.png",
+      "width": 390,
+      "height": 354
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-iphone-14.png",
+      "width": 390,
+      "height": 354
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "iphone-14",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-iphone-14.png",
       "width": 390,
+      "height": 844
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "iphone-14",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-iphone-14.png",
+      "width": 409,
       "height": 844
     },
     {
@@ -505,9 +712,37 @@
       "height": 915
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-android-xl.png",
+      "width": 412,
+      "height": 384
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-android-xl.png",
+      "width": 412,
+      "height": 384
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-android-xl.png",
+      "width": 412,
+      "height": 384
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "android-xl",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-android-xl.png",
+      "width": 412,
+      "height": 915
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "android-xl",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-android-xl.png",
       "width": 412,
       "height": 915
     },
@@ -533,10 +768,38 @@
       "height": 667
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-iphone-se.png",
+      "width": 375,
+      "height": 280
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-iphone-se.png",
+      "width": 375,
+      "height": 280
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-iphone-se.png",
+      "width": 375,
+      "height": 280
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "iphone-se",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-iphone-se.png",
       "width": 375,
+      "height": 667
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "iphone-se",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-iphone-se.png",
+      "width": 409,
       "height": 667
     },
     {
@@ -561,11 +824,39 @@
       "height": 1024
     },
     {
+      "screen": "sc-game-hud",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-hud-ipad-portrait.png",
+      "width": 768,
+      "height": 430
+    },
+    {
+      "screen": "sc-game-upgrades",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-upgrades-ipad-portrait.png",
+      "width": 768,
+      "height": 430
+    },
+    {
+      "screen": "sc-game-buffs",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-game-buffs-ipad-portrait.png",
+      "width": 768,
+      "height": 430
+    },
+    {
       "screen": "sc-gameover",
       "viewport": "ipad-portrait",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-ipad-portrait.png",
       "width": 768,
       "height": 1024
+    },
+    {
+      "screen": "sc-gameover-stats",
+      "viewport": "ipad-portrait",
+      "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-ipad-portrait.png",
+      "width": 635,
+      "height": 815
     }
   ]
 }

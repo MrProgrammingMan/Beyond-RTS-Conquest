@@ -10,14 +10,15 @@
  *   node run.js --skip-online            skip online sync test
  *   node run.js --factions=a,b,c         only test these factions
  *   node run.js --games=N                override gamesPerMatchup
- *   node run.js --quick                  5 factions × 2 games (fast sanity check)
+ *   node run.js --quick                  all factions × 1 game (fast sanity check)
  *   node run.js --resume                 skip phases that already have saved data
  *   node run.js --focus=TYPE             only show/diagnose bugs matching TYPE substring
  *   node run.js --auto-fix               apply all HIGH/CRITICAL fixes non-interactively after run
  *   node run.js --no-server              skip starting the local fix server (for CI)
+ *   node run.js --report-only            rebuild report from cached analysis (no API calls)
  */
 
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
 const cfg = require('./config');
 const { runAllMatchups, aggregateStats } = require('./matchup-runner');
@@ -29,6 +30,7 @@ const { pingCriticalBug, sendFullReport } = require('./discord');
 const { runOnlineTests } = require('./online-tester');
 const { detectAnomalies } = require('./anomaly-detector');
 const { generateFeatureAdvice } = require('./feature-advisor');
+const { analyzeScreenshotsWithVision } = require('./ui-vision-analyzer');
 
 const { chromium, executablePath } = require('playwright');
 const { execSync } = require('child_process');
@@ -37,7 +39,7 @@ const path = require('path');
 const http = require('http');
 const { buildSnapshot, saveToHistory, computeDiff, formatDiffSummary } = require('./run-history');
 const { buildGameContext } = require('./game-context');
-const { generateFix, applyDiff } = require('./auto-fixer');
+const { generateFix, generateGenericFix, applyDiff } = require('./auto-fixer');
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -49,16 +51,19 @@ const quickMode = args.includes('--quick');
 const resumeMode = args.includes('--resume');
 const autoFix = args.includes('--auto-fix');   // #11: batch-apply HIGH/CRITICAL fixes
 const noServer = args.includes('--no-server');  // #11: skip local fix server (CI)
+const reportOnly = args.includes('--report-only'); // rebuild report from cached analysis data
 const FIX_PORT = 3742;                          // port for the local fix server
 const factionsArg = args.find(a => a.startsWith('--factions='));
 const gamesArg = args.find(a => a.startsWith('--games='));
 const focusArg = args.find(a => a.startsWith('--focus='));
 
 if (quickMode) {
-  cfg.balance.factionFilter = ['warriors', 'summoners', 'brutes', 'spirits', 'infernal', 'weavers', 'merchants', 'plagued', 'chronomancers', 'psionics', 'umbral', 'pandemonium'];
-  cfg.balance.gamesPerMatchup = 2;
-  cfg.balance.parallelGames = 3;
-  cfg.online = { ...(cfg.online || {}), latencyProfiles: ['ideal'], factionPairs: [['warriors', 'brutes']] };
+  // Quick mode: ALL 24 factions but fewer games per matchup for a fast sanity check
+  cfg.balance.factionFilter = null; // all factions
+  cfg.balance.gamesPerMatchup = 1;
+  cfg.balance.parallelGames = 4;
+  cfg.balance.mirrorMatchups = false; // halve matchup count (A-vs-B only, no B-vs-A)
+  cfg.online = { ...(cfg.online || {}), latencyProfiles: ['ideal'], factionPairs: [['warriors', 'brutes'], ['psionics', 'umbral']] };
 }
 if (factionsArg) cfg.balance.factionFilter = factionsArg.replace('--factions=', '').split(',').map(s => s.trim());
 if (gamesArg) cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=', '')) || cfg.balance.gamesPerMatchup;
@@ -94,6 +99,23 @@ async function main() {
   log('');
 
   const gamePath = path.resolve(cfg.gamePath);
+  const analysisCachePath = path.resolve('./qa-analysis-cache.json');
+
+  // ── --report-only: rebuild report from cached data (no API calls) ─────────
+  if (reportOnly) {
+    if (!fs.existsSync(analysisCachePath)) {
+      log('  ❌  No analysis cache found — run a full analysis first');
+      process.exit(1);
+    }
+    log('  ♻️  Report-only mode: rebuilding from cached analysis data...');
+    const cached = JSON.parse(fs.readFileSync(analysisCachePath, 'utf8'));
+    const html = buildReport(cached);
+    const reportPath = path.resolve(cfg.output.reportPath || './qa-report.html');
+    fs.writeFileSync(reportPath, html);
+    log(`  ✅ Report rebuilt → ${reportPath}`);
+    return;
+  }
+
   if (!analyzeOnly && !fs.existsSync(gamePath)) {
     log(`  ❌  Game file not found: ${gamePath}`);
     log(`      Set gamePath in config.js`);
@@ -419,6 +441,26 @@ async function main() {
   log('');
 
   // ════════════════════════════════════════════════════════════════════════════
+  // PHASE 4.8: VISION UI ANALYSIS (Claude analyses each screenshot)
+  // ════════════════════════════════════════════════════════════════════════════
+  let visionAnalysis = null;
+  const ssCount = (uiAuditResult.screenshots || []).length;
+  if (ssCount > 0 && hasApiKey && cfg.run?.vision !== false) {
+    log('  ── Phase 4.8: Vision UI analysis ──────────────────────────────');
+    log(`  👁️  Sending ${ssCount} screenshots to Claude for visual UX review...`);
+    try {
+      visionAnalysis = await analyzeScreenshotsWithVision(uiAuditResult.screenshots, cfg);
+      const s = visionAnalysis.summary;
+      log(`  ✅ Vision analysis: ${s.screensAnalyzed} screens · ${s.totalIssues} issues (${s.critical} critical, ${s.high} high)`);
+    } catch (err) {
+      log(`  ⚠️  Vision analysis failed: ${err.message}`);
+    }
+  } else if (ssCount === 0) {
+    log('  ℹ️  No screenshots — vision analysis skipped');
+  }
+  log('');
+
+  // ════════════════════════════════════════════════════════════════════════════
   // PHASE 6: BUILD REPORT
   // ════════════════════════════════════════════════════════════════════════════
   log('  ── Phase 5: Building report ───────────────────────────────────');
@@ -439,7 +481,17 @@ async function main() {
     log(`  ⚠️  History save failed: ${err.message}`);
   }
 
-  const html = buildReport({ balanceData: rawData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta: { startTime, endTime: Date.now() } });
+  const reportData = { balanceData: rawData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, visionAnalysis, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta: { startTime, endTime: Date.now() } };
+
+  // Cache analysis data so --report-only can rebuild without API calls
+  try {
+    fs.writeFileSync(analysisCachePath, JSON.stringify(reportData, null, 2));
+    log('  💾 Analysis cache saved → qa-analysis-cache.json');
+  } catch (err) {
+    log(`  ⚠️  Cache save failed: ${err.message}`);
+  }
+
+  const html = buildReport(reportData);
   const reportPath = path.resolve(cfg.output.reportPath || './qa-report.html');
   fs.writeFileSync(reportPath, html);
   log(`  ✅ Report saved → ${reportPath}`);
@@ -669,6 +721,37 @@ function _startFixServer(diagnosedBugs, cfg, port) {
         console.log(`  🔧 Generating fix for bug ${bugIndex}: ${bug.type}`);
         try {
           const fixResult = await generateFix(bug, cfg.gamePath, cfg);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(fixResult));
+          if (fixResult.ok) {
+            console.log(`     ✅ Fix ready (${fixResult.confidence}, ${fixResult.linesChanged} lines)`);
+          } else {
+            console.log(`     ⚠️  No fix: ${fixResult.summary}`);
+          }
+        } catch (err) {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: false, summary: err.message }));
+        }
+      });
+      return;
+    }
+
+    // ── POST /fix-generic  { type, severity, message, suggestion, elementHint, searchHints } ──
+    if (req.method === 'POST' && req.url === '/fix-generic') {
+      let body = '';
+      req.on('data', c => body += c);
+      req.on('end', async () => {
+        let issue;
+        try { issue = JSON.parse(body); } catch (_) { issue = null; }
+        if (!issue || !issue.message) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ ok: false, summary: 'Invalid issue data' }));
+          return;
+        }
+
+        console.log(`  🔧 Generating generic fix: ${(issue.type || 'issue').slice(0, 40)} — ${(issue.message || '').slice(0, 60)}`);
+        try {
+          const fixResult = await generateGenericFix(issue, cfg.gamePath, cfg);
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify(fixResult));
           if (fixResult.ok) {

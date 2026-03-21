@@ -42,7 +42,7 @@ const FACTION_ICONS = {
   illusionists: '🪄', pandemonium: '🌀', psionics: '🧠', umbral: '🌑',
 };
 
-function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta }) {
+function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, uiAuditResult, visionAnalysis, onlineReport, anomalyReport, featureAdvice, runDiff, cfg, runMeta }) {
   const { results, factions, qa } = balanceData;
   const uiIssues = uiAuditResult?.issues || [];
   const screenshots = uiAuditResult?.screenshots || [];
@@ -201,7 +201,7 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   const featureMegaPrompt = featuresWithPrompts.length > 0
     ? featuresWithPrompts.map((s, i) => [
       `${'─'.repeat(60)}`,
-      `FEATURE ${i + 1} of ${featuresWithPrompts.length} | ${(s.impact || '').toUpperCase()} IMPACT | effort: ${s.effort}`,
+      `FEATURE ${i + 1} of ${featuresWithPrompts.length} | ${(s.excitement || 'cool').toUpperCase()} | effort: ${s.effort}`,
       `Category: ${s.category} | ${s.title}`,
       `${'─'.repeat(60)}`,
       s.pasteToClaudePrompt,
@@ -425,10 +425,12 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     for (const a of anomalies) {
       const sevCls = a.severity === 'HIGH' ? 'sev-high' : a.severity === 'MEDIUM' ? 'sev-medium' : 'sev-low';
       const promptId = `anom-${Math.random().toString(36).slice(2)}`;
+      const aFixData = JSON.stringify({ type: 'anomaly', severity: a.severity || 'MEDIUM', message: a.detail || a.title || '', suggestion: a.suggestion || '', elementHint: '', searchHints: (a.title || '').split(/\s+/).filter(w => w.length > 4).slice(0, 3) }).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
       anomalyHtml += `<div class="bug-card ${sevCls}" style="margin-bottom:10px">
         <div class="bug-header" style="cursor:default">
           <span class="bug-sev-badge ${sevCls}">${escHtml(a.severity)}</span>
           <span class="bug-type-label">${escHtml(a.title)}</span>
+          <button class="fix-btn" style="margin-left:auto;margin-top:0;padding:3px 10px;font-size:11px" onclick="applyGenericFix(this,JSON.parse(this.dataset.issue))" data-issue="${aFixData}">🔧 Fix</button>
         </div>
         <div class="bug-message" style="padding:10px 14px">${escHtml(a.detail)}</div>
         <div class="bug-body" style="display:block;padding:12px">
@@ -446,36 +448,56 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   // ── Feature advisor HTML ───────────────────────────────────────────────────
   let featureHtml = '';
   const suggestions = featureAdvice?.suggestions || [];
+  const featAllPrompt = featureAdvice?.megaPrompt;
   if (suggestions.length === 0) {
     featureHtml = `<div class="empty-state">Feature suggestions unavailable${featureAdvice ? '' : ' (run with balance data to enable)'}</div>`;
   } else {
     const effortColors = { quick: 'var(--green)', medium: 'var(--gold)', large: 'var(--orange)' };
-    const impactColors = { high: '#ff8080', medium: 'var(--gold)', low: 'var(--dim)' };
-    const catIcons = { gameplay: '🎮', ux: '✨', balance: '⚖️', online: '🌐', performance: '📈', polish: '💎' };
+    const exciteIcons = { 'game-changer': '🔥🔥🔥', awesome: '🔥🔥', cool: '🔥' };
+    const exciteColors = { 'game-changer': '#ff4444', awesome: 'var(--orange)', cool: 'var(--gold)' };
+    const catIcons = { mechanic: '⚙️', mode: '🎮', ui: '✨', social: '👥', meta: '🏆', economy: '💰', visual: '🎨' };
 
-    // Summary bar
-    const byImpact = { high: suggestions.filter(s => s.impact === 'high').length, medium: suggestions.filter(s => s.impact === 'medium').length, low: suggestions.filter(s => s.impact === 'low').length };
-    const byEffort = { quick: suggestions.filter(s => s.effort === 'quick').length, medium: suggestions.filter(s => s.effort === 'medium').length, large: suggestions.filter(s => s.effort === 'large').length };
+    const gameChangers = suggestions.filter(s => s.excitement === 'game-changer').length;
+    const quickWins = suggestions.filter(s => s.effort === 'quick').length;
     featureHtml += `<div class="stats-grid" style="margin-bottom:20px">
-      <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${suggestions.length}</div><div class="stat-lbl">Total suggestions</div></div>
-      <div class="stat-card stat-bad"><div class="stat-num" style="color:#ff8080">${byImpact.high}</div><div class="stat-lbl">High impact</div></div>
-      <div class="stat-card stat-ok"><div class="stat-num" style="color:var(--green)">${byEffort.quick}</div><div class="stat-lbl">Quick wins</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--gold)">${suggestions.length}</div><div class="stat-lbl">Feature Ideas</div></div>
+      <div class="stat-card" style="border-color:rgba(255,68,68,.4)"><div class="stat-num" style="color:#ff4444">${gameChangers}</div><div class="stat-lbl">Game-Changers</div></div>
+      <div class="stat-card stat-ok"><div class="stat-num" style="color:var(--green)">${quickWins}</div><div class="stat-lbl">Quick Wins</div></div>
     </div>`;
+
+    // Mega prompt: implement ALL features
+    if (featAllPrompt) {
+      const megaId = `feat-mega-${Math.random().toString(36).slice(2)}`;
+      featureHtml += `<div class="prompt-mega-box" style="margin-bottom:20px">
+        <div class="prompt-mega-header">
+          <div>
+            <strong style="color:var(--gold);font-size:14px">📋 Implement ALL Features</strong>
+            <div style="font-size:12px;color:var(--dim);margin-top:4px">Combined prompt for all ${suggestions.length} features — paste to Claude to implement them one by one</div>
+          </div>
+          <button class="copy-btn copy-big" onclick="copyById('${megaId}',this)">Copy All</button>
+        </div>
+        <pre class="prompt-text" id="${megaId}" style="max-height:180px">${escHtml(featAllPrompt)}</pre>
+      </div>`;
+    }
 
     for (const s of suggestions) {
       const promptId = `feat-${Math.random().toString(36).slice(2)}`;
-      featureHtml += `<div class="section" style="margin-bottom:12px;padding:16px;border-left:3px solid ${impactColors[s.impact] || 'var(--border)'}">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+      const excite = s.excitement || 'cool';
+      const borderColor = exciteColors[excite] || 'var(--border)';
+      featureHtml += `<div class="section" style="margin-bottom:12px;padding:16px;border-left:4px solid ${borderColor}">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
           <span style="font-size:18px">${catIcons[s.category] || '🔧'}</span>
-          <strong style="font-size:14px">#${s.priority} ${escHtml(s.title)}</strong>
-          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.06);color:${effortColors[s.effort] || 'var(--dim)'}">effort: ${s.effort}</span>
-          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.06);color:${impactColors[s.impact] || 'var(--dim)'}">impact: ${s.impact}</span>
+          <strong style="font-size:15px">#${s.priority} ${escHtml(s.title)}</strong>
+          <span style="font-size:12px;letter-spacing:1px" title="${excite}">${exciteIcons[excite] || '🔥'}</span>
+          <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.06);color:${effortColors[s.effort] || 'var(--dim)'}">${s.effort}</span>
           <span style="font-size:11px;color:var(--dim);margin-left:auto">${escHtml(s.category)}</span>
         </div>
-        <div style="font-size:13px;color:var(--dim);margin-bottom:8px;line-height:1.6">${escHtml(s.rationale)}</div>
-        ${s.implementation ? `<div style="font-size:13px;line-height:1.6;margin-bottom:8px">${escHtml(s.implementation)}</div>` : ''}
+        <div style="font-size:14px;color:var(--text);margin-bottom:10px;line-height:1.7;font-weight:500">${escHtml(s.pitch)}</div>
+        ${s.howItWorks ? `<details style="margin-bottom:8px"><summary style="cursor:pointer;color:var(--gold);font-size:12px;font-weight:600">How it works</summary><div style="font-size:13px;line-height:1.6;margin-top:6px;padding:8px;background:var(--bg);border-radius:6px">${escHtml(s.howItWorks)}</div></details>` : ''}
+        ${s.factionSynergies ? `<details style="margin-bottom:8px"><summary style="cursor:pointer;color:var(--blue);font-size:12px;font-weight:600">Faction synergies</summary><div style="font-size:13px;line-height:1.6;margin-top:6px;padding:8px;background:var(--bg);border-radius:6px">${escHtml(s.factionSynergies)}</div></details>` : ''}
+        ${s.implementation ? `<details style="margin-bottom:8px"><summary style="cursor:pointer;color:var(--dim);font-size:12px;font-weight:600">Implementation details</summary><div style="font-size:12px;line-height:1.6;margin-top:6px;padding:8px;background:var(--bg);border-radius:6px;font-family:monospace">${escHtml(s.implementation)}</div></details>` : ''}
         ${s.pasteToClaudePrompt ? `<div class="prompt-box">
-          <div class="prompt-label">📋 Paste to Claude</div>
+          <div class="prompt-label">📋 Paste to Claude — implement this feature</div>
           <pre class="prompt-text" id="${promptId}">${escHtml(s.pasteToClaudePrompt)}</pre>
           <button class="copy-btn" onclick="copyById('${promptId}',this)">Copy</button>
         </div>` : ''}
@@ -492,20 +514,98 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     const renderGroup = (issues, label, cls) => {
       if (issues.length === 0) return '';
       return `<h3 class="ui-group-title ${cls}">${label} <span class="badge">${issues.length}</span></h3>` +
-        issues.map(i => `<div class="ui-issue-row ${cls}">
+        issues.map(i => {
+          const fixData = JSON.stringify({ type: i.type, severity: i.severity, message: i.message || '', suggestion: '', elementHint: i.element || '', searchHints: [i.element, i.screen].filter(Boolean) }).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+          return `<div class="ui-issue-row ${cls}">
           <div class="ui-issue-meta">
             <span class="ui-type-badge">${escHtml(i.type)}</span>
             ${i.screen ? `<span class="ui-screen-badge">${escHtml(i.screen)}</span>` : ''}
             ${i.viewportSize ? `<span class="ui-vp-badge">${escHtml(i.viewportSize)}</span>` : ''}
+            <button class="fix-btn" style="margin-left:auto;margin-top:0;padding:3px 10px;font-size:11px" onclick="applyGenericFix(this,JSON.parse(this.dataset.issue))" data-issue="${fixData}">🔧 Fix</button>
           </div>
           <div class="ui-issue-msg">${escHtml(i.message || '')}</div>
           ${i.element ? `<code class="ui-el-code">${escHtml(i.element)}</code>` : ''}
           ${i.size ? `<code class="ui-el-code">${i.size.width}×${i.size.height}px</code>` : ''}
-        </div>`).join('');
+        </div>`;
+        }).join('');
     };
     uiHtml = renderGroup(uiErrors, '🔴 Errors', 'ui-error')
       + renderGroup(uiWarnings, '🟡 Warnings', 'ui-warning')
       + renderGroup(uiInfos, 'ℹ️ Info', 'ui-info');
+  }
+
+  // ── Vision Analysis ────────────────────────────────────────────────────────
+  let visionHtml = '';
+  const visionAnalyses = visionAnalysis?.analyses || [];
+  const visionSummary = visionAnalysis?.summary;
+  if (visionAnalyses.length > 0 && visionSummary) {
+    // Summary stats bar
+    visionHtml += `<div class="vision-summary">
+      <div class="vision-stat"><div class="vision-stat-num" style="color:var(--gold)">${visionSummary.screensAnalyzed}</div><div class="vision-stat-lbl">Screens</div></div>
+      <div class="vision-stat"><div class="vision-stat-num">${visionSummary.totalIssues}</div><div class="vision-stat-lbl">Issues</div></div>
+      ${visionSummary.critical > 0 ? `<div class="vision-stat" style="border-color:rgba(231,76,60,.4)"><div class="vision-stat-num" style="color:var(--red)">${visionSummary.critical}</div><div class="vision-stat-lbl">Critical</div></div>` : ''}
+      ${visionSummary.high > 0 ? `<div class="vision-stat" style="border-color:rgba(230,126,34,.4)"><div class="vision-stat-num" style="color:var(--orange)">${visionSummary.high}</div><div class="vision-stat-lbl">High</div></div>` : ''}
+      ${visionSummary.medium > 0 ? `<div class="vision-stat"><div class="vision-stat-num" style="color:#f1c40f">${visionSummary.medium}</div><div class="vision-stat-lbl">Medium</div></div>` : ''}
+      ${visionSummary.low > 0 ? `<div class="vision-stat"><div class="vision-stat-num" style="color:var(--blue)">${visionSummary.low}</div><div class="vision-stat-lbl">Low</div></div>` : ''}
+    </div>`;
+    // Build "Copy All" text for the entire vision analysis
+    const allVisionLines = [];
+    for (const a of visionAnalyses) {
+      if (a.issues.length === 0) continue;
+      allVisionLines.push(`── ${a.screen} (${a.viewport} ${a.width}×${a.height}) ──`);
+      for (const issue of a.issues) {
+        allVisionLines.push(`[${(issue.severity || 'LOW').toUpperCase()}] ${issue.category || ''} — ${issue.location || ''}`);
+        allVisionLines.push(`  Issue: ${issue.issue || ''}`);
+        if (issue.why) allVisionLines.push(`  Why: ${issue.why}`);
+        if (issue.suggestion) allVisionLines.push(`  Fix: ${issue.suggestion}`);
+        if (issue.element_hint) allVisionLines.push(`  Element: ${issue.element_hint}`);
+        allVisionLines.push('');
+      }
+    }
+    if (allVisionLines.length > 0) {
+      const copyAllId = `vision-all-${Math.random().toString(36).slice(2)}`;
+      visionHtml += `<div style="display:flex;gap:8px;margin-bottom:16px">
+        <pre class="prompt-text" id="${copyAllId}" style="display:none">${escHtml(allVisionLines.join('\n'))}</pre>
+        <button class="copy-btn" onclick="copyById('${copyAllId}',this)" style="font-size:12px">📋 Copy All Issues</button>
+      </div>`;
+    }
+
+    // Per-screen issue cards
+    for (const a of visionAnalyses) {
+      if (a.issues.length === 0 && !a.error) continue;
+      visionHtml += `<div class="vision-screen-group">
+        <div class="vision-screen-header">
+          <span class="vision-screen-name">${escHtml(a.screen)}</span>
+          <span class="vision-vp-tag">${escHtml(a.viewport)} (${a.width}×${a.height})</span>
+          ${a.error ? `<span style="color:var(--red);font-size:12px">⚠ ${escHtml(a.error)}</span>` : ''}
+        </div>`;
+      for (const issue of a.issues) {
+        const sev = (issue.severity || 'LOW').toUpperCase();
+        const cls = 'vis-' + sev.toLowerCase();
+        const vFixData = JSON.stringify({ type: 'vision_' + (issue.category || 'ui'), severity: sev, message: issue.issue || '', suggestion: issue.suggestion || '', elementHint: issue.element_hint || '', searchHints: [issue.element_hint, a.screen].filter(Boolean) }).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+        const copyId = `vis-${Math.random().toString(36).slice(2)}`;
+        const copyText = `[${sev}] ${issue.category || ''} — ${issue.location || ''}\\nIssue: ${issue.issue || ''}${issue.why ? '\\nWhy: ' + issue.why : ''}${issue.suggestion ? '\\nFix: ' + issue.suggestion : ''}${issue.element_hint ? '\\nElement: ' + issue.element_hint : ''}`;
+        visionHtml += `<div class="vision-card ${cls}">
+          <div class="vision-card-header">
+            <span class="vision-sev">${escHtml(sev)}</span>
+            <span class="vision-cat">${escHtml(issue.category || '')}</span>
+            ${issue.location ? `<span class="vision-loc">📍 ${escHtml(issue.location)}</span>` : ''}
+            <button class="copy-btn" style="margin-left:auto;margin-top:0;padding:3px 8px;font-size:10px" onclick="copyById('${copyId}',this)">📋</button>
+            <button class="fix-btn" style="margin-top:0;padding:3px 10px;font-size:11px" onclick="applyGenericFix(this,JSON.parse(this.dataset.issue))" data-issue="${vFixData}">🔧 Fix</button>
+          </div>
+          <pre id="${copyId}" style="display:none">${escHtml(copyText.replace(/\\n/g, '\n'))}</pre>
+          <div class="vision-issue">${escHtml(issue.issue || '')}</div>
+          ${issue.why ? `<div class="vision-why">${escHtml(issue.why)}</div>` : ''}
+          ${issue.suggestion ? `<div class="vision-suggestion">💡 ${escHtml(issue.suggestion)}</div>` : ''}
+          ${issue.element_hint ? `<div class="vision-hint"><code>${escHtml(issue.element_hint)}</code></div>` : ''}
+        </div>`;
+      }
+      visionHtml += `</div>`;
+    }
+  } else if (visionAnalysis?.error) {
+    visionHtml = `<div class="empty-state" style="color:var(--orange)">⚠ ${escHtml(visionAnalysis.error)}</div>`;
+  } else {
+    visionHtml = `<div class="empty-state">No vision analysis (requires API key + screenshots)</div>`;
   }
 
   // ── Mechanics ──────────────────────────────────────────────────────────────
@@ -733,7 +833,9 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
 
   // ── Nav badge helper ───────────────────────────────────────────────────────
   const bugBadge = totalBugs > 0 ? ` <span class="nav-badge ${criticalBugs.length ? 'badge-red' : 'badge-orange'}">${totalBugs}</span>` : ' <span class="nav-badge badge-green">✓</span>';
-  const uiBadge = uiErrors.length > 0 ? ` <span class="nav-badge badge-red">${uiIssues.length}</span>` : uiIssues.length > 0 ? ` <span class="nav-badge badge-orange">${uiIssues.length}</span>` : ' <span class="nav-badge badge-green">✓</span>';
+  const visionCritical = visionSummary?.critical || 0;
+  const totalUiCount = uiIssues.length + (visionSummary?.totalIssues || 0);
+  const uiBadge = (uiErrors.length > 0 || visionCritical > 0) ? ` <span class="nav-badge badge-red">${totalUiCount}</span>` : totalUiCount > 0 ? ` <span class="nav-badge badge-orange">${totalUiCount}</span>` : ' <span class="nav-badge badge-green">✓</span>';
   const promptBadge = allPrompts.length > 0 ? ` <span class="nav-badge badge-gold">${allPrompts.length}</span>` : '';
   const onlineGrade = onlineReport?.overallGrade;
   const onlineBadge = onlineGrade ? ` <span class="nav-badge ${onlineGrade === 'A' ? 'badge-green' : onlineGrade === 'B' ? 'badge-gold' : 'badge-red'}">${onlineGrade}</span>` : '';
@@ -940,6 +1042,34 @@ details[open] .snip-summary::before{transform:rotate(90deg);}
 .ui-screen-badge,.ui-vp-badge{background:var(--surface2);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--dim);}
 .ui-issue-msg{font-size:13px;line-height:1.5;}
 .ui-el-code{display:inline-block;margin-top:4px;}
+/* ── Vision Analysis ── */
+.vision-summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.vision-stat{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;text-align:center;min-width:80px;}
+.vision-stat-num{font-size:1.3rem;font-weight:800;line-height:1.2;}
+.vision-stat-lbl{font-size:10px;color:var(--dim);margin-top:2px;}
+.vision-screen-group{margin-bottom:20px;}
+.vision-screen-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.vision-screen-name{font-size:.9rem;font-weight:700;color:var(--gold);}
+.vision-vp-tag{font-size:11px;color:var(--dim);background:var(--surface2);padding:2px 8px;border-radius:4px;}
+.vision-card{border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;background:var(--surface2);}
+.vision-card.vis-critical{border-left:4px solid var(--red);}
+.vision-card.vis-high{border-left:4px solid var(--orange);}
+.vision-card.vis-medium{border-left:4px solid #f1c40f;}
+.vision-card.vis-low{border-left:4px solid var(--blue);}
+.vision-card-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.vision-sev{font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;letter-spacing:.5px;}
+.vis-critical .vision-sev{background:rgba(231,76,60,.2);color:#ff8080;}
+.vis-high .vision-sev{background:rgba(230,126,34,.2);color:#ffb347;}
+.vis-medium .vision-sev{background:rgba(241,196,15,.15);color:#f1c40f;}
+.vis-low .vision-sev{background:rgba(52,152,219,.15);color:#74b9ff;}
+.vision-cat{font-size:11px;color:var(--dim);background:var(--bg);padding:1px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px;font-weight:600;}
+.vision-loc{font-size:11px;color:var(--dim);margin-left:auto;}
+.vision-issue{font-size:13px;line-height:1.5;margin-bottom:6px;}
+.vision-why{font-size:12px;color:var(--dim);line-height:1.5;margin-bottom:6px;padding-left:10px;border-left:2px solid var(--border);}
+.vision-suggestion{font-size:12px;color:var(--green);line-height:1.5;padding:6px 10px;background:rgba(46,204,113,.05);border:1px solid rgba(46,204,113,.15);border-radius:4px;}
+.vision-hint{margin-top:6px;}
+.vision-hint code{font-size:11px;}
+.vision-empty{text-align:center;padding:16px;color:var(--green);font-weight:600;}
 /* ── Mechanics ── */
 .mech-row{display:grid;grid-template-columns:200px 1fr 50px 40px auto;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
 .mech-row.mech-flagged .mech-name{color:var(--orange);}
@@ -1092,6 +1222,7 @@ details[open] .snip-summary::before{transform:rotate(90deg);}
       <div class="stat-card ${onlineGrade && onlineGrade !== 'A' ? 'stat-warn' : 'stat-ok'}"><div class="stat-num" style="color:${onlineGrade ? ({ A: 'var(--green)', B: '#f1c40f', C: 'var(--orange)', D: 'var(--red)', F: 'var(--red)' }[onlineGrade] || 'var(--dim)') : 'var(--dim)'}">${onlineGrade || '—'}</div><div class="stat-lbl">Online Grade</div></div>
       <div class="stat-card ${anomalyCount > 0 ? (anomalyReport?.hasCritical ? 'stat-bad' : 'stat-warn') : 'stat-ok'}"><div class="stat-num">${anomalyCount}</div><div class="stat-lbl">Anomalies<small>behavioral</small></div></div>
       <div class="stat-card"><div class="stat-num">${featureCount}</div><div class="stat-lbl">Feature Ideas<small>AI-suggested</small></div></div>
+      <div class="stat-card ${visionCritical > 0 ? 'stat-bad' : (visionSummary?.totalIssues || 0) > 0 ? 'stat-warn' : 'stat-ok'}"><div class="stat-num">${visionSummary?.totalIssues || '—'}</div><div class="stat-lbl">Vision Issues<small>AI UI review</small></div></div>
     </div>
   </div>
   ${factions.length > 0 ? `<div class="section"><h2>Quick Faction Standings</h2>${barsHtml}</div>` : ''}
@@ -1153,6 +1284,11 @@ ${deltaTabHtml}
   <div class="section">
     <h2>UI Issues (${uiIssues.length})</h2>
     ${uiHtml}
+  </div>
+  <div class="section">
+    <h2>👁️ Vision Analysis — AI UI/UX Review${visionSummary ? ` (${visionSummary.totalIssues} issues)` : ''}</h2>
+    <p style="color:var(--dim);font-size:12px;margin-bottom:14px">Claude analyses each screenshot for layout problems, readability issues, usability concerns, and design suggestions — especially on smaller screens.</p>
+    ${visionHtml}
   </div>
 </div>
 
@@ -1471,6 +1607,45 @@ async function applyFixForBug(bugIdx, btn) {
     btn.disabled = false;
     btn.classList.remove('loading');
     btn.textContent = '🔧 Apply Fix';
+    _showDiffModal({ ok: false, summary: 'Request failed: ' + err.message, diff: '', confidence: 'LOW' });
+  }
+}
+
+async function applyGenericFix(btn, issueData) {
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Generating…';
+
+  const alive = await _serverAlive();
+  if (!alive) {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '🔧 Fix';
+    _showDiffOffline();
+    return;
+  }
+
+  try {
+    const resp = await fetch(FIX_SERVER + '/fix-generic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(issueData),
+    });
+    const fixResult = await resp.json();
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '🔧 Fix';
+
+    if (!fixResult.ok) {
+      _showDiffModal({ ok: false, summary: fixResult.summary || 'No fix available', diff: '', confidence: 'LOW' });
+    } else {
+      _showDiffModal(fixResult);
+    }
+  } catch (err) {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '🔧 Fix';
     _showDiffModal({ ok: false, summary: 'Request failed: ' + err.message, diff: '', confidence: 'LOW' });
   }
 }
