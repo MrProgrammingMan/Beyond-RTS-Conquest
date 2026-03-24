@@ -409,3 +409,8 @@ analyzer/.env.txt
 analyzer/qa-data.json
 analyzer/qa-history.json
 analyzer/qa-ui-cache.json
+Rider/.idea/encodings.xml
+Rider/.idea/indexLayout.xml
+/Rider
+analyzer/qa-analysis-cache.json
+analyzer/qa-data.json

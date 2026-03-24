@@ -33,6 +33,32 @@ async function generateFeatureAdvice(rawData, aggStats, anomalyReport, onlineRep
   const bugCount = diagnosedBugs.length;
   const anomalyCount = (anomalyReport?.anomalies || []).length;
 
+  // ── Existing features list (prevents duplicate suggestions) ────────────────
+  const existingFeatures = `
+FEATURES THAT ALREADY EXIST (DO NOT SUGGEST THESE OR VARIATIONS OF THESE):
+- Draft Mode: full ban/pick phase with P1 bans → P2 bans → P1 picks → P2 picks, greyed-out banned factions
+- Random Events system: Blood Moon (halved body costs), Arcane Surge (40% soul discount), Time Warp (+80% speed), Dark Eclipse (doubled desperation income) — rolls every 40-70s with visual overlays
+- Faction Mastery system: full skill tree per faction with XP, mastery perks, mastery flags that modify gameplay (fortifyDmgReduce, skyBountyAmt, chainRate, etc.)
+- Upgrade Tree: 7-node skill tree per faction purchased during gameplay with souls/bodies
+- Buff system: War Cry, Iron Wall, Blitz, Soul Tide, Conquest Shield — unlocked at 60s, cooldown-based
+- Spy system: deploy spies to reveal enemy info
+- Rogue Events: Treasure Courier and Arena Champion that spawn mid-map
+- Mid-zone control: capture the center for income bonuses
+- Desperation income: losing player gets accelerating passive income
+- Kill streaks: every 10 kills triggers a Wild Card (free surprise unit from another faction)
+- Kill feed: scrolling combat log with faction icons
+- Veteran system: units with 5+ kills or 3 retreats become veterans with visual star
+- Worker scaling: worker body cost increases with count
+- Chat/taunt system: faction-specific voice lines and taunts
+- Online multiplayer: WebRTC-based P2P with lobby system
+- AI personalities: 16 different AI playstyles (aggressive, defensive, swarm, economist, etc.)
+- Post-game stats: detailed breakdown with damage dealt, souls earned, unit efficiency
+- Tutorial mode: guided introduction for new players
+- Faction select with lore, pros/cons, matchup tips, and difficulty ratings
+- Sound effects and music system
+- Base castle themes per faction with unique visual styles
+- Damage escalation: global damage multiplier that increases over time to prevent stalemates`;
+
   // ── Core prompt ─────────────────────────────────────────────────────────────
   const corePrompt = `You are a visionary game designer brainstorming NEW FEATURES for "Beyond RTS Conquest" — a browser-based 2D side-scroller RTS with 24 factions.
 
@@ -47,6 +73,7 @@ MECHANICS IN USE:
 ${mechSummary || '  No mechanic data'}
 
 GAME HEALTH: ${bugCount} bugs found, ${anomalyCount} anomalies detected
+${existingFeatures}
 
 ══ YOUR MISSION ══
 
@@ -64,8 +91,9 @@ WHAT I DON'T WANT:
 - Bug fixes or patches to existing issues
 - Minor balance tweaks (nerfs/buffs)
 - Small QoL improvements that are obvious
-- Features that already exist (check the game context carefully)
+- Features that already exist — CHECK THE LIST ABOVE. Draft mode, random events/weather, mastery/prestige, buffs, spies, rogue events, kill streaks, veteran system, etc. ALL EXIST ALREADY
 - Generic RTS suggestions — be specific to THIS game and its unique identity
+- Variations of existing features disguised as new ones (e.g. "weather system" = random events, "progression system" = mastery tree)
 
 For each feature, think about:
 - How COOL would this feel to discover as a player?
@@ -105,10 +133,10 @@ Rules:
 - Think like a player who loves this game and wants it to be INCREDIBLE`;
 
   try {
-    const fullPrompt = injectContext(corePrompt, gameContext, 'factions');
+    const fullPrompt = injectContext(corePrompt, gameContext, 'compact');
     const response = await client.messages.create({
-      model:      'claude-sonnet-4-6',
-      max_tokens: 6000,
+      model:      'claude-haiku-4-5-20251001',
+      max_tokens: 4000,
       messages:   [{ role: 'user', content: fullPrompt }],
     });
 
@@ -186,49 +214,57 @@ Let's begin with #1.`;
 }
 
 function _heuristicFallback(rawData, aggStats, qa) {
-  // Even without API, suggest creative ideas based on game state
+  // Fallback ideas when API fails.
+  // ╔═══════════════════════════════════════════════════════════════════╗
+  // ║ ALREADY EXISTS — DO NOT SUGGEST:                                 ║
+  // ║  Draft mode, random events/weather, mastery/prestige system,     ║
+  // ║  buffs (warcry/ironwall/blitz/soul tide/conquest shield),        ║
+  // ║  spies, rogue events, kill streaks, wild card, veteran system,   ║
+  // ║  chat/taunts, online multiplayer, AI personalities, post-game    ║
+  // ║  stats, tutorial, kill feed, desperation income, mid control,    ║
+  // ║  upgrade tree, worker scaling, damage escalation, sound/music,   ║
+  // ║  base castle themes, faction lore/matchup tips                   ║
+  // ╚═══════════════════════════════════════════════════════════════════╝
   const suggestions = [];
   const factionCount = rawData.factions?.length || 0;
 
-  if (factionCount >= 10) {
-    suggestions.push({
-      priority: 1, category: 'mode', title: 'Faction Draft Mode with Bans',
-      pitch: `With ${factionCount} factions, a draft system where each player bans 2-3 factions then picks from the remaining pool would add incredible strategic depth before the game even starts.`,
-      excitement: 'game-changer', effort: 'medium',
-      howItWorks: 'Pre-game phase: P1 bans, P2 bans, P1 picks, P2 picks. Banned factions greyed out with X overlay. Could have ranked draft and casual draft variants.',
-      factionSynergies: 'Creates meta around "must-ban" factions and pocket picks. Factions with hard counters become more valuable.',
-      implementation: 'Add draft state to G, new screen sc-draft, ban/pick phase logic, timer per pick.',
-      pasteToClaudePrompt: null,
-    });
-  }
+  suggestions.push({
+    priority: 1, category: 'mode', title: 'Tournament Bracket Mode',
+    pitch: `With ${factionCount} factions, run an automated single-elimination tournament — 8 or 16 AI factions fight bracket-style with a live bracket UI showing results as they unfold.`,
+    excitement: 'game-changer', effort: 'large',
+    howItWorks: 'Player selects 8 or 16 factions for a bracket. Games auto-run in sequence with a visual bracket that fills in winners. Optional: player controls one faction throughout. Final shows winner with fanfare.',
+    factionSynergies: 'All factions participate. Reveals true tier lists through elimination. Creates narratives — underdog runs, dominant sweeps.',
+    implementation: 'Add tournament state to G, bracket generation, auto-advance between rounds, bracket UI screen with match results.',
+    pasteToClaudePrompt: null,
+  });
 
   suggestions.push({
-    priority: 2, category: 'mechanic', title: 'Dynamic Weather System',
-    pitch: 'Random weather events (sandstorm, rain, fog of war) that affect gameplay differently per faction — Glacial thrives in storms, Infernal weakened by rain.',
+    priority: 2, category: 'mechanic', title: 'Faction Fusion — Dual Faction Hybrid',
+    pitch: 'Pick two factions and get a merged roster — 3 units from each plus a unique fusion passive. Creates hundreds of possible combinations from 24 factions.',
+    excitement: 'game-changer', effort: 'large',
+    howItWorks: 'In faction select, pick a primary and secondary faction. Primary contributes 3 units + its passive, secondary contributes 3 units. A fusion bonus is generated based on the pair (e.g., Infernal+Glacial = units leave fire/ice zones on death).',
+    factionSynergies: 'Every faction pair creates a unique playstyle. Infernal+Reavers: corpses burn. Merchants+Fortune: double economy RNG. Umbral+Illusionists: invisible decoys.',
+    implementation: 'Add fusion select UI after faction pick, roster merge logic in initGame(), fusion passive lookup table, adjusted balance for hybrid rosters.',
+    pasteToClaudePrompt: null,
+  });
+
+  suggestions.push({
+    priority: 3, category: 'mode', title: 'Survival / Horde Mode',
+    pitch: `Defend your base against infinite AI waves that escalate in difficulty. See how long you can last with your chosen faction — leaderboard tracks best survival times per faction.`,
     excitement: 'awesome', effort: 'medium',
-    howItWorks: 'Every 60-90s a weather event rolls. Each weather type applies global modifiers. Some factions get bonuses, others penalties. Visual overlay on canvas.',
-    factionSynergies: 'Glacial: ice storm bonus. Infernal: weakened in rain. Umbral: fog of war amplified. Tideborn: rain gives regen boost.',
-    implementation: 'Add G.weather state, updateWeather(dt) function, per-faction weather modifiers, canvas overlay rendering.',
+    howItWorks: 'Player picks a faction and faces auto-spawning enemy waves from random factions. Each wave is stronger (more units, higher tier). Between waves, earn bonus souls to upgrade. Tracks best time in localStorage.',
+    factionSynergies: 'Menders excel with retreat-heal sustain. Summoners snowball with shades. Glacial slows entire waves. Brutes fortify and tank. Each faction creates a different survival strategy.',
+    implementation: 'Add survival mode state to G, wave spawner with escalating difficulty, between-wave upgrade shop, localStorage leaderboard.',
     pasteToClaudePrompt: null,
   });
 
   suggestions.push({
-    priority: 3, category: 'visual', title: 'Kill Replay Highlights',
-    pitch: 'After game-over, show a "Top Plays" replay of the 3 most impactful moments — biggest multi-kill, closest base save, most souls earned in one fight.',
-    excitement: 'awesome', effort: 'large',
-    howItWorks: 'Record key events with timestamps during gameplay. Post-game, reconstruct and replay the top moments with slow-mo and zoom effects.',
-    factionSynergies: 'Pandemonium chaos multi-kills, Tideborn split plays, Chrysalis metamorphosis moments would all look incredible.',
-    implementation: 'Add event recording to G.replayLog, post-game replay renderer, highlight selection algorithm.',
-    pasteToClaudePrompt: null,
-  });
-
-  suggestions.push({
-    priority: 4, category: 'meta', title: 'Faction Mastery Prestige System',
-    pitch: 'After maxing mastery on a faction, prestige it for a unique visual effect (golden units, special death animations) that carries across all modes.',
+    priority: 4, category: 'mechanic', title: 'Unit Promotion & Naming',
+    pitch: 'Units that survive long enough or get 5+ kills earn a unique name and stat boost. Named units show a mini-portrait in the HUD and are tracked across the match.',
     excitement: 'cool', effort: 'medium',
-    howItWorks: 'Track total wins per faction in localStorage. At milestones (10, 25, 50, 100 wins), unlock cosmetic tiers. Prestige resets mastery but grants permanent visual flair.',
-    factionSynergies: 'All 24 factions get unique prestige visuals. Creates long-term progression and faction loyalty.',
-    implementation: 'Add localStorage mastery tracking, prestige state, golden unit rendering variants, mastery UI screen.',
+    howItWorks: 'When a unit hits kill thresholds (5, 10, 15), it earns a randomly generated name (e.g. "Grimjaw the Relentless"), visual crown/glow, and cumulative stat bonuses. A sidebar tracks your named heroes. Losing a named unit triggers a dramatic death animation and kill feed entry.',
+    factionSynergies: 'Wolfborn Dire Wolf with growOnKill stacks becomes legendary. Mender Veterans with multiple retreats earn names fastest. Chrysalis adults that survive metamorphosis feel heroic.',
+    implementation: 'Add name generation table, promotion check in updateUnits, named unit HUD panel, enhanced death handling for promoted units.',
     pasteToClaudePrompt: null,
   });
 

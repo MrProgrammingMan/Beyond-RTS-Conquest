@@ -53,9 +53,9 @@
       "element": "BUTTON#btn-rematch.btn",
       "bounds": {
         "left": 224,
-        "top": 854,
+        "top": 870,
         "right": 408,
-        "bottom": 899
+        "bottom": 915
       },
       "viewport": "laptop",
       "message": "Interactive element is outside viewport",
@@ -68,9 +68,9 @@
       "element": "BUTTON#btn-change-faction.btn",
       "bounds": {
         "left": 430,
-        "top": 854,
+        "top": 870,
         "right": 692,
-        "bottom": 899
+        "bottom": 915
       },
       "viewport": "laptop",
       "message": "Interactive element is outside viewport",
@@ -83,9 +83,9 @@
       "element": "BUTTON#btn-to-menu.btn",
       "bounds": {
         "left": 714,
-        "top": 854,
+        "top": 870,
         "right": 877,
-        "bottom": 899
+        "bottom": 915
       },
       "viewport": "laptop",
       "message": "Interactive element is outside viewport",
@@ -98,9 +98,9 @@
       "element": "BUTTON#btn-go-mastery.btn",
       "bounds": {
         "left": 899,
-        "top": 854,
+        "top": 870,
         "right": 1142,
-        "bottom": 899
+        "bottom": 915
       },
       "viewport": "laptop",
       "message": "Interactive element is outside viewport",
@@ -121,13 +121,73 @@
     {
       "type": "element_offscreen",
       "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-rematch.btn",
+      "bounds": {
+        "left": 156,
+        "top": 804,
+        "right": 297,
+        "bottom": 844
+      },
+      "viewport": "tablet-landscape",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-change-faction.btn",
+      "bounds": {
+        "left": 317,
+        "top": 804,
+        "right": 517,
+        "bottom": 844
+      },
+      "viewport": "tablet-landscape",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-to-menu.btn",
+      "bounds": {
+        "left": 537,
+        "top": 804,
+        "right": 662,
+        "bottom": 844
+      },
+      "viewport": "tablet-landscape",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
+      "screen": "sc-gameover",
+      "element": "BUTTON#btn-go-mastery.btn",
+      "bounds": {
+        "left": 682,
+        "top": 804,
+        "right": 868,
+        "bottom": 844
+      },
+      "viewport": "tablet-landscape",
+      "message": "Interactive element is outside viewport",
+      "viewportSize": "1024×768"
+    },
+    {
+      "type": "element_offscreen",
+      "severity": "error",
       "screen": "sc-menu",
       "element": "BUTTON#btn-controls.btn",
       "bounds": {
-        "left": 65,
-        "top": 894,
-        "right": 325,
-        "bottom": 939
+        "left": 29,
+        "top": 908,
+        "right": 361,
+        "bottom": 959
       },
       "viewport": "iphone-14",
       "message": "Interactive element is outside viewport",
@@ -137,10 +197,10 @@
       "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "elementA": "BUTTON#btn-mastery",
+      "elementA": "BUTTON#btn-tutorial",
       "elementB": "BUTTON",
-      "overlapPx": 979,
-      "message": "Two interactive elements overlap by 979px²",
+      "overlapPx": 1439,
+      "message": "Two interactive elements overlap by 1439px²",
       "viewport": "iphone-14",
       "viewportSize": "390×844"
     },
@@ -148,10 +208,10 @@
       "type": "element_overlap",
       "severity": "warning",
       "screen": "sc-menu",
-      "elementA": "BUTTON#btn-mastery",
+      "elementA": "BUTTON#btn-tutorial",
       "elementB": "BUTTON#btn-fullscreen-menu",
-      "overlapPx": 2596,
-      "message": "Two interactive elements overlap by 2596px²",
+      "overlapPx": 2906,
+      "message": "Two interactive elements overlap by 2906px²",
       "viewport": "iphone-14",
       "viewportSize": "390×844"
     },
@@ -173,10 +233,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-rematch.btn",
       "bounds": {
-        "left": -10,
-        "top": 1079,
-        "right": 93,
-        "bottom": 1154
+        "left": 15,
+        "top": 1289,
+        "right": 375,
+        "bottom": 1337
       },
       "viewport": "iphone-14",
       "message": "Interactive element is outside viewport",
@@ -188,10 +248,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-change-faction.btn",
       "bounds": {
-        "left": 103,
-        "top": 1079,
-        "right": 199,
-        "bottom": 1154
+        "left": 15,
+        "top": 1345,
+        "right": 375,
+        "bottom": 1393
       },
       "viewport": "iphone-14",
       "message": "Interactive element is outside viewport",
@@ -203,10 +263,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-to-menu.btn",
       "bounds": {
-        "left": 209,
-        "top": 1079,
-        "right": 288,
-        "bottom": 1154
+        "left": 15,
+        "top": 1401,
+        "right": 375,
+        "bottom": 1449
       },
       "viewport": "iphone-14",
       "message": "Interactive element is outside viewport",
@@ -218,10 +278,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-go-mastery.btn",
       "bounds": {
-        "left": 298,
-        "top": 1079,
-        "right": 400,
-        "bottom": 1154
+        "left": 15,
+        "top": 1457,
+        "right": 375,
+        "bottom": 1505
       },
       "viewport": "iphone-14",
       "message": "Interactive element is outside viewport",
@@ -233,10 +293,10 @@
       "screen": "sc-menu",
       "element": "BUTTON#btn-controls.btn",
       "bounds": {
-        "left": 76,
-        "top": 922,
-        "right": 336,
-        "bottom": 970
+        "left": 31,
+        "top": 926,
+        "right": 381,
+        "bottom": 978
       },
       "viewport": "android-xl",
       "message": "Interactive element is outside viewport",
@@ -248,8 +308,8 @@
       "screen": "sc-menu",
       "elementA": "BUTTON#btn-mastery",
       "elementB": "BUTTON",
-      "overlapPx": 1151,
-      "message": "Two interactive elements overlap by 1151px²",
+      "overlapPx": 2575,
+      "message": "Two interactive elements overlap by 2575px²",
       "viewport": "android-xl",
       "viewportSize": "412×915"
     },
@@ -259,8 +319,8 @@
       "screen": "sc-menu",
       "elementA": "BUTTON#btn-mastery",
       "elementB": "BUTTON#btn-fullscreen-menu",
-      "overlapPx": 3050,
-      "message": "Two interactive elements overlap by 3050px²",
+      "overlapPx": 5203,
+      "message": "Two interactive elements overlap by 5203px²",
       "viewport": "android-xl",
       "viewportSize": "412×915"
     },
@@ -282,10 +342,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-rematch.btn",
       "bounds": {
-        "left": 0,
-        "top": 1096,
-        "right": 103,
-        "bottom": 1173
+        "left": 26,
+        "top": 1300,
+        "right": 386,
+        "bottom": 1348
       },
       "viewport": "android-xl",
       "message": "Interactive element is outside viewport",
@@ -297,10 +357,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-change-faction.btn",
       "bounds": {
-        "left": 113,
-        "top": 1096,
-        "right": 212,
-        "bottom": 1173
+        "left": 26,
+        "top": 1356,
+        "right": 386,
+        "bottom": 1404
       },
       "viewport": "android-xl",
       "message": "Interactive element is outside viewport",
@@ -312,10 +372,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-to-menu.btn",
       "bounds": {
-        "left": 222,
-        "top": 1096,
-        "right": 300,
-        "bottom": 1173
+        "left": 26,
+        "top": 1412,
+        "right": 386,
+        "bottom": 1460
       },
       "viewport": "android-xl",
       "message": "Interactive element is outside viewport",
@@ -327,10 +387,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-go-mastery.btn",
       "bounds": {
-        "left": 310,
-        "top": 1096,
-        "right": 412,
-        "bottom": 1173
+        "left": 26,
+        "top": 1468,
+        "right": 386,
+        "bottom": 1516
       },
       "viewport": "android-xl",
       "message": "Interactive element is outside viewport",
@@ -342,8 +402,8 @@
       "screen": "sc-menu",
       "elementA": "BUTTON#btn-controls",
       "elementB": "BUTTON",
-      "overlapPx": 356,
-      "message": "Two interactive elements overlap by 356px²",
+      "overlapPx": 467,
+      "message": "Two interactive elements overlap by 467px²",
       "viewport": "iphone-se",
       "viewportSize": "375×667"
     },
@@ -376,10 +436,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-rematch.btn",
       "bounds": {
-        "left": -17,
-        "top": 1035,
-        "right": 85,
-        "bottom": 1106
+        "left": 8,
+        "top": 1188,
+        "right": 368,
+        "bottom": 1236
       },
       "viewport": "iphone-se",
       "message": "Interactive element is outside viewport",
@@ -391,10 +451,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-change-faction.btn",
       "bounds": {
-        "left": 95,
-        "top": 1035,
-        "right": 192,
-        "bottom": 1106
+        "left": 8,
+        "top": 1244,
+        "right": 368,
+        "bottom": 1292
       },
       "viewport": "iphone-se",
       "message": "Interactive element is outside viewport",
@@ -406,10 +466,10 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-to-menu.btn",
       "bounds": {
-        "left": 202,
-        "top": 1035,
-        "right": 280,
-        "bottom": 1106
+        "left": 8,
+        "top": 1300,
+        "right": 368,
+        "bottom": 1348
       },
       "viewport": "iphone-se",
       "message": "Interactive element is outside viewport",
@@ -421,36 +481,14 @@
       "screen": "sc-gameover",
       "element": "BUTTON#btn-go-mastery.btn",
       "bounds": {
-        "left": 290,
-        "top": 1035,
-        "right": 392,
-        "bottom": 1106
+        "left": 8,
+        "top": 1356,
+        "right": 368,
+        "bottom": 1404
       },
       "viewport": "iphone-se",
       "message": "Interactive element is outside viewport",
       "viewportSize": "375×667"
-    },
-    {
-      "type": "element_overlap",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "elementA": "BUTTON#btn-controls",
-      "elementB": "BUTTON",
-      "overlapPx": 1749,
-      "message": "Two interactive elements overlap by 1749px²",
-      "viewport": "ipad-portrait",
-      "viewportSize": "768×1024"
-    },
-    {
-      "type": "element_overlap",
-      "severity": "warning",
-      "screen": "sc-menu",
-      "elementA": "BUTTON#btn-controls",
-      "elementB": "BUTTON#btn-fullscreen-menu",
-      "overlapPx": 5127,
-      "message": "Two interactive elements overlap by 5127px²",
-      "viewport": "ipad-portrait",
-      "viewportSize": "768×1024"
     },
     {
       "type": "low_contrast",
@@ -520,7 +558,7 @@
       "viewport": "1080p",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-1080p.png",
       "width": 990,
-      "height": 991
+      "height": 1047
     },
     {
       "screen": "sc-menu",
@@ -687,7 +725,7 @@
       "screen": "sc-gameover-stats",
       "viewport": "iphone-14",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-iphone-14.png",
-      "width": 409,
+      "width": 390,
       "height": 844
     },
     {
@@ -799,7 +837,7 @@
       "screen": "sc-gameover-stats",
       "viewport": "iphone-se",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-iphone-se.png",
-      "width": 409,
+      "width": 375,
       "height": 667
     },
     {
@@ -856,7 +894,7 @@
       "viewport": "ipad-portrait",
       "path": "C:\\Users\\sande\\OneDrive\\Документы\\Beyond RTS Conquest\\analyzer\\screenshots\\sc-gameover-stats-ipad-portrait.png",
       "width": 635,
-      "height": 815
+      "height": 871
     }
   ]
 }

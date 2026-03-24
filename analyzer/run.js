@@ -16,6 +16,9 @@
  *   node run.js --auto-fix               apply all HIGH/CRITICAL fixes non-interactively after run
  *   node run.js --no-server              skip starting the local fix server (for CI)
  *   node run.js --report-only            rebuild report from cached analysis (no API calls)
+ *   node run.js --cheap                  use haiku for ALL API calls (much cheaper, slightly lower quality)
+ *   node run.js --skip-features          skip feature advisor (saves 1 API call)
+ *   node run.js --skip-vision            skip vision UI analysis (saves 1-3 API calls with images)
  */
 
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
@@ -52,6 +55,9 @@ const resumeMode = args.includes('--resume');
 const autoFix = args.includes('--auto-fix');   // #11: batch-apply HIGH/CRITICAL fixes
 const noServer = args.includes('--no-server');  // #11: skip local fix server (CI)
 const reportOnly = args.includes('--report-only'); // rebuild report from cached analysis data
+const cheapMode = args.includes('--cheap');       // use haiku for all API calls
+const skipFeatures = args.includes('--skip-features');
+const skipVision = args.includes('--skip-vision');
 const FIX_PORT = 3742;                          // port for the local fix server
 const factionsArg = args.find(a => a.startsWith('--factions='));
 const gamesArg = args.find(a => a.startsWith('--games='));
@@ -67,6 +73,7 @@ if (quickMode) {
 }
 if (factionsArg) cfg.balance.factionFilter = factionsArg.replace('--factions=', '').split(',').map(s => s.trim());
 if (gamesArg) cfg.balance.gamesPerMatchup = parseInt(gamesArg.replace('--games=', '')) || cfg.balance.gamesPerMatchup;
+if (cheapMode) cfg._cheapMode = true; // passed to analyzers to force haiku
 
 const hasApiKey = !!(cfg.anthropicApiKey && cfg.anthropicApiKey !== 'YOUR_API_KEY_HERE');
 
@@ -96,6 +103,9 @@ async function main() {
   log('');
   log('  ⚔  BEYOND RTS CONQUEST — QA SYSTEM  ⚔');
   log('  ─────────────────────────────────────');
+  if (cheapMode) log('  💰 CHEAP MODE: using Haiku for all API calls');
+  if (skipFeatures) log('  ⏭  Skipping feature advisor');
+  if (skipVision) log('  ⏭  Skipping vision UI analysis');
   log('');
 
   const gamePath = path.resolve(cfg.gamePath);
@@ -423,7 +433,7 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   log('  ── Phase 4.7: Feature advisor ─────────────────────────────────');
   let featureAdvice = null;
-  if (cfg.run?.features !== false) {
+  if (cfg.run?.features !== false && !skipFeatures) {
     if (!hasApiKey) {
       log('  ⚠️  No API key — using heuristic feature suggestions');
     } else {
@@ -435,6 +445,8 @@ async function main() {
     } catch (err) {
       log(`  ⚠️  Feature advisor failed: ${err.message}`);
     }
+  } else if (skipFeatures) {
+    log('  ℹ️  Feature advisor skipped (--skip-features)');
   } else {
     log('  ℹ️  Feature advisor disabled in config');
   }
@@ -445,7 +457,7 @@ async function main() {
   // ════════════════════════════════════════════════════════════════════════════
   let visionAnalysis = null;
   const ssCount = (uiAuditResult.screenshots || []).length;
-  if (ssCount > 0 && hasApiKey && cfg.run?.vision !== false) {
+  if (ssCount > 0 && hasApiKey && cfg.run?.vision !== false && !skipVision) {
     log('  ── Phase 4.8: Vision UI analysis ──────────────────────────────');
     log(`  👁️  Sending ${ssCount} screenshots to Claude for visual UX review...`);
     try {

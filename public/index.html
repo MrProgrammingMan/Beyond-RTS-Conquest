@@ -3301,6 +3301,7 @@
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
     }
 
@@ -7692,6 +7693,7 @@
 
         socket.on('fireEvent', ({ eventId, nextDelay }) => {
           if (typeof G === 'undefined' || !G || !G.running) return;
+          if (typeof eventId !== 'string' || typeof nextDelay !== 'number') return;
           G.activeEvent = { type: eventId, timer: 0 };
           _dispatchEvent(eventId);
           G.nextRogueTime = (G.elapsed || 0) + nextDelay;
@@ -8098,6 +8100,10 @@
 
       // ── P2 receives snapshot: push into ring buffer for interpolation ─────
       function _receiveStateSnapshot(snap) {
+        // Validate snap structure before processing
+        if (!snap || typeof snap !== 'object') return;
+        if (!Array.isArray(snap.u) || !Array.isArray(snap.p)) return;
+        if (snap.pr && !Array.isArray(snap.pr)) return;
         // Expose for QA online tester
         window.__qaReceiveSnapshot = _receiveStateSnapshot;
         const now = performance.now();
@@ -8983,39 +8989,40 @@
     }
 
     // ── AUDIO ──
-    const AC = new (window.AudioContext || window.webkitAudioContext)();
+    let AC = null;
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (_) { console.warn('AudioContext unavailable — sound disabled'); }
     // Master limiter/compressor — prevents audio from peaking when many units hit at once
-    const _masterGain = AC.createGain();
-    const _compressor = AC.createDynamicsCompressor();
-    _compressor.threshold.value = -18;
-    _compressor.knee.value = 8;
-    _compressor.ratio.value = 12;
-    _compressor.attack.value = 0.003;
-    _compressor.release.value = 0.08;
-    _masterGain.gain.value = 0.38;
-    // Separate gain nodes for SFX and Music
-    const _sfxGain = AC.createGain();
-    const _musicGain = AC.createGain();
-    _sfxGain.gain.value = 1.0;
-    _musicGain.gain.value = 0.4;
-    _sfxGain.connect(_masterGain);
-    _musicGain.connect(_masterGain);
-    let _muted = false;
-    let _sfxVol = 1.0;
-    let _musicVol = 0.4;
+    let _masterGain = null, _compressor = null, _sfxGain = null, _musicGain = null;
+    let _muted = false, _sfxVol = 1.0, _musicVol = 0.4;
+    if (AC) {
+      _masterGain = AC.createGain();
+      _compressor = AC.createDynamicsCompressor();
+      _compressor.threshold.value = -18;
+      _compressor.knee.value = 8;
+      _compressor.ratio.value = 12;
+      _compressor.attack.value = 0.003;
+      _compressor.release.value = 0.08;
+      _masterGain.gain.value = 0.38;
+      _sfxGain = AC.createGain();
+      _musicGain = AC.createGain();
+      _sfxGain.gain.value = 1.0;
+      _musicGain.gain.value = 0.4;
+      _sfxGain.connect(_masterGain);
+      _musicGain.connect(_masterGain);
+      _masterGain.connect(_compressor);
+      _compressor.connect(AC.destination);
+    }
     function toggleMute() {
       _muted = !_muted;
-      _masterGain.gain.value = _muted ? 0 : 0.38;
+      if (_masterGain) _masterGain.gain.value = _muted ? 0 : 0.38;
       document.querySelectorAll('.mute-btn').forEach(b => {
         b.textContent = _muted ? '🔇 UNMUTE' : '🔊 MUTE';
         b.style.borderColor = _muted ? '#e74c3c' : '';
         b.style.color = _muted ? '#e74c3c' : '';
       });
     }
-    function setSfxVolume(v) { _sfxVol = v; _sfxGain.gain.value = v; document.querySelectorAll('.sfx-vol-slider').forEach(s => s.value = v); }
-    function setMusicVolume(v) { _musicVol = v; _musicGain.gain.value = v; document.querySelectorAll('.music-vol-slider').forEach(s => s.value = v); }
-    _masterGain.connect(_compressor);
-    _compressor.connect(AC.destination);
+    function setSfxVolume(v) { _sfxVol = v; if (_sfxGain) _sfxGain.gain.value = v; document.querySelectorAll('.sfx-vol-slider').forEach(s => s.value = v); }
+    function setMusicVolume(v) { _musicVol = v; if (_musicGain) _musicGain.gain.value = v; document.querySelectorAll('.music-vol-slider').forEach(s => s.value = v); }
 
     // Hit-rate throttling — prevents audio overload when many units fight at once
     let _sfxHitLast = 0, _sfxDeathLast = 0, _sfxBaseHitLast = 0;
@@ -9127,7 +9134,8 @@
     function tAddPlayer(name, fIdx) {
       if (!name.trim() || TOURNAMENT.players.length >= 10) return false;
       if (tTakenFactions().has(fIdx)) return false;
-      TOURNAMENT.players.push({ name: name.trim().toUpperCase(), factionIdx: fIdx, faction: FACTIONS[fIdx], isAI: false });
+      const safeName = name.trim().toUpperCase().replace(/[<>&"']/g, '');
+      TOURNAMENT.players.push({ name: safeName, factionIdx: fIdx, faction: FACTIONS[fIdx], isAI: false });
       return true;
     }
 
@@ -9697,6 +9705,7 @@
 
       // ── Voice creation ──
       function _mkVoice(type, filterFreq) {
+        if (!AC) return null;
         const osc = AC.createOscillator();
         osc.type = type; osc.frequency.value = 220;
         const flt = AC.createBiquadFilter();
@@ -9708,6 +9717,7 @@
         return { osc, flt, g };
       }
       function _mkNoise(freq, q) {
+        if (!AC) return null;
         const buf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
         const d = buf.getChannelData(0);
         for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -9727,6 +9737,7 @@
       let _frontRaw = 0; // raw frontline reading: -1 = P1 dominant, +1 = P2 dominant
 
       function _build() {
+        if (!AC) return;
         _kill();
         const t1 = _theme('f1'), t2 = _theme('f2'), has2 = !!t2;
         _voices = {
@@ -9997,7 +10008,7 @@
           { id: 'w_worker', name: 'Peasant', icon: '👨‍🌾', souls: 2, bodies: 1, hp: 25, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#95a5a6', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
           { id: 'w_soldier', name: 'Soldier', icon: '🗡️', souls: 5, bodies: 1, hp: 72, speed: 58, dmg: 10, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#bdc3c7', type: 'mel', desc: 'Charge Strike: first hit after 1.5s of marching deals +55% damage. Benefits from Veterans.', chargeStrike: true, armor: 1 },
           { id: 'w_archer', name: 'Archer', icon: '🏹', souls: 6, bodies: 1, hp: 45, speed: 62, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#e67e22', type: 'rng', desc: 'Standard ranged. Extra damage vs aerial and high-HP units.', armor: 1 },
-          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 11, bodies: 3, hp: 100, speed: 48, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.8, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 30% HP.', armor: 2 },
+          { id: 'w_knight', name: 'Knight', icon: '🛡️', souls: 11, bodies: 3, hp: 100, speed: 48, dmg: 20, range: 30, aerial: false, isWorker: false, attackRate: 0.8, radius: 16, color: '#7f8c8d', type: 'mel', desc: 'Heavy frontline tank. Absorbs massive damage. Iron Resolve activates below 50% HP.', armor: 2 },
           { id: 'w_gryphon', name: 'Gryphon', icon: '🦅', souls: 11, bodies: 3, hp: 68, speed: 82, dmg: 26, range: 65, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#f1c40f', type: 'air', desc: 'Aerial destroyer. +30% DMG vs high-HP targets.', 'aerialBonus': 1.3, armor: 1 },
         ],
         extraUnits: [{ id: 'w_guard', name: 'Battle Commander', icon: '⚔️', souls: 0, bodies: 0, hp: 170, speed: 60, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 17, color: '#f39c12', type: 'mel', desc: 'Royal Guard. Inspires nearby units (+10% ATK). Despawns 30s.', isSpawned: true, guardAura: 0.1 }],
@@ -10084,7 +10095,7 @@
 
       {
         id: 'verdant', name: 'Verdant', icon: '🌿', tagline: 'Nature\'s endurance. Regen, thorns, and a fearsome bear.',
-        passive: 'Regrowth: units not in combat regenerate 1 HP/sec. Workers carry +2 extra bodies from mid.',
+        passive: 'Regrowth: units regenerate 1 HP/sec out of combat, 0.5 HP/sec in combat. Workers carry +2 extra bodies from mid.',
         pros: ['Regrowth makes your units self-sustaining in prolonged battles', 'Thornwhip ranged unit applies a 35% slow on every hit', 'Grove Bear is the best single unit for controlling choke points'],
         cons: ['Regen only works out of combat — useless while actively being attacked', 'Relies on terrain control and forward pressure — weak when pushed back to base', 'No aerial combat options — air units from the enemy will freely harass ranged'],
         matchup: 'Best against: slow melee (Brutes), Tideborn (out-sustain), Menders (regen war) | Weak to: aerial (Spirits, Infernal), Plagued (mutations bypass regen), Psionics (corruption)',
@@ -10262,7 +10273,7 @@
         upgrades: [
           { id: 'compound_rates', name: 'Compound Rates', cost: { souls: 33, bodies: 5 }, desc: 'Passive income threshold drops to 15 souls, rate doubles to +0.6/s.', effect: 'merchant_rate', value: 0.6 },
           { id: 'bulk_discount', name: 'Bulk Discount', cost: { souls: 52, bodies: 9 }, desc: 'All units cost 2 fewer souls (min 1). Courier returns +1 extra body.', effect: 'merchant_discount', value: 2 },
-          { id: 'golden_fleet', name: 'Golden Fleet', cost: { souls: 88, bodies: 14 }, desc: 'GOLDEN AGE: All on-kill soul bonuses triple. Banker aura: +3 souls/s. All units cost 3 fewer souls (min 1). Passive income rate: +1.0/s.', effect: 'merchant_kill_bonus', value: 2 },
+          { id: 'golden_fleet', name: 'Golden Fleet', cost: { souls: 88, bodies: 14 }, desc: 'GOLDEN AGE: All on-kill soul bonuses triple. Banker aura: +3 souls/s. All units cost 3 fewer souls (min 1). Passive income rate: +0.6/s.', effect: 'merchant_kill_bonus', value: 2 },
         ]
       },
       {
@@ -10328,7 +10339,7 @@
         upgrades: [
           { id: 'accelerated_strain', name: 'Accelerated Strain', cost: { souls: 33, bodies: 5 }, desc: 'Kills grant 2 mutations instead of 1.', effect: 'plague_double', value: 2 },
           { id: 'viral_spread', name: 'Viral Spread', cost: { souls: 52, bodies: 9 }, desc: 'On death, spreads ALL mutations to all allies within 100px.', effect: 'plague_spread', value: 1 },
-          { id: 'pandemic', name: 'Pandemic', cost: { souls: 88, bodies: 16 }, desc: 'EXTINCTION EVENT: Mutation spread 250px radius. All Plagued gain +1 mutation on spawn. Max mutations: 10. Deaths spread ALL mutations + poison.', effect: 'plague_radius', value: 200 },
+          { id: 'pandemic', name: 'Pandemic', cost: { souls: 88, bodies: 16 }, desc: 'EXTINCTION EVENT: Mutation spread 250px radius. All Plagued gain +1 mutation on spawn. Max mutations: 8. Deaths spread ALL mutations + poison.', effect: 'plague_radius', value: 200 },
         ]
       },
       {
@@ -10377,9 +10388,9 @@
       },
       {
         id: 'echoes', name: 'Echoes', icon: '👁️', tagline: 'The past attacks the present',
-        passive: 'Temporal Echo: 10 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 70% of the original\'s stats. Echoes cannot create further echoes.',
+        passive: 'Temporal Echo: 10 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 50% of the original\'s stats and 85% speed. Echoes cannot create further echoes.',
         pros: ['Every spawn is effectively double with a 10s offset', 'Overwhelming double-push timing with carefully staggered spawns', 'Echoes appear automatically — no extra effort required'],
-        cons: ['Echoes at 70% stats will not match real units in direct fights', 'Works best if originals survive long enough to have value', 'Echoes always spawn even if original already died'],
+        cons: ['Echoes at 50% stats are fragile support — not replacements for real units', 'Works best if originals survive long enough to have value', 'Echoes always spawn even if original already died'],
         matchup: 'Best against: sustained factions (Menders, Verdant), Glacial (delayed spawns bypass chill) | Weak to: fast rush (Infernal, Pandemonium), Reavers (feed on echo deaths)',
         startSouls: 10, startBodies: 5,
         units: [
@@ -10393,13 +10404,13 @@
         guardUnit: 'ec_guard',
         upgrades: [
           { id: 'faster_echoes', name: 'Rapid Echoes', cost: { souls: 33, bodies: 5 }, desc: 'Echo spawn delay reduced from 10s to 7s.', effect: 'echo_delay', value: 7 },
-          { id: 'stronger_echoes', name: 'Phantom Power', cost: { souls: 52, bodies: 9 }, desc: 'Echo units gain 85% stats instead of 70%.', effect: 'echo_power', value: 0.85 },
-          { id: 'echo_chain', name: 'Echo Chain', cost: { souls: 85, bodies: 14 }, desc: 'INFINITE REVERB: Echoes spawn their own echo (at 60% stats). Echo delay reduced to 5s. All Echo units gain +15% DMG.', effect: 'echo_chain', value: 1 },
+          { id: 'stronger_echoes', name: 'Phantom Power', cost: { souls: 52, bodies: 9 }, desc: 'Echo units gain 65% stats instead of 50%.', effect: 'echo_power', value: 0.65 },
+          { id: 'echo_chain', name: 'Echo Chain', cost: { souls: 85, bodies: 14 }, desc: 'INFINITE REVERB: Echoes spawn their own echo (at 40% stats). Echo delay reduced to 5s. All Echo units gain +15% DMG.', effect: 'echo_chain', value: 1 },
         ]
       },
       {
         id: 'veilborn', name: 'Veilborn', icon: '👻', tagline: 'Attack from between moments',
-        passive: 'Veil Walk: when any non-worker unit drops below 40% HP (12s cooldown), it auto-phases for 2s — untargetable, regen 5 HP/s. Re-materializing adjacent to an enemy deals a free strike. Workers always phased while traveling.',
+        passive: 'Veil Walk: when any non-worker unit drops below 40% HP (10s cooldown), it auto-phases for 2s — untargetable, cannot attack, regen 5 HP/s. Re-materializing adjacent to an enemy deals a free strike. Workers always phased while traveling.',
         pros: ['Phase survival is extremely hard to play around', 'Worker phasing means workers are never blocked by enemies', 'Free re-materialization strike punishes crowded enemies'],
         cons: ['Phase activates only when already below 40% HP — you still take initial damage', 'Phased units cannot attack — large phase wave leaves you defenseless briefly', '12s cooldown means each unit phases a few times per game only'],
         matchup: 'Best against: burst damage (Infernal, Bloodpact), Voltborn (phase dodges chain lightning) | Weak to: DoT (Verdant, Plagued), sustained pressure (Summoners, Echoes)',
@@ -10472,7 +10483,7 @@
         startSouls: 14, startBodies: 5,
         units: [
           { id: 'pd_worker', name: 'Frenzied', icon: '🤪', souls: 2, bodies: 1, hp: 20, speed: 65, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 10, color: '#e84393', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'pd_wild', name: 'Wildfire', icon: '🔥', souls: 4, bodies: 1, hp: 48, speed: 76, dmg: 11, range: 26, aerial: false, isWorker: false, attackRate: 1.3, radius: 12, color: '#e84393', type: 'mel', desc: 'Cheap fast melee. 15% misfire chance on attack.', pandemonium: true },
+          { id: 'pd_wild', name: 'Wildfire', icon: '🔥', souls: 5, bodies: 1, hp: 48, speed: 76, dmg: 11, range: 26, aerial: false, isWorker: false, attackRate: 1.3, radius: 12, color: '#e84393', type: 'mel', desc: 'Fast melee swarm unit. 15% misfire chance on attack.', pandemonium: true },
           { id: 'pd_unhng', name: 'The Unhinged', icon: '😵', souls: 9, bodies: 2, hp: 60, speed: 68, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 15, color: '#d63031', type: 'mel', desc: 'Heavy melee. Berserk at 50% HP (attack rate doubles).', pandemonium: true, berserkThreshold: 0.5 },
           { id: 'pd_chaos', name: 'Chaos Drake', icon: '🐲', souls: 8, bodies: 2, hp: 30, speed: 95, dmg: 16, range: 52, aerial: true, isWorker: false, attackRate: 1.35, radius: 13, color: '#e84393', type: 'air', desc: 'Fast aerial. 15% misfire chance.', pandemonium: true },
           { id: 'pd_maelstrom', name: 'The Maelstrom', icon: '🌀', souls: 5, bodies: 1, hp: 36, speed: 72, dmg: 14, range: 100, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#d63031', type: 'rng', desc: 'Cheap ranged. 15% chance per shot to ricochet to random unit.', pandemonium: true },
@@ -10565,7 +10576,7 @@
       try {
         initGame();
         window.G = G;
-        G._speedMult = 40;
+        G._speedMult = 50;
         window.__qaInitError = null;
       } catch (e) {
         window.__qaInitError = e.message + '\n' + (e.stack || '');
@@ -10601,7 +10612,7 @@
       try {
         initGame();
         window.G = G;
-        G._speedMult = 40;
+        G._speedMult = 50;
         // Force NET into P2 online mode so the game loop enters the
         // P2 render-only path (interpolate + draw, no physics/economy).
         if (typeof NET !== 'undefined' && NET._qaForceP2Online) {
@@ -11746,7 +11757,7 @@
 
     function _aiChooseUnit(pid, units, personality, diff, myCount, enCount, enemyTypes, midEmpty, midOwned, p, enemy, cfg, forceDefend, factionId, gameSecs) {
       if (!units.length) return null;
-      const affordable = units.filter(u => p.souls >= u.souls && p.bodies >= (p._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
+      const affordable = units.filter(u => p.souls >= (p._arcaneSurge ? Math.ceil(u.souls * 0.6) : u.souls) && p.bodies >= (p._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
       if (!affordable.length) return null;
 
       const totalEnemy = enemyTypes.mel + enemyTypes.rng + enemyTypes.air;
@@ -12158,7 +12169,7 @@
           if (rt.spawnBurst > 0 && rt.burstCooldown <= 0 && !G[pid === 1 ? '_aiActing1' : '_aiActing']) {
             const bp = G.players[pid - 1];
             const bUnits = G.factions[pid - 1].units.filter((d, i) => !d.isSpawned && !d.isWorker && _slotUnlocked(i));
-            const bAffordable = bUnits.filter(u => bp.souls >= u.souls && bp.bodies >= (bp._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
+            const bAffordable = bUnits.filter(u => bp.souls >= (bp._arcaneSurge ? Math.ceil(u.souls * 0.6) : u.souls) && bp.bodies >= (bp._bloodMoon ? Math.ceil(u.bodies / 2) : u.bodies));
             if (bAffordable.length > 0) {
               // Pick cheapest affordable combat unit for fast response
               const cheapest = bAffordable.reduce((a, b) => a.souls < b.souls ? a : b);
@@ -12949,15 +12960,29 @@
               : 2.0) : 0;
         const _hudBasePassive = gameSec < 90 ? 0.35 : 0.5;
         const _hudMidCap = gameSec < 90 ? 0.6 : gameSec < 150 ? 1.2 : 2.0;
-        const _midTaperCapped = Math.min(_hudMidCap, _midTaperHUD);
-        const soulRate = (_hudBasePassive + _midTaperCapped + (p.despStacks * 0.6) + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0)).toFixed(1);
+        const _hudEclipse = G.activeEvent && G.activeEvent.type === 'dark_eclipse' && G.activeEvent._eclipseActive;
+        const _midTaperCapped = Math.min(_hudMidCap, _midTaperHUD) * (_hudEclipse ? 0.5 : 1.0);
+        // Count merchant banker income for this player
+        let _bankerIncome = 0;
+        G.units.forEach(u => { if (u.player === pid && u.def.merchantAura && u.hp > 0) _bankerIncome += (u.def.merchantAuraRate || 0.6); });
+        const _soulTideRate = (p.activeBuffs && p.activeBuffs.soul_tide > 0) ? 3.0 : 0;
+        const _despRate = p.despStacks * 0.6 * (_hudEclipse ? 2.0 : 1.0);
+        const soulRate = (_hudBasePassive + _midTaperCapped + _despRate + (p.activeBuffs && p.activeBuffs.warcry > 0 ? 0.5 : 0) + _soulTideRate + _bankerIncome).toFixed(1);
         const bodyRate = ((3.0 + Math.floor(gameSec / 60) * 0.4) * p.workers).toFixed(1);
         const incEl = document.getElementById(`p${pid}-income-rate`);
         const _bm = G.activeEvent && G.activeEvent.type === 'blood_moon' && p._bloodMoon;
         const _bmRemain = _bm ? Math.ceil((G.activeEvent.duration || 18) - (G.activeEvent.timer || 0)) : 0;
         const _ec = G.activeEvent && G.activeEvent._eclipseActive;
         const _ecRemain = _ec ? Math.ceil((G.activeEvent.duration || 15) - (G.activeEvent.timer || 0)) : 0;
-        const eventTag = _bm ? ` 🔴×½🦴 ${_bmRemain}s` : _ec ? ` 🌑 ${_ecRemain}s` : '';
+        const _as = G.activeEvent && G.activeEvent.type === 'arcane_surge' && p._arcaneSurge;
+        const _asRemain = _as ? Math.ceil((G.activeEvent.duration || 12) - (G.activeEvent.timer || 0)) : 0;
+        const _tw = G.activeEvent && G.activeEvent._timeWarpActive;
+        const _twRemain = _tw ? Math.ceil((G.activeEvent.duration || 10) - (G.activeEvent.timer || 0)) : 0;
+        let eventTag = '';
+        if (_bm) eventTag += ` 🔴×½🦴 ${_bmRemain}s`;
+        if (_ec) eventTag += ` 🌑 ${_ecRemain}s`;
+        if (_as) eventTag += ` ✨-40%💀 ${_asRemain}s`;
+        if (_tw) eventTag += ` ⏩+80% ${_twRemain}s`;
         const _incStr = `+${soulRate}💀/s · +${bodyRate}🦴/m${eventTag}`;
         if (_incStr !== _hl.incStr) { _hl.incStr = _incStr; incEl.textContent = _incStr; }
         const passiveText = G.factions[pid - 1].passive || '';
@@ -13015,10 +13040,17 @@
               return;
             }
             const def = defs[i]; if (!def) return;
-            const canAfford = p.souls >= def.souls && p.bodies >= def.bodies;
+            const _hudSoulCost = p._arcaneSurge ? Math.ceil(def.souls * 0.6) : def.souls;
+            let _hudBodyCost = p._bloodMoon ? Math.ceil(def.bodies / 2) : def.bodies;
+            if (def.isWorker) { const wc = p.workers || 0; _hudBodyCost = wc === 0 ? 0 : wc === 1 ? 1 : 2; }
+            const canAfford = p.souls >= _hudSoulCost && p.bodies >= _hudBodyCost;
             const atCap = !def.isWorker && combatUnits >= p.unitCap;
             const workerCap = def.isWorker && p.workers >= (p.workerCap || 3);
             card.classList.toggle('cant', !canAfford || workerCap);
+            // Update displayed costs when events modify them
+            const csEl = card.querySelector('.cs'); const cbEl = card.querySelector('.cb');
+            if (csEl) { const t = `💀${_hudSoulCost}`; if (csEl.textContent !== t) { csEl.textContent = t; csEl.style.color = p._arcaneSurge ? '#fdcb6e' : ''; } }
+            if (cbEl) { const t = `🦴${_hudBodyCost}`; if (cbEl.textContent !== t) { cbEl.textContent = t; cbEl.style.color = p._bloodMoon ? '#e74c3c' : ''; } }
             let warn = card.querySelector('.ucard-cap-warn');
             if (atCap) {
               if (!warn) { warn = document.createElement('div'); warn.className = 'ucard-cap-warn'; card.appendChild(warn); }
@@ -13235,9 +13267,11 @@
         const workerCount = p.workers || 0;
         _bodyCost = workerCount === 0 ? 0 : workerCount === 1 ? 1 : 2;
       }
-      if (p.souls < def.souls || p.bodies < _bodyCost) { shakeCard(cardEl); flashRes(pid, p.souls < def.souls ? 'souls' : 'bodies'); return; }
+      let _soulCost = def.souls;
+      if (p._arcaneSurge) _soulCost = Math.ceil(def.souls * 0.6); // 40% discount
+      if (p.souls < _soulCost || p.bodies < _bodyCost) { shakeCard(cardEl); flashRes(pid, p.souls < _soulCost ? 'souls' : 'bodies'); return; }
       const _bCost = _bodyCost;
-      p.souls -= def.souls; p.bodies -= _bCost; p.soulsSpent = (p.soulsSpent || 0) + def.souls; p.bodiesSpent = (p.bodiesSpent || 0) + _bCost; p.spawned++;
+      p.souls -= _soulCost; p.bodies -= _bCost; p.soulsSpent = (p.soulsSpent || 0) + _soulCost; p.bodiesSpent = (p.bodiesSpent || 0) + _bCost; p.spawned++;
       if (!def.isSpawned) { p.unitTypeSpawned = p.unitTypeSpawned || {}; p.unitTypeSpawned[def.id] = (p.unitTypeSpawned[def.id] || 0) + 1; }
       // Blood Tithe refund
       if (G.factions[pid - 1].id === 'bloodpact') {
@@ -13474,7 +13508,7 @@
           liveUnits.forEach(u => { if (u.def.soulsOnKill) u.def.soulsOnKill *= 3; });
           G.unitDefs[pid - 1].forEach(d => { if (d.soulsOnKill) d.soulsOnKill *= 3; });
           G.unitDefs[pid - 1].forEach(d => { if (!d.isWorker) d.souls = Math.max(1, d.souls - 3); });
-          p._merchantPassive = (p._merchantPassive || 0.3) + 1.0;
+          p._merchantPassive = (p._merchantPassive || 0.3) + 0.6;
           p._bankerAura = 3;
           break;
         // ── Reavers ──
@@ -13505,10 +13539,10 @@
           break;
         case 'plague_spread': p._plagueSpread = (p._plagueSpread || 1) + 1; break;
         case 'plague_radius':
-          // EXTINCTION EVENT: 250px spread, +1 mutation on spawn, max 10, spread all + poison
+          // EXTINCTION EVENT: 250px spread, +1 mutation on spawn, max 8, spread all + poison
           p._plagueRadius = 250;
           p._plagueSpawnMutation = 1;
-          p._plagueMaxMutations = 10;
+          p._plagueMaxMutations = 8;
           p._plagueDeathPoison = true;
           break;
         // ── Chrysalis ──
@@ -13540,11 +13574,11 @@
           break;
         // ── Echoes ──
         case 'echo_delay': p._echoDelay = Math.max(2, (p._echoDelay || 10) - up.value); break;
-        case 'echo_power': p._echoPower = (p._echoPower || 0.7) + up.value; break;
+        case 'echo_power': p._echoPower = up.value; break;
         case 'echo_chain':
           // INFINITE REVERB: echoes of echoes at 60%, delay 5s, all echo units +15% DMG
           p._echoChain = true;
-          p._echoPower = Math.max(p._echoPower || 0.7, 0.60);
+          p._echoPower = Math.max(p._echoPower || 0.50, 0.40);
           p._echoDelay = 5;
           liveUnits.filter(u => u._isEcho).forEach(u => { u.def.dmg = Math.round(u.def.dmg * 1.15); });
           G.unitDefs[pid - 1].forEach(d => { d._echoDmgBonus = 0.15; });
@@ -13581,7 +13615,13 @@
           G.unitDefs[pid - 1].filter(d => d.illuHeavyDecoy).forEach(d => { d.hp += 60; });
           break;
         // ── Pandemonium ──
-        case 'pandemonium_chaos': liveUnits.filter(u => u.def.pandemonium).forEach(u => { u.def.dmg += up.value; }); G.unitDefs[pid - 1].filter(d => d.pandemonium).forEach(d => { d.dmg += up.value; }); break;
+        case 'pandemonium_chaos':
+          // Total Chaos: misfire chance increases to 25% for own units AND enemy units in aura
+          p._panMisfireChance = 0.25;
+          // Also give a small DMG boost to own units
+          liveUnits.filter(u => u.def.pandemonium).forEach(u => { u.def.dmg += 2; });
+          G.unitDefs[pid - 1].filter(d => d.pandemonium).forEach(d => { d.dmg += 2; });
+          break;
         case 'pandemonium_frenzy': liveUnits.filter(u => u.def.pandemonium).forEach(u => { u.def.speed = Math.round(u.def.speed * 1.15); }); G.unitDefs[pid - 1].filter(d => d.pandemonium).forEach(d => { d.speed = Math.round(d.speed * 1.15); }); break;
         case 'pandemonium_death':
           // ARMAGEDDON: 12 DMG 60px splash, +20% atkrate, 30% misfire, chaos extends to enemies
@@ -13686,7 +13726,8 @@
             // ABSOLUTE ZERO: 8s chill in 80px, +15% DMG vs slowed, splash 80%
             p._permafrostDur = 8; p._permafrostRadius = 80;
             p._slowedDmgBonus = 0.15;
-            p._iceBoltSplashMult = 0.80;
+            // Apply 80% splash to Ice Bolt units
+            modDef('gl_icebolt', (def) => { def.aoeSplashMult = 0.80; });
             break;
           }
         case 'veteran_bonus':
@@ -13816,7 +13857,7 @@
         const rate = p.hellfireRate || 8;
         // Inferno Lord guard: every spawn is empowered while she lives
         const infernoGuardActive = G.units.some(gu => gu.player === pid && gu.isGuard && gu.defId === 'if_guard' && gu.hp > 0);
-        if (infernoGuardActive || p.infernalCount % rate === 0) { u.dmgMult = 1.25; u._hellfire = true; }
+        if (infernoGuardActive || p.infernalCount % rate === 0) { u.dmgMult = 1.25 + (p._hellfireDmgBonus || 0); u._hellfire = true; }
       }
       // ── Fortune Seekers: luck rolls at spawn ──
       if (G.factions[pid - 1].id === 'fortune' && !def.isWorker && !def.isSpawned) {
@@ -13868,7 +13909,19 @@
       // ── Echoes: schedule a delayed echo spawn ──
       if (G.factions[pid - 1].id === 'echoes' && !def.isWorker && !def.isSpawned && !u._isEcho) {
         const delay = p._echoDelay || 10;
-        G.echoSchedule.push({ pid, defId: def.id, x, y: u.y, t: delay, power: p._echoPower || 0.7 });
+        let _echoPwr = p._echoPower || 0.50;
+        // Mastery overrides for specific unit types
+        if (def.id === 'ec_archer' && p.echoArcherPower) _echoPwr = Math.max(_echoPwr, p.echoArcherPower);
+        if (def.id === 'ec_moment' && p.echoMomentPower) _echoPwr = Math.max(_echoPwr, p.echoMomentPower);
+        if (p.echoAllPower) _echoPwr = Math.max(_echoPwr, p.echoAllPower);
+        // Mastery delay bonuses
+        const _delayBonus = (p.echoDelayBonus || 0) + (p.echoDelayBonus2 || 0);
+        const _finalDelay = Math.max(2, delay - _delayBonus);
+        G.echoSchedule.push({ pid, defId: def.id, x, y: u.y, t: _finalDelay, power: _echoPwr });
+        // Mastery: Echo Cascade — schedule a second echo at double delay
+        if (p.echoCascadeMastery) {
+          G.echoSchedule.push({ pid, defId: def.id, x, y: u.y, t: _finalDelay * 2, power: _echoPwr * 0.80 });
+        }
       }
       // ── Veilborn guard: starts phased ──
       if (def.veilStartPhased) {
@@ -13962,7 +14015,8 @@
     function _applyPlagueMutation(u) {
       if (!u || !u.def) return;
       u._mutations = (u._mutations || 0) + 1;
-      const maxMut = u.def.plagueMaxMutations || 4;
+      const pMax = G.players[u.player - 1]?._plagueMaxMutations || 0;
+      const maxMut = Math.max(u.def.plagueMaxMutations || 4, pMax);
       if (u._mutations > maxMut) return;
       const roll = Math.floor(Math.random() * 4);
       if (roll === 0) { u.def.hp = Math.round(u.def.hp * 1.12); u.maxHp = Math.round(u.maxHp * 1.12); u.hp = Math.round(u.hp * 1.12); }
@@ -14203,10 +14257,42 @@
       const enemyUnits = fc ? fc[u.player === 1 ? 'p2' : 'p1'] : G.units.filter(e => e.player !== u.player && !e.offscreen);
       let best = null, bestD = Infinity;
       const isRanged = u.def.range > 60;
-      // Pandemonium: 15% chance to pick a random visible enemy instead of nearest
-      if (u.def.pandemonium && Math.random() < 0.15) {
-        const candidates = enemyUnits.filter(e => !e._phased);
-        if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)];
+      // Pandemonium own chaos targeting: 15% (or upgraded) chance to pick a random visible enemy instead of nearest
+      if (u.def.pandemonium) {
+        const ownMisfireChance = G.players[u.player - 1]?._panMisfireChance || 0.15;
+        if (Math.random() < ownMisfireChance) {
+          const candidates = enemyUnits.filter(e => !e._phased);
+          if (candidates.length > 0) return candidates[Math.floor(Math.random() * candidates.length)];
+        }
+      }
+      // Pandemonium ENEMY misfire aura: if any enemy Pandemonium units are within 70px,
+      // this unit has a chance to target one of its own allies instead
+      if (!u.def.pandemonium) {
+        const enemyPanUnits = enemyUnits.filter(e => e.def.pandemonium && !e._phased);
+        let misfireChance = 0;
+        for (let pi = 0; pi < enemyPanUnits.length; pi++) {
+          const ep = enemyPanUnits[pi];
+          const auraRange = ep.def.isSpawned ? 100 : 70; // Chaos Lord has 100px aura
+          if (rangeDist(u, ep) < auraRange) {
+            // Use upgraded chance if available, base 15% (Chaos Lord: 25%)
+            const epOwner = G.players[ep.player - 1];
+            const baseChance = ep.def.isSpawned ? 0.25 : (epOwner._panMisfireChance || 0.15);
+            misfireChance = Math.max(misfireChance, baseChance);
+          }
+        }
+        if (misfireChance > 0 && Math.random() < misfireChance) {
+          // Target one of own allies instead (friendly fire)
+          const allies = (fc ? fc[u.player === 1 ? 'p1' : 'p2'] : G.units.filter(e => e.player === u.player && !e.offscreen))
+            .filter(a => a !== u && !a._phased && !a.def.isWorker);
+          if (allies.length > 0) {
+            const victim = allies[Math.floor(Math.random() * allies.length)];
+            if (!u._misfirePopup || u._misfirePopup <= 0) {
+              showPopup(u.x, u.y - 28, '🌀 MISFIRE', '#e17055', u.player);
+              u._misfirePopup = 3;
+            }
+            return victim;
+          }
+        }
       }
       // Pass 0: ranged aerial priority — check for aerial in range first.
       if (isRanged) {
@@ -14268,7 +14354,8 @@
       const isRanged = attacker.def.range > 60;
       const berserkHPMult = (attacker.def.berserkHPThresh && attacker.hp < attacker.maxHp * attacker.def.berserkHPThresh) ? 2.0 : 1.0;
       const _fsMult = attacker._finalStand > 0 ? 1.3 : 1.0;
-      let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0) * berserkHPMult * (G._dmgEscalation || 1) * _fsMult;
+      const _berserkUpgBonus = attacker._berserkActive ? (G.players[attacker.player - 1]?._berserkDmgBonus || 0) : 0;
+      let dmg = attacker.def.dmg * (attacker.dmgMult || 1.0) * (attacker._warcryed > 0 ? 1.15 : 1.0) * berserkHPMult * (1 + _berserkUpgBonus) * (G._dmgEscalation || 1) * _fsMult;
       if (isRanged && target.def.aerial && !attacker.def.aerial) {
         dmg *= 1.8; // Ground ranged counters aerial (reduced from 2.2 — was too punishing for aerial factions)
         // Extra attack rate for ranged vs aerial — simulate faster targeting
@@ -14329,6 +14416,9 @@
         dmg *= attacker.def.aerialBonus;
       }
       dmg *= 1 + (attacker.veteranStacks || 0) * 0.08;
+      // Glacial Absolute Zero: +DMG vs slowed targets
+      const _slowedBonus = G.players[attacker.player - 1]?._slowedDmgBonus || 0;
+      if (_slowedBonus > 0 && (target.slowTimer || 0) > 0) dmg *= (1 + _slowedBonus);
       // Reavers: +15% damage when near a corpse (within 80px)
       if (G._hasReavers && G.corpses && G.corpses.length && (attacker.def.reaverKillBonus || attacker.def.bodyOnKill || attacker.def.corpseFeed)) {
         const nearCorpse = G.corpses.some(c => Math.abs(c.x - attacker.x) < 80);
@@ -14400,8 +14490,8 @@
           aoeShot: attacker.def.aoeShot, aoeSplashRange: attacker.def.aoeSplashRange, aoeSplashMult: attacker.def.aoeSplashMult || 0.4,
           blocked: false,
         });
-        // Pandemonium misfire: 15% chance to redirect shot to random unit (including allies)
-        if (attacker.def.pandemonium && Math.random() < 0.15) {
+        // Pandemonium misfire: chance to redirect shot to random unit (including allies)
+        if (attacker.def.pandemonium && Math.random() < (G.players[attacker.player - 1]?._panMisfireChance || 0.15)) {
           const allUnits = G.units.filter(u => u !== attacker && !u.offscreen && !u._phased);
           if (allUnits.length > 0) {
             const misfireTarget = allUnits[Math.floor(Math.random() * allUnits.length)];
@@ -14427,8 +14517,8 @@
         if (G.factions[target.player - 1] && G.factions[target.player - 1].id === 'spirits') {
           dmg *= 0.85;
         }
-        // Warriors Iron Resolve — 15% resistance when below 50% HP
-        if (G.factions[target.player - 1] && G.factions[target.player - 1].ironResolve && target.hp < target.maxHp * 0.50) {
+        // Warriors Iron Resolve — 15% resistance when below threshold HP (default 50%, upgradeable to 60%)
+        if (G.factions[target.player - 1] && G.factions[target.player - 1].ironResolve && target.hp < target.maxHp * (G.players[target.player - 1]?.ironResolveThreshold || 0.50)) {
           dmg *= 0.85;
           if (!target._ironResolvePopup || target._ironResolvePopup <= 0) {
             showPopup(target.x, target.y - 28, '🛡 IRON RESOLVE', '#f1c40f', target.player);
@@ -14449,7 +14539,10 @@
         }
         if (target.spawnProtectionTimer > 0) actualDmg = 0;// spawn protect
         else {
-          actualDmg = Math.max(1, actualDmg - (target.def.armor || 0));
+          // Menders Divine Intervention: low HP armor bonus
+          const _lowHpArmor = (_tOwner?._lowHpArmor && target.hp < target.maxHp * (_tOwner._lowHpThreshold || 0.40)) ? _tOwner._lowHpArmor : 0;
+          actualDmg = Math.max(1, actualDmg - (target.def.armor || 0) - _lowHpArmor);
+          if (isNaN(actualDmg) || !isFinite(actualDmg)) actualDmg = 1; // NaN safety
           target.hp -= actualDmg; target.lastHitTime = Date.now();
           if (actualDmg > 0) G.players[attacker.player - 1].dmgDealt = (G.players[attacker.player - 1].dmgDealt || 0) + actualDmg;
         }
@@ -14468,6 +14561,9 @@
           spawnParticles(target.x, target.y, '#95a5a6', 3);
         }
         if (attacker.def.lifeSteal) attacker.hp = Math.min(attacker.maxHp, attacker.hp + actualDmg * attacker.def.lifeSteal);
+        // Wolfborn Blood Frenzy upgrade: all melee lifesteal
+        const _pMeleeLS = G.players[attacker.player - 1]?._meleeLifesteal || 0;
+        if (_pMeleeLS > 0 && attacker.def.type === 'mel') attacker.hp = Math.min(attacker.maxHp, attacker.hp + actualDmg * _pMeleeLS);
         // Knockback — immune units (Brutes heavies) cannot be pushed
         const kbDir = target.x > attacker.x ? 1 : -1;
         const kbForce = Math.min(7, actualDmg * 0.22); // stronger knockback
@@ -14477,7 +14573,7 @@
         // Chain lightning (melee)
         attacker._attackCount = (attacker._attackCount || 0) + 1;
         const crate = attacker.def.alwaysChain ? 1 : (attacker.def.chainRate || G.players[attacker.player - 1].chainRate || 10);
-        if ((G.factions[attacker.player - 1].id === 'voltborn' || attacker.def.alwaysChain) && attacker._attackCount % crate === 0) {
+        if ((G.factions[attacker.player - 1]?.id === 'voltborn' || attacker.def.alwaysChain) && attacker._attackCount % crate === 0) {
           const cdmg = G.players[attacker.player - 1].chainDmgMult || 0.25;
           const chainR = attacker.def.chainRange || 70;
           const _cJumps = G.players[attacker.player - 1].chainJumps || 1;
@@ -14596,6 +14692,7 @@
       if (kp) { kp.souls += soulReward; kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + soulReward; }
       if (kp) {
         kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward });
+        if (kp.soulsLast5.length > 50) kp.soulsLast5 = kp.soulsLast5.filter(e => Date.now() - e.t < 5000);
         if (!u.def.isSpawned && killer && !killer.def.isSpawned) { kp.unitTypeKills = kp.unitTypeKills || {}; kp.unitTypeKills[killer.def.id] = (kp.unitTypeKills[killer.def.id] || 0) + 1; }
         kp._killStreak = (kp._killStreak || 0) + 1;
         kp.maxKillStreak = Math.max(kp.maxKillStreak || 0, kp._killStreak);
@@ -14613,12 +14710,13 @@
         showPopup(u.x, u.y - 30, `+${killer.def.soulsOnKill}💀`, '#a29bfe', killer.player);
       }
       // Sky Bounty — Spirits get souls on ALL kills; aerial kills give full bonus
-      if (killer && G.factions[killer.player - 1].id === 'spirits') {
+      if (killer && G.factions[killer.player - 1]?.id === 'spirits') {
+        const _spiritExtra = kp._spiritKillSoul || 0;
         if (u.def.aerial) {
-          const bonus = kp.skyBountyAmt || 3;
+          const bonus = (kp.skyBountyAmt || 3) + _spiritExtra;
           kp.souls += bonus; showPopup(u.x, u.y - 30, `✦ SKY BOUNTY +${bonus}💀`, '#fd79a8', killer.player);
         } else {
-          kp.souls += 2; showPopup(u.x, u.y - 30, `✦ +2💀`, '#fd79a8', killer.player);
+          kp.souls += 2 + _spiritExtra; showPopup(u.x, u.y - 30, `✦ +${2 + _spiritExtra}💀`, '#fd79a8', killer.player);
         }
       }
       // Summoner summons on kill
@@ -14646,23 +14744,33 @@
         spawnParticles(u.x, u.y, '#e74c3c', 25);
       }
       // Bloodpact Blood Pool — leaves a slow-zone at death location for 8s
-      if (G.factions[u.player - 1].id === 'bloodpact' && !u.def.isWorker && !u.def.isSpawned && G.bloodPools) {
+      if (G.factions[u.player - 1]?.id === 'bloodpact' && !u.def.isWorker && !u.def.isSpawned && G.bloodPools) {
         G.bloodPools.push({ x: u.x, y: G.groundY - 4, r: 30, life: 10.0, owner: u.player });
         spawnParticles(u.x, G.groundY - 8, '#b71c1c', 12);
       }
       // Glacial Permafrost
-      if (G.factions[u.player - 1].id === 'glacial' && killer) {
+      if (G.factions[u.player - 1]?.id === 'glacial' && killer) {
         const p = G.players[u.player - 1];
         if (!killer.def.immuneDebuff) { killer.slowTimer = 2.0; killer._speedMult = p.chillSpeedMult || 0.65; }
         [...G.units].forEach(e => { if (e.player !== u.player && dist2d(e, u) < 60 && !e.def.immuneDebuff) { e.slowTimer = 2.0; e._speedMult = p.chillSpeedMult || 0.65; } });
       }
       // Summoner Death Frenzy
-      if (G.factions[u.player - 1].id === 'summoners') {
+      if (G.factions[u.player - 1]?.id === 'summoners') {
         const rad = G.players[u.player - 1]._frenzyRadius || 80;
         const affected = G.units.filter(a => a.player === u.player && dist2d(a, u) < rad && !(a._deathFrenzyCD > 0));
         if (affected.length > 0) {
           affected.forEach(a => { a.frenzyTimer = Math.max(a.frenzyTimer || 0, 4); a._deathFrenzyCD = 3.0; });
           showPopup(u.x, u.y - 30, '💀 DEATH FRENZY', '#9b59b6', u.player);
+        }
+        // Undying Will upgrade: 30% chance to raise a free Shade on death
+        const _deathShadeChance = G.players[u.player - 1]?._deathShadeChance || 0;
+        if (_deathShadeChance > 0 && Math.random() < _deathShadeChance && !u.def.isSpawned) {
+          const cap = G.players[u.player - 1].maxShades || 8;
+          if (G.shadeCount[u.player - 1] < cap) {
+            spawnUnit(u.player, 's_shade', true, u.x, G.groundY);
+            spawnParticles(u.x, u.y, '#9b59b6', 8);
+            showPopup(u.x, u.y - 40, '💀 UNDYING', '#9b59b6', u.player);
+          }
         }
       }
       // Sylph heal on kill
@@ -15000,6 +15108,7 @@
     // Triggered at a 10-kill streak. Spawns a free unit from a random OTHER faction
     // that fights for the player for 20 seconds before vanishing.
     function _triggerWildCard(pid) {
+      if (!G.factions[pid - 1]) return;
       const myFid = G.factions[pid - 1].id;
       const others = FACTIONS.filter(f => f.id !== myFid);
       const src = others[Math.floor(Math.random() * others.length)];
@@ -15520,6 +15629,26 @@
         }
       }
 
+      // ── TIME WARP: clear event so next can spawn ──────────────────────────
+      if (ev.type === 'time_warp') {
+        if (ev.timer >= (ev.duration || 10)) {
+          ev._timeWarpActive = false;
+          showPopup(G.midX, G.groundY - 60, '⏩ Time Warp fades', '#888', 1);
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 40 + Math.random() * 30;
+        }
+      }
+
+      // ── ARCANE SURGE: count down and restore soul costs ───────────────────
+      if (ev.type === 'arcane_surge') {
+        if (ev.timer >= (ev.duration || 12)) {
+          G.players.forEach(p => { p._arcaneSurge = false; });
+          showPopup(G.midX, G.groundY - 60, '✨ Arcane Surge fades', '#888', 1);
+          G.activeEvent = null;
+          G.nextEventTime = elapsed + 40 + Math.random() * 30;
+        }
+      }
+
       // ── KING OF THE HILL: track hold time per player ──────────────────────
       if (ev.type === 'veterans_rally' && !ev._kothWon) {
         const midR = 80;
@@ -15745,8 +15874,8 @@
           }
           // Spirits Ethereal — 15% resistance to all attacks (projectile path)
           if (G.factions[t.player - 1] && G.factions[t.player - 1].id === 'spirits') dmg *= 0.85;
-          // Warriors Iron Resolve — 15% resistance when below 50% HP
-          if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * 0.50) {
+          // Warriors Iron Resolve — 15% resistance when below threshold HP (default 50%, upgradeable to 60%)
+          if (G.factions[t.player - 1] && G.factions[t.player - 1].ironResolve && t.hp < t.maxHp * (G.players[t.player - 1]?.ironResolveThreshold || 0.50)) {
             dmg *= 0.85;
             if (!t._ironResolvePopup || t._ironResolvePopup <= 0) { showPopup(t.x, t.y - 28, '🛡 IRON RESOLVE', '#f1c40f', t.player); t._ironResolvePopup = 2.5; }
           }
@@ -15754,7 +15883,10 @@
           const _tOwner2 = G.players[t.player - 1];
           if (_tOwner2) { const _tBase2 = _tOwner2.baseX; if (Math.abs(t.x - _tBase2) < 180) dmg *= 0.88; }
           if (t.spawnProtectionTimer > 0) dmg = 0;
-          else { dmg = Math.max(1, dmg - (t.def.armor || 0)); t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg; }
+          else {
+            const _lowHpArmor2 = (_tOwner2?._lowHpArmor && t.hp < t.maxHp * (_tOwner2._lowHpThreshold || 0.40)) ? _tOwner2._lowHpArmor : 0;
+            dmg = Math.max(1, dmg - (t.def.armor || 0) - _lowHpArmor2); if (isNaN(dmg) || !isFinite(dmg)) dmg = 1; t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg;
+          }
           t.hitFlash = 1; SFX.hit();
           t.lastHitById = p.attackerId; t.lastHitByPlayer = p.player;
           const atk = G.units.find(u => u.id === p.attackerId);
@@ -15800,7 +15932,7 @@
           if (atk) {
             atk._attackCount = (atk._attackCount || 0) + 1;
             const crate = atk.def.alwaysChain ? 1 : (atk.def.chainRate || G.players[atk.player - 1].chainRate || 10);
-            if ((G.factions[atk.player - 1].id === 'voltborn' || atk.def.alwaysChain) && atk._attackCount % crate === 0) {
+            if ((G.factions[atk.player - 1]?.id === 'voltborn' || atk.def.alwaysChain) && atk._attackCount % crate === 0) {
               const cdmg = G.players[atk.player - 1].chainDmgMult || 0.25;
               const chainR2 = atk.def.chainRange || 70;
               const _cJumps2 = G.players[atk.player - 1].chainJumps || 1;
@@ -15861,6 +15993,12 @@
           if (G._fortuneStreakTimer[si] <= 0) G._fortuneStreaks[si] = 0;
         }
       });
+      // Aura throttle — run expensive O(n²) aura loops every 0.3s instead of every frame
+      G._auraTimer = (G._auraTimer || 0) + dt;
+      const _runAuras = G._auraTimer >= 0.3;
+      const _auraDt = _runAuras ? G._auraTimer : 0;
+      if (_runAuras) G._auraTimer = 0;
+
       for (let i = G.units.length - 1; i >= 0; i--) {
         const u = G.units[i]; if (!u || u.hp <= 0) continue;
         // Guard despawn
@@ -15871,6 +16009,7 @@
         if (u._warcryed > 0) u._warcryed = Math.max(0, u._warcryed - dt);
         if (u._ironwalled > 0) u._ironwalled = Math.max(0, u._ironwalled - dt);
         if (u._ironResolvePopup > 0) u._ironResolvePopup = Math.max(0, u._ironResolvePopup - dt);
+        if (u._misfirePopup > 0) u._misfirePopup = Math.max(0, u._misfirePopup - dt);
         if (u._finalStand > 0) u._finalStand = Math.max(0, u._finalStand - dt);
         // Royal Guard regen
         if (u.def.regenPerSec) u.hp = Math.min(u.maxHp, u.hp + (u.def.regenPerSec) * dt);
@@ -15883,7 +16022,17 @@
         if (u.retreatCooldown > 0) u.retreatCooldown -= dt;
         if (u._deathFrenzyCD > 0) u._deathFrenzyCD -= dt;
         // Burn
-        if (u.burnTimer > 0) { u.burnTimer -= dt; u.hp -= (u.burnDmgTotal / 2) * dt; if (u.hp <= 0) { handleDeath(u, null); continue; } }
+        if (u.burnTimer > 0) {
+          u.burnTimer -= dt; const _burnTick = (u.burnDmgTotal / 2) * dt; u.hp -= _burnTick;
+          // Infernal Doom Surge: burn ticks heal allies for 25% of burn damage
+          const _enemyP = G.players[u.player === 1 ? 1 : 0];
+          if (_enemyP?._burnHeal && _burnTick > 0) {
+            const _healAmt = _burnTick * _enemyP._burnHeal;
+            const _nearAlly = G.units.find(a => a.player !== u.player && !a.def.isWorker && a.hp < a.maxHp && Math.abs(a.x - u.x) < 100);
+            if (_nearAlly) _nearAlly.hp = Math.min(_nearAlly.maxHp, _nearAlly.hp + _healAmt);
+          }
+          if (u.hp <= 0) { handleDeath(u, null); continue; }
+        }
         // Poison
         if (u.poisonTimer > 0) { u.poisonTimer -= dt; u.hp -= (u.poisonDmgPerSec || 0) * dt; if (u.hp <= 0) { handleDeath(u, null); continue; } }
         // Hit flash
@@ -15906,14 +16055,15 @@
           // Retreating: walk to base
           if (u.retreating) {
             const p = G.players[u.player - 1];
-            const retSpd = u.def.speed * 1.8 * (u._speedMult || 1); // faster retreat
+            const _retSpdBonus = (G.players[u.player - 1]?._retreatSpeedBonus || 0) + (G.players[u.player - 1]?.retreatSpeedBonus || 0);
+            const retSpd = u.def.speed * (1.8 + _retSpdBonus) * (u._speedMult || 1); // faster retreat
             u.x += (u.player === 1 ? -1 : 1) * retSpd * dt;
             u.y = G.groundY - (u.def.radius || 10);
             const atBase = (u.player === 1 && u.x < p.baseX + 60) || (u.player === 2 && u.x > p.baseX - 60);
             if (atBase) {
               u.retreating = false;
               u.healingPhase = true;
-              u.healDuration = u.def.healDuration || 6;
+              u.healDuration = Math.max(2, (u.def.healDuration || 6) - (G.players[u.player - 1]?._retreatHealReduction || 0));
               u.healRatePerSec = (u.maxHp - u.hp) / u.healDuration;
             }
             continue;
@@ -15925,11 +16075,12 @@
               u.healingPhase = false;
               u.retreatCooldown = 18;
               u.returnCount = (u.returnCount || 0) + 1;
-              if (u.def.returnDmgBonus && u.returnCount <= 3) {
-                u.def.dmg = Math.round(u.def.dmg * (1 + u.def.returnDmgBonus));
-                showPopup(u.x, u.y - 40, `+${Math.round(u.def.returnDmgBonus * 100)}% DMG`, '#2ecc71', u.player);
+              if (u.def.returnDmgBonus && u.returnCount <= (G.players[u.player - 1]?._veteranMaxStacks || 3)) {
+                const _retBonus = G.players[u.player - 1]?._veteranReturnBonus || u.def.returnDmgBonus;
+                u.def.dmg = Math.round(u.def.dmg * (1 + _retBonus));
+                showPopup(u.x, u.y - 40, `+${Math.round(_retBonus * 100)}% DMG`, '#2ecc71', u.player);
               }
-              if (u.returnCount >= 3) {
+              if (u.returnCount >= (G.players[u.player - 1]?._veteranMaxStacks || 3)) {
                 u.def.menderRetreat = false; // spent all retreats
                 showPopup(u.x, u.y - 40, '⚔ LAST STAND', '#e67e22', u.player);
               }
@@ -15954,15 +16105,16 @@
         // ─── Faction passives ───
         if (u.isRogue) continue; // rogue unit: skip all faction logic
         const faction = G.factions[u.player - 1];
+        if (!faction) continue;
         if (faction.id === 'verdant' && u.hp < u.maxHp) {
           const _vOwner = G.players[u.player - 1];
-          const _vRegen = !u.target ? (_vOwner._verdantRegenRate || 1.0) : (_vOwner._verdantCombatRegen || 0);
+          const _vRegen = !u.target ? (_vOwner._verdantRegenRate || 1.0) : (_vOwner._verdantCombatRegen || 0.5);
           const _vPassive = _vOwner._verdantPassiveRegen || 0;
           u.hp = Math.min(u.maxHp, u.hp + (_vRegen + _vPassive) * dt);
         }
-        if (u.def.bearAura) { G.units.forEach(e => { if (e.player !== u.player && dist2d(u, e) < 60 && !e.def.immuneDebuff) { e.slowTimer = Math.max(e.slowTimer || 0, .5); e._speedMult = Math.min(e._speedMult || 1, .75); } }); }
-        if (u.def.pitAura) { G.units.forEach(e => { if (e.player !== u.player && dist2d(u, e) < u.def.pitAuraRange) { e.hp -= u.def.pitAuraDmg * dt; if (e.hp <= 0) handleDeath(e, u); } }); }
-        if (u.def.allyAura) { G.units.forEach(a => { if (a.player === u.player && a !== u && dist2d(u, a) < (u.def.allyAuraRange || 80)) a.dmgMult = Math.max(a.dmgMult || 1, 1 + (u.def.allyAuraDmg || 0.08)); }); }
+        if (_runAuras && u.def.bearAura) { G.units.forEach(e => { if (e.player !== u.player && dist2d(u, e) < 60 && !e.def.immuneDebuff) { e.slowTimer = Math.max(e.slowTimer || 0, .5); e._speedMult = Math.min(e._speedMult || 1, .75); } }); }
+        if (_runAuras && u.def.pitAura) { G.units.forEach(e => { if (e.player !== u.player && dist2d(u, e) < u.def.pitAuraRange) { e.hp -= u.def.pitAuraDmg * _auraDt; if (e.hp <= 0) handleDeath(e, u); } }); }
+        if (_runAuras && u.def.allyAura) { G.units.forEach(a => { if (a.player === u.player && a !== u && dist2d(u, a) < (u.def.allyAuraRange || 80)) a.dmgMult = Math.max(a.dmgMult || 1, 1 + (u.def.allyAuraDmg || 0.08)); }); }
         // Warriors veteran stacks
         u.veteranTimer = (u.veteranTimer || 0) + dt;
         if (u.veteranTimer >= 5) { u.veteranTimer = 0; u.veteranStacks = Math.min((u.veteranStacks || 0) + 1, 4); }
@@ -15987,11 +16139,22 @@
         // Speed floor for slowed units (BUG2 fix)
         const groundMult = (!u.def.aerial && !u.def.isWorker) ? 0.92 : 1.0;
         const finalStandMult = u._finalStand > 0 ? 1.3 : 1.0;
-        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult * blitzMult * timeWarpMult * groundMult * finalStandMult * UNIT_SPEED_MULT;
-        const spd = u.def.immuneDebuff ? u.def.speed * warcryMult * blitzMult * groundMult * finalStandMult * UNIT_SPEED_MULT : Math.max(22, rawSpd);
-        const enemy = findEnemy(u);
+        const berserkSpdMult = u._berserkActive ? (1 + (_spOwner._berserkSpdBonus || 0)) : 1.0;
+        // ── Veilborn: phased units skip ALL attack/movement (handled in veilborn block below) ──
+        if (u._phased && u.def.veilborn) {
+          // Phase duration, regen, and unphase are handled in the veilborn block below
+          // But we must skip findEnemy/doAttack/movement — phased units are ghosts
+          u.vx = 0; u.target = null;
+          // Fall through to the veilborn block (do NOT continue here — need to reach it)
+        }
+        const rawSpd = u.def.speed * (u._speedMult || 1.0) * warcryMult * rallyMult * blitzMult * timeWarpMult * groundMult * finalStandMult * berserkSpdMult * UNIT_SPEED_MULT;
+        const spd = u.def.immuneDebuff ? u.def.speed * warcryMult * blitzMult * groundMult * finalStandMult * berserkSpdMult * UNIT_SPEED_MULT : Math.max(22, rawSpd);
+        const enemy = u._phased ? null : findEnemy(u);
         u.target = enemy;
-        if (enemy) {
+        if (u._phased) {
+          // Phased units: skip all attack and movement — they're ghosts
+          // Phase logic (duration, regen, unphase) is handled in the veilborn block below
+        } else if (enemy) {
           const d = rangeDist(u, enemy);
           // Check if we're right at the enemy base — attack it even while an enemy exists elsewhere
           const ebaseCheck = G.players[u.player === 1 ? 1 : 0];
@@ -16018,7 +16181,7 @@
                   col: u.def.color, life: 0.6, tx: _bpx, ty: _bpy,
                 });
               }
-              const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
+              const frenzyM = (u.frenzyTimer > 0) ? (1.15 + (G.players[u.player - 1]?._frenzyBonus || 0)) : 1;
               const _twAtkBase = (u._timeWarpTimer > 0) ? 1.80 : 1.0;
               u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM * _twAtkBase, .1);
             }
@@ -16029,7 +16192,7 @@
             if (!u.def.aerial) { u.vx = (u.vx || 0) * 0.75; if (Math.abs(u.vx) < 0.2) u.vx = 0; }
             u.attackCooldown -= dt; u.chargeTimer = 0;
             if (u.attackCooldown <= 0) {
-              const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
+              const frenzyM = (u.frenzyTimer > 0) ? (1.15 + (G.players[u.player - 1]?._frenzyBonus || 0)) : 1;
               const berserkHPM = (u.def.berserkHPThresh && u.hp < u.maxHp * u.def.berserkHPThresh) ? 2.0 : 1.0;
               const berserkM = u._berserkActive ? 2.0 : 1.0;
               const warcryAtkM = u._warcryed > 0 ? 1.15 : 1.0;
@@ -16182,7 +16345,7 @@
                     col: u.def.color, life: 0.6, tx: _bpx2, ty: _bpy2,
                   });
                 }
-                const frenzyM = (u.frenzyTimer > 0) ? 1.15 : 1;
+                const frenzyM = (u.frenzyTimer > 0) ? (1.15 + (G.players[u.player - 1]?._frenzyBonus || 0)) : 1;
                 u.attackCooldown = 1 / Math.max(u.def.attackRate * frenzyM, .1);
               }
             }
@@ -16257,27 +16420,33 @@
         }
         // ── Veilborn: auto-phase at low HP ──
         if (u.def.veilborn) {
+          const _vp = G.players[u.player - 1];
           if (u._phased) {
             u._phaseDur = (u._phaseDur || 0) - dt;
-            u.hp = Math.min(u.maxHp, u.hp + 8 * dt); // regen while phased
+            const _regenRate = (_vp?._veilRegenRate || 5) + (_vp?.veilRegenBonus || 0);
+            u.hp = Math.min(u.maxHp, u.hp + _regenRate * dt); // regen while phased
             if (u._phaseDur <= 0) {
               u._phased = false;
               // Free strike bonus on re-materialization
               const nearestFoe = G.units.find(e => e.player !== u.player && !e._phased && Math.abs(e.x - u.x) < (u.def.range || 80));
               if (nearestFoe) {
-                const strikeDmg = u.def.dmg + (u.def.veilStrikeBonus || 0) + (G.players[u.player - 1]._veilStrikeBonus || 0);
+                const strikeDmg = u.def.dmg + (u.def.veilStrikeBonus || 0) + (_vp?._veilStrikeBonus || 0) + (_vp?.veilStrikeBonusMastery || 0) + (_vp?.riftStrikeBonus || 0);
                 nearestFoe.hp -= strikeDmg; nearestFoe.hitFlash = 1;
                 spawnParticles(nearestFoe.x, nearestFoe.y, '#6c5ce7', 10);
                 if (nearestFoe.hp <= 0) handleDeath(nearestFoe, u);
               }
-              u._phaseCooldown = G.players[u.player - 1]._veilCooldown || 10;
+              let _cd = Math.max(4, (_vp?._veilCooldown || 10) - (_vp?.veilCooldownBonus || 0));
+              if (_vp?.veilAscendantMastery) _cd = Math.min(_cd, 7); // legendary cap
+              u._phaseCooldown = _cd;
             }
             continue; // phased units don't move or attack
           }
           if (u._phaseCooldown > 0) u._phaseCooldown -= dt;
-          if (!u._phased && u.hp < u.maxHp * 0.40 && (u._phaseCooldown || 0) <= 0) {
+          let _trigPct = (_vp?._veilTriggerPct || 0.40) + (_vp?.veilHPThresholdBonus || 0);
+          if (_vp?.veilAscendantMastery) _trigPct = Math.max(_trigPct, 0.55); // legendary override
+          if (!u._phased && u.hp < u.maxHp * _trigPct && (u._phaseCooldown || 0) <= 0) {
             u._phased = true;
-            u._phaseDur = u.def.veilPhaseDur || (G.players[u.player - 1]._veilDur || 2);
+            u._phaseDur = (u.def.veilPhaseDur || (_vp?._veilDur || 2)) + (_vp?.veilDurBonus || 0) + (u.def.id === 'vb2_rift' ? (_vp?.riftPhaseDurBonus || 0) : 0);
             spawnParticles(u.x, u.y, '#6c5ce7', 14);
             showPopup(u.x, u.y - 30, '👁 PHASE', '#6c5ce7', u.player);
           }
@@ -16332,12 +16501,12 @@
             continue;
           }
         }
-        // ── Psionics: aura corruption ──
-        if (u.def.psionicAura) {
+        // ── Psionics: aura corruption (throttled) ──
+        if (_runAuras && u.def.psionicAura) {
           G.units.forEach(e => {
             if (e.player === u.player || e.hp <= 0) return;
             if (dist2d(u, e) < (u.def.psionicAuraRange || 65)) {
-              e._corrupted = Math.min(1.0, (e._corrupted || 0) + (u.def.psionicAuraRate || 0.10) * dt);
+              e._corrupted = Math.min(1.0, (e._corrupted || 0) + (u.def.psionicAuraRate || 0.10) * _auraDt);
               if (e._corrupted >= 1.0) {
                 e._corrupted = 0;
                 // Fully corrupted: convert to psionic side for 8s
@@ -16519,8 +16688,9 @@
           if (_dCfg.soulCap) p.souls = Math.min(p.souls, _dCfg.soulCap);
         }
         const gained = p.souls - soulsBefore;
-        if (gained > 0) p.soulsLast5.push({ t: Date.now(), v: gained });
-        p.soulsLast5 = p.soulsLast5.filter(e => Date.now() - e.t < 5000);
+        const _tsNow = Date.now();
+        if (gained > 0) p.soulsLast5.push({ t: _tsNow, v: gained });
+        p.soulsLast5 = p.soulsLast5.filter(e => _tsNow - e.t < 5000);
         p.recentSoulRate = p.soulsLast5.reduce((s, e) => s + e.v, 0) / 5;
         p.souls = Math.min(p.souls, 999); p.bodies = Math.min(p.bodies, 99);
       });
@@ -17086,20 +17256,23 @@
         // Spawn the echo
         const def = G.unitDefs[ev.pid - 1].find(d => d.id === ev.defId);
         if (!def) return false;
-        const power = ev.power || 0.7;
+        const power = ev.power || 0.50;
         const chain = G.players[ev.pid - 1]._echoChain || false;
+        const _p = G.players[ev.pid - 1];
+        // Mastery: Paradox Chain — Paradox echoes spawn their own echo
+        const _paradoxChain = _p?.paradoxChain && ev.defId === 'ec_paradox' && !ev._isChainEcho;
         const echo = {
           id: 'echo_' + Date.now() + '_' + Math.random(),
           defId: 'echo_' + ev.defId, def: Object.assign({}, def, {
             hp: Math.round(def.hp * power), dmg: Math.round(def.dmg * power),
-            speed: def.speed, name: 'Echo: ' + def.name, isSpawned: true
+            speed: Math.round(def.speed * 0.85), name: 'Echo: ' + def.name, isSpawned: true
           }),
           player: ev.pid, x: ev.x, y: ev.y,
           hp: Math.round(def.hp * power), maxHp: Math.round(def.hp * power),
           dead: false, _isEcho: true, aliveSecs: 0,
           attackTimer: 0, attackCooldown: 0,
           moveDir: ev.pid === 1 ? 1 : -1,
-          _age: 0, radius: def.radius || 14,
+          _age: 0, radius: Math.round((def.radius || 14) * 0.85),
           aerial: def.aerial || false, color: '#9b59b6',
           icon: def.icon, veteranTimer: 0, veteranStacks: 0,
           stillTimer: 0, fortified: false, frenzyTimer: 0,
@@ -17115,8 +17288,10 @@
         };
         G.units.push(echo);
         spawnParticles(ev.x, ev.y, '#9b59b6', 12);
-        // If echo_chain upgrade: schedule another echo in 4s
-        if (chain) G.echoSchedule.push({ pid: ev.pid, defId: ev.defId, x: ev.x, y: ev.y, t: 4, power: power * 0.7 });
+        // If echo_chain upgrade: schedule another echo in 4s at 60% of parent power
+        if (chain) G.echoSchedule.push({ pid: ev.pid, defId: ev.defId, x: ev.x, y: ev.y, t: 4, power: power * 0.60 });
+        // Mastery: Paradox Chain — Paradox echo spawns its own echo at 70% power
+        if (_paradoxChain) G.echoSchedule.push({ pid: ev.pid, defId: ev.defId, x: ev.x, y: ev.y, t: 5, power: power * 0.70, _isChainEcho: true });
         return false;
       });
     }
@@ -17141,10 +17316,10 @@
       });
     }
     function updateNewFactionSystems(dt) {
-      // Merchants: passive soul income when rich
+      // Merchants: passive soul income when rich (only above 30 souls threshold)
       G.players.forEach((p, i) => {
         if (!G.factions[i] || G.factions[i].id !== 'merchants') return;
-        if (p._merchantPassive) p.souls = Math.min(900, p.souls + p._merchantPassive * dt);
+        if (p._merchantPassive && p.souls > 30) p.souls = Math.min(p.soulCap || 900, p.souls + p._merchantPassive * dt);
       });
       // Chronomancers: Time Tax — enemies near own base of chrono player are slowed
       G.players.forEach((p, i) => {
@@ -17191,7 +17366,11 @@
       if (G.particles.length > 600) G.particles.splice(0, G.particles.length - 600);
     }
     // ─── DRAWING ─────────────────────────────────────────────────────────────────
+    // Cached sky/horizon canvases — regenerated only when factions change
+    let _cachedSky = null, _cachedSkyKey = '';
+    let _now = 0; // cached Date.now() for all animation pulses this frame
     function drawGame() {
+      _now = Date.now();
       if (G && G.shake > 0) {
         G.shake = Math.max(0, G.shake - 0.025);
         G.shakeX = (Math.random() - 0.5) * G.shake * 14;
@@ -17217,11 +17396,12 @@
           const frac = tp.life / tp.dur;
           ctx.save();
           ctx.globalAlpha = frac * 0.5;
-          const tg = ctx.createRadialGradient(tp.x, G.groundY, 0, tp.x, G.groundY, tp.radius || 22);
-          tg.addColorStop(0, '#2d3436');
-          tg.addColorStop(0.6, '#636e72');
-          tg.addColorStop(1, 'transparent');
-          ctx.fillStyle = tg;
+          if (!tp._grad) {
+            const tg = ctx.createRadialGradient(tp.x, G.groundY, 0, tp.x, G.groundY, tp.radius || 22);
+            tg.addColorStop(0, '#2d3436'); tg.addColorStop(0.6, '#636e72'); tg.addColorStop(1, 'transparent');
+            tp._grad = tg;
+          }
+          ctx.fillStyle = tp._grad;
           ctx.beginPath(); ctx.ellipse(tp.x, G.groundY, tp.radius || 22, (tp.radius || 22) * 0.3, 0, 0, Math.PI * 2); ctx.fill();
           ctx.restore();
         });
@@ -17230,7 +17410,7 @@
       if (G.darkZones && G.darkZones.length) {
         G.darkZones.forEach(dz => {
           if (!dz.x) return;
-          const pulse = 0.25 + Math.sin(Date.now() / 400) * 0.08;
+          const pulse = 0.25 + Math.sin(_now / 400) * 0.08;
           ctx.save();
           ctx.globalAlpha = pulse;
           const dzg = ctx.createRadialGradient(dz.x, G.groundY - 40, 0, dz.x, G.groundY - 40, dz.radius || 120);
@@ -17248,11 +17428,12 @@
           const alpha = Math.min(0.45, (pool.life / 8.0) * 0.45);
           ctx.save();
           ctx.globalAlpha = alpha;
-          const grad = ctx.createRadialGradient(pool.x, pool.y, 0, pool.x, pool.y, pool.r);
-          grad.addColorStop(0, '#b71c1c');
-          grad.addColorStop(0.6, '#7f0000');
-          grad.addColorStop(1, 'transparent');
-          ctx.fillStyle = grad;
+          if (!pool._grad) {
+            const grad = ctx.createRadialGradient(pool.x, pool.y, 0, pool.x, pool.y, pool.r);
+            grad.addColorStop(0, '#b71c1c'); grad.addColorStop(0.6, '#7f0000'); grad.addColorStop(1, 'transparent');
+            pool._grad = grad;
+          }
+          ctx.fillStyle = pool._grad;
           ctx.beginPath();
           ctx.ellipse(pool.x, pool.y, pool.r, pool.r * 0.38, 0, 0, Math.PI * 2);
           ctx.fill();
@@ -17263,14 +17444,16 @@
       if (G._hasReavers && G.corpses && G.corpses.length) {
         G.corpses.forEach(c => {
           const frac = Math.min(1, c.life / 8);
-          const _now = Date.now();
           const pulse = 0.4 + Math.sin((_now / 500) + c.x * 0.1) * 0.15;
           ctx.save();
           ctx.globalAlpha = frac * pulse;
-          // Bone pile base — brown radial glow
-          const cg = ctx.createRadialGradient(c.x, G.groundY - 2, 0, c.x, G.groundY - 2, 14);
-          cg.addColorStop(0, '#d5c4a1'); cg.addColorStop(0.5, '#8B4513'); cg.addColorStop(1, 'transparent');
-          ctx.fillStyle = cg;
+          // Bone pile base — brown radial glow (cached)
+          if (!c._grad) {
+            const cg = ctx.createRadialGradient(c.x, G.groundY - 2, 0, c.x, G.groundY - 2, 14);
+            cg.addColorStop(0, '#d5c4a1'); cg.addColorStop(0.5, '#8B4513'); cg.addColorStop(1, 'transparent');
+            c._grad = cg;
+          }
+          ctx.fillStyle = c._grad;
           ctx.beginPath(); ctx.ellipse(c.x, G.groundY - 2, 14, 5, 0, 0, Math.PI * 2); ctx.fill();
           // Bone fragments
           ctx.fillStyle = '#d5c4a1'; ctx.globalAlpha = frac * 0.7;
@@ -17302,7 +17485,7 @@
           const frac = fx.life / fx.maxLife;
           ctx.save();
           if (fx.type === 'fire') {
-            const pulse = 0.5 + Math.sin(Date.now() / 80 + fx.x) * 0.25;
+            const pulse = 0.5 + Math.sin(_now / 80 + fx.x) * 0.25;
             ctx.globalAlpha = frac * pulse * 0.7;
             const fg = ctx.createRadialGradient(fx.x, fx.y, 0, fx.x, fx.y, fx.r);
             fg.addColorStop(0, '#f9ca24'); fg.addColorStop(0.4, '#ff6b35'); fg.addColorStop(1, 'transparent');
@@ -17344,7 +17527,7 @@
           if (spy.phase === 'transit') {
             // Translucent silhouette dashing across the field
             const t = 1 - Math.max(0, spy.transitTimer / (spy.transitDur || 5));
-            const flicker = 0.15 + Math.sin(Date.now() / 120) * 0.08;
+            const flicker = 0.15 + Math.sin(_now / 120) * 0.08;
             ctx.globalAlpha = flicker + t * 0.15;
             // Shadow trail
             ctx.fillStyle = '#636e72';
@@ -17362,7 +17545,7 @@
             ctx.setLineDash([]);
           } else if (spy.phase === 'active') {
             // Pulsing spy icon at enemy base
-            const pulse = 0.3 + Math.sin(Date.now() / 300) * 0.15;
+            const pulse = 0.3 + Math.sin(_now / 300) * 0.15;
             const caught = spy._caughtFlash > 0;
             const stealing = spy._stealFlash > 0;
 
@@ -17375,7 +17558,7 @@
             ctx.setLineDash([]);
 
             // Spy figure
-            ctx.globalAlpha = caught ? 0.9 : 0.35 + Math.sin(Date.now() / 250) * 0.1;
+            ctx.globalAlpha = caught ? 0.9 : 0.35 + Math.sin(_now / 250) * 0.1;
             ctx.fillStyle = caught ? '#e74c3c' : '#636e72';
             ctx.beginPath(); ctx.arc(sx, sy - 14, 5, 0, Math.PI * 2); ctx.fill();
             // Hat
@@ -17446,7 +17629,7 @@
       };
       const t1 = themes[f1id] || 'dark', t2 = themes[f2id] || 'dark';
       const mixed = t1 !== t2;
-      const W = G.w, H = G.h, GY = G.groundY, now = Date.now();
+      const W = G.w, H = G.h, GY = G.groundY, now = _now;
 
       const skyP = {
         hell: ['#1a0005', '#3d000c', '#2a0008'],   // deep red sky
@@ -17482,68 +17665,59 @@
         psionic: 'rgba(155, 89, 182,', abyss: 'rgba(80, 80, 100,',
       };
 
-      // Draw sky — for mixed, blend both palettes via an offscreen canvas
-      const drawSkyGrad = (pal) => {
-        const g = ctx.createLinearGradient(0, 0, 0, GY);
-        g.addColorStop(0, pal[0]); g.addColorStop(0.55, pal[1]); g.addColorStop(1, pal[2]);
-        return g;
-      };
-      const p1 = skyP[t1] || skyP.dark, p2 = skyP[t2] || skyP.dark;
-      ctx.fillStyle = drawSkyGrad(p1); ctx.fillRect(0, 0, W, H);
-      if (mixed) {
-        // P2 sky fades in from center-right — harder split than before so sides read clearly
-        const off = document.createElement('canvas'); off.width = W; off.height = H;
-        const oc = off.getContext('2d');
-        oc.fillStyle = (() => { const g = oc.createLinearGradient(0, 0, 0, GY); g.addColorStop(0, p2[0]); g.addColorStop(0.55, p2[1]); g.addColorStop(1, p2[2]); return g; })();
-        oc.fillRect(0, 0, W, H);
-        oc.globalCompositeOperation = 'destination-in';
-        // Mask starts at 40% width so each side is clearly its own theme
-        const mask = oc.createLinearGradient(W * 0.4, 0, W * 0.85, 0);
-        mask.addColorStop(0, 'rgba(0,0,0,0)');
-        mask.addColorStop(0.45, 'rgba(0,0,0,0.55)');
-        mask.addColorStop(1, 'rgba(0,0,0,1)');
-        oc.fillStyle = mask; oc.fillRect(0, 0, W, H);
-        ctx.drawImage(off, 0, 0);
+      // Draw sky + horizon glow — cached to avoid creating offscreen canvases every frame
+      const _skyKey = t1 + '|' + t2 + '|' + W + '|' + H;
+      if (!_cachedSky || _cachedSkyKey !== _skyKey) {
+        _cachedSkyKey = _skyKey;
+        const skyOff = document.createElement('canvas'); skyOff.width = W; skyOff.height = H;
+        const sctx = skyOff.getContext('2d');
+        const drawSkyGrad = (c, pal) => {
+          const g = c.createLinearGradient(0, 0, 0, GY);
+          g.addColorStop(0, pal[0]); g.addColorStop(0.55, pal[1]); g.addColorStop(1, pal[2]);
+          return g;
+        };
+        const p1 = skyP[t1] || skyP.dark, p2 = skyP[t2] || skyP.dark;
+        sctx.fillStyle = drawSkyGrad(sctx, p1); sctx.fillRect(0, 0, W, H);
+        if (mixed) {
+          const off = document.createElement('canvas'); off.width = W; off.height = H;
+          const oc = off.getContext('2d');
+          oc.fillStyle = drawSkyGrad(oc, p2); oc.fillRect(0, 0, W, H);
+          oc.globalCompositeOperation = 'destination-in';
+          const mask = oc.createLinearGradient(W * 0.4, 0, W * 0.85, 0);
+          mask.addColorStop(0, 'rgba(0,0,0,0)'); mask.addColorStop(0.45, 'rgba(0,0,0,0.55)'); mask.addColorStop(1, 'rgba(0,0,0,1)');
+          oc.fillStyle = mask; oc.fillRect(0, 0, W, H);
+          sctx.drawImage(off, 0, 0);
+        }
+        // Horizon glow
+        const hc1 = horizonGlow[t1] || 'rgba(100,100,100,';
+        const hc2 = horizonGlow[t2] || 'rgba(100,100,100,';
+        if (!mixed) {
+          const hg = sctx.createLinearGradient(0, GY * 0.55, 0, GY);
+          hg.addColorStop(0, hc1 + '0)'); hg.addColorStop(0.6, hc1 + '0.18)'); hg.addColorStop(1, hc1 + '0.45)');
+          sctx.fillStyle = hg; sctx.fillRect(0, GY * 0.55, W, GY * 0.45);
+        } else {
+          const hg1mask = document.createElement('canvas'); hg1mask.width = W; hg1mask.height = H;
+          const hgc1 = hg1mask.getContext('2d');
+          hgc1.fillStyle = (() => { const g = hgc1.createLinearGradient(0, GY * 0.55, 0, GY); g.addColorStop(0, hc1 + '0)'); g.addColorStop(0.6, hc1 + '0.2)'); g.addColorStop(1, hc1 + '0.48)'); return g; })();
+          hgc1.fillRect(0, GY * 0.55, W, GY * 0.45);
+          hgc1.globalCompositeOperation = 'destination-in';
+          const lm = hgc1.createLinearGradient(W * 0.3, 0, W * 0.7, 0);
+          lm.addColorStop(0, 'rgba(0,0,0,1)'); lm.addColorStop(1, 'rgba(0,0,0,0)');
+          hgc1.fillStyle = lm; hgc1.fillRect(0, GY * 0.55, W, GY * 0.45);
+          sctx.drawImage(hg1mask, 0, 0);
+          const hg2mask = document.createElement('canvas'); hg2mask.width = W; hg2mask.height = H;
+          const hgc2 = hg2mask.getContext('2d');
+          hgc2.fillStyle = (() => { const g = hgc2.createLinearGradient(0, GY * 0.55, 0, GY); g.addColorStop(0, hc2 + '0)'); g.addColorStop(0.6, hc2 + '0.2)'); g.addColorStop(1, hc2 + '0.48)'); return g; })();
+          hgc2.fillRect(0, GY * 0.55, W, GY * 0.45);
+          hgc2.globalCompositeOperation = 'destination-in';
+          const rm = hgc2.createLinearGradient(W * 0.3, 0, W * 0.7, 0);
+          rm.addColorStop(0, 'rgba(0,0,0,0)'); rm.addColorStop(1, 'rgba(0,0,0,1)');
+          hgc2.fillStyle = rm; hgc2.fillRect(0, GY * 0.55, W, GY * 0.45);
+          sctx.drawImage(hg2mask, 0, 0);
+        }
+        _cachedSky = skyOff;
       }
-
-      // Horizon glow — strong faction-coloured band at bottom of sky per side
-      // This is the main visual anchor that makes each side unmistakably "that faction"
-      const hc1 = horizonGlow[t1] || 'rgba(100,100,100,';
-      const hc2 = horizonGlow[t2] || 'rgba(100,100,100,';
-      if (!mixed) {
-        // Single faction — full-width glow
-        const hg = ctx.createLinearGradient(0, GY * 0.55, 0, GY);
-        hg.addColorStop(0, hc1 + '0)');
-        hg.addColorStop(0.6, hc1 + '0.18)');
-        hg.addColorStop(1, hc1 + '0.45)');
-        ctx.fillStyle = hg; ctx.fillRect(0, GY * 0.55, W, GY * 0.45);
-      } else {
-        // Split — P1 glow covers left half, P2 glow covers right half
-        // P1 left
-        const hg1 = ctx.createLinearGradient(0, GY * 0.55, 0, GY);
-        hg1.addColorStop(0, hc1 + '0)');
-        hg1.addColorStop(0.6, hc1 + '0.2)');
-        hg1.addColorStop(1, hc1 + '0.48)');
-        const hg1mask = document.createElement('canvas'); hg1mask.width = W; hg1mask.height = H;
-        const hgc1 = hg1mask.getContext('2d');
-        hgc1.fillStyle = (() => { const g = hgc1.createLinearGradient(0, GY * 0.55, 0, GY); g.addColorStop(0, hc1 + '0)'); g.addColorStop(0.6, hc1 + '0.2)'); g.addColorStop(1, hc1 + '0.48)'); return g; })();
-        hgc1.fillRect(0, GY * 0.55, W, GY * 0.45);
-        hgc1.globalCompositeOperation = 'destination-in';
-        const lm = hgc1.createLinearGradient(W * 0.3, 0, W * 0.7, 0);
-        lm.addColorStop(0, 'rgba(0,0,0,1)'); lm.addColorStop(1, 'rgba(0,0,0,0)');
-        hgc1.fillStyle = lm; hgc1.fillRect(0, GY * 0.55, W, GY * 0.45);
-        ctx.drawImage(hg1mask, 0, 0);
-        // P2 right
-        const hg2mask = document.createElement('canvas'); hg2mask.width = W; hg2mask.height = H;
-        const hgc2 = hg2mask.getContext('2d');
-        hgc2.fillStyle = (() => { const g = hgc2.createLinearGradient(0, GY * 0.55, 0, GY); g.addColorStop(0, hc2 + '0)'); g.addColorStop(0.6, hc2 + '0.2)'); g.addColorStop(1, hc2 + '0.48)'); return g; })();
-        hgc2.fillRect(0, GY * 0.55, W, GY * 0.45);
-        hgc2.globalCompositeOperation = 'destination-in';
-        const rm = hgc2.createLinearGradient(W * 0.3, 0, W * 0.7, 0);
-        rm.addColorStop(0, 'rgba(0,0,0,0)'); rm.addColorStop(1, 'rgba(0,0,0,1)');
-        hgc2.fillStyle = rm; hgc2.fillRect(0, GY * 0.55, W, GY * 0.45);
-        ctx.drawImage(hg2mask, 0, 0);
-      }
+      ctx.drawImage(_cachedSky, 0, 0);
 
       // Stars — twinkling
       const sc = (t1 === 'hell' || t1 === 'blood') ? 18 : t1 === 'forest' ? 12 : 55;
@@ -18537,7 +18711,7 @@
         const gy = G.groundY;
         // Circle centred ON ground line — half visible above, half below (like mid-point)
         const cy = gy;
-        const pulse = 0.08 + Math.sin(Date.now() / 700 + i * 2.1) * 0.05;
+        const pulse = 0.08 + Math.sin(_now / 700 + i * 2.1) * 0.05;
         const col = z.owner === 1 ? '#2471a3' : z.owner === 2 ? '#c0392b' : '#444';
         const glowCol = z.owner === 1 ? 'rgba(36,113,163,' : z.owner === 2 ? 'rgba(192,57,43,' : 'rgba(100,100,100,';
 
@@ -19585,6 +19759,18 @@
         ctx.save(); ctx.globalAlpha = 0.1 * fade; ctx.fillStyle = '#2d1b69';
         ctx.fillRect(0, 0, G.w, G.h); ctx.restore();
       }
+      if (G.activeEvent && G.activeEvent.type === 'arcane_surge') {
+        const remaining = Math.max(0, (G.activeEvent.duration || 12) - (G.activeEvent.timer || 0));
+        const fade = Math.min(1, remaining / 3);
+        ctx.save(); ctx.globalAlpha = 0.04 * fade; ctx.fillStyle = '#fdcb6e';
+        ctx.fillRect(0, 0, G.w, G.h); ctx.restore();
+      }
+      if (G.activeEvent && G.activeEvent._timeWarpActive) {
+        const remaining = Math.max(0, (G.activeEvent.duration || 10) - (G.activeEvent.timer || 0));
+        const fade = Math.min(1, remaining / 3);
+        ctx.save(); ctx.globalAlpha = 0.04 * fade; ctx.fillStyle = '#a29bfe';
+        ctx.fillRect(0, 0, G.w, G.h); ctx.restore();
+      }
 
       // ── Ground circle (cap arc + owner ring) ────────────────────────────────
       if (G.midOwner) {
@@ -19798,7 +19984,7 @@
       if (_fogged) {
         const x = u.x, y = u.y, r = u.def.radius || 10;
         ctx.save();
-        ctx.globalAlpha = 0.35 + Math.sin(Date.now() / 400) * 0.08;
+        ctx.globalAlpha = 0.35 + Math.sin(_now / 400) * 0.08;
         ctx.fillStyle = '#636e72';
         ctx.shadowBlur = 8; ctx.shadowColor = '#2d3436';
         ctx.beginPath(); ctx.ellipse(x, y, r * .85, r, 0, 0, Math.PI * 2); ctx.fill();
@@ -19814,7 +20000,7 @@
       ctx.save();
       // Retreating units: green trail
       if (u.retreating) {
-        ctx.globalAlpha = 0.7 + Math.sin(Date.now() / 200) * .2;
+        ctx.globalAlpha = 0.7 + Math.sin(_now / 200) * .2;
         ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 2;
         ctx.setLineDash([4, 4]);
         ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke();
@@ -19831,7 +20017,7 @@
       }
       // Warriors Charge Strike — gold glow when charged up (chargeTimer > 1.5s)
       if (u.def.chargeStrike && (u.chargeTimer || 0) > 1.5) {
-        const _cp = 0.4 + Math.sin(Date.now() / 130) * 0.3;
+        const _cp = 0.4 + Math.sin(_now / 130) * 0.3;
         ctx.save();
         ctx.globalAlpha = _cp;
         ctx.shadowBlur = 14; ctx.shadowColor = '#f1c40f';
@@ -19872,7 +20058,7 @@
       }
       // Sylph pollen regen — soft green pulsing glow
       if ((u._sylphRegen || 0) > 0) {
-        const _sp = 0.3 + Math.sin(Date.now() / 200) * 0.2;
+        const _sp = 0.3 + Math.sin(_now / 200) * 0.2;
         ctx.save();
         ctx.globalAlpha = _sp;
         ctx.shadowBlur = 10; ctx.shadowColor = '#a8ff78';
@@ -19888,7 +20074,7 @@
       }
       // Wild Card — pulsing gold ring + countdown bar underneath
       if (u._wildCard) {
-        const wcp = 0.5 + Math.sin(Date.now() / 140) * 0.4;
+        const wcp = 0.5 + Math.sin(_now / 140) * 0.4;
         ctx.save();
         ctx.globalAlpha = wcp;
         ctx.strokeStyle = '#f9ca24'; ctx.lineWidth = 3;
@@ -19909,7 +20095,7 @@
       }
       // Hellfire empowerment — orange pulse ring
       if (u._hellfire) {
-        const hfPulse = 0.5 + Math.sin(Date.now() / 120) * 0.4;
+        const hfPulse = 0.5 + Math.sin(_now / 120) * 0.4;
         ctx.save();
         ctx.globalAlpha = hfPulse;
         ctx.strokeStyle = '#ff6600'; ctx.lineWidth = 2.5;
@@ -19921,7 +20107,7 @@
       // ── Veilborn: phased — very translucent, blue shimmer ──
       if (u._phased) {
         ctx.save();
-        ctx.globalAlpha = 0.25 + Math.sin(Date.now() / 150) * 0.08;
+        ctx.globalAlpha = 0.25 + Math.sin(_now / 150) * 0.08;
         ctx.strokeStyle = '#6c5ce7'; ctx.lineWidth = 2.5;
         ctx.shadowBlur = 16; ctx.shadowColor = '#6c5ce7';
         ctx.beginPath(); ctx.arc(x, y, r + 8, 0, Math.PI * 2); ctx.stroke();
@@ -19931,19 +20117,21 @@
         // Draw the unit very faded
         ctx.globalAlpha = 0.28;
       }
-      // ── Echo unit: purple tint overlay ──
+      // ── Echo unit: translucent ghost with strong purple ring ──
       if (u._isEcho) {
-        ctx.globalAlpha = 0.65;
+        ctx.globalAlpha = 0.40;
         ctx.save();
-        ctx.globalAlpha = 0.4 + Math.sin(Date.now() / 300) * 0.15;
-        ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(x, y, r + 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 0.5 + Math.sin(_now / 250) * 0.2;
+        ctx.strokeStyle = '#9b59b6'; ctx.lineWidth = 3;
+        ctx.shadowBlur = 12; ctx.shadowColor = '#9b59b6';
+        ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke();
+        ctx.shadowBlur = 0;
         ctx.restore();
-        ctx.globalAlpha = 0.65;
+        ctx.globalAlpha = 0.40;
       }
       // ── Decoy: flickering + dashed border ──
       if (u._isDecoy) {
-        const flicker = 0.4 + Math.sin(Date.now() / 80) * 0.3;
+        const flicker = 0.4 + Math.sin(_now / 80) * 0.3;
         ctx.globalAlpha = flicker;
         ctx.save();
         ctx.globalAlpha = 0.6;
@@ -19955,7 +20143,7 @@
       }
       // ── Chrysalis cocoon: pulsing green ring ──
       if (u._chrysPhase === 'cocoon') {
-        const cp = 0.5 + Math.sin(Date.now() / 200) * 0.4;
+        const cp = 0.5 + Math.sin(_now / 200) * 0.4;
         ctx.save();
         ctx.globalAlpha = cp;
         ctx.strokeStyle = '#00b894'; ctx.lineWidth = 3;
@@ -19967,7 +20155,6 @@
       // ── Psionics: corruption overlay — glowing purple eyes + tendrils ──
       if (u._corrupted && u._corrupted > 0.1) {
         const cp2 = u._corrupted;
-        const _now = Date.now();
         ctx.save();
         // Corruption ring
         ctx.globalAlpha = cp2 * 0.6;
@@ -20001,21 +20188,20 @@
       // ── Plagued: mutation marks ──
       if (u._mutations && u._mutations > 0) {
         const mutCount = u._mutations;
-        const _now2 = Date.now();
         ctx.save();
         ctx.globalAlpha = 0.5;
         // Green boil marks on body
         for (let m = 0; m < Math.min(mutCount, 4); m++) {
           const ma = (m / 4) * Math.PI * 2 + 0.3;
           const mx2 = x + Math.cos(ma) * r * 0.5, my2 = y + Math.sin(ma) * r * 0.5;
-          const mPulse = 0.4 + Math.abs(Math.sin(_now2 / 500 + m * 1.2)) * 0.4;
+          const mPulse = 0.4 + Math.abs(Math.sin(_now / 500 + m * 1.2)) * 0.4;
           ctx.globalAlpha = mPulse;
           ctx.fillStyle = '#7bed9f'; ctx.shadowBlur = 4; ctx.shadowColor = '#2ecc71';
           ctx.beginPath(); ctx.arc(mx2, my2, 2 + mutCount * 0.3, 0, Math.PI * 2); ctx.fill();
         }
         // Toxic aura when highly mutated
         if (mutCount >= 3) {
-          ctx.globalAlpha = 0.15 + Math.abs(Math.sin(_now2 / 700)) * 0.1;
+          ctx.globalAlpha = 0.15 + Math.abs(Math.sin(_now / 700)) * 0.1;
           const tGrd = ctx.createRadialGradient(x, y, r * 0.5, x, y, r + 10);
           tGrd.addColorStop(0, 'rgba(123,237,159,0.3)'); tGrd.addColorStop(1, 'rgba(123,237,159,0)');
           ctx.fillStyle = tGrd; ctx.beginPath(); ctx.arc(x, y, r + 10, 0, Math.PI * 2); ctx.fill();
@@ -20025,14 +20211,13 @@
       }
       // ── Umbral: in-darkness shadow + glowing eyes ──
       if (u._inDark) {
-        const _now3 = Date.now();
         ctx.save();
-        ctx.globalAlpha = 0.3 + Math.sin(_now3 / 500) * 0.1;
+        ctx.globalAlpha = 0.3 + Math.sin(_now / 500) * 0.1;
         ctx.fillStyle = '#0a0a0e';
         ctx.shadowBlur = 18; ctx.shadowColor = '#000';
         ctx.beginPath(); ctx.ellipse(x, y, r * 1.3, r * 1.4, 0, 0, Math.PI * 2); ctx.fill();
         // Piercing eyes in the darkness
-        ctx.globalAlpha = 0.7 + Math.sin(_now3 / 300) * 0.2;
+        ctx.globalAlpha = 0.7 + Math.sin(_now / 300) * 0.2;
         ctx.fillStyle = '#b2bec3'; ctx.shadowBlur = 6; ctx.shadowColor = '#b2bec3';
         const deyeOff = r * 0.2, deyeY = y - r * (r >= 14 ? 0.9 : 0.3);
         ctx.beginPath(); ctx.ellipse(x - deyeOff, deyeY, 2.5, 1.5, 0, 0, Math.PI * 2); ctx.fill();
@@ -20042,17 +20227,15 @@
       }
       // ── Tideborn: water shimmer aura ──
       if (u.def.tideborn && !u.def.isWorker) {
-        const _now4 = Date.now();
         ctx.save();
-        ctx.globalAlpha = 0.12 + Math.abs(Math.sin(_now4 / 600 + u.id)) * 0.08;
+        ctx.globalAlpha = 0.12 + Math.abs(Math.sin(_now / 600 + u.id)) * 0.08;
         ctx.strokeStyle = '#74b9ff'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.arc(x, y, r + 3 + Math.sin(_now4 / 400 + u.id) * 2, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, r + 3 + Math.sin(_now / 400 + u.id) * 2, 0, Math.PI * 2); ctx.stroke();
         ctx.restore();
       }
       // ── Chronomancers: time distortion ring ──
       if (u.def.chronoElite || u.def.chronoBonus) {
-        const _now5 = Date.now();
-        const rotAngle = (_now5 / 1500) % (Math.PI * 2);
+        const rotAngle = (_now / 1500) % (Math.PI * 2);
         ctx.save();
         ctx.globalAlpha = 0.2;
         ctx.strokeStyle = '#5dade2'; ctx.lineWidth = 1;
@@ -20069,7 +20252,7 @@
 
       // ── Final Stand: pulsing red aura ──
       if (u._finalStand > 0) {
-        const _fsAlpha = 0.3 + Math.sin(Date.now() / 200) * 0.15;
+        const _fsAlpha = 0.3 + Math.sin(_now / 200) * 0.15;
         ctx.save();
         ctx.globalAlpha = _fsAlpha;
         ctx.shadowBlur = 14;
@@ -20089,7 +20272,7 @@
         const _fid = G.factions[u.player - 1]?.id;
         const _aura = _fid && FACTION_AURA[_fid];
         if (_aura && !u.def.isWorker) {
-          const _ap = 0.22 + Math.sin(Date.now() / 900 + u.id * 0.37) * 0.08;
+          const _ap = 0.22 + Math.sin(_now / 900 + u.id * 0.37) * 0.08;
           ctx.save();
           ctx.globalAlpha = _ap;
           ctx.shadowBlur = _aura.blur;
@@ -20264,7 +20447,7 @@
 
       // Rogue unit visual — gold pulsing ring + skull label
       if (u.isRogue) {
-        const ropulse = 0.6 + Math.sin(Date.now() / 200) * 0.35;
+        const ropulse = 0.6 + Math.sin(_now / 200) * 0.35;
         ctx.save();
         ctx.globalAlpha = ropulse;
         ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 3;
@@ -20288,7 +20471,7 @@
       // Kill marks (marked unit at 3+ kills = gold ring; veteran at 5+ = pulsing star)
       if ((u.killCount || 0) >= 5 || u._veteran) {
         // Veteran: pulsing gold ring + star
-        const pulse = 0.55 + Math.sin(Date.now() / 200) * 0.35;
+        const pulse = 0.55 + Math.sin(_now / 200) * 0.35;
         ctx.save();
         ctx.globalAlpha = pulse;
         ctx.strokeStyle = '#d4a843'; ctx.lineWidth = 2.5;
@@ -22017,7 +22200,7 @@
     // CAMPAIGN MODE
     // ══════════════════════════════════════════════════════════════════
     const CAMPAIGN = {
-      progress: JSON.parse(localStorage.getItem('bkc_campaign') || '{}'),
+      progress: (() => { try { return JSON.parse(localStorage.getItem('bkc_campaign') || '{}'); } catch (_) { return {}; } })(),
       active: false,
       currentLevel: 0,
       _diaTimer: null,
@@ -22025,7 +22208,7 @@
       _diaReplyTimer: null,
       _diaQueue: [],
       _lastTrigger: {},
-      save() { localStorage.setItem('bkc_campaign', JSON.stringify(this.progress)); },
+      save() { try { localStorage.setItem('bkc_campaign', JSON.stringify(this.progress)); } catch (_) { console.warn('Campaign save failed — storage full?'); } },
       isCompleted(i) { return this.progress['lv' + i] === 'done'; },
       isUnlocked(i) { return i === 0 || this.isCompleted(i - 1); },
     };
@@ -24367,10 +24550,9 @@
     function devBtn(label, onclick, tip) {
       return '<button class="dev-btn" onclick="' + onclick + '" ' + devTip(tip) + '>' + label + '</button>';
     }
-    function devInp(id, val, onchange, tip) {
-      // No auto-apply — only fires on APPLY CHANGES click
-      const safeOnch = (onchange || '').split('"').join("'");
-      return '<input class="dev-inp" id="' + id + '" type="number" value="' + val + '" data-devonch="' + safeOnch + '" ' + devTip(tip) + ' step="1">';
+    function devInp(id, val, devPath, tip) {
+      // Safe: stores a dot-path into G (e.g. "players.0.souls") instead of raw JS
+      return '<input class="dev-inp" id="' + id + '" type="number" value="' + val + '" data-dev-path="' + (devPath || '') + '" ' + devTip(tip) + ' step="1">';
     }
     function devToggle(label, active, onclick, tip) {
       return `<button class="dev-btn ${active ? 'dev-btn-active' : ''}" onclick="${onclick}" ${devTip(tip)}>${active ? '✓ ' : ''} ${label}</button>`;
@@ -24420,11 +24602,11 @@
         const pc = pid === 1 ? '#2471a3' : '#c0392b';
         const sec = document.getElementById(`dev-p${pid}-section`);
         sec.innerHTML = `<div class="dev-head" style="color:${pc}">PLAYER ${pid} — ${G.factions[pid - 1].name}</div>
-          ${devRow('💀 Souls', devInp(`d-p${pid}-souls`, Math.floor(p.souls), `G.players[${pid - 1}].souls=+this.value;updateHUD()`) + devBtn('+200', `G.players[${pid - 1}].souls+=200;updateHUD();openDevPanel()`, '+200 souls'), 'Set or add souls directly')}
-          ${devRow('🦴 Bodies', devInp(`d-p${pid}-bodies`, p.bodies, `G.players[${pid - 1}].bodies=+this.value;updateHUD()`) + devBtn('+30', `G.players[${pid - 1}].bodies+=30;updateHUD();openDevPanel()`, '+30 bodies'), 'Set or add bodies directly')}
-          ${devRow('❤️ Base HP', devInp(`d-p${pid}-hp`, Math.ceil(p.baseHp), `G.players[${pid - 1}].baseHp=+this.value;updateHUD()`), 'Edit base health directly (0 = game over)')}
-          ${devRow('⚔ Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `G.players[${pid - 1}].unitCap=+this.value;updateHUD()`), 'Override unit cap for this player')}
-          ${devRow('⛏ Worker Cap', devInp(`d-p${pid}-wcap`, p.workerCap || 3, `G.players[${pid - 1}].workerCap=+this.value;updateHUD()`), 'Override worker cap (default 3→5 over time)')}
+          ${devRow('💀 Souls', devInp(`d-p${pid}-souls`, Math.floor(p.souls), `players.${pid - 1}.souls`) + devBtn('+200', `G.players[${pid - 1}].souls+=200;updateHUD();openDevPanel()`, '+200 souls'), 'Set or add souls directly')}
+          ${devRow('🦴 Bodies', devInp(`d-p${pid}-bodies`, p.bodies, `players.${pid - 1}.bodies`) + devBtn('+30', `G.players[${pid - 1}].bodies+=30;updateHUD();openDevPanel()`, '+30 bodies'), 'Set or add bodies directly')}
+          ${devRow('❤️ Base HP', devInp(`d-p${pid}-hp`, Math.ceil(p.baseHp), `players.${pid - 1}.baseHp`), 'Edit base health directly (0 = game over)')}
+          ${devRow('⚔ Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `players.${pid - 1}.unitCap`), 'Override unit cap for this player')}
+          ${devRow('⛏ Worker Cap', devInp(`d-p${pid}-wcap`, p.workerCap || 3, `players.${pid - 1}.workerCap`), 'Override worker cap (default 3→5 over time)')}
           ${devRow('', devBtn('👑 SPAWN GUARD', `G.players[${pid - 1}].lastStandUsed=false;G.players[${pid - 1}].baseHp=31;`, `Trigger last stand + royal guard for P${pid}`) + devBtn('☠ KILL ENEMIES', `G.units.filter(u=>u.player!==${pid}).forEach(u=>{u.hp=0;handleDeath(u,null)})`, `Kill all of Player ${pid === 1 ? 2 : 1}'s units`))}
           ${devRow('', devBtn(`💣 DESTROY P${pid === 1 ? 2 : 1} BASE`, `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`, `Destroy Player ${pid === 1 ? 2 : 1}'s base — Player ${pid} wins`) + `<input id="dev-p${pid}-dmg" type="number" value="25" min="1" max="100" style="width:52px;background:#111;border:1px solid #555;color:#fff;padding:3px 5px;font-family:Rajdhani,sans-serif;font-size:.7rem;border-radius:3px;text-align:center;">` + devBtn(`🩸 HIT OWN BASE`, `const v=+(document.getElementById('dev-p${pid}-dmg').value||25);G.players[${pid - 1}].baseHp=Math.max(0,G.players[${pid - 1}].baseHp-v);updateHUD();`, `Deal custom damage to Player ${pid}'s own base`))}
           ${devRow('', devBtn(`📋 UNIT LIST`, `openUnitList(${pid})`, `Browse and edit all active units for Player ${pid}`))}`;
@@ -24460,11 +24642,15 @@
     }
 
     function _devApplyAll() {
-      // Apply all devInp inputs by reading their data-devonch attribute
-      document.querySelectorAll('#dev-panel-body input[data-devonch]').forEach(inp => {
+      // Safe property-path setter — no eval/new Function
+      document.querySelectorAll('#dev-panel-body input[data-dev-path]').forEach(inp => {
         try {
-          const fn = new Function(inp.getAttribute('data-devonch').replace(/this\.value/g, JSON.stringify(inp.value)));
-          fn();
+          const path = inp.getAttribute('data-dev-path');
+          if (!path) return;
+          const parts = path.split('.');
+          let obj = G;
+          for (let i = 0; i < parts.length - 1; i++) obj = obj[parts[i]];
+          obj[parts[parts.length - 1]] = +inp.value;
         } catch (e) { console.warn('devApply err', e); }
       });
       updateHUD();
@@ -24595,8 +24781,8 @@
         },
         /* 5 T3L */ {
           row: 3, col: 0, name: 'Iron Resolve II', icon: '💪', cost: 175,
-          desc: 'Iron Resolve now activates when your units drop below 45% HP (up from 30%), greatly extending its protective window.',
-          req: [2], effects: [{ type: 'flag', flag: 'ironResolveThreshold', value: 0.45 }]
+          desc: 'Iron Resolve now activates when your units drop below 60% HP (up from 50%), greatly extending its protective window.',
+          req: [2], effects: [{ type: 'flag', flag: 'ironResolveThreshold', value: 0.60 }]
         },
         /* 6 T3M */ {
           row: 3, col: 2, name: 'War Drums', icon: '🥁', cost: 175,
@@ -25288,16 +25474,16 @@
       echoes: [
         /* 0 T1L */ { row: 1, col: 0, name: 'Echo Haste', icon: '⏱️', cost: 50, desc: 'Echo spawn delay reduced by 1s (10s→9s). The past catches up to the present faster.', req: [], effects: [{ type: 'flag', flag: 'echoDelayBonus', value: 1 }] },
         /* 1 T1R */ { row: 1, col: 4, name: 'Remnant Power', icon: '👁️', cost: 50, desc: 'The Remnant gains +15 HP. A sturdier original means the echo has more to mirror.', req: [], effects: [{ type: 'unit_hp_flat', target: 'ec_remnant', value: 15 }] },
-        /* 2 T2L */ { row: 2, col: 0, name: 'Phantom Archers', icon: '🏹', cost: 100, desc: 'Echo Archer echoes spawn with 80% stats (up from 70%). More lethal echoes in the backline.', req: [0], effects: [{ type: 'flag', flag: 'echoArcherPower', value: 0.80 }] },
+        /* 2 T2L */ { row: 2, col: 0, name: 'Phantom Archers', icon: '🏹', cost: 100, desc: 'Echo Archer echoes spawn with 65% stats (up from 50%). More lethal echoes in the backline.', req: [0], effects: [{ type: 'flag', flag: 'echoArcherPower', value: 0.65 }] },
         /* 3 T2M */ { row: 2, col: 2, name: 'Time Investment', icon: '💰', cost: 100, desc: 'Start every match with +10 souls. Invest now, reap echoes later.', req: [0, 1], effects: [{ type: 'start_souls', value: 10 }] },
         /* 4 T2R */ { row: 2, col: 4, name: 'Remnant Surge', icon: '⚡', cost: 100, desc: 'The Remnant gains +12% attack rate. Original and echo both strike faster.', req: [1], effects: [{ type: 'unit_atkrate_pct', target: 'ec_remnant', value: 0.12 }] },
         /* 5 T3L */ { row: 3, col: 0, name: 'Rapid Recall', icon: '⏩', cost: 175, desc: 'Echo delay reduced by an additional 1.5s (total up to 2.5s faster). The echoes surge forward.', req: [2], effects: [{ type: 'flag', flag: 'echoDelayBonus2', value: 1.5 }] },
         /* 6 T3M */ { row: 3, col: 2, name: 'Paradox Power', icon: '⏰', cost: 175, desc: 'The Paradox gains +20 HP and +8 DMG. Your heavy echo-source becomes truly intimidating.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'ec_paradox', value: 20 }, { type: 'unit_dmg_flat', target: 'ec_paradox', value: 8 }] },
-        /* 7 T3R */ { row: 3, col: 4, name: 'Aerial Echo', icon: '⏳', cost: 175, desc: 'Moment Reaver echoes spawn with 80% stats. Ghostly aerial reinforcements come in stronger.', req: [4], effects: [{ type: 'flag', flag: 'echoMomentPower', value: 0.80 }] },
-        /* 8 T4L */ { row: 4, col: 0, name: 'Echo Surge', icon: '🔮', cost: 275, desc: 'All echoes spawn with 80% stats (up from 70%). Every echo across all units is deadlier.', req: [5], effects: [{ type: 'flag', flag: 'echoAllPower', value: 0.80 }] },
+        /* 7 T3R */ { row: 3, col: 4, name: 'Aerial Echo', icon: '⏳', cost: 175, desc: 'Moment Reaver echoes spawn with 65% stats (up from 50%). Ghostly aerial reinforcements come in stronger.', req: [4], effects: [{ type: 'flag', flag: 'echoMomentPower', value: 0.65 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Echo Surge', icon: '🔮', cost: 275, desc: 'All echoes spawn with 65% stats (up from 50%). Every echo across all units is deadlier.', req: [5], effects: [{ type: 'flag', flag: 'echoAllPower', value: 0.65 }] },
         /* 9 T4M */ { row: 4, col: 2, name: 'Echo Champion Elite', icon: '⚔️', cost: 275, desc: 'Echo Champion gains +80 HP and +10 DMG. Your royal guard and its echoes are fearsome.', req: [6], effects: [{ type: 'unit_hp_flat', target: 'ec_guard', value: 80 }, { type: 'unit_dmg_flat', target: 'ec_guard', value: 10 }] },
-        /* 10 T4R */ { row: 4, col: 4, name: 'Paradox Chain', icon: '🔗', cost: 275, desc: 'The Paradox echo also spawns its own echo at 50% stats. One original becomes three fighters.', req: [7], effects: [{ type: 'flag', flag: 'paradoxChain', value: true }] },
-        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Echo Cascade', icon: '👑', cost: 400, desc: 'Each unit spawned creates 2 echoes — first at 7s, second at 14s at 60% stats. The battlefield fills with ghosts of your army. The past overwrites the present.', req: [8, 10], effects: [{ type: 'flag', flag: 'echoCascadeMastery', value: true }] },
+        /* 10 T4R */ { row: 4, col: 4, name: 'Paradox Chain', icon: '🔗', cost: 275, desc: 'The Paradox echo also spawns its own echo at 35% stats. One original becomes three fighters.', req: [7], effects: [{ type: 'flag', flag: 'paradoxChain', value: true }] },
+        /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Echo Cascade', icon: '👑', cost: 400, desc: 'Each unit spawned creates 2 echoes — first at normal delay, second at double delay at 80% of echo power. The battlefield fills with ghosts of your army. The past overwrites the present.', req: [8, 10], effects: [{ type: 'flag', flag: 'echoCascadeMastery', value: true }] },
       ],
       veilborn: [
         /* 0 T1L */ { row: 1, col: 0, name: 'Flicker Mastery', icon: '💨', cost: 50, desc: 'Flicker gains +15 HP. More HP means surviving to trigger the phase ability more reliably.', req: [], effects: [{ type: 'unit_hp_flat', target: 'vb2_flicker', value: 15 }] },
@@ -25553,6 +25739,10 @@
           const wd = G.unitDefs[i].find(d => d.id === 'ps_whisper');
           if (wd) wd.corruptAmt = (wd.corruptAmt || 0.15) + f.whisperCorruptBonus;
         }
+        // Generic passthrough: copy ALL mastery flags to player object so gameplay
+        // code can read them via G.players[i].flagName. The explicit mappings above
+        // handle complex cases (renaming, addition); remaining flags pass through directly.
+        for (const key of Object.keys(f)) p[key] = f[key];
       });
     }
 

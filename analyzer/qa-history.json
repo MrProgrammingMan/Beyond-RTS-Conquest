@@ -1,5 +1,166 @@
 [
   {
+    "timestamp": 1774135106888,
+    "date": "2026-03-21T23:18:26.888Z",
+    "totalGames": 276,
+    "factions": [
+      "warriors",
+      "summoners",
+      "brutes",
+      "spirits",
+      "verdant",
+      "infernal",
+      "glacial",
+      "voltborn",
+      "bloodpact",
+      "menders",
+      "weavers",
+      "merchants",
+      "reavers",
+      "fortune",
+      "plagued",
+      "chrysalis",
+      "tideborn",
+      "echoes",
+      "veilborn",
+      "chronomancers",
+      "illusionists",
+      "pandemonium",
+      "psionics",
+      "umbral"
+    ],
+    "winRates": {
+      "warriors": 21.7,
+      "summoners": 50,
+      "brutes": 71.4,
+      "spirits": 5,
+      "verdant": 36.8,
+      "infernal": 44.4,
+      "glacial": 35.3,
+      "voltborn": 50,
+      "bloodpact": 33.3,
+      "menders": 42.9,
+      "weavers": 61.5,
+      "merchants": 66.7,
+      "reavers": 45.5,
+      "fortune": 60,
+      "plagued": 55.6,
+      "chrysalis": 37.5,
+      "tideborn": 71.4,
+      "echoes": 83.3,
+      "veilborn": 20,
+      "chronomancers": 50,
+      "illusionists": 33.3,
+      "pandemonium": 0,
+      "psionics": 100,
+      "umbral": 50
+    },
+    "positionalRates": {
+      "warriors": {
+        "asP1": 21.7,
+        "asP2": 50
+      },
+      "summoners": {
+        "asP1": 50,
+        "asP2": 0
+      },
+      "brutes": {
+        "asP1": 71.4,
+        "asP2": 50
+      },
+      "spirits": {
+        "asP1": 5,
+        "asP2": 0
+      },
+      "verdant": {
+        "asP1": 36.8,
+        "asP2": 75
+      },
+      "infernal": {
+        "asP1": 44.4,
+        "asP2": 60
+      },
+      "glacial": {
+        "asP1": 35.3,
+        "asP2": 83.3
+      },
+      "voltborn": {
+        "asP1": 50,
+        "asP2": 57.1
+      },
+      "bloodpact": {
+        "asP1": 33.3,
+        "asP2": 25
+      },
+      "menders": {
+        "asP1": 42.9,
+        "asP2": 44.4
+      },
+      "weavers": {
+        "asP1": 61.5,
+        "asP2": 70
+      },
+      "merchants": {
+        "asP1": 66.7,
+        "asP2": 45.5
+      },
+      "reavers": {
+        "asP1": 45.5,
+        "asP2": 41.7
+      },
+      "fortune": {
+        "asP1": 60,
+        "asP2": 53.8
+      },
+      "plagued": {
+        "asP1": 55.6,
+        "asP2": 42.9
+      },
+      "chrysalis": {
+        "asP1": 37.5,
+        "asP2": 60
+      },
+      "tideborn": {
+        "asP1": 71.4,
+        "asP2": 62.5
+      },
+      "echoes": {
+        "asP1": 83.3,
+        "asP2": 70.6
+      },
+      "veilborn": {
+        "asP1": 20,
+        "asP2": 50
+      },
+      "chronomancers": {
+        "asP1": 50,
+        "asP2": 47.4
+      },
+      "illusionists": {
+        "asP1": 33.3,
+        "asP2": 25
+      },
+      "pandemonium": {
+        "asP1": 0,
+        "asP2": 33.3
+      },
+      "psionics": {
+        "asP1": 100,
+        "asP2": 72.7
+      },
+      "umbral": {
+        "asP1": 50,
+        "asP2": 43.5
+      }
+    },
+    "bugCount": 0,
+    "bugs": [],
+    "softlockCount": 0,
+    "nanCount": 0,
+    "gamesPerMatchup": 1,
+    "aiDifficulty": "hard"
+  },
+  {
     "timestamp": 1774119183534,
     "date": "2026-03-21T18:53:03.534Z",
     "totalGames": 276,

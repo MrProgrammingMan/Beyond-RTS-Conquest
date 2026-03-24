@@ -196,11 +196,13 @@ A ready-to-paste request that includes:
 
 Wrap in: ===BALANCE PROMPT START=== and ===BALANCE PROMPT END===`;
 
-  const fullPrompt = injectContext(analyticsPrompt, gameContext, 'full');
+  const model = cfg._cheapMode ? 'claude-haiku-4-5-20251001' : 'claude-sonnet-4-6';
+  const contextLevel = cfg._cheapMode ? 'compact' : 'factions';
+  const fullPrompt = injectContext(analyticsPrompt, gameContext, contextLevel);
 
   const response = await client.messages.create({
-    model:      'claude-sonnet-4-6',
-    max_tokens: 5000,
+    model,
+    max_tokens: cfg._cheapMode ? 3000 : 4000,
     messages:   [{ role: 'user', content: fullPrompt }],
   });
 

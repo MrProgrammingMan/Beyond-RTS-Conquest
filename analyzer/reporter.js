@@ -102,7 +102,29 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   // ── Bug cards ──────────────────────────────────────────────────────────────
   let bugsHtml = '';
   if (diagnosedBugs.length === 0) {
-    bugsHtml = `<div class="empty-state">✅ No bugs detected across ${qa.totalGamesRun} games</div>`;
+    // Show what was checked even when no bugs found
+    const _gameCount = qa.totalGamesRun || 0;
+    const _matchupCount = results.length || 0;
+    const _factionCount = factions.length || 0;
+    const _errorCount = (qa.allErrors || []).length;
+    const _timeoutCount = (qa.allTimedOut || []).length;
+    bugsHtml = `<div class="empty-state" style="text-align:left;max-width:600px;margin:20px auto">
+      <div style="text-align:center;margin-bottom:16px">✅ No bugs detected across ${_gameCount} games</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.8">
+        <strong style="color:var(--text)">What was checked:</strong><br>
+        • <strong>${_gameCount}</strong> AI vs AI games simulated across <strong>${_matchupCount}</strong> matchups (<strong>${_factionCount}</strong> factions)<br>
+        • JS errors captured during gameplay: <strong>${_errorCount}</strong><br>
+        • Game timeouts (>60s): <strong>${_timeoutCount}</strong><br>
+        • Stack traces and error messages analyzed by Claude for root cause diagnosis<br>
+        • Repeated errors across matchups clustered and deduplicated<br>
+        <br>
+        <strong style="color:var(--text)">Not checked:</strong><br>
+        • Player-facing UI bugs (see UI tab for automated + AI vision checks)<br>
+        • Online multiplayer sync (see Online tab)<br>
+        • Memory leaks or gradual performance degradation<br>
+        • Edge cases in unit interactions not triggered by AI playstyle
+      </div>
+    </div>`;
   } else {
     // Filter bar
     bugsHtml += `<div class="filter-bar">
@@ -211,8 +233,43 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   // Anomaly prompts for inclusion in the Prompts tab (#7)
   const anomalyPrompts = (anomalyReport?.anomalies || []).filter(a => a.prompt);
 
+  // Online issue prompts for the Prompts tab
+  const onlineIssuePrompts = (onlineReport?.issues || []).filter(i => i.prompt);
+
+  // Vision analysis prompts for the Prompts tab
+  const visionIssuesList = (visionAnalysis?.analyses || []).flatMap(a =>
+    (a.issues || []).map(issue => ({
+      screen: a.screen, viewport: a.viewport, width: a.width, height: a.height,
+      severity: (issue.severity || 'LOW').toUpperCase(),
+      category: issue.category || '', location: issue.location || '',
+      issue: issue.issue || '', why: issue.why || '',
+      suggestion: issue.suggestion || '', element_hint: issue.element_hint || '',
+    }))
+  );
+  const visionPromptText = visionIssuesList.length > 0
+    ? [
+      'You are fixing visual/UI issues in index.html, a single-file browser RTS (~20k lines, vanilla JS + Canvas).',
+      `${visionIssuesList.length} visual issue(s) were found by AI screenshot analysis across multiple viewports.`,
+      '',
+      ...visionIssuesList.map((v, i) => [
+        `--- VISION ISSUE ${i + 1} ---`,
+        `Severity: ${v.severity}`,
+        `Screen: ${v.screen}  Viewport: ${v.viewport} (${v.width}×${v.height})`,
+        `Category: ${v.category}`,
+        v.location ? `Location: ${v.location}` : '',
+        `Issue: ${v.issue}`,
+        v.why ? `Why: ${v.why}` : '',
+        v.suggestion ? `Fix: ${v.suggestion}` : '',
+        v.element_hint ? `Element: ${v.element_hint}` : '',
+      ].filter(Boolean).join('\n')),
+      '',
+      'Please fix each issue in index.html. Preserve all existing functionality.',
+    ].join('\n')
+    : null;
+
   let promptsHtml = '';
-  const totalPromptCount = allPrompts.length + anomalyPrompts.length + (uiPromptText ? 1 : 0) + (featureMegaPrompt ? 1 : 0);
+  const totalPromptCount = allPrompts.length + anomalyPrompts.length + onlineIssuePrompts.length
+    + (uiPromptText ? 1 : 0) + (visionPromptText ? 1 : 0) + (featureMegaPrompt ? 1 : 0);
 
   if (totalPromptCount === 0) {
     promptsHtml = `<div class="empty-state">No paste-to-Claude prompts generated (no bugs diagnosed, or no API key).</div>`;
@@ -303,6 +360,40 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
         <pre class="prompt-text" id="prompt-ui-all">${escHtml(uiPromptText)}</pre>
         <button class="copy-btn" onclick="copyById('prompt-ui-all',this)">📋 Copy All UI Issues</button>
       </div>`;
+    }
+
+    // ── Section: Vision analysis prompt ────────────────────────────────────────
+    if (visionPromptText) {
+      promptsHtml += `<h3 class="prompts-section-title">👁️ Vision Issues (${visionIssuesList.length} issues, 1 combined prompt)</h3>`;
+      promptsHtml += `<div class="prompt-card" style="border-color:#9b59b6" id="pcard-vision-0">
+        <div class="prompt-card-header">
+          <label class="done-label"><input type="checkbox" class="done-cb" data-done-type="vision" data-done-idx="0" onchange="markDone('vision',0,this.checked)"><span class="done-txt">Done</span></label>
+          <span class="bug-sev-badge" style="background:rgba(155,89,182,.2);color:#9b59b6">VISION</span>
+          <span class="prompt-bug-type">All ${visionIssuesList.length} vision issues bundled</span>
+        </div>
+        <pre class="prompt-text" id="prompt-vision-all">${escHtml(visionPromptText)}</pre>
+        <button class="copy-btn" onclick="copyById('prompt-vision-all',this)">📋 Copy All Vision Issues</button>
+      </div>`;
+    }
+
+    // ── Section: Online sync prompts ────────────────────────────────────────────
+    if (onlineIssuePrompts.length > 0) {
+      promptsHtml += `<h3 class="prompts-section-title">🌐 Online Sync Fixes (${onlineIssuePrompts.length})</h3>`;
+      for (let i = 0; i < onlineIssuePrompts.length; i++) {
+        const oi = onlineIssuePrompts[i];
+        const sevCls = oi.severity === 'HIGH' || oi.severity === 'CRITICAL' ? 'sev-high' : oi.severity === 'MEDIUM' ? 'sev-medium' : 'sev-low';
+        const pid = `prompt-online-${i}`;
+        promptsHtml += `<div class="prompt-card ${sevCls}" id="pcard-online-${i}">
+          <div class="prompt-card-header">
+            <label class="done-label"><input type="checkbox" class="done-cb" data-done-type="online" data-done-idx="${i}" onchange="markDone('online',${i},this.checked)"><span class="done-txt">Done</span></label>
+            <span class="bug-sev-badge ${sevCls}">${escHtml(oi.severity)}</span>
+            <span class="prompt-bug-type">${escHtml(oi.type.replace(/_/g, ' '))}</span>
+            ${oi.matchup ? `<span style="color:var(--dim);font-size:12px">${escHtml(oi.matchup)}</span>` : ''}
+          </div>
+          <pre class="prompt-text" id="${pid}">${escHtml(oi.prompt)}</pre>
+          <button class="copy-btn" onclick="copyById('${pid}',this)">Copy</button>
+        </div>`;
+      }
     }
 
     // ── Section: Feature suggestions prompt (#8) ──────────────────────────────
@@ -400,6 +491,23 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
     onlineHtml += `<h3 style="margin-top:20px">Scenario Results</h3>`;
     for (const r of onlineReport.results) {
       const gc = { A: 'var(--green)', B: '#f1c40f', C: 'var(--orange)', D: 'var(--red)', F: 'var(--red)' }[r.grade] || 'var(--dim)';
+      // Grade explanation
+      const gradeReasons = [];
+      if (r.totalDivergences > 20) gradeReasons.push(`${r.totalDivergences} divergences (>20 → D)`);
+      else if (r.totalDivergences > 10) gradeReasons.push(`${r.totalDivergences} divergences (>10 → C)`);
+      else if (r.totalDivergences > 5) gradeReasons.push(`${r.totalDivergences} divergences (>5 → B, need ≤5 for A)`);
+      const avg = r.latencyMs?.avg || 0;
+      if (avg > 600) gradeReasons.push(`avg ${avg}ms latency (>600 → D)`);
+      else if (avg > 300) gradeReasons.push(`avg ${avg}ms latency (>300 → C)`);
+      else if (avg > 150) gradeReasons.push(`avg ${avg}ms latency (>150 → B)`);
+      // Top divergent fields for actionable info
+      let topFieldsStr = '';
+      if (r.totalDivergences > 0 && r.divergenceFrames?.length > 0) {
+        const fc = r.divergenceFrames.flatMap(df => (df.diffs || []).map(d => d.field))
+          .reduce((a, f) => { a[f] = (a[f] || 0) + 1; return a; }, {});
+        const top = Object.entries(fc).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([f, c]) => `${f} (×${c})`);
+        if (top.length) topFieldsStr = ` — top fields: ${top.join(', ')}`;
+      }
       onlineHtml += `<div class="section" style="margin-bottom:12px;padding:14px">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
           <span style="font-size:1.4rem;font-weight:800;color:${gc}">${r.grade || '?'}</span>
@@ -410,7 +518,8 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           ${(r.checks || []).map(c => `<span style="font-size:12px;padding:2px 8px;border-radius:10px;background:${c.passed ? 'rgba(46,204,113,.15)' : 'rgba(231,76,60,.15)'};color:${c.passed ? 'var(--green)' : 'var(--red)'}${c.critical && !c.passed ? ';font-weight:700' : ''}">${c.passed ? '✓' : '✗'} ${escHtml(c.name)}</span>`).join('')}
         </div>
-        ${r.totalDivergences > 0 ? `<div style="margin-top:8px;font-size:12px;color:var(--orange)">⚠️ ${r.totalDivergences} divergence events</div>` : ''}
+        ${r.totalDivergences > 0 ? `<div style="margin-top:8px;font-size:12px;color:var(--orange)">⚠️ ${r.totalDivergences} divergence events${topFieldsStr}</div>` : ''}
+        ${gradeReasons.length > 0 ? `<div style="margin-top:4px;font-size:11px;color:var(--dim)">Grade limited by: ${gradeReasons.join('; ')}</div>` : ''}
         ${r.error ? `<div style="margin-top:8px;font-size:12px;color:var(--red)">${escHtml(r.error)}</div>` : ''}
       </div>`;
     }
@@ -612,17 +721,24 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   const totalGames = qa.totalGamesRun || 1;
   const threshold = cfg.mechanics?.unusedThresholdPct || 15;
   let mechHtml = '';
-  for (const [key, count] of Object.entries(qa.mechanicUsage || {})) {
-    const pct = Math.round(count / totalGames * 100);
-    const flagged = pct < threshold;
-    const barW = Math.min(pct * 2, 100);
-    const barClr = flagged ? 'var(--orange)' : pct > 60 ? 'var(--green)' : 'var(--blue)';
-    mechHtml += `<div class="mech-row ${flagged ? 'mech-flagged' : ''}">
-      <span class="mech-name">${key.replace(/_/g, ' ')}</span>
+  // Sort mechanics: flagged (rare) first, then by avg per game descending
+  const mechEntries = Object.entries(qa.mechanicUsage || {}).map(([key, count]) => {
+    const avg = count / totalGames;
+    const pctGames = Math.round(avg * 100); // used as "frequency" — >100 means multiple times per game
+    return { key, count, avg, pctGames, flagged: pctGames < threshold };
+  }).sort((a, b) => a.flagged === b.flagged ? b.avg - a.avg : a.flagged ? 1 : -1);
+  for (const m of mechEntries) {
+    const avgStr = m.avg >= 1 ? m.avg.toFixed(1) + '×/game' : (m.avg * 100).toFixed(0) + '%';
+    // Bar width: scale so that avg=10/game fills the bar, lower values proportional
+    const barMax = Math.max(10, ...mechEntries.map(e => e.avg));
+    const barW = Math.min(100, (m.avg / barMax) * 100);
+    const barClr = m.flagged ? 'var(--orange)' : m.avg >= 1 ? 'var(--green)' : 'var(--blue)';
+    mechHtml += `<div class="mech-row ${m.flagged ? 'mech-flagged' : ''}">
+      <span class="mech-name">${m.key.replace(/_/g, ' ')}</span>
       <div class="mech-track"><div class="mech-fill" style="width:${barW}%;background:${barClr}"></div></div>
-      <span class="mech-pct">${pct}%</span>
-      <span class="mech-count">${count}×</span>
-      ${flagged ? `<span class="mech-flag">⚠️ rarely used</span>` : ''}
+      <span class="mech-pct">${avgStr}</span>
+      <span class="mech-count">${m.count}× total</span>
+      ${m.flagged ? `<span class="mech-flag">⚠️ rarely used</span>` : ''}
     </div>`;
   }
 
@@ -636,14 +752,30 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   const maxGrade = overallMaxFt > 200 ? 'stat-bad' : overallMaxFt > 100 ? 'stat-warn' : 'stat-ok';
   const ltGrade = longTasks.length > 10 ? 'stat-bad' : longTasks.length > 3 ? 'stat-warn' : 'stat-ok';
 
+  // Compute percentiles for frame time distribution
+  const sortedFt = [...avgFtAll].sort((a, b) => a - b);
+  const ftP50 = sortedFt.length > 0 ? sortedFt[Math.floor(sortedFt.length * 0.5)] : 0;
+  const ftP95 = sortedFt.length > 0 ? sortedFt[Math.floor(sortedFt.length * 0.95)] : 0;
+  const ftP99 = sortedFt.length > 0 ? sortedFt[Math.floor(sortedFt.length * 0.99)] : 0;
+  const avgFps = avgAvgFt > 0 ? Math.round(1000 / avgAvgFt) : 0;
+  const ftVerdict = avgAvgFt <= 16 ? '✅ Hitting 60fps target' : avgAvgFt <= 20 ? '⚠️ Slightly below 60fps' : avgAvgFt <= 33 ? '⚠️ Running at ~30fps' : '🔴 Significant frame drops';
+
   const perfHtml = `<div class="stats-grid">
-    <div class="stat-card ${ftGrade}"><div class="stat-num">${avgAvgFt}ms</div><div class="stat-lbl">Avg frame time<br><small>target: &lt;16ms</small></div></div>
+    <div class="stat-card ${ftGrade}"><div class="stat-num">${avgAvgFt}ms</div><div class="stat-lbl">Avg frame time<br><small>target: &lt;16ms (60fps)</small></div></div>
     <div class="stat-card ${maxGrade}"><div class="stat-num">${overallMaxFt}ms</div><div class="stat-lbl">Worst frame spike<br><small>target: &lt;100ms</small></div></div>
     <div class="stat-card ${ltGrade}"><div class="stat-num">${longTasks.length}</div><div class="stat-lbl">Long tasks (&gt;100ms)<br><small>target: 0</small></div></div>
     <div class="stat-card"><div class="stat-num">${qa.totalGamesRun}</div><div class="stat-lbl">Games simulated<br><small>${runDurStr} total</small></div></div>
   </div>
-  ${longTasks.length > 0 ? `<details><summary style="cursor:pointer;color:var(--gold)">Long task breakdown (${longTasks.length})</summary>
-    <pre style="margin-top:8px">${longTasks.slice(0, 30).map(t => `${String(t.dt).padStart(5)}ms  ${t.matchup || 'unknown'}`).join('\n')}</pre>
+  <div style="margin-top:16px;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:13px;line-height:1.8">
+    <div style="margin-bottom:8px;font-weight:700;color:var(--text)">${ftVerdict}</div>
+    <div style="color:var(--dim)">
+      Effective FPS: <strong style="color:var(--text)">~${avgFps}fps</strong> avg across ${qa.totalGamesRun} games<br>
+      Frame time distribution: <strong>p50</strong> ${Math.round(ftP50 * 10) / 10}ms · <strong>p95</strong> ${Math.round(ftP95 * 10) / 10}ms · <strong>p99</strong> ${Math.round(ftP99 * 10) / 10}ms · <strong>max</strong> ${overallMaxFt}ms<br>
+      ${longTasks.length > 0 ? `Long tasks (>100ms): ${longTasks.length} detected — these cause visible stutters and input lag` : 'No long tasks (>100ms) detected — smooth gameplay'}
+    </div>
+  </div>
+  ${longTasks.length > 0 ? `<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold)">Long task breakdown (${longTasks.length})</summary>
+    <pre style="margin-top:8px">${longTasks.slice(0, 30).map(t => `${String(t.dt).padStart(5)}ms  ${t.matchup || 'unknown'}`).join('\n')}${longTasks.length > 30 ? `\n... and ${longTasks.length - 30} more` : ''}</pre>
   </details>` : ''}`;
 
   // ── Balance analysis ───────────────────────────────────────────────────────
@@ -836,7 +968,7 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   const visionCritical = visionSummary?.critical || 0;
   const totalUiCount = uiIssues.length + (visionSummary?.totalIssues || 0);
   const uiBadge = (uiErrors.length > 0 || visionCritical > 0) ? ` <span class="nav-badge badge-red">${totalUiCount}</span>` : totalUiCount > 0 ? ` <span class="nav-badge badge-orange">${totalUiCount}</span>` : ' <span class="nav-badge badge-green">✓</span>';
-  const promptBadge = allPrompts.length > 0 ? ` <span class="nav-badge badge-gold">${allPrompts.length}</span>` : '';
+  const promptBadge = totalPromptCount > 0 ? ` <span class="nav-badge badge-gold">${totalPromptCount}</span>` : '';
   const onlineGrade = onlineReport?.overallGrade;
   const onlineBadge = onlineGrade ? ` <span class="nav-badge ${onlineGrade === 'A' ? 'badge-green' : onlineGrade === 'B' ? 'badge-gold' : 'badge-red'}">${onlineGrade}</span>` : '';
   const anomalyCount = (anomalyReport?.anomalies || []).length;
@@ -1296,7 +1428,7 @@ ${deltaTabHtml}
 <div id="tab-mechanics" class="tab">
   <div class="section">
     <h2>⚙️ Mechanic Usage</h2>
-    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Percentage of games where each mechanic was used. Under ${threshold}% is flagged — likely broken, too expensive, or players don't discover it.</p>
+    <p style="color:var(--dim);font-size:13px;margin-bottom:16px">Average frequency per game across ${totalGames} games. Values ≥1× mean the mechanic fires multiple times per game. Under ${threshold}% is flagged — likely broken, too expensive, or AI doesn't discover it.</p>
     ${mechHtml || `<div class="empty-state">No mechanic data (balance run required)</div>`}
   </div>
 </div>

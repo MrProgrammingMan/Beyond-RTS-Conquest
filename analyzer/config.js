@@ -4,6 +4,8 @@
 //   Full 24-faction run (~4000 games): ~25–40 min → gamesPerMatchup:3, parallelGames:4
 //   Quick sanity check (~276 games):   ~4–6 min   → run: node run.js --quick
 //   UI only (no games):                ~1 min     → run: node run.js --skip-balance
+//   Cheapest run (haiku everywhere):   any        → add --cheap
+//   Skip expensive extras:             any        → add --skip-features --skip-vision
 
 module.exports = {
 

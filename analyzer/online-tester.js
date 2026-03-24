@@ -523,6 +523,17 @@ function _buildReport(results) {
         message: `${r.totalDivergences} divergence events. Top fields: ${topFields.join(', ')}`,
         prompt: `P1 and P2 state diverged ${r.totalDivergences} times during "${r.profileName}" testing. Most divergent fields: ${topFields.join(', ')}. In _applyInstantState (index.html ~line 6280), verify these fields are being written from snap. Also check P2's updateEconomy() is clamped to values received from P1 rather than simulating independently.`,
       });
+    } else if (r.totalDivergences > 5) {
+      // Grade-affecting divergence that doesn't meet the >10 threshold — still explain why grade dropped
+      const fieldCounts = r.divergenceFrames.flatMap(df => df.diffs.map(d => d.field))
+        .reduce((acc, f) => { acc[f] = (acc[f] || 0) + 1; return acc; }, {});
+      const topFields = Object.entries(fieldCounts).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([f]) => f);
+      issues.push({
+        severity: 'LOW', type: 'minor_state_divergence',
+        profile: r.profileName, matchup: `${r.f1} vs ${r.f2}`,
+        message: `${r.totalDivergences} divergence events (>5 prevents A grade). Top fields: ${topFields.join(', ')}`,
+        prompt: `P1/P2 state diverged ${r.totalDivergences} times during "${r.profileName}" — just above the A-grade threshold (≤5). Most divergent fields: ${topFields.join(', ')}. These are minor drifts, often caused by timing-sensitive fields (e.g., unit counts, projectile positions) that briefly differ between P1 simulation and P2 snapshot application. To reach A: in _applyInstantState, ensure these fields are overwritten from the snapshot every frame rather than locally simulated on P2.`,
+      });
     }
     for (const err of (r.errors || []).slice(0, 2)) {
       issues.push({

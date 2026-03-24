@@ -193,11 +193,15 @@ Rules:
 - suggestedFix must include corrected code, not vague advice
 - If a bug is clearly caused by a mechanic you can see in the game context (e.g. handleDeath recursion, siege decay using wall clock), say so explicitly with the line number`;
 
-  const fullPrompt = injectContext(corePrompt, gameContext, 'full');
+  // Bugs need mechanic code for accurate diagnosis — use full context for 3+ bugs, factions for fewer
+  const useCheap = cfg._cheapMode && bugs.length <= 2;
+  const contextLevel = useCheap ? 'compact' : (bugs.length >= 3 ? 'full' : 'factions');
+  const model = useCheap ? 'claude-haiku-4-5-20251001' : 'claude-sonnet-4-6';
+  const fullPrompt = injectContext(corePrompt, gameContext, contextLevel);
 
   const response = await client.messages.create({
-    model:      'claude-sonnet-4-6',
-    max_tokens: Math.min(8000, bugs.length * 1200 + 800),
+    model,
+    max_tokens: Math.min(6000, bugs.length * 1000 + 800),
     messages:   [{ role: 'user', content: fullPrompt }],
   });
 
