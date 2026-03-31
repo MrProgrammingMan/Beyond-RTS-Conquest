@@ -57,7 +57,8 @@ FEATURES THAT ALREADY EXIST (DO NOT SUGGEST THESE OR VARIATIONS OF THESE):
 - Faction select with lore, pros/cons, matchup tips, and difficulty ratings
 - Sound effects and music system
 - Base castle themes per faction with unique visual styles
-- Damage escalation: global damage multiplier that increases over time to prevent stalemates`;
+- Damage escalation: global damage multiplier that increases over time to prevent stalemates
+- Tournament Bracket Mode: full single-elimination tournament with visual bracket UI, auto-advancing matches, and winner fanfare (sc-tournament-setup and sc-tournament-bracket screens)`;
 
   // ── Core prompt ─────────────────────────────────────────────────────────────
   const corePrompt = `You are a visionary game designer brainstorming NEW FEATURES for "Beyond RTS Conquest" — a browser-based 2D side-scroller RTS with 24 factions.
@@ -229,17 +230,7 @@ function _heuristicFallback(rawData, aggStats, qa) {
   const factionCount = rawData.factions?.length || 0;
 
   suggestions.push({
-    priority: 1, category: 'mode', title: 'Tournament Bracket Mode',
-    pitch: `With ${factionCount} factions, run an automated single-elimination tournament — 8 or 16 AI factions fight bracket-style with a live bracket UI showing results as they unfold.`,
-    excitement: 'game-changer', effort: 'large',
-    howItWorks: 'Player selects 8 or 16 factions for a bracket. Games auto-run in sequence with a visual bracket that fills in winners. Optional: player controls one faction throughout. Final shows winner with fanfare.',
-    factionSynergies: 'All factions participate. Reveals true tier lists through elimination. Creates narratives — underdog runs, dominant sweeps.',
-    implementation: 'Add tournament state to G, bracket generation, auto-advance between rounds, bracket UI screen with match results.',
-    pasteToClaudePrompt: null,
-  });
-
-  suggestions.push({
-    priority: 2, category: 'mechanic', title: 'Faction Fusion — Dual Faction Hybrid',
+    priority: 1, category: 'mechanic', title: 'Faction Fusion — Dual Faction Hybrid',
     pitch: 'Pick two factions and get a merged roster — 3 units from each plus a unique fusion passive. Creates hundreds of possible combinations from 24 factions.',
     excitement: 'game-changer', effort: 'large',
     howItWorks: 'In faction select, pick a primary and secondary faction. Primary contributes 3 units + its passive, secondary contributes 3 units. A fusion bonus is generated based on the pair (e.g., Infernal+Glacial = units leave fire/ice zones on death).',

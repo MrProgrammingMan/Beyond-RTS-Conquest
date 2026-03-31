@@ -788,6 +788,24 @@
       background: var(--border);
     }
 
+    .faction-filter {
+      width: 100%;
+      box-sizing: border-box;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: var(--fs-sm);
+      padding: 5px 8px;
+      margin-bottom: 6px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .faction-filter:focus { border-color: var(--accent); }
+    .faction-filter::placeholder { color: var(--dim); opacity: .7; }
+    .fcard.filter-hidden { display: none !important; }
+
     .faction-scroll-count {
       font-family: 'Rajdhani', sans-serif;
       font-size: var(--fs-xs);
@@ -955,24 +973,24 @@
     .fcard-pc {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
       overflow: hidden;
     }
 
     .pro {
-      color: #2ecc71;
-      font-size: clamp(0.65rem, 0.85vw, 0.82rem);
+      color: #66bb6a;
+      font-size: clamp(0.68rem, 0.88vw, 0.84rem);
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.5;
       display: flex;
       gap: 5px;
     }
 
     .con {
-      color: #e74c3c;
-      font-size: clamp(0.65rem, 0.85vw, 0.82rem);
+      color: #ef5350;
+      font-size: clamp(0.68rem, 0.88vw, 0.84rem);
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.5;
       display: flex;
       gap: 5px;
     }
@@ -1930,14 +1948,17 @@
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.58rem, .8vw, .72rem);
+      font-size: clamp(.65rem, .9vw, .8rem);
       font-weight: 700;
-      color: rgba(255, 255, 255, .5);
+      color: rgba(255, 255, 255, .7);
       letter-spacing: .1em;
       z-index: 5;
       pointer-events: none;
       text-shadow: 0 1px 4px rgba(0, 0, 0, 1);
       white-space: nowrap;
+      background: rgba(0, 0, 0, .4);
+      padding: 1px 6px;
+      border-radius: 3px;
     }
 
     /* ── CAMPAIGN ──────────────────────────────────────────────── */
@@ -2072,15 +2093,15 @@
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Rajdhani', sans-serif;
-      font-size: var(--fs-md);
+      font-size: clamp(.88rem, 1.3vw, 1.15rem);
       letter-spacing: .15em;
       text-shadow: 0 0 10px currentColor;
       pointer-events: none;
       z-index: 5;
       white-space: nowrap;
-      background: rgba(0, 0, 0, .55);
+      background: rgba(0, 0, 0, .65);
       border-radius: 4px;
-      padding: 3px 12px;
+      padding: 4px 14px;
       transition: border-color .3s;
       border: 1px solid transparent;
     }
@@ -2125,6 +2146,35 @@
       border-left: 2px solid rgba(255, 255, 255, .12);
       padding: 2px 8px;
       border-radius: 3px;
+    }
+
+    /* ── HERO ROSTER ──────────────────────────────────────────────────── */
+    .hero-roster {
+      position: absolute;
+      bottom: clamp(6px, 1.2vh, 14px);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      pointer-events: none;
+      z-index: 30;
+    }
+    #hero-roster-p1 { left: clamp(4px, .6vw, 10px); }
+    #hero-roster-p2 { right: clamp(4px, .6vw, 10px); }
+    .hero-entry {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.5rem, .68vw, .62rem);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.65);
+      border-left: 2px solid currentColor;
+      white-space: nowrap;
+    }
+    #hero-roster-p2 .hero-entry {
+      border-left: none;
+      border-right: 2px solid currentColor;
+      text-align: right;
     }
 
     .btn-sudden {
@@ -2709,7 +2759,7 @@
     }
 
     .rlabel {
-      font-size: clamp(.58rem, .8vw, .72rem);
+      font-size: clamp(.62rem, .84vw, .74rem);
       color: var(--dim);
       letter-spacing: .07em;
       line-height: 1;
@@ -3306,9 +3356,9 @@
     }
 
     .upcard-desc {
-      font-size: clamp(.75rem, 1.1vw, .95rem);
-      color: var(--dim);
-      line-height: 1.4;
+      font-size: clamp(.76rem, 1.12vw, .96rem);
+      color: rgba(180, 175, 200, .85);
+      line-height: 1.45;
       margin-top: 2px;
       flex: 1;
     }
@@ -3401,10 +3451,10 @@
     }
 
     .bfcard-desc {
-      font-size: clamp(.7rem, 1vw, .9rem);
-      color: rgba(255, 255, 255, .75);
+      font-size: clamp(.72rem, 1.02vw, .92rem);
+      color: rgba(255, 255, 255, .82);
       text-align: center;
-      line-height: 1.3;
+      line-height: 1.45;
       margin: 2px 0;
       overflow: hidden;
       display: -webkit-box;
@@ -3423,11 +3473,11 @@
     }
 
     .bfcard-meta {
-      font-size: clamp(0.65rem, 0.9vw, 0.85rem);
-      color: var(--dim);
+      font-size: clamp(0.68rem, 0.94vw, 0.88rem);
+      color: rgba(200, 200, 220, .75);
       text-align: center;
-      line-height: 1.2;
-      opacity: 0.85;
+      line-height: 1.3;
+      font-weight: 600;
     }
 
     .bfcard-cost {
@@ -3470,7 +3520,7 @@
     /* STAT PANEL */
     .unit-stat-panel {
       flex-shrink: 0;
-      width: clamp(70px, 8.5vw, 115px);
+      width: clamp(80px, 9vw, 122px);
       pointer-events: none;
       background: rgba(5, 5, 20, .6);
       border-left: 1px solid var(--border);
@@ -3504,14 +3554,14 @@
 
     .usp-label {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.52rem, .78vw, .7rem);
+      font-size: clamp(.6rem, .84vw, .74rem);
       color: var(--dim);
       letter-spacing: .04em;
     }
 
     .usp-val {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.52rem, .78vw, .7rem);
+      font-size: clamp(.6rem, .84vw, .74rem);
       color: var(--text);
       font-weight: 700;
     }
@@ -3519,8 +3569,8 @@
     .usp-special {
       overflow-y: auto;
       max-height: 4em;
-      line-height: 1.3;
-      font-size: clamp(.48rem, .68vw, .62rem);
+      line-height: 1.4;
+      font-size: clamp(.52rem, .72vw, .65rem);
       color: #9b59b6;
       margin-top: 1px;
       text-align: center;
@@ -4559,15 +4609,15 @@
       margin-top: 4px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
 
     .go-row {
       display: flex;
       justify-content: space-between;
-      font-size: clamp(.72rem, 1.05vw, .95rem);
+      font-size: clamp(.76rem, 1.1vw, .98rem);
       color: var(--dim);
-      padding: 2px 4px;
+      padding: 3px 4px;
       border-radius: 2px;
     }
 
@@ -6791,6 +6841,7 @@
     <div class="faction-layout">
       <div class="faction-side">
         <div class="faction-plabel p1l" id="faction-hint-p1">PLAYER 1<span></span></div>
+        <input class="faction-filter" id="ffilter-p1" placeholder="Search factions..." autocomplete="off" />
         <div class="faction-scroll-wrap">
           <div class="faction-cards" id="fcards-p1"></div>
           <div class="faction-scroll-count" id="fscroll-p1"></div>
@@ -6817,6 +6868,7 @@
         <!-- P2 human section (hidden in solo mode) -->
         <div id="p2-human-section">
           <div class="faction-plabel p2l" id="faction-hint-p2">PLAYER 2<span></span></div>
+          <input class="faction-filter" id="ffilter-p2" placeholder="Search factions..." autocomplete="off" />
           <div class="faction-scroll-wrap">
             <div class="faction-cards" id="fcards-p2"></div>
             <div class="faction-scroll-count" id="fscroll-p2"></div>
@@ -7089,6 +7141,8 @@
         <div id="mid-cap-fill"></div>
       </div>
       <div id="killfeed"></div>
+      <div id="hero-roster-p1" class="hero-roster"></div>
+      <div id="hero-roster-p2" class="hero-roster"></div>
       <div id="popups"></div>
       <div id="siege-indicator">⏳ SIEGE DECAY ACTIVE</div>
     </div>
@@ -9037,7 +9091,18 @@
     // The canvas is CSS-scaled to fill the full available width (side-scroller
     // — horizontal space is what matters). Height scales proportionally.
     // Both players see an identical map regardless of their screen resolution.
-    const VIRTUAL_W = 1920;
+    // Responsive virtual width: on smaller screens, use a narrower virtual canvas
+    // so the game fills more of the screen. All positions (bases, mid, units) are
+    // proportional to VIRTUAL_W, so gameplay adapts automatically. On small screens
+    // the battlefield is physically closer, keeping the game readable.
+    function _calcVirtualW() {
+      const vw = window.innerWidth;
+      if (vw >= 1600) return 1920;        // full HD+ — original size
+      if (vw >= 1200) return Math.round(vw * 1.15); // ~1380-1840
+      if (vw >= 800)  return Math.round(vw * 1.25);  // ~1000-1500
+      return Math.max(960, Math.round(vw * 1.4));     // phones: 960-1120
+    }
+    let VIRTUAL_W = _calcVirtualW();
     const VIRTUAL_H = 600;
     const UNIT_SPEED_MULT = 0.75; // global movement speed scalar — lower = slower paced
     let _canvasScale = 1; // current CSS scale factor — used to map game→screen coords
@@ -9994,6 +10059,42 @@
       umbral: { color: '#2d3436', blur: 10 },    // near-black — shadow
     };
 
+    // ── PROJECTILE STYLES — per-faction projectile shape/glow/trail ──
+    // Shapes: circle, diamond, arrow, bolt, orb, shard
+    const PROJECTILE_STYLE = {
+      warriors:      { shape: 'arrow',   size: 4, glow: 8,  glowCol: '#d4a843', trailFreq: 3, trailAlpha: 0.4 },
+      summoners:     { shape: 'orb',     size: 4, glow: 10, glowCol: '#9b59b6', trailFreq: 2, trailAlpha: 0.5 },
+      brutes:        { shape: 'shard',   size: 5, glow: 6,  glowCol: '#8d6e63', trailFreq: 4, trailAlpha: 0.3 },
+      spirits:       { shape: 'orb',     size: 4, glow: 12, glowCol: '#00d2d3', trailFreq: 2, trailAlpha: 0.5 },
+      verdant:       { shape: 'circle',  size: 3, glow: 8,  glowCol: '#2ecc71', trailFreq: 4, trailAlpha: 0.3 },
+      infernal:      { shape: 'diamond', size: 4, glow: 12, glowCol: '#ff4500', trailFreq: 2, trailAlpha: 0.5 },
+      glacial:       { shape: 'shard',   size: 5, glow: 10, glowCol: '#74b9ff', trailFreq: 3, trailAlpha: 0.4 },
+      voltborn:      { shape: 'bolt',    size: 4, glow: 14, glowCol: '#f9ca24', trailFreq: 2, trailAlpha: 0.6 },
+      bloodpact:     { shape: 'diamond', size: 4, glow: 10, glowCol: '#c0392b', trailFreq: 3, trailAlpha: 0.4 },
+      menders:       { shape: 'circle',  size: 3, glow: 8,  glowCol: '#a8ff78', trailFreq: 4, trailAlpha: 0.3 },
+      weavers:       { shape: 'shard',   size: 4, glow: 6,  glowCol: '#636e72', trailFreq: 4, trailAlpha: 0.3 },
+      merchants:     { shape: 'diamond', size: 4, glow: 8,  glowCol: '#fdcb6e', trailFreq: 3, trailAlpha: 0.4 },
+      reavers:       { shape: 'shard',   size: 5, glow: 6,  glowCol: '#8B4513', trailFreq: 4, trailAlpha: 0.3 },
+      fortune:       { shape: 'diamond', size: 4, glow: 10, glowCol: '#f9ca24', trailFreq: 3, trailAlpha: 0.4 },
+      plagued:       { shape: 'orb',     size: 4, glow: 10, glowCol: '#7bed9f', trailFreq: 2, trailAlpha: 0.5 },
+      chrysalis:     { shape: 'orb',     size: 4, glow: 10, glowCol: '#00b894', trailFreq: 3, trailAlpha: 0.4 },
+      tideborn:      { shape: 'circle',  size: 4, glow: 10, glowCol: '#0984e3', trailFreq: 3, trailAlpha: 0.4 },
+      echoes:        { shape: 'orb',     size: 4, glow: 12, glowCol: '#a29bfe', trailFreq: 2, trailAlpha: 0.5 },
+      veilborn:      { shape: 'bolt',    size: 4, glow: 12, glowCol: '#6c5ce7', trailFreq: 2, trailAlpha: 0.5 },
+      chronomancers: { shape: 'diamond', size: 4, glow: 10, glowCol: '#2e86c1', trailFreq: 3, trailAlpha: 0.4 },
+      illusionists:  { shape: 'orb',     size: 4, glow: 10, glowCol: '#fd79a8', trailFreq: 2, trailAlpha: 0.5 },
+      pandemonium:   { shape: 'bolt',    size: 4, glow: 12, glowCol: '#e17055', trailFreq: 2, trailAlpha: 0.5 },
+      psionics:      { shape: 'orb',     size: 4, glow: 12, glowCol: '#9b59b6', trailFreq: 2, trailAlpha: 0.5 },
+      umbral:        { shape: 'shard',   size: 5, glow: 8,  glowCol: '#2d3436', trailFreq: 3, trailAlpha: 0.4 },
+    };
+
+    // ── HERO PROMOTION — name tables ────────────────────────────────────────────
+    const _HERO_PREFIXES = ['Grim','Iron','Blood','Stone','Dark','Swift','Fell','Frost','Bone','Ash','Void','Scar','War','Doom','Shadow','Storm','Silver','Ember','Thorn','Cinder','Ruin','Grave','Blaze','Dusk','Fury'];
+    const _HERO_SUFFIXES = ['jaw','fang','claw','blade','born','bane','hide','eye','heart','skull','fist','maw','sting','spike','will','tide','shard','wraith','thorn','gore'];
+    const _HERO_EPITHETS = ['the Relentless','the Undying','the Merciless','Bonebreaker','the Ancient','Deathwalker','the Fearless','the Unyielding','Bloodthirst','the Eternal','the Cursed','the Undaunted','Ironside','Warborn','the Unstoppable','the Legendary','of Ash','the Deathless','Oathbreaker','the Inevitable'];
+    function _genHeroName() { return _HERO_PREFIXES[Math.random() * _HERO_PREFIXES.length | 0] + _HERO_SUFFIXES[Math.random() * _HERO_SUFFIXES.length | 0]; }
+    function _genEpithet() { return _HERO_EPITHETS[Math.random() * _HERO_EPITHETS.length | 0]; }
+
     // ── FACTIONS ──
     const FACTIONS = [
       {
@@ -10029,7 +10130,7 @@
         startSouls: 12, startBodies: 4,
         units: [
           { id: 'su_worker', name: 'Bone Collector', icon: '🦴', souls: 2, bodies: 1, hp: 20, speed: 50, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#bdc3c7', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid (own mid only).' },
-          { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 5, bodies: 1, hp: 35, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
+          { id: 'su_wraith', name: 'Wraith', icon: '👻', souls: 5, bodies: 1, hp: 42, speed: 80, dmg: 9, range: 30, aerial: false, isWorker: false, attackRate: 1.4, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Fast melee spirit. Cheap and expendable.' },
           { id: 'su_archer', name: 'Bone Archer', icon: '🏹', souls: 6, bodies: 1, hp: 35, speed: 60, dmg: 15, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a29bfe', type: 'rng', desc: 'Undead ranged unit. Fires from a safe distance.' },
           { id: 'su_necro', name: 'Necromancer', icon: '🔮', souls: 14, bodies: 3, hp: 55, speed: 45, dmg: 18, range: 100, aerial: false, isWorker: false, attackRate: 0.8, radius: 12, color: '#8e44ad', type: 'sum', desc: 'Summons 2 Shades on kill. Passively summons 1 Shade every 12s.', summons: 's_shade', summonCount: 2, passiveSummon: 12 },
           { id: 'su_wraith2', name: 'Dark Wing', icon: '🦇', souls: 11, bodies: 2, hp: 36, speed: 95, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#6c3483', type: 'air', desc: 'Fast aerial harasser. Spawns a Shade on death.', deathSpawn: 's_shade' },
@@ -10059,14 +10160,14 @@
           { id: 'br_bouldershot', name: 'Boulder Shot', icon: '🪨', souls: 10, bodies: 2, hp: 50, speed: 46, dmg: 19, range: 95, aerial: false, isWorker: false, attackRate: 0.8, radius: 13, color: '#a04000', type: 'rng', desc: 'Heavy ranged. Slow fire rate. +30% DMG vs aerial.', aerialBonus: 1.3 },
           { id: 'br_warlord', name: 'Warlord', icon: '⚔️', souls: 14, bodies: 3, hp: 130, speed: 42, dmg: 23, range: 32, aerial: false, isWorker: false, attackRate: 0.75, radius: 20, color: '#c0392b', type: 'mel', desc: 'Titan unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
           { id: 'br_vulture', name: 'Stone Vulture', icon: '🦅', souls: 11, bodies: 3, hp: 42, speed: 80, dmg: 20, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#795548', type: 'air', desc: 'Aerial support. Dives to stun targets on first hit.', firstHitStun: true, stunDur: 0.9 },
-          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 22, bodies: 5, hp: 115, speed: 38, dmg: 23, range: 34, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
+          { id: 'br_gravebrute', name: 'Grave Brute', icon: '💀', souls: 22, bodies: 5, hp: 115, speed: 42, dmg: 23, range: 34, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#922b21', type: 'mel', desc: 'Heaviest unit. Immune to knockback. Ground Slam every 4th hit — AoE 55% DMG in 55px.', immuneKnockback: true, groundSlam: true },
         ],
         extraUnits: [{ id: 'br_guard', name: 'War Titan', icon: '🪨', souls: 0, bodies: 0, hp: 210, speed: 40, dmg: 32, range: 34, aerial: false, isWorker: false, attackRate: 0.75, radius: 22, color: '#e74c3c', type: 'mel', desc: 'Royal Guard. Immune to slows/stuns. Despawns 30s.', isSpawned: true, immuneDebuff: true }],
         guardUnit: 'br_guard',
         upgrades: [
-          { id: 'warbrand', name: 'Warbrand', cost: { souls: 36, bodies: 7 }, desc: 'All melee units gain +14 base DMG.', effect: 'melee_dmg', value: 14 },
+          { id: 'warbrand', name: 'Warbrand', cost: { souls: 36, bodies: 7 }, desc: 'All melee units gain +10 base DMG.', effect: 'melee_dmg', value: 10 },
           { id: 'siege_training', name: 'Siege Training', cost: { souls: 55, bodies: 10 }, desc: 'All units deal +35% damage to enemy base. Workers deal base damage.', effect: 'base_dmg', value: 0.35 },
-          { id: 'armored_core', name: 'Armored Core', cost: { souls: 90, bodies: 18 }, desc: 'JUGGERNAUT: Warlord and Grave Brute gain +120 HP and +15 DMG. All melee gain +2 armor. Workers deal double base damage.', effect: 'heavy_hp', value: 72 },
+          { id: 'armored_core', name: 'Armored Core', cost: { souls: 90, bodies: 18 }, desc: 'JUGGERNAUT: Warlord and Grave Brute gain +80 HP and +15 DMG. All melee gain +2 armor. Workers deal double base damage.', effect: 'heavy_hp', value: 80 },
         ]
       },
 
@@ -10079,16 +10180,16 @@
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'sp_worker', name: 'Sprite', icon: '✨', souls: 2, bodies: 1, hp: 20, speed: 60, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Slightly faster.' },
-          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 52, speed: 75, dmg: 12, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
-          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 48, speed: 70, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
-          { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 10, bodies: 2, hp: 50, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +3 souls per kill.', soulsOnKill: 3 },
-          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 13, bodies: 4, hp: 58, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.3× damage bonus vs aerial enemies.', aerialBonus: 1.3 },
+          { id: 'sp_specter', name: 'Specter', icon: '👁️', souls: 5, bodies: 1, hp: 62, speed: 75, dmg: 12, range: 30, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#6c5ce7', type: 'mel', desc: 'Fast melee spirit. Mobile and aggressive.' },
+          { id: 'sp_phantom', name: 'Phantom', icon: '💫', souls: 8, bodies: 2, hp: 48, speed: 70, dmg: 20, range: 105, aerial: false, isWorker: false, attackRate: 1.15, radius: 12, color: '#fd79a8', type: 'rng', desc: 'Fast-firing ranged unit. Strong vs aerial.' },
+          { id: 'sp_revenant', name: 'Revenant', icon: '🌟', souls: 10, bodies: 2, hp: 50, speed: 80, dmg: 22, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#a29bfe', type: 'air', desc: 'Aerial unit. Gives +5 souls per kill.', soulsOnKill: 5 },
+          { id: 'sp_archon', name: 'Archon', icon: '⚡', souls: 11, bodies: 3, hp: 58, speed: 90, dmg: 28, range: 65, aerial: true, isWorker: false, attackRate: 1.3, radius: 15, color: '#fdcb6e', type: 'air', desc: 'Powerful aerial. 1.3× damage bonus vs aerial enemies.', aerialBonus: 1.3 },
         ],
         extraUnits: [{ id: 'sp_guard', name: 'Spirit Lord', icon: '✨', souls: 0, bodies: 0, hp: 180, speed: 85, dmg: 30, range: 60, aerial: true, isWorker: false, attackRate: 1.4, radius: 16, color: '#a29bfe', type: 'air', desc: 'Royal Guard. Aerial. Sky Bounty gives +18 souls. Despawns 30s.', isSpawned: true }],
         guardUnit: 'sp_guard',
         upgrades: [
-          { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 30, bodies: 5 }, desc: 'All Spirit units gain +22% movement speed and +10% attack rate.', effect: 'all_speed', value: 0.22 },
-          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 52, bodies: 8 }, desc: 'Sky Bounty grants +8 souls per aerial kill (was +3).', effect: 'sky_bounty', value: 8 },
+          { id: 'ethereal_dash', name: 'Ethereal Dash', cost: { souls: 30, bodies: 5 }, desc: 'All Spirit units gain +22% movement speed and +15% attack rate.', effect: 'all_speed', value: 0.22, atkRateBonus: 0.15 },
+          { id: 'soul_feast', name: 'Soul Feast', cost: { souls: 52, bodies: 8 }, desc: 'Sky Bounty grants +10 souls per aerial kill (was +5).', effect: 'sky_bounty', value: 10 },
           { id: 'phantom_edge', name: 'Phantom Edge', cost: { souls: 85, bodies: 14 }, desc: 'SPECTRAL FURY: Phantom attack rate reaches 2.3 and gains +10 DMG. All Spirit kills grant +1 soul. Sky Bounty jumps to +12 per aerial kill.', effect: 'phantom_atkrate', value: 2.3 },
         ]
       },
@@ -10105,14 +10206,14 @@
           { id: 've_soldier', name: 'Thornguard', icon: '🌱', souls: 5, bodies: 1, hp: 75, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#2ecc71', type: 'mel', desc: 'Sturdy melee. Regenerates 1 HP/sec when not in combat.' },
           { id: 've_thornwhip', name: 'Thornwhip', icon: '🎋', souls: 7, bodies: 2, hp: 42, speed: 60, dmg: 16, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#1e8449', type: 'rng', desc: 'Ranged unit. Every hit slows the target by 35% for 2s.', thornslow: true },
           { id: 've_sylph', name: 'Sylph', icon: '🍃', souls: 10, bodies: 2, hp: 32, speed: 88, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.3, radius: 14, color: '#a8ff78', type: 'air', desc: 'Aerial support. Kills heal nearby allies 8 HP. On death: pollinates 3 nearby allies — 3 HP/s regen for 6s.', sylphHeal: 8, sylphHealRange: 110, pollenDeath: true },
-          { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 120, speed: 42, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
+          { id: 've_bear', name: 'Grove Bear', icon: '🐻', souls: 20, bodies: 5, hp: 110, speed: 42, dmg: 22, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#6d4c41', type: 'mel', desc: 'Massive melee. Slows all nearby enemies within 60px by 25%.', bearAura: true },
         ],
         extraUnits: [{ id: 've_guard', name: 'Ancient Oak', icon: '🌳', souls: 0, bodies: 0, hp: 250, speed: 35, dmg: 22, range: 35, aerial: false, isWorker: false, attackRate: 0.7, radius: 22, color: '#27ae60', type: 'mel', desc: 'Royal Guard. Massive HP. Adjacent allies gain +1 HP regen/sec. Despawns 30s.', isSpawned: true, guardRegen: 1 }],
         guardUnit: 've_guard',
         upgrades: [
-          { id: 'deeproots', name: 'Deep Roots', cost: { souls: 33, bodies: 6 }, desc: 'Regrowth regen increases to 4 HP/sec and now also works during combat at 1.5 HP/sec.', effect: 'regen_rate', value: 3.0 },
+          { id: 'deeproots', name: 'Deep Roots', cost: { souls: 33, bodies: 6 }, desc: 'Regrowth regen increases to 4 HP/sec and now also works during combat at 0.8 HP/sec.', effect: 'regen_rate', value: 3.0 },
           { id: 'poisonthorns', name: 'Poison Thorns', cost: { souls: 52, bodies: 9 }, desc: 'Thornwhip hits apply 5 DPS poison for 4 seconds. Poison spreads to adjacent units on death.', effect: 'thornwhip_poison', value: null },
-          { id: 'ancient_fury', name: 'Ancient Fury', cost: { souls: 88, bodies: 16 }, desc: 'WORLD TREE: Grove Bear gains +100 HP, 120px slow aura at 50% strength. All Verdant units passively regen +2 HP/s.', effect: 'bear_buff', value: null },
+          { id: 'ancient_fury', name: 'Ancient Fury', cost: { souls: 88, bodies: 16 }, desc: 'WORLD TREE: Grove Bear gains +100 HP, 120px slow aura at 50% strength. All Verdant units passively regen +1 HP/s.', effect: 'bear_buff', value: null },
         ]
       },
 
@@ -10151,7 +10252,7 @@
           { id: 'gl_sleet', name: 'Sleet', icon: '🌨️', souls: 4, bodies: 1, hp: 60, speed: 50, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#81ecec', type: 'mel', desc: 'Melee fighter. Applies 1.2s chill on every melee hit.', chillOnHit: true, chillDur: 1.2 },
           { id: 'gl_icebolt', name: 'Ice Bolt', icon: '🧊', souls: 8, bodies: 2, hp: 42, speed: 58, dmg: 17, range: 105, aerial: false, isWorker: false, attackRate: 0.95, radius: 12, color: '#a8dadc', type: 'rng', desc: 'AoE ranged unit. Each shot splashes 40% DMG in 40px. Chills on hit.', chillOnHit: true, chillDur: 1.2, aoeShot: true, aoeSplashRange: 40, aoeSplashMult: 0.4 },
           { id: 'gl_snowhawk', name: 'Snowhawk', icon: '🦅', souls: 11, bodies: 2, hp: 36, speed: 85, dmg: 18, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#dfe6e9', type: 'air', desc: 'Aerial unit. First hit on each enemy stuns for 0.8s.', firstHitStun: true, stunDur: 0.8 },
-          { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 24, bodies: 6, hp: 165, speed: 36, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 1.6 },
+          { id: 'gl_colossus', name: 'Ice Colossus', icon: '🗿', souls: 22, bodies: 6, hp: 165, speed: 36, dmg: 26, range: 32, aerial: false, isWorker: false, attackRate: 0.65, radius: 22, color: '#b2bec3', type: 'mel', desc: 'Unstoppable titan. Immune to stuns (not slows). Applies AoE chill aura.', immuneStun: true, bearAura: true, chillOnHit: true, chillDur: 1.6 },
         ],
         extraUnits: [{ id: 'gl_guard', name: 'Blizzard Queen', icon: '❄️', souls: 0, bodies: 0, hp: 155, speed: 50, dmg: 24, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#74b9ff', type: 'mel', desc: 'Royal Guard. Melee ice titan. All hits chill for 2.0s. Despawns 30s.', isSpawned: true, chillOnHit: true, chillDur: 2.0 }],
         guardUnit: 'gl_guard',
@@ -10187,17 +10288,17 @@
 
       {
         id: 'bloodpact', name: 'Bloodpact', icon: '🩸', tagline: 'Blood sacrifice. Spend HP to grow stronger. Kill or be killed.',
-        passive: 'Blood Tithe: each unit spawned refunds 2 souls. Blood Pool: unit deaths leave slowing puddles for 10 seconds.',
-        pros: ['Blood Tithe passive refunds 2 souls per spawn — effective discount on everything', 'Dire Wolf grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 40% HP, doubling attack rate when near death'],
+        passive: 'Blood Tithe: each unit spawned refunds 4 souls. Blood Pool: unit deaths leave slowing puddles for 10 seconds.',
+        pros: ['Blood Tithe passive refunds 4 souls per spawn — effective discount on everything', 'Wolfborn grows permanently stronger with each kill — snowballs extremely hard', 'Bloodborn berserks below 50% HP, doubling attack rate when near death'],
         cons: ['Wolfborn melee unit must kill to "grow" — weak until it has kills', 'No ranged options beyond the Plague Archer — limited damage at range', 'Army power depends heavily on kills — losing fights means losing your edge'],
         matchup: 'Best against: equal/smaller armies, Fortune Seekers (burst kills before luck procs), Merchants (aggression outpaces economy) | Weak to: Warriors, Spirits, Weavers (tar roots berserkers), Tideborn (high HP tanks burst)',
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'bp_worker', name: 'Bloodhound', icon: '🐕', souls: 2, bodies: 1, hp: 25, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#b71c1c', type: 'wrk', desc: 'Collects bodies. Slightly faster than average.' },
-          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 6, bodies: 1, hp: 65, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +2 DMG permanently per kill (max 4 stacks).', growOnKill: 2, growMaxStacks: 4 },
+          { id: 'bp_wolfborn', name: 'Wolfborn', icon: '🐺', souls: 6, bodies: 1, hp: 65, speed: 72, dmg: 11, range: 28, aerial: false, isWorker: false, attackRate: 1.3, radius: 13, color: '#795548', type: 'mel', desc: 'Melee unit. +3 DMG permanently per kill (max 5 stacks).', growOnKill: 3, growMaxStacks: 5 },
           { id: 'bp_plaguebow', name: 'Plague Archer', icon: '🏹', souls: 9, bodies: 2, hp: 42, speed: 62, dmg: 14, range: 105, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged unit. Shots apply 5 DPS poison for 3 seconds.', poisonOnHit: true, poisonDur: 3, poisonDmg: 5 },
-          { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 13, bodies: 3, hp: 72, speed: 58, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 40% HP: attack rate doubles (Berserk).', berserkThreshold: 0.4 },
-          { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 12, bodies: 3, hp: 38, speed: 88, dmg: 17, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP.', lifeSteal: 0.12, berserkHPThresh: 0.5 },
+          { id: 'bp_bloodborn', name: 'Bloodborn', icon: '💢', souls: 13, bodies: 3, hp: 72, speed: 58, dmg: 16, range: 30, aerial: false, isWorker: false, attackRate: 0.95, radius: 16, color: '#c0392b', type: 'mel', desc: 'Heavy melee. Below 50% HP: attack rate doubles (Berserk).', berserkThreshold: 0.5 },
+          { id: 'bp_raven', name: 'Dread Raven', icon: '🦅', souls: 12, bodies: 3, hp: 38, speed: 88, dmg: 17, range: 58, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#6d4c41', type: 'air', desc: 'Aerial unit. Deals 2× damage when below 50% HP. Heals 18% of damage dealt.', lifeSteal: 0.18, berserkHPThresh: 0.5 },
         ],
         extraUnits: [{ id: 'bp_guard', name: 'Blood Champion', icon: '🩸', souls: 0, bodies: 0, hp: 210, speed: 60, dmg: 38, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#b71c1c', type: 'mel', desc: 'Royal Guard. Berserk at 50% HP. Grows on kill. Despawns 30s.', isSpawned: true, berserkThreshold: 0.5, growOnKill: 5 }],
         guardUnit: 'bp_guard',
@@ -10210,7 +10311,7 @@
 
       {
         id: 'menders', name: 'Menders', icon: '💚', tagline: 'Sustain over burst. Wounded units retreat, heal, and return stronger.',
-        passive: 'Field Recovery: units below 25% HP automatically retreat to base and return fully healed (5-7s).',
+        passive: 'Field Recovery: units below 25% HP automatically retreat to base and return fully healed (5-10s).',
         pros: ['Units regenerate and return to battle — very hard to permanently kill a unit', 'Excellent in long sustained fights where attrition matters', 'Cleric healer unit passively buffs your army HP every engagement'],
         cons: ['Retreating units temporarily reduce your front-line numbers mid-fight', 'Lowest single-target burst damage of all factions — wins through attrition not aggression', 'Seraph is fragile — it can be focused and killed quickly by ranged units'],
         matchup: 'Best against: burst factions (Infernal, Bloodpact), Plagued (cleanse/outheal mutations) | Weak to: Spirits, Reavers (body economy outlasts), Psionics (corruption bypasses heals)',
@@ -10219,15 +10320,15 @@
           { id: 'me_worker', name: 'Chirurgeon', icon: '🩺', souls: 2, bodies: 1, hp: 30, speed: 55, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#2ecc71', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid. Slightly faster when loaded.' },
           { id: 'me_warden', name: 'Shield Warden', icon: '🛡️', souls: 7, bodies: 2, hp: 80, speed: 55, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#27ae60', type: 'mel', desc: 'Frontline tank. Retreats at 25% HP, returns fully healed after 5s.', menderRetreat: true, healDuration: 5 },
           { id: 'me_cleric', name: 'Cleric', icon: '✨', souls: 10, bodies: 2, hp: 45, speed: 60, dmg: 8, range: 115, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#a8e063', type: 'rng', desc: 'Healer. Fires heal projectiles at the lowest-HP friendly unit (+12 HP).', isHealer: true },
-          { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 25% HP, returns healed after 7s. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 7, returnDmgBonus: 0.1 },
+          { id: 'me_veteran', name: 'Veteran', icon: '⚔️', souls: 16, bodies: 4, hp: 110, speed: 60, dmg: 20, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 16, color: '#16a085', type: 'mel', desc: 'Heavy melee. Retreats at 25% HP, returns healed after 10s. Each return: +10% DMG (max 3×).', menderRetreat: true, healDuration: 10, returnDmgBonus: 0.1 },
           { id: 'me_seraph', name: 'Seraph', icon: '🕊️', souls: 11, bodies: 3, hp: 32, speed: 90, dmg: 12, range: 55, aerial: true, isWorker: false, attackRate: 1.4, radius: 14, color: '#81ecec', type: 'air', desc: 'Aerial support. Each attack heals the lowest-HP nearby friendly for 6 HP.', seraphHeal: 6, seraphHealRange: 120 },
         ],
         extraUnits: [{ id: 'me_paladin', name: 'Grand Paladin', icon: '💚', souls: 0, bodies: 0, hp: 200, speed: 50, dmg: 28, range: 30, aerial: false, isWorker: false, attackRate: 0.9, radius: 17, color: '#00b894', type: 'mel', desc: 'Royal Guard. Regenerates 5 HP/sec. Despawns 30s.', isSpawned: true, regenPerSec: 5 }],
         guardUnit: 'me_paladin',
         upgrades: [
           { id: 'rapid_recovery', name: 'Rapid Recovery', cost: { souls: 33, bodies: 5 }, desc: 'Retreat heal time reduced by 3s and retreating units gain +40% movement speed.', effect: 'heal_speed', value: 4 },
-          { id: 'battle_hymn', name: 'Battle Hymn', cost: { souls: 52, bodies: 9 }, desc: 'Cleric heal increases to 28 HP per shot and fires at 2 targets simultaneously.', effect: 'cleric_heal', value: 26 },
-          { id: 'iron_faith', name: 'Iron Faith', cost: { souls: 88, bodies: 15 }, desc: 'DIVINE INTERVENTION: Veterans gain +30% DMG per return (max 5 stacks). Clerics heal 35 HP per shot. All units below 40% HP gain +3 armor.', effect: 'veteran_bonus', value: 0.24 },
+          { id: 'battle_hymn', name: 'Battle Hymn', cost: { souls: 52, bodies: 9 }, desc: 'Cleric heal increases to 20 HP per shot and fires at 2 targets simultaneously.', effect: 'cleric_heal', value: 26 },
+          { id: 'iron_faith', name: 'Iron Faith', cost: { souls: 88, bodies: 15 }, desc: 'DIVINE INTERVENTION: Veterans gain +30% DMG per return (max 5 stacks). Clerics heal 25 HP per shot. All units below 40% HP gain +3 armor.', effect: 'veteran_bonus', value: 0.24 },
         ]
       },
 
@@ -10287,7 +10388,7 @@
           { id: 'rv_worker', name: 'Bone Picker', icon: '🦴', souls: 2, bodies: 1, hp: 25, speed: 62, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#922b21', type: 'wrk', desc: 'Returns 3 bodies per trip, 14 from mid. Harvests nearby corpses for +5 bodies.', reaverWorker: true },
           { id: 'rv_digger', name: 'Grave Digger', icon: '⚰️', souls: 3, bodies: 3, hp: 58, speed: 58, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#922b21', type: 'mel', desc: 'Melee. Kills drop high-value corpse (+2 bonus bodies).', reaverKillBonus: 2 },
           { id: 'rv_harvester', name: 'Harvester', icon: '🏹', souls: 4, bodies: 4, hp: 40, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#c0392b', type: 'rng', desc: 'Ranged. Shots apply 4 DPS poison for 3s.', poisonOnHit: true, poisonDur: 3, poisonDmg: 4 },
-          { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 8, bodies: 10, hp: 100, speed: 44, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7b241c', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 200) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 200 },
+          { id: 'rv_golem', name: 'Corpse Golem', icon: '💀', souls: 8, bodies: 10, hp: 100, speed: 44, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 18, color: '#7b241c', type: 'mel', desc: 'Heavy melee. Gains +5 HP (max 150) each time any unit dies within 100px.', corpseFeed: true, corpseFeedRange: 100, corpseFeedCap: 150 },
           { id: 'rv_flenser', name: 'The Flenser', icon: '⚔️', souls: 10, bodies: 14, hp: 115, speed: 42, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.8, radius: 20, color: '#e74c3c', type: 'mel', desc: 'Titan. Immune to knockback. Each kill grants +3 bodies.', immuneKnockback: true, bodyOnKill: 3 },
         ],
         extraUnits: [{ id: 'rv_guard', name: 'Bone Titan', icon: '🦴', souls: 0, bodies: 0, hp: 195, speed: 44, dmg: 30, range: 34, aerial: false, isWorker: false, attackRate: 0.8, radius: 21, color: '#922b21', type: 'mel', desc: 'Royal Guard. Immune to knockback. Gains +8 HP per nearby death. Despawns 30s.', isSpawned: true, immuneKnockback: true, corpseFeed: true, corpseFeedRange: 120, corpseFeedCap: 300 }],
@@ -10295,7 +10396,7 @@
         upgrades: [
           { id: 'mass_grave', name: 'Mass Grave', cost: { souls: 15, bodies: 16 }, desc: 'Corpse value increases to +8 bodies each.', effect: 'reaver_corpse', value: 8 },
           { id: 'necro_feed', name: 'Necro-Feed', cost: { souls: 18, bodies: 18 }, desc: 'Corpse Golem gains +10 HP per death, range to 160px.', effect: 'golem_feed', value: 10 },
-          { id: 'body_trade', name: 'Body Trade', cost: { souls: 20, bodies: 24 }, desc: 'BONE HARVEST: Flenser body-on-kill: +8. Flenser gains +30 DMG and +50 HP. All Reaver melee gain +2 armor. Corpse Golem feed cap raised to 350.', effect: 'reaver_body', value: 6 },
+          { id: 'body_trade', name: 'Body Trade', cost: { souls: 20, bodies: 24 }, desc: 'BONE HARVEST: Flenser body-on-kill: +8. Flenser gains +30 DMG and +50 HP. All Reaver melee gain +2 armor. Corpse Golem feed cap raised to 280.', effect: 'reaver_body', value: 6 },
         ]
       },
       {
@@ -10373,23 +10474,23 @@
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'tb_worker', name: 'Droplet', icon: '💧', souls: 2, bodies: 1, hp: 22, speed: 58, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#74b9ff', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'tb_surge', name: 'Surge Guard', icon: '🌊', souls: 5, bodies: 1, hp: 62, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#0984e3', type: 'mel', desc: 'Melee. Regen 3 HP/s near allies. Below 20% HP: splits into 2 copies.', tideborn: true },
+          { id: 'tb_surge', name: 'Surge Guard', icon: '🌊', souls: 5, bodies: 1, hp: 62, speed: 62, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.15, radius: 13, color: '#0984e3', type: 'mel', desc: 'Melee. Regen 3 HP/s near allies. Below 15% HP: splits into 2 copies.', tideborn: true },
           { id: 'tb_archer', name: 'Surge Archer', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 15, range: 108, aerial: false, isWorker: false, attackRate: 1.05, radius: 12, color: '#74b9ff', type: 'rng', desc: 'Ranged. Regen 3 HP/s near allies.', tideborn: true },
           { id: 'tb_deep', name: 'Deep Current', icon: '🐋', souls: 10, bodies: 2, hp: 36, speed: 85, dmg: 18, range: 58, aerial: true, isWorker: false, attackRate: 1.25, radius: 14, color: '#0984e3', type: 'air', desc: 'Aerial. Regen 3 HP/s near allies.', tideborn: true },
-          { id: 'tb_brute', name: 'Tidal Brute', icon: '🌊', souls: 18, bodies: 4, hp: 88, speed: 46, dmg: 19, range: 30, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#2980b9', type: 'mel', desc: 'Heavy melee. Regen 3 HP/s near allies. Split spawns 2 Surge Guards.', tideborn: true, tideHighHP: true },
+          { id: 'tb_brute', name: 'Tidal Brute', icon: '🌊', souls: 18, bodies: 4, hp: 88, speed: 46, dmg: 19, range: 30, aerial: false, isWorker: false, attackRate: 0.85, radius: 20, color: '#2980b9', type: 'mel', desc: 'Heavy melee. Regen 3 HP/s near allies. Below 15% HP: splits into 2 Surge Guards.', tideborn: true, tideHighHP: true },
         ],
         extraUnits: [{ id: 'tb_guard', name: 'The Colossus', icon: '🌊', souls: 0, bodies: 0, hp: 220, speed: 48, dmg: 34, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 21, color: '#0984e3', type: 'mel', desc: 'Royal Guard. Splits into 2 Tidal Brutes on death. Despawns 30s.', isSpawned: true }],
         guardUnit: 'tb_guard',
         upgrades: [
-          { id: 'rising_tide', name: 'Rising Tide', cost: { souls: 33, bodies: 5 }, desc: 'HP regen near allies: 3→6 HP/s.', effect: 'tide_regen', value: 6 },
+          { id: 'rising_tide', name: 'Rising Tide', cost: { souls: 33, bodies: 5 }, desc: 'HP regen near allies: 3→4 HP/s.', effect: 'tide_regen', value: 4 },
           { id: 'fluid_form', name: 'Fluid Form', cost: { souls: 52, bodies: 9 }, desc: 'Split threshold raises to 35% HP. Split copies retain 65% HP.', effect: 'tide_split', value: 0.35 },
           { id: 'tidal_wave', name: 'Tidal Wave', cost: { souls: 88, bodies: 15 }, desc: 'TSUNAMI: Tidal Brute splits into 3 Surge Guards at full HP. All Tideborn gain +2 HP/s regen. High-HP split threshold raised to 45%.', effect: 'tide_brute', value: 1 },
         ]
       },
       {
         id: 'echoes', name: 'Echoes', icon: '👁️', tagline: 'The past attacks the present',
-        passive: 'Temporal Echo: 10 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 50% of the original\'s stats and 85% speed. Echoes cannot create further echoes.',
-        pros: ['Every spawn is effectively double with a 10s offset', 'Overwhelming double-push timing with carefully staggered spawns', 'Echoes appear automatically — no extra effort required'],
+        passive: 'Temporal Echo: 7 seconds after any non-worker unit spawns, a ghostly echo appears at the same spawn position with 50% of the original\'s stats and 85% speed. Echoes cannot create further echoes.',
+        pros: ['Every spawn is effectively double with a 7s offset', 'Overwhelming double-push timing with carefully staggered spawns', 'Echoes appear automatically — no extra effort required'],
         cons: ['Echoes at 50% stats are fragile support — not replacements for real units', 'Works best if originals survive long enough to have value', 'Echoes always spawn even if original already died'],
         matchup: 'Best against: sustained factions (Menders, Verdant), Glacial (delayed spawns bypass chill) | Weak to: fast rush (Infernal, Pandemonium), Reavers (feed on echo deaths)',
         startSouls: 10, startBodies: 5,
@@ -10447,8 +10548,8 @@
         extraUnits: [{ id: 'cm_guard', name: 'Paradox King', icon: '⏳', souls: 0, bodies: 0, hp: 200, speed: 55, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.0, radius: 19, color: '#154360', type: 'mel', desc: 'Royal Guard. Triggers Rewind immediately on spawn. Despawns 30s.', isSpawned: true, chronoElite: true }],
         guardUnit: 'cm_guard',
         upgrades: [
-          { id: 'fast_rewind', name: 'Fast Rewind', cost: { souls: 33, bodies: 5 }, desc: 'Auto-Rewind cooldown: 40s→25s.', effect: 'chrono_cooldown', value: 25 },
-          { id: 'deep_time', name: 'Deep Time', cost: { souls: 52, bodies: 9 }, desc: 'Rewind restores units to 60% HP (was 40%). Speed boost: +30% for 8s.', effect: 'chrono_restore', value: 0.6 },
+          { id: 'fast_rewind', name: 'Fast Rewind', cost: { souls: 33, bodies: 5 }, desc: 'Auto-Rewind cooldown: 40s→30s.', effect: 'chrono_cooldown', value: 30 },
+          { id: 'deep_time', name: 'Deep Time', cost: { souls: 52, bodies: 9 }, desc: 'Rewind restores units to 50% HP (was 40%). Speed boost: +30% for 8s.', effect: 'chrono_restore', value: 0.5 },
           { id: 'temporal_collapse', name: 'Temporal Collapse', cost: { souls: 88, bodies: 16 }, desc: 'TIME STOP: Time Tax triples to 4.5% maxHP/s. Rewind now also grants 3s invulnerability. Enemies near base slowed 35%.', effect: 'chrono_tax', value: 0.03 },
         ]
       },
@@ -10486,7 +10587,7 @@
           { id: 'pd_wild', name: 'Wildfire', icon: '🔥', souls: 5, bodies: 1, hp: 48, speed: 76, dmg: 11, range: 26, aerial: false, isWorker: false, attackRate: 1.3, radius: 12, color: '#e84393', type: 'mel', desc: 'Fast melee swarm unit. 15% misfire chance on attack.', pandemonium: true },
           { id: 'pd_unhng', name: 'The Unhinged', icon: '😵', souls: 9, bodies: 2, hp: 60, speed: 68, dmg: 13, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 15, color: '#d63031', type: 'mel', desc: 'Heavy melee. Berserk at 50% HP (attack rate doubles).', pandemonium: true, berserkThreshold: 0.5 },
           { id: 'pd_chaos', name: 'Chaos Drake', icon: '🐲', souls: 8, bodies: 2, hp: 30, speed: 95, dmg: 16, range: 52, aerial: true, isWorker: false, attackRate: 1.35, radius: 13, color: '#e84393', type: 'air', desc: 'Fast aerial. 15% misfire chance.', pandemonium: true },
-          { id: 'pd_maelstrom', name: 'The Maelstrom', icon: '🌀', souls: 5, bodies: 1, hp: 36, speed: 72, dmg: 14, range: 100, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#d63031', type: 'rng', desc: 'Cheap ranged. 15% chance per shot to ricochet to random unit.', pandemonium: true },
+          { id: 'pd_maelstrom', name: 'The Maelstrom', icon: '🌀', souls: 6, bodies: 1, hp: 36, speed: 72, dmg: 14, range: 100, aerial: false, isWorker: false, attackRate: 1.1, radius: 12, color: '#d63031', type: 'rng', desc: 'Ranged. 15% chance per shot to ricochet to random unit.', pandemonium: true },
         ],
         extraUnits: [{ id: 'pd_guard', name: 'Chaos Lord', icon: '🌀', souls: 0, bodies: 0, hp: 190, speed: 65, dmg: 32, range: 32, aerial: false, isWorker: false, attackRate: 1.1, radius: 18, color: '#d63031', type: 'mel', desc: 'Royal Guard. 25% misfire aura in 100px. Despawns 30s.', isSpawned: true, pandemonium: true }],
         guardUnit: 'pd_guard',
@@ -10498,14 +10599,14 @@
       },
       {
         id: 'psionics', name: 'Psionics', icon: '🧠', tagline: 'Turn their army against them',
-        passive: 'Collective Mind: each corrupted enemy grants +0.15 soul/s. At 100% corruption, unit switches sides for 20s. Corrupted units that die spawn a loyal Thought Ghost.',
+        passive: 'Collective Mind: each corrupted enemy grants +0.08 soul/s. At 100% corruption, unit switches sides for 20s. Corrupted units that die spawn a loyal Thought Ghost.',
         pros: ['Soul income from corruption scales with enemy army size', 'Mind-controlled units create devastating friendly fire for enemies', 'Free Thought Ghost army from corrupted deaths'],
         cons: ['Corruption builds slowly — must attack same targets repeatedly', 'Corrupted units return to enemy after 20s — temporary benefit', 'Very fragile units — loses melee brawls badly without mind control'],
         matchup: 'Best against: slow high-HP (Brutes, Glacial), Verdant (corruption bypasses regen), Menders (corruption bypasses heals) | Weak to: fast swarm (Pandemonium, Infernal), Illusionists (decoys waste corruption)',
         startSouls: 10, startBodies: 5,
         units: [
           { id: 'ps_worker', name: 'Mind Probe', icon: '🔮', souls: 2, bodies: 1, hp: 22, speed: 57, dmg: 0, range: 0, aerial: false, isWorker: true, attackRate: 0, radius: 11, color: '#c39bd3', type: 'wrk', desc: 'Returns 2 bodies per trip, 12 from mid.' },
-          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 58, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Melee. Each hit adds 15% corruption to target.', corruptOnHit: true, corruptAmt: 0.15 },
+          { id: 'ps_whisper', name: 'The Whisper', icon: '💭', souls: 5, bodies: 1, hp: 58, speed: 60, dmg: 12, range: 28, aerial: false, isWorker: false, attackRate: 1.1, radius: 13, color: '#9b59b6', type: 'mel', desc: 'Melee. Each hit adds 20% corruption to target.', corruptOnHit: true, corruptAmt: 0.20 },
           { id: 'ps_thief', name: 'Thought Thief', icon: '🏹', souls: 7, bodies: 2, hp: 38, speed: 60, dmg: 13, range: 108, aerial: false, isWorker: false, attackRate: 1.0, radius: 12, color: '#8e44ad', type: 'rng', desc: 'Ranged. Shots add 20% corruption to target.', corruptOnHit: true, corruptAmt: 0.20 },
           { id: 'ps_dom', name: 'Dominion Caster', icon: '🦅', souls: 11, bodies: 3, hp: 36, speed: 82, dmg: 16, range: 55, aerial: true, isWorker: false, attackRate: 1.2, radius: 14, color: '#d2b4de', type: 'air', desc: 'Aerial. Shots add 25% corruption.', corruptOnHit: true, corruptAmt: 0.25 },
           { id: 'ps_mind', name: 'The Overmind', icon: '🧠', souls: 20, bodies: 5, hp: 100, speed: 46, dmg: 20, range: 32, aerial: false, isWorker: false, attackRate: 0.9, radius: 19, color: '#7d3c98', type: 'mel', desc: 'Heavy melee. Aura corrupts enemies within 65px at 10%/s.', psionicAura: true, psionicAuraRange: 65, psionicAuraRate: 0.10 },
@@ -10518,7 +10619,7 @@
         upgrades: [
           { id: 'deep_scan', name: 'Deep Scan', cost: { souls: 33, bodies: 5 }, desc: 'Corruption per hit +10% (Thief: 30%, Dominion: 35%).', effect: 'psionic_corrupt', value: 0.10 },
           { id: 'prolonged_control', name: 'Prolonged Control', cost: { souls: 55, bodies: 9 }, desc: 'Mind-control duration: 20s→35s.', effect: 'psionic_dur', value: 35 },
-          { id: 'mind_harvest', name: 'Mind Harvest', cost: { souls: 90, bodies: 16 }, desc: 'HIVEMIND: +1.5 soul/s per corrupted unit. Thought Ghosts gain +15 HP and +5 DMG. Corruption hits now also slow 20% for 2s.', effect: 'psionic_income', value: 1.0 },
+          { id: 'mind_harvest', name: 'Mind Harvest', cost: { souls: 90, bodies: 16 }, desc: 'HIVEMIND: +0.5 soul/s per corrupted unit. Thought Ghosts gain +15 HP and +5 DMG. Corruption hits now also slow 20% for 2s.', effect: 'psionic_income', value: 1.0 },
         ]
       },
       {
@@ -12339,6 +12440,9 @@
 
     function initGame() {
       if (AC.state === 'suspended') AC.resume();
+      // Recalculate virtual width for current screen size (takes effect this game)
+      // Online games must use fixed 1920 so both players share the same coordinate space
+      VIRTUAL_W = (typeof NET !== 'undefined' && NET.isOnline()) ? 1920 : _calcVirtualW();
       // Apply mastery perks to faction definitions before game state is built
       if (typeof _applyMasteryToGame === 'function') _applyMasteryToGame();
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -12380,7 +12484,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.25,
-            bloodTitheRefund: 2, skyBountyAmt: 3,
+            bloodTitheRefund: 4, skyBountyAmt: 3,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -12401,7 +12505,7 @@
             activeBuffs: { warcry: 0, ironwall: 0 },
             ownedUpgrades: new Set(),
             hellfireRate: 8, chainRate: 10, chainDmgMult: 0.25,
-            bloodTitheRefund: 2, skyBountyAmt: 3,
+            bloodTitheRefund: 4, skyBountyAmt: 3,
             chillSpeedMult: 0.70, chillDur: 1.6,
             guardTimerDisplay: 0,
             totalSoulsEarned: 0, totalBodiesEarned: 0,
@@ -12544,7 +12648,7 @@
             tt.style.display = 'block';
             tt.style.left = Math.min(ev.clientX + 10, window.innerWidth - 260) + 'px';
             tt.style.top = Math.max(ev.clientY - tt.offsetHeight - 8, 4) + 'px';
-          });
+          }); 
           el.addEventListener('mouseleave', hideTT);
           el.addEventListener('mousemove', ev => {
             const tt = document.getElementById('tooltip');
@@ -13433,10 +13537,11 @@
         case 'base_dmg': case 'base_dmg_mult': p._baseDmgMult = (p._baseDmgMult || 1) + (up.val || up.value || 0.24); break;
         case 'heavy_hp':
           {
-            // JUGGERNAUT: +120 HP, +15 DMG to heavy units, +2 armor to all melee, workers double base dmg
+            // JUGGERNAUT: HP/DMG to heavy units (HP from up.value), +2 armor to all melee, workers double base dmg
+            const _jugHp = up.value || 80;
             (up.targets || []).forEach(id => modDef(id, (def, u) => {
-              def.hp += 120; def.dmg += 15;
-              if (u) { u.maxHp += 120; u.hp += 120; }
+              def.hp += _jugHp; def.dmg += 15;
+              if (u) { u.maxHp += _jugHp; u.hp += _jugHp; }
             }));
             liveUnits.filter(u => u.def.type === 'mel').forEach(u => { u.def.armor = (u.def.armor || 0) + 2; });
             G.unitDefs[pid - 1].filter(d => d.type === 'mel').forEach(d => { d.armor = (d.armor || 0) + 2; });
@@ -13446,7 +13551,7 @@
         case 'all_speed': case 'faction_speed':
         {
           const spdVal = up.val || up.value || 0.14;
-          const spdAtkVal = (up.effect === 'all_speed') ? 0.10 : 0; // Spirits: +10% atk rate too
+          const spdAtkVal = up.atkRateBonus || ((up.effect === 'all_speed') ? 0.10 : 0); // Spirits: +15% atk rate (or legacy 10%)
           liveUnits.filter(u => !u.def.isWorker).forEach(u => {
             u.def.speed *= (1 + spdVal);
             if (spdAtkVal) u.def.attackRate *= (1 + spdAtkVal);
@@ -13467,7 +13572,7 @@
         case 'regen_rate':
           // Deep Roots: regen 4 HP/s out of combat, 1.5 HP/s in combat
           p._verdantRegenRate = 4.0;
-          p._verdantCombatRegen = 1.5;
+          p._verdantCombatRegen = 0.8;
           break;
         case 'chain_jump':
           // Superconductor: chain jumps 3 times, each 40% DMG
@@ -13513,14 +13618,14 @@
           break;
         // ── Reavers ──
         case 'reaver_corpse': liveUnits.forEach(u => { if (u.def.reaverKillBonus) u.def.reaverKillBonus += up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.reaverKillBonus) d.reaverKillBonus += up.value; }); break;
-        case 'golem_feed': liveUnits.forEach(u => { if (u.def.corpseFeed) u.def.corpseFeedCap = (u.def.corpseFeedCap || 200) + up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.corpseFeed) d.corpseFeedCap = (d.corpseFeedCap || 200) + up.value; }); break;
+        case 'golem_feed': liveUnits.forEach(u => { if (u.def.corpseFeed) u.def.corpseFeedCap = (u.def.corpseFeedCap || 150) + up.value; }); G.unitDefs[pid - 1].forEach(d => { if (d.corpseFeed) d.corpseFeedCap = (d.corpseFeedCap || 150) + up.value; }); break;
         case 'reaver_body':
           // BONE HARVEST: Flenser +8 bodyOnKill, +30 DMG, +50 HP, all melee +2 armor, golem cap 350
           modDef('rv_flenser', (def, u) => { def.bodyOnKill = 8; def.dmg += 30; def.hp += 50; if (u) { u.maxHp += 50; u.hp += 50; } });
           liveUnits.filter(u => u.def.type === 'mel' && !u.def.isWorker).forEach(u => { u.def.armor = (u.def.armor || 0) + 2; });
           G.unitDefs[pid - 1].filter(d => d.type === 'mel' && !d.isWorker).forEach(d => { d.armor = (d.armor || 0) + 2; });
-          liveUnits.filter(u => u.def.corpseFeed).forEach(u => { u.def.corpseFeedCap = 350; });
-          G.unitDefs[pid - 1].filter(d => d.corpseFeed).forEach(d => { d.corpseFeedCap = 350; });
+          liveUnits.filter(u => u.def.corpseFeed).forEach(u => { u.def.corpseFeedCap = 280; });
+          G.unitDefs[pid - 1].filter(d => d.corpseFeed).forEach(d => { d.corpseFeedCap = 280; });
           break;
         // ── Fortune Seekers ──
         case 'fortune_double': p._fortuneDouble = true; break;
@@ -13561,7 +13666,7 @@
           p._chrysInvulnCocoon = true;
           break;
         // ── Tideborn ──
-        case 'tide_regen': p._tideRegen = (p._tideRegen || 3) + up.value; break;
+        case 'tide_regen': p._tideRegen = up.value; break;
         case 'tide_split':
           G.unitDefs[pid - 1].filter(d => d.tideHighHP).forEach(d => { d.hp = Math.round(d.hp * 1.15); });
           liveUnits.filter(u => u.def.tideHighHP).forEach(u => { const bonus = Math.round(u.maxHp * 0.15); u.maxHp += bonus; u.hp = Math.min(u.hp + bonus, u.maxHp); });
@@ -13594,12 +13699,12 @@
           p._veilTriggerPct = 0.55;
           break;
         // ── Chronomancers ──
-        case 'chrono_cooldown': p._chronoCooldown = Math.max(15, (p._chronoCooldown || 40) - up.value); break;
+        case 'chrono_cooldown': p._chronoCooldown = Math.max(20, up.value); break;
         case 'chrono_restore': p._chronoRestore = (p._chronoRestore || 0.80) + up.value; break;
         case 'chrono_tax':
           // TIME STOP: tax 4.5%, rewind +3s invuln, 35% slow near base
           p._chronoTax = true;
-          p._chronoTaxRate = 0.045;
+          p._chronoTaxRate = 0.030;
           p._chronoRewindInvuln = 3;
           p._chronoBaseSlow = 0.35;
           break;
@@ -13635,9 +13740,9 @@
         case 'psionic_corrupt': liveUnits.filter(u => u.def.corruptOnHit).forEach(u => { u.def.corruptAmt = (u.def.corruptAmt || 0.20) + up.value; }); G.unitDefs[pid - 1].filter(d => d.corruptOnHit).forEach(d => { d.corruptAmt = (d.corruptAmt || 0.20) + up.value; }); break;
         case 'psionic_dur': p._psionicAuraBonus = (p._psionicAuraBonus || 0) + up.value; break;
         case 'psionic_income':
-          // HIVEMIND: +1.5 soul/s per corrupted, ghosts +15 HP +5 DMG, corrupt slows 20%
+          // HIVEMIND: +0.5 soul/s per corrupted, ghosts +15 HP +5 DMG, corrupt slows 20%
           p._psionicPassive = true;
-          p._psionicIncomeRate = 1.5;
+          p._psionicIncomeRate = 0.5;
           p._psionicCorruptSlow = 0.20;
           modDef('ps_ghost', (def, u) => { def.hp += 15; def.dmg += 5; if (u) { u.maxHp += 15; u.hp += 15; } });
           break;
@@ -13678,7 +13783,7 @@
           break;
         case 'cleric_heal':
           // Cleric heals 28 HP, fires at 2 targets
-          modDef('mn_cleric', (def) => { def.healAmt = 28; def._dualTarget = true; });
+          modDef('mn_cleric', (def) => { def.healAmt = 20; def._dualTarget = true; });
           break;
         case 'wolf_grow':
           // Pack Alpha: wolf +4 DMG per kill, 6 max stacks
@@ -13707,9 +13812,9 @@
           }
         case 'bear_buff':
           {
-            // WORLD TREE: Bear +100 HP, 120px slow at 50%, all Verdant +2 HP/s regen
+            // WORLD TREE: Bear +100 HP, 120px slow at 50%, all Verdant +1 HP/s regen
             modDef('ve_bear', (def, u) => { def.hp += 100; def.slowAuraRange = 120; def.slowAuraStr = 0.50; if (u) { u.maxHp += 100; u.hp += 100; } });
-            p._verdantPassiveRegen = 2;
+            p._verdantPassiveRegen = 1;
             break;
           }
         case 'nightmare_splash':
@@ -13734,7 +13839,7 @@
           {
             // DIVINE INTERVENTION: +30% DMG per return (5 stacks), cleric 35HP, <40% HP +3 armor
             p._veteranReturnBonus = 0.30; p._veteranMaxStacks = 5;
-            modDef('mn_cleric', (def) => { def.healAmt = 35; });
+            modDef('mn_cleric', (def) => { def.healAmt = 25; });
             p._lowHpArmor = 3; p._lowHpThreshold = 0.40;
             break;
           }
@@ -13908,7 +14013,7 @@
       }
       // ── Echoes: schedule a delayed echo spawn ──
       if (G.factions[pid - 1].id === 'echoes' && !def.isWorker && !def.isSpawned && !u._isEcho) {
-        const delay = p._echoDelay || 10;
+        const delay = p._echoDelay || 7;
         let _echoPwr = p._echoPower || 0.50;
         // Mastery overrides for specific unit types
         if (def.id === 'ec_archer' && p.echoArcherPower) _echoPwr = Math.max(_echoPwr, p.echoArcherPower);
@@ -14010,6 +14115,20 @@
       kf.appendChild(el);
       while (kf.children.length > 6) kf.removeChild(kf.firstChild);
       setTimeout(() => el.remove(), 2800);
+    }
+    function updateHeroRoster() {
+      if (!G || !G.units) return;
+      [1, 2].forEach(pid => {
+        const panel = document.getElementById(`hero-roster-p${pid}`);
+        if (!panel) return;
+        const heroes = G.units.filter(u => u.player === pid && u._heroName && !u._dying);
+        const tierCol = t => t >= 3 ? '#e74c3c' : t >= 2 ? '#e67e22' : '#d4a843';
+        const tierIcon = t => t >= 3 ? '🌟' : t >= 2 ? '⚔️' : '👑';
+        panel.innerHTML = heroes.slice(0, 4).map(u => {
+          const t = u._promotionTier || 1;
+          return `<div class="hero-entry" style="color:${tierCol(t)}">${tierIcon(t)} ${u._heroName} · ${u.killCount}⚔</div>`;
+        }).join('');
+      });
     }
     // ── Plague mutation helper ──
     function _applyPlagueMutation(u) {
@@ -14337,7 +14456,7 @@
       const ebase = G.players[u.player === 1 ? 1 : 0];
       const isRangedUnit = u.def.range > 60;
       const blockRange = isRangedUnit ? 120 : Math.max(u.def.range * 1.8, 80);
-      const enemies = G.units.filter(e => e.player !== u.player && !e.offscreen && !e.def.isWorker);
+      const enemies = G._fc ? G._fc.combat[u.player === 1 ? 1 : 0] : G.units.filter(e => e.player !== u.player && !e.offscreen && !e.def.isWorker);
       if (enemies.length === 0) return true;
       // Only blocked by enemies that are between this unit and the enemy base (same side)
       const toBase = Math.sign(ebase.baseX - u.x);
@@ -14445,7 +14564,8 @@
           G.projectiles.push({
             x: attacker.x, y: attacker.y, vx: 0, vy: 0, targetId: healTarget.id,
             isHeal: true, healAmt: attacker.def.healAmt || 12, player: attacker.player,
-            col: '#2ecc71', life: 2.0, attackerId: attacker.id
+            col: '#2ecc71', life: 2.0, attackerId: attacker.id,
+            factionId: G.factions[attacker.player - 1]?.id, _trailTick: 0
           });
           return;
         }
@@ -14489,6 +14609,7 @@
           chillOnHit: attacker.def.chillOnHit, chillDur: attacker.def.chillDur || 1.5,
           aoeShot: attacker.def.aoeShot, aoeSplashRange: attacker.def.aoeSplashRange, aoeSplashMult: attacker.def.aoeSplashMult || 0.4,
           blocked: false,
+          factionId: G.factions[attacker.player - 1]?.id, _trailTick: 0
         });
         // Pandemonium misfire: chance to redirect shot to random unit (including allies)
         if (attacker.def.pandemonium && Math.random() < (G.players[attacker.player - 1]?._panMisfireChance || 0.15)) {
@@ -14532,9 +14653,9 @@
         if (_tOwner && Math.abs(target.x - _tOwner.baseX) < 180) actualDmg *= 0.88;
         if (target._ironwalled > 0) actualDmg *= 0.6;
         if (target._cocoonArmor) actualDmg *= (1 - target._cocoonArmor); // Chrysalis cocoon damage reduction
-        // Brutes Fortify — 30% DR when standing still (+ mastery bonus)
+        // Brutes Fortify — 22% DR when standing still (+ mastery bonus)
         if (target.fortified) {
-          const _fortDR = 0.30 + (G.factions[target.player - 1]?.masteryFlags?.fortifyDmgReduce || 0);
+          const _fortDR = 0.22 + (G.factions[target.player - 1]?.masteryFlags?.fortifyDmgReduce || 0);
           actualDmg *= (1 - _fortDR);
         }
         if (target.spawnProtectionTimer > 0) actualDmg = 0;// spawn protect
@@ -14543,7 +14664,7 @@
           const _lowHpArmor = (_tOwner?._lowHpArmor && target.hp < target.maxHp * (_tOwner._lowHpThreshold || 0.40)) ? _tOwner._lowHpArmor : 0;
           actualDmg = Math.max(1, actualDmg - (target.def.armor || 0) - _lowHpArmor);
           if (isNaN(actualDmg) || !isFinite(actualDmg)) actualDmg = 1; // NaN safety
-          target.hp -= actualDmg; target.lastHitTime = Date.now();
+          target.hp -= actualDmg; target.lastHitTime = G._now || Date.now();
           if (actualDmg > 0) G.players[attacker.player - 1].dmgDealt = (G.players[attacker.player - 1].dmgDealt || 0) + actualDmg;
         }
         target.hitFlash = 1;
@@ -14580,7 +14701,8 @@
           const _cHit = new Set([target.id]);
           let _cSource = attacker;
           for (let _cj = 0; _cj < _cJumps; _cj++) {
-            const ct = G.units.filter(e => e.player !== attacker.player && !_cHit.has(e.id) && !e.offscreen && dist2d(_cSource, e) < chainR);
+            const _cEnemies = G._fc ? G._fc.combat[attacker.player === 1 ? 1 : 0] : G.units.filter(e => e.player !== attacker.player && !e.offscreen);
+            const ct = _cEnemies.filter(e => !_cHit.has(e.id) && dist2d(_cSource, e) < chainR);
             if (ct.length === 0) break;
             const c = ct[0]; _cHit.add(c.id);
             const _cd = (attacker.def.dmg || 1) * cdmg;
@@ -14592,7 +14714,8 @@
         }
         // Ground Slam (Brutes Warlord / Grave Brute) — AoE every 4th hit
         if (attacker.def.groundSlam && attacker._attackCount % 4 === 0) {
-          const _slamTargets = [...G.units].filter(e => e.player !== attacker.player && !e.offscreen && dist2d(attacker, e) < 55);
+          const _slamPool = G._fc ? G._fc.combat[attacker.player === 1 ? 1 : 0] : G.units.filter(e => e.player !== attacker.player && !e.offscreen);
+          const _slamTargets = _slamPool.filter(e => dist2d(attacker, e) < 55);
           _slamTargets.forEach(e => {
             const sdmg = Math.max(1, attacker.def.dmg * 0.55 * (attacker.dmgMult || 1));
             e.hp -= sdmg; e.hitFlash = 1;
@@ -14691,8 +14814,8 @@
       if (killer && G.midOwner && G.midOwner !== killer.player) soulReward = Math.floor(soulReward * _midKillMult);
       if (kp) { kp.souls += soulReward; kp.totalSoulsEarned = (kp.totalSoulsEarned || 0) + soulReward; }
       if (kp) {
-        kp.kills++; kp.soulsLast5.push({ t: Date.now(), v: soulReward });
-        if (kp.soulsLast5.length > 50) kp.soulsLast5 = kp.soulsLast5.filter(e => Date.now() - e.t < 5000);
+        kp.kills++; kp.soulsLast5.push({ t: G._now || Date.now(), v: soulReward });
+        if (kp.soulsLast5.length > 50) { const _sn = G._now || Date.now(); kp.soulsLast5 = kp.soulsLast5.filter(e => _sn - e.t < 5000); }
         if (!u.def.isSpawned && killer && !killer.def.isSpawned) { kp.unitTypeKills = kp.unitTypeKills || {}; kp.unitTypeKills[killer.def.id] = (kp.unitTypeKills[killer.def.id] || 0) + 1; }
         kp._killStreak = (kp._killStreak || 0) + 1;
         kp.maxKillStreak = Math.max(kp.maxKillStreak || 0, kp._killStreak);
@@ -14807,17 +14930,69 @@
         killer.dmgMult = (killer.dmgMult || 1.0) * 1.15;
         killer._veteran = true;
         const kcp = G.players[killer.player - 1];
-        showPopup(killer.x, killer.y - 50, `⭐ VETERAN!`, '#d4a843', killer.player);
-        showPopup(killer.x, killer.y - 32, `+15% DMG`, '#f9ca24', killer.player);
-        spawnParticles(killer.x, killer.y, '#d4a843', 20);
-        addKillFeed(`⭐ ${killer.def.icon} ${killer.def.name} — VETERAN`, '#d4a843');
+        if (!killer._heroName) { // veteran popup only if not a hero (hero popup below)
+          showPopup(killer.x, killer.y - 50, `⭐ VETERAN!`, '#d4a843', killer.player);
+          showPopup(killer.x, killer.y - 32, `+15% DMG`, '#f9ca24', killer.player);
+          spawnParticles(killer.x, killer.y, '#d4a843', 20);
+          addKillFeed(`⭐ ${killer.def.icon} ${killer.def.name} — VETERAN`, '#d4a843');
+        }
+      }
+      // ── Hero Promotion milestones ──
+      if (killer && !killer.def.isWorker && !killer.def.isSpawned && !killer._isEcho && !killer._isDecoy) {
+        const kc = killer.killCount;
+        if (kc === 5 && !killer._heroName) {
+          killer._heroName = _genHeroName();
+          killer._promotionTier = 1;
+          showPopup(killer.x, killer.y - 55, `👑 ${killer._heroName}`, '#d4a843', killer.player);
+          showPopup(killer.x, killer.y - 36, 'HERO BORN!', '#f9ca24', killer.player);
+          spawnParticles(killer.x, killer.y, '#d4a843', 30);
+          addKillFeed(`👑 ${killer.def.icon} ${killer._heroName} — HERO BORN`, '#d4a843');
+          G.shake = Math.max(G.shake || 0, 0.6);
+          updateHeroRoster();
+        } else if (kc === 10 && killer._heroName && killer._promotionTier < 2) {
+          killer._heroName += ' ' + _genEpithet();
+          killer._promotionTier = 2;
+          killer.dmgMult = (killer.dmgMult || 1.0) * 1.15;
+          const _hpb = 15; killer.maxHp += _hpb; killer.hp = Math.min(killer.maxHp, killer.hp + _hpb);
+          killer.def.armor = (killer.def.armor || 0) + 1;
+          showPopup(killer.x, killer.y - 55, `⚔️ ${killer._heroName}`, '#e67e22', killer.player);
+          showPopup(killer.x, killer.y - 36, 'CHAMPION!', '#e67e22', killer.player);
+          spawnParticles(killer.x, killer.y, '#e67e22', 45);
+          addKillFeed(`⚔️ ${killer.def.icon} ${killer._heroName} — CHAMPION`, '#e67e22');
+          G.shake = Math.max(G.shake || 0, 0.8);
+          updateHeroRoster();
+        } else if (kc === 15 && killer._heroName && killer._promotionTier < 3) {
+          killer._promotionTier = 3;
+          killer.dmgMult = (killer.dmgMult || 1.0) * 1.20;
+          const _hpb2 = 20; killer.maxHp += _hpb2; killer.hp = Math.min(killer.maxHp, killer.hp + _hpb2);
+          killer.def.armor = (killer.def.armor || 0) + 2;
+          killer.def.speed = (killer.def.speed || 60) * 1.10;
+          showPopup(killer.x, killer.y - 55, `🌟 ${killer._heroName}`, '#e74c3c', killer.player);
+          showPopup(killer.x, killer.y - 36, 'LEGENDARY!', '#e74c3c', killer.player);
+          spawnParticles(killer.x, killer.y, '#e74c3c', 65);
+          addKillFeed(`🌟 ${killer.def.icon} ${killer._heroName} — LEGENDARY`, '#e74c3c');
+          G.shake = Math.max(G.shake || 0, 1.0);
+          updateHeroRoster();
+        }
       }
       // Shade count
       if (isShade) G.shadeCount[u.player - 1] = Math.max(0, G.shadeCount[u.player - 1] - 1);
+      // ── Hero death announcement ──
+      if (u._heroName && !u._isEcho && !u._isDecoy && !u.def.isSpawned) {
+        const _ht = u._promotionTier || 1;
+        const _hc = _ht >= 3 ? '#e74c3c' : _ht >= 2 ? '#e67e22' : '#d4a843';
+        const _hi = _ht >= 3 ? '🌟' : _ht >= 2 ? '⚔️' : '👑';
+        showPopup(u.x, u.y - 58, `💀 ${u._heroName}`, _hc, u.player);
+        showPopup(u.x, u.y - 38, 'HAS FALLEN!', '#cc0000', u.player);
+        spawnParticles(u.x, u.y, _hc, 30 + _ht * 10);
+        addKillFeed(`💀 ${_hi} ${u._heroName} — FALLEN`, _hc);
+        G.shake = Math.max(G.shake || 0, 0.4 + _ht * 0.2);
+        setTimeout(updateHeroRoster, 80);
+      }
       spawnFactionDeath(u);
       const killerNum = killer ? `P${killer.player} ⚔ ` : '';
       const killerCol = killer ? killer.player === 1 ? '#e8a0a0' : '#a0c0e8' : '#888';
-      addKillFeed(`${killerNum}${u.def.icon} ${u.def.name}`, killerCol);
+      if (!u._heroName) addKillFeed(`${killerNum}${u.def.icon} ${u.def.name}`, killerCol); // skip generic feed for heroes (already added above)
       if (u.def.isWorker) G.players[u.player - 1].workers = Math.max(0, G.players[u.player - 1].workers - 1);
       // deathSpawn (e.g. Dark Wing) — spawn shade at death position
       if (u.def.deathSpawn) {
@@ -14834,7 +15009,7 @@
         G.units.forEach(gu => {
           if (gu.def.corpseFeed && gu.player !== u.player) {
             if (Math.abs(gu.x - u.x) < (gu.def.corpseFeedRange || 100)) {
-              const feedHp = Math.min((gu.def.corpseFeedCap || 200), gu.maxHp);
+              const feedHp = Math.min((gu.def.corpseFeedCap || 150), gu.maxHp);
               const gain = Math.min(feedHp - gu.hp, 20);
               if (gain > 0) { gu.hp = Math.min(feedHp, gu.hp + gain); spawnParticles(gu.x, gu.y, '#8B4513', 6); }
             }
@@ -15829,6 +16004,25 @@
         }
         p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
         if (p.life <= 0) return false;
+        // Trail particles
+        if (p._trailTick !== undefined && G.particles.length < 580) {
+          p._trailTick++;
+          const ps = PROJECTILE_STYLE[p.factionId];
+          const freq = ps ? ps.trailFreq : 4;
+          if (p._trailTick % freq === 0) {
+            const tCol = ps ? ps.glowCol : (p.col || '#fff');
+            const tAlpha = ps ? ps.trailAlpha : 0.3;
+            const _tLife = 0.18 + Math.random() * 0.08;
+            G.particles.push({
+              x: p.x + (Math.random() - 0.5) * 2,
+              y: p.y + (Math.random() - 0.5) * 2,
+              vx: (Math.random() - 0.5) * 12,
+              vy: (Math.random() - 0.5) * 12,
+              life: _tLife, maxLife: _tLife,
+              col: tCol, r: 1 + Math.random(), noFall: true
+            });
+          }
+        }
         // Visual-only projectiles (e.g. ranged base attacks) — just fly and expire
         if (p._visualOnly) {
           // Check if reached target area
@@ -15867,9 +16061,9 @@
           let dmg = Number.isFinite(p.dmg) ? p.dmg : 1;
           if (t._ironwalled > 0) dmg *= 0.6;
           if (t._cocoonArmor) dmg *= (1 - t._cocoonArmor); // Chrysalis cocoon damage reduction
-          // Brutes Fortify — 30% DR when standing still (+ mastery bonus)
+          // Brutes Fortify — 22% DR when standing still (+ mastery bonus)
           if (t.fortified) {
-            const _fortDR = 0.30 + (G.factions[t.player - 1]?.masteryFlags?.fortifyDmgReduce || 0);
+            const _fortDR = 0.22 + (G.factions[t.player - 1]?.masteryFlags?.fortifyDmgReduce || 0);
             dmg *= (1 - _fortDR);
           }
           // Spirits Ethereal — 15% resistance to all attacks (projectile path)
@@ -15885,7 +16079,7 @@
           if (t.spawnProtectionTimer > 0) dmg = 0;
           else {
             const _lowHpArmor2 = (_tOwner2?._lowHpArmor && t.hp < t.maxHp * (_tOwner2._lowHpThreshold || 0.40)) ? _tOwner2._lowHpArmor : 0;
-            dmg = Math.max(1, dmg - (t.def.armor || 0) - _lowHpArmor2); if (isNaN(dmg) || !isFinite(dmg)) dmg = 1; t.hp -= dmg; t.lastHitTime = Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg;
+            dmg = Math.max(1, dmg - (t.def.armor || 0) - _lowHpArmor2); if (isNaN(dmg) || !isFinite(dmg)) dmg = 1; t.hp -= dmg; t.lastHitTime = G._now || Date.now(); if (dmg > 0 && p.player) G.players[p.player - 1].dmgDealt = (G.players[p.player - 1].dmgDealt || 0) + dmg;
           }
           t.hitFlash = 1; SFX.hit();
           t.lastHitById = p.attackerId; t.lastHitByPlayer = p.player;
@@ -15895,7 +16089,7 @@
           if (atkDef && atkDef.aoeShot) {
             G.units.forEach(e => {
               if (e.player !== p.player && e !== t && !e.offscreen && dist2d({ x: p.x, y: p.y }, e) < atkDef.aoeSplashRange) {
-                e.hp -= dmg * (atkDef.aoeSplashMult || 0.4); e.hitFlash = 1;
+                const _aoeDmg = dmg * (atkDef.aoeSplashMult || 0.4); e.hp -= Number.isFinite(_aoeDmg) ? _aoeDmg : 1; e.hitFlash = 1;
                 // Apply chill on AoE splash too
                 if (atkDef.chillOnHit && !e.def.immuneStun) {
                   e.slowTimer = Math.max(e.slowTimer || 0, atkDef.chillDur || 1.5);
@@ -15939,7 +16133,8 @@
               const _cHit2 = new Set([t.id]);
               let _cSrc2 = atk;
               for (let _cj2 = 0; _cj2 < _cJumps2; _cj2++) {
-                const ct2 = G.units.filter(e => e.player !== atk.player && !_cHit2.has(e.id) && !e.offscreen && dist2d(_cSrc2, e) < chainR2);
+                const _cEn2 = G._fc ? G._fc.combat[atk.player === 1 ? 1 : 0] : G.units.filter(e => e.player !== atk.player && !e.offscreen);
+                const ct2 = _cEn2.filter(e => !_cHit2.has(e.id) && dist2d(_cSrc2, e) < chainR2);
                 if (ct2.length === 0) break;
                 const c2 = ct2[0]; _cHit2.add(c2.id);
                 const _cd2 = (atk.def.dmg || 1) * cdmg;
@@ -16121,7 +16316,7 @@
         // Brutes Fortify — requires not being hit for 0.5s
         if (faction.id === 'brutes') {
           if (Math.abs(u.vx || 0) < 0.5) u.stillTimer = (u.stillTimer || 0) + dt; else { u.stillTimer = 0; u.fortified = false; }
-          u.fortified = u.stillTimer >= 1.0 && (Date.now() - u.lastHitTime > 500);
+          u.fortified = u.stillTimer >= 1.5 && ((G._now || Date.now()) - u.lastHitTime > 500);
         }
         if (u.frenzyTimer > 0) u.frenzyTimer -= dt;
         if (u.def.berserkThreshold) {
@@ -16179,6 +16374,7 @@
                   x: u.x, y: u.y, vx: (_bdx / _bd) * _bspd, vy: (_bdy / _bd) * _bspd,
                   targetId: -999, dmg: 0, player: u.player, _visualOnly: true,
                   col: u.def.color, life: 0.6, tx: _bpx, ty: _bpy,
+                  factionId: G.factions[u.player - 1]?.id, _trailTick: 0,
                 });
               }
               const frenzyM = (u.frenzyTimer > 0) ? (1.15 + (G.players[u.player - 1]?._frenzyBonus || 0)) : 1;
@@ -16343,6 +16539,7 @@
                     x: u.x, y: u.y, vx: (_bdx2 / _bd2) * 300, vy: (_bdy2 / _bd2) * 300,
                     targetId: -999, dmg: 0, player: u.player, _visualOnly: true,
                     col: u.def.color, life: 0.6, tx: _bpx2, ty: _bpy2,
+                    factionId: G.factions[u.player - 1]?.id, _trailTick: 0,
                   });
                 }
                 const frenzyM = (u.frenzyTimer > 0) ? (1.15 + (G.players[u.player - 1]?._frenzyBonus || 0)) : 1;
@@ -16491,7 +16688,7 @@
         if (u.def.tideborn) {
           const allyNear = G.units.some(a => a.player === u.player && a !== u && Math.abs(a.x - u.x) < 50);
           if (allyNear) u.hp = Math.min(u.maxHp, u.hp + (G.players[u.player - 1]._tideRegen || 3) * dt);
-          if (!u._splitDone && u.hp < u.maxHp * 0.20 && u.def.tideHighHP) {
+          if (!u._splitDone && u.hp < u.maxHp * 0.15 && u.def.tideHighHP) {
             u._splitDone = true;
             // Split into two smaller units
             for (let si = 0; si < 2; si++) {
@@ -16573,7 +16770,7 @@
     }
 
     function updateEconomy(dt) {
-      const gameSec = (Date.now() - G.gameStart) / 1000;
+      const gameSec = ((G._now || Date.now()) - G.gameStart) / 1000;
       const _isSudden = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
 
       // ── SUDDEN DEATH: doom clock + passive body trickle (no workers) ──
@@ -16671,8 +16868,8 @@
           p.unitCap = newCap;
           const newWCap = Math.min(5, 3 + Math.floor(gameSec / 90));
           if (newWCap > (p.workerCap || 3)) { p.workerCap = newWCap; }
-          if (Date.now() - G.lastCapAnnounce > 2000) {
-            G.lastCapAnnounce = Date.now();
+          if ((G._now || Date.now()) - G.lastCapAnnounce > 2000) {
+            G.lastCapAnnounce = G._now || Date.now();
             const ind = document.getElementById('mid-indicator');
             const prev = ind.textContent; ind.textContent = `ARMY CAP → ${newCap}`;
             setTimeout(() => { if (G) updateMidIndicator(); }, 2000);
@@ -16688,7 +16885,7 @@
           if (_dCfg.soulCap) p.souls = Math.min(p.souls, _dCfg.soulCap);
         }
         const gained = p.souls - soulsBefore;
-        const _tsNow = Date.now();
+        const _tsNow = G._now || Date.now();
         if (gained > 0) p.soulsLast5.push({ t: _tsNow, v: gained });
         p.soulsLast5 = p.soulsLast5.filter(e => _tsNow - e.t < 5000);
         p.recentSoulRate = p.soulsLast5.reduce((s, e) => s + e.v, 0) / 5;
@@ -17339,7 +17536,8 @@
       G.players.forEach((p, i) => {
         if (!p._psionicPassive) return;
         const corruptedCount = G.units.filter(u => u.player !== i + 1 && u._corrupted > 0.3).length;
-        if (corruptedCount > 0) p.souls = Math.min(900, p.souls + corruptedCount * 0.15 * dt);
+        const _psiRate = p._psionicIncomeRate || 0.08;
+        if (corruptedCount > 0) p.souls = Math.min(900, p.souls + corruptedCount * _psiRate * dt);
       });
     }
 
@@ -17363,7 +17561,7 @@
     }
     function updateParticles(dt) {
       G.particles = G.particles.filter(p => { p.x += p.vx * dt; p.y += p.vy * dt; if (!p.noFall) p.vy += 200 * dt; p.life -= dt; return p.life > 0; });
-      if (G.particles.length > 600) G.particles.splice(0, G.particles.length - 600);
+      if (G.particles.length > 800) G.particles.splice(0, G.particles.length - 800);
     }
     // ─── DRAWING ─────────────────────────────────────────────────────────────────
     // Cached sky/horizon canvases — regenerated only when factions change
@@ -17596,21 +17794,76 @@
           ctx.restore();
         });
       }
-      // Projectiles
+      // Projectiles — faction-specific shapes
       G.projectiles.forEach(p => {
+        const ps = PROJECTILE_STYLE[p.factionId];
+        ctx.save();
         if (p.isHeal) {
-          ctx.save(); ctx.globalAlpha = 0.85;
+          ctx.globalAlpha = 0.85;
           ctx.shadowBlur = 8; ctx.shadowColor = '#2ecc71';
           ctx.fillStyle = '#2ecc71';
           ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
-        } else {
-          ctx.save(); ctx.globalAlpha = 0.9;
-          ctx.shadowBlur = 6; ctx.shadowColor = p.col || '#fff';
-          ctx.fillStyle = p.col || '#fff';
-          ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
+          ctx.restore(); return;
         }
+        const col = p.col || '#fff';
+        const sz = ps ? ps.size : 3;
+        const glow = ps ? ps.glow : 6;
+        const glowCol = ps ? ps.glowCol : col;
+        ctx.globalAlpha = 0.9;
+        ctx.shadowBlur = glow; ctx.shadowColor = glowCol;
+        ctx.fillStyle = col;
+        const shape = ps ? ps.shape : 'circle';
+        switch (shape) {
+          case 'diamond':
+            ctx.translate(p.x, p.y);
+            ctx.rotate(Math.PI / 4);
+            ctx.fillRect(-sz * 0.7, -sz * 0.7, sz * 1.4, sz * 1.4);
+            break;
+          case 'arrow': {
+            const ang = Math.atan2(p.vy, p.vx);
+            ctx.translate(p.x, p.y);
+            ctx.rotate(ang);
+            ctx.beginPath();
+            ctx.moveTo(sz * 1.5, 0);
+            ctx.lineTo(-sz, -sz * 0.8);
+            ctx.lineTo(-sz * 0.4, 0);
+            ctx.lineTo(-sz, sz * 0.8);
+            ctx.closePath(); ctx.fill();
+            break;
+          }
+          case 'bolt': {
+            const ang = Math.atan2(p.vy, p.vx);
+            ctx.translate(p.x, p.y);
+            ctx.rotate(ang);
+            ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(-sz * 1.5, -sz * 0.4);
+            ctx.lineTo(-sz * 0.3, sz * 0.3);
+            ctx.lineTo(sz * 0.3, -sz * 0.3);
+            ctx.lineTo(sz * 1.5, sz * 0.4);
+            ctx.stroke();
+            ctx.beginPath(); ctx.arc(0, 0, sz * 0.45, 0, Math.PI * 2); ctx.fill();
+            break;
+          }
+          case 'orb': {
+            const pulse = 1 + Math.sin(_now * 0.012) * 0.15;
+            ctx.beginPath(); ctx.arc(p.x, p.y, sz * pulse, 0, Math.PI * 2); ctx.fill();
+            ctx.globalAlpha = 0.6; ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(p.x, p.y, sz * 0.4, 0, Math.PI * 2); ctx.fill();
+            break;
+          }
+          case 'shard': {
+            const ang = Math.atan2(p.vy, p.vx);
+            ctx.translate(p.x, p.y);
+            ctx.rotate(ang);
+            ctx.fillRect(-sz * 1.2, -sz * 0.35, sz * 2.4, sz * 0.7);
+            break;
+          }
+          default: // circle
+            ctx.beginPath(); ctx.arc(p.x, p.y, sz, 0, Math.PI * 2); ctx.fill();
+            break;
+        }
+        ctx.restore();
       });
       ctx.restore(); // screen shake
     }
@@ -20468,8 +20721,33 @@
         ctx.restore();
         return;
       }
-      // Kill marks (marked unit at 3+ kills = gold ring; veteran at 5+ = pulsing star)
-      if ((u.killCount || 0) >= 5 || u._veteran) {
+      // Kill marks — heroes show crown/glow; veterans show star; 3+ kills show gold ring
+      if (u._heroName && (u._promotionTier || 0) >= 1) {
+        const _ht = u._promotionTier;
+        const _hcol = _ht >= 3 ? '#e74c3c' : _ht >= 2 ? '#e67e22' : '#d4a843';
+        const pulse = 0.6 + Math.sin(_now / 180) * 0.35;
+        ctx.save();
+        ctx.globalAlpha = pulse;
+        ctx.strokeStyle = _hcol; ctx.lineWidth = _ht >= 2 ? 3 : 2.5;
+        ctx.shadowBlur = 10 + _ht * 4; ctx.shadowColor = _hcol;
+        ctx.beginPath(); ctx.arc(x, y, r + 3 + _ht, 0, Math.PI * 2); ctx.stroke();
+        if (_ht >= 2) {
+          ctx.globalAlpha = pulse * 0.4;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.arc(x, y, r + 9 + _ht, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+        ctx.restore();
+        const _crownIcon = _ht >= 3 ? '🌟' : _ht >= 2 ? '⚔️' : '👑';
+        ctx.fillStyle = _hcol; ctx.font = `bold ${Math.max(9, r * 0.85)}px serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText(_crownIcon, x, y - r - 10);
+        // Tier 3: show first word of name above crown
+        if (_ht >= 3) {
+          ctx.font = `bold 7px Arial`; ctx.fillStyle = 'rgba(231,76,60,0.9)';
+          ctx.fillText(u._heroName.split(' ')[0], x, y - r - 20);
+        }
+      } else if ((u.killCount || 0) >= 5 || u._veteran) {
         // Veteran: pulsing gold ring + star
         const pulse = 0.55 + Math.sin(_now / 200) * 0.35;
         ctx.save();
@@ -20544,6 +20822,7 @@
       if (!G.lastTime) G.lastTime = ts;
       G.dt = Math.min((ts - G.lastTime) / 1000, 0.05) * (G._speedMult || 1);
       G.lastTime = ts;
+      G._now = Date.now(); // per-frame timestamp — reuse instead of calling Date.now() repeatedly
       if (G.paused) {
         // P1 ticks the vote; P2 just renders and keeps the display updated from snapshots
         const _isP2Online = typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2;
@@ -20608,15 +20887,15 @@
       // ── Per-frame unit cache ─────────────────────────────────────────────────
       // Built once here so findEnemy / doAttack / updateUnits don't each re-scan
       // the full unit list for the same player/type sub-sets every call.
-      { const _on1 = [], _on2 = [], _m1 = [], _m2 = [], _r1 = [], _r2 = [];
+      { const _on1 = [], _on2 = [], _m1 = [], _m2 = [], _r1 = [], _r2 = [], _c1 = [], _c2 = [];
         for (let _ci = 0; _ci < G.units.length; _ci++) {
           const _cu = G.units[_ci];
           if (_cu.offscreen) continue;
-          if (_cu.player === 1) { _on1.push(_cu); if (_cu.def.type === 'mel') _m1.push(_cu); else if (_cu.def.type === 'rng') _r1.push(_cu); }
-          else if (_cu.player === 2) { _on2.push(_cu); if (_cu.def.type === 'mel') _m2.push(_cu); else if (_cu.def.type === 'rng') _r2.push(_cu); }
-          else { _on1.push(_cu); _on2.push(_cu); } // rogue units (player 3) — targetable by both sides
+          if (_cu.player === 1) { _on1.push(_cu); if (!_cu.def.isWorker) _c1.push(_cu); if (_cu.def.type === 'mel') _m1.push(_cu); else if (_cu.def.type === 'rng') _r1.push(_cu); }
+          else if (_cu.player === 2) { _on2.push(_cu); if (!_cu.def.isWorker) _c2.push(_cu); if (_cu.def.type === 'mel') _m2.push(_cu); else if (_cu.def.type === 'rng') _r2.push(_cu); }
+          else { _on1.push(_cu); _on2.push(_cu); _c1.push(_cu); _c2.push(_cu); } // rogue units (player 3) — targetable by both sides
         }
-        G._fc = { p1: _on1, p2: _on2, mel: [_m1, _m2], rng: [_r1, _r2] };
+        G._fc = { p1: _on1, p2: _on2, mel: [_m1, _m2], rng: [_r1, _r2], combat: [_c1, _c2] };
       }
       updateUnits(G.dt);
       updateProjectiles(G.dt);
@@ -20843,16 +21122,16 @@
             const avgLife = deaths > 0 ? (secs / deaths).toFixed(1) + 's' : '—';
             const kills = (p.unitTypeKills || {})[def.id] || 0;
             return `<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.04);padding:3px 0;">
-              <span style="color:var(--text);font-size:.71rem">${def.icon} ${def.name}</span>
-              <span style="display:flex;gap:10px;font-size:.67rem;">
+              <span style="color:var(--text);font-size:.78rem">${def.icon} ${def.name}</span>
+              <span style="display:flex;gap:10px;font-size:.72rem;">
                 <span title="Times spawned" style="color:var(--dim)">${spawned} spawned</span>
-                <span title="Total kills by this unit type" style="color:#2ecc71">${kills} kills</span>
-                <span title="Total deaths of this unit type" style="color:#e74c3c">${deaths} deaths</span>
+                <span title="Total kills by this unit type" style="color:#66bb6a">${kills} kills</span>
+                <span title="Total deaths of this unit type" style="color:#ef5350">${deaths} deaths</span>
                 <span title="Average lifespan" style="color:#74b9ff">${avgLife} avg</span>
               </span>
             </div>`;
           }).filter(Boolean).join('');
-          return rows ? `<div class="go-stat-section"><div style="font-family:Rajdhani,sans-serif;font-size:.7rem;color:var(--gold);margin-bottom:2px;">UNIT BREAKDOWN</div>${rows}</div>` : '';
+          return rows ? `<div class="go-stat-section"><div style="font-family:Rajdhani,sans-serif;font-size:.76rem;color:var(--gold);margin-bottom:4px;letter-spacing:.08em;">UNIT BREAKDOWN</div>${rows}</div>` : '';
         }
         const _isSoloGo = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
         document.getElementById('go-stats').innerHTML =
@@ -21619,6 +21898,7 @@
       }
       if (typeof _campHideDialogue === 'function') _campHideDialogue();
       if (id === 'sc-faction') {
+        if (typeof clearFactionFilters === 'function') clearFactionFilters();
         fCursor = [0, 0];
         updateFactionHints();
         _applyFactionScreenMode();
@@ -21826,6 +22106,40 @@
         document.getElementById(`fscroll-p${pid}`).textContent = `${FACTIONS.length} factions`;
       });
     }
+
+    // ── Faction filter ──
+    function filterFactionCards(pid) {
+      const input = document.getElementById(`ffilter-p${pid}`);
+      if (!input) return;
+      const q = input.value.toLowerCase().trim();
+      const container = document.getElementById(`fcards-p${pid}`);
+      const cards = container.querySelectorAll('.fcard');
+      let visible = 0;
+      cards.forEach(card => {
+        if (!q) { card.classList.remove('filter-hidden'); visible++; return; }
+        const fid = card.dataset.factionId;
+        const f = FACTIONS.find(f => f.id === fid);
+        if (!f) { card.classList.add('filter-hidden'); return; }
+        const haystack = [f.id, f.name, f.tagline, f.passive, ...f.units.map(u => u.name)].join(' ').toLowerCase();
+        if (haystack.includes(q)) { card.classList.remove('filter-hidden'); visible++; }
+        else { card.classList.add('filter-hidden'); }
+      });
+      document.getElementById(`fscroll-p${pid}`).textContent = q ? `${visible} of ${FACTIONS.length} factions` : `${FACTIONS.length} factions`;
+    }
+    function clearFactionFilters() {
+      [1, 2].forEach(pid => {
+        const input = document.getElementById(`ffilter-p${pid}`);
+        if (input) { input.value = ''; }
+        filterFactionCards(pid);
+      });
+    }
+    [1, 2].forEach(pid => {
+      const input = document.getElementById(`ffilter-p${pid}`);
+      if (!input) return;
+      input.addEventListener('input', () => filterFactionCards(pid));
+      // Prevent game keybinds (W/S/Enter/Space) from leaking through while typing
+      input.addEventListener('keydown', e => e.stopPropagation());
+    });
 
     // Lightweight badge refresh — updates win badge on existing cards without rebuilding
     function refreshFactionWinBadges() {
@@ -25410,7 +25724,7 @@
         /* 5 T3L */ { row: 3, col: 0, name: 'Golem Growth', icon: '💀', cost: 175, desc: 'Corpse Golem gains +8 HP per nearby death (up from +5). The Golem grows ravenously.', req: [2], effects: [{ type: 'flag', flag: 'golemGrowthBonus', value: 3 }] },
         /* 6 T3M */ { row: 3, col: 2, name: 'Iron Scavenger', icon: '⚔️', cost: 175, desc: 'The Flenser gains +20 HP and +8 DMG. Your elite harvester becomes truly unstoppable.', req: [3], effects: [{ type: 'unit_hp_flat', target: 'rv_flenser', value: 20 }, { type: 'unit_dmg_flat', target: 'rv_flenser', value: 8 }] },
         /* 7 T3R */ { row: 3, col: 4, name: 'Toxic Harvest', icon: '🧪', cost: 175, desc: 'Harvester gains +12 HP and +18 attack range. Poison from a safer distance.', req: [4], effects: [{ type: 'unit_hp_flat', target: 'rv_harvester', value: 12 }, { type: 'unit_range_flat', target: 'rv_harvester', value: 18 }] },
-        /* 8 T4L */ { row: 4, col: 0, name: 'Unstoppable Golem', icon: '🗿', cost: 275, desc: 'Corpse Golem max HP cap raised to 260 (from 200). Near-immortal given enough deaths.', req: [5], effects: [{ type: 'flag', flag: 'golemMaxHPBonus', value: 60 }] },
+        /* 8 T4L */ { row: 4, col: 0, name: 'Unstoppable Golem', icon: '🗿', cost: 275, desc: 'Corpse Golem max HP cap raised to 210 (from 150). Near-immortal given enough deaths.', req: [5], effects: [{ type: 'flag', flag: 'golemMaxHPBonus', value: 60 }] },
         /* 9 T4M */ { row: 4, col: 2, name: 'Body Surplus', icon: '💪', cost: 275, desc: 'Flenser kills grant +5 bodies (up from +3). Every enemy slain funds the next wave.', req: [6], effects: [{ type: 'flag', flag: 'flensorBodiesBonus', value: 2 }] },
         /* 10 T4R */ { row: 4, col: 4, name: 'Dead Pool', icon: '🩸', cost: 275, desc: 'Corpse Golem gains HP from deaths in a 160px range (up from 100px). Nothing escapes notice.', req: [7], effects: [{ type: 'flag', flag: 'golemRangeBonus', value: 60 }] },
         /* 11 CAP */ { row: 5, col: 2, name: 'LEGENDARY: Bone Titan Ascendant', icon: '👑', cost: 400, desc: 'Bone Titan gains +100 HP, +15 DMG. Workers harvest corpses for +12 bodies. Golem gains +12 HP per death. The Reavers become an unstoppable charnel machine.', req: [8, 10], effects: [{ type: 'unit_hp_flat', target: 'rv_guard', value: 100 }, { type: 'unit_dmg_flat', target: 'rv_guard', value: 15 }, { type: 'flag', flag: 'boneTitanMastery', value: true }] },
