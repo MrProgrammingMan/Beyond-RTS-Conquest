@@ -299,10 +299,10 @@ const INSTRUMENTATION_SCRIPT = `
       // Fortune streak activations (Fortune Seekers)
       const streaks = G._fortuneStreaks || [0, 0];
       for (let i = 0; i < streaks.length; i++) {
-        if (streaks[i] >= 3 && !window.__qa['_fortuneStreakActive' + i]) {
+        if (streaks[i] >= 2 && !window.__qa['_fortuneStreakActive' + i]) {
           window.__qa['_fortuneStreakActive' + i] = true;
           window.__qa.mechanics.fortune_streak_activated++;
-        } else if (streaks[i] < 3) {
+        } else if (streaks[i] < 2) {
           window.__qa['_fortuneStreakActive' + i] = false;
         }
       }

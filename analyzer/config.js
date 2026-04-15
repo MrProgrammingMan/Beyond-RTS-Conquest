@@ -59,10 +59,18 @@ module.exports = {
   // ── UI AUDIT ──────────────────────────────────────────────────────────────
   ui: {
     screens: [
-      'sc-menu',        // main menu
-      'sc-faction',     // faction select
-      'sc-game',        // in-game (after 3s)
-      'sc-gameover',    // game over screen
+      'sc-menu',              // main menu
+      'sc-faction',           // faction select
+      'sc-draft',             // draft ban/pick screen
+      'sc-online',            // online multiplayer lobby
+      'sc-tournament-setup',  // tournament config
+      'sc-campaign',          // campaign map
+      'sc-mastery',           // faction mastery book
+      'sc-tutorial',          // tutorial screen
+      'sc-controls',          // keybind reference
+      'sc-game',              // in-game (conquest, after 3s AI play)
+      'sc-game-horde',        // horde mode gameplay
+      'sc-gameover',          // game over screen
     ],
     desktopViewports: [
       { width: 1920, height: 1080, label: '1080p' },

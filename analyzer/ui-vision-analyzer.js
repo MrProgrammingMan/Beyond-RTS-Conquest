@@ -5,8 +5,8 @@
  * suggestions that programmatic DOM checks can't catch.
  *
  * COST OPTIMISATION: batches all screenshots from the same viewport into a
- * single multi-image API call. For 3 viewports × 8 screens this cuts the
- * number of API calls from ~24 down to ~3.
+ * single multi-image API call. For 3 viewports × 18 screens this cuts the
+ * number of API calls from ~54 down to ~3.
  */
 
 const Anthropic = require('@anthropic-ai/sdk');
@@ -29,7 +29,7 @@ const SCREEN_DESC = {
 
   'sc-game-upgrades': `Close-up of HUD with UPGRADES tab selected for Player 1. Shows upgrade cards with descriptions, costs, and effects.`,
 
-  'sc-game-buffs': `Close-up of HUD with BUFFS tab selected for Player 1. Shows buff abilities with cooldowns and descriptions.`,
+  'sc-game-buffs': `Close-up of HUD with BUFFS tab selected for Player 1. Shows 3×3 grid of buff abilities (War Cry, Iron Wall, Body Boon, Soul Tide, Battle Trance, Mending Wave, Wrath Toll, Soul Spike, Last Rites) with cooldowns and costs.`,
 
   'sc-gameover': `Game-over / victory screen.
 - Winner announcement with crown icon
@@ -41,7 +41,27 @@ const SCREEN_DESC = {
 
   'sc-menu': `Main menu screen with all game mode buttons (Multiplayer, Online, Sudden Death, Conquest, Draft, Campaign, Singleplayer, Tournament, AI vs AI, Tutorial, Faction Mastery, Changelog).`,
 
-  'sc-faction': `Faction selection screen where both players choose their faction. Shows faction cards with descriptions, pros/cons, and unit previews.`,
+  'sc-faction': `Faction selection screen where both players choose their faction. Shows 24 faction cards with icons, names, taglines, difficulty ratings, and pros/cons.`,
+
+  'sc-draft': `Draft mode screen — ban/pick phase. Players alternate banning and picking factions. Banned factions are greyed out. Shows remaining picks and turn indicator.`,
+
+  'sc-online': `Online multiplayer lobby screen. Shows create/join room interface with room codes, player names, and connection status via WebRTC.`,
+
+  'sc-tournament-setup': `Tournament setup screen — configure single-elimination bracket. Select number of entrants, assign factions, and start the tournament.`,
+
+  'sc-tournament-bracket': `Tournament bracket display — visual bracket UI showing matchups, completed results, and advancing winners with connecting lines.`,
+
+  'sc-campaign': `Campaign map screen — vertical list of 24 faction nodes to battle through. Each node shows faction icon, name, and completion status. Has a back button, title, and preview panel for selected node.`,
+
+  'sc-mastery': `Faction mastery book — 3D page-turn book UI. Each page shows a faction's mastery progress: XP bar, skill tree, perks unlocked. Navigation dots and prev/next buttons at bottom.`,
+
+  'sc-tutorial': `Tutorial mode screen — guided introduction walkthrough for new players. Step-by-step panels explaining game mechanics, unit spawning, economy, buffs, upgrades, etc.`,
+
+  'sc-controls': `Controls/keybind reference screen — shows keyboard shortcuts and control scheme for the game.`,
+
+  'sc-game-horde': `Horde mode gameplay — defend-your-base mode with wave counter. P2 HUD is hidden. Shows current wave number, phase indicator, and incoming enemy wave.`,
+
+  'sc-game-sudden': `Sudden Death mode gameplay — faster match variant with accelerated damage escalation and tighter economy.`,
 };
 
 // ── Build batched prompt for multiple screenshots in one viewport ─────────────
@@ -57,50 +77,53 @@ function buildBatchPrompt(screensInBatch, viewport) {
 
   return `You are a senior UI/UX designer reviewing ${screensInBatch.length} screenshots from "Beyond RTS Conquest", a browser-based 2D side-scroller RTS game.
 
-VIEWPORT: ${viewport.width}×${viewport.height} (${sizeContext}${isMobile ? ' — this is the most critical viewport to get right' : ''})
+VIEWPORT: ${viewport.width}×${viewport.height} (${sizeContext}${isMobile ? ' — mobile viewport' : ''})
 
-The images are provided in order. Here is what each shows:
-
+The images are provided in order:
 ${screenList}
 
-Analyse ALL screenshots and find SPECIFIC, ACTIONABLE issues. Focus on:
+━━ STRICT RULES FOR WHAT TO REPORT ━━
 
-1. **LAYOUT PROBLEMS** — Elements overlapping, cut off, or pushed offscreen. Text truncated. Cards too cramped.
-2. **READABILITY** — Text too small to read, poor contrast, information density too high for this viewport size.
-3. **USABILITY** — Controls too small to tap (mobile), important info hidden or hard to find, confusing layout.
-4. **WASTED SPACE** — Areas with too much empty space while other areas are cramped. Unbalanced layout.
-5. **DESIGN ISSUES** — Elements that don't belong on this screen, UI that could confuse players, visual clutter.
-${isMobile ? `6. **MOBILE-SPECIFIC** — Touch targets too small, text unreadable at phone distance, horizontal overflow, elements that should stack vertically but don't.` : ''}
+ONLY report issues that you can CLEARLY AND DIRECTLY SEE in the provided screenshots. Do NOT:
+- Invent hypothetical problems that "might" exist on other screen sizes
+- Flag things that look intentional or styled (dark theme, small fonts in information-dense UIs are intentional)
+- Report more than 1-2 issues per screen — only the most impactful real problems
+- Make up issues to fill a quota — it's BETTER to report 0 issues than to invent ones
+- Flag low-contrast as an issue if the text is clearly legible in the screenshot
+- Report "too much information" if the game UI is intentionally data-dense
 
-For EACH issue found, provide:
-- Which image/screen it belongs to
-- A clear description of what's wrong and WHERE (reference position: top-left, bottom-right, center, etc.)
-- WHY it's a problem (especially for ${sizeContext} users)
-- A specific suggestion to fix it (with concrete values: "reduce font from 14px to 11px", "hide P2 panel on mobile", etc.)
+DO report (only if clearly visible):
+- Text that is genuinely cut off or overflows its container
+- UI elements that visibly overlap and obscure each other
+- Buttons/cards that are clearly broken or misaligned
+- ${isMobile ? 'Touch targets that are visibly too small to tap reliably on mobile' : 'Layout breakage that makes the game unplayable'}
+- Missing or clearly incorrect UI state
 
-Rate each issue: CRITICAL (broken/unusable), HIGH (significantly hurts UX), MEDIUM (noticeable but workable), LOW (polish/nice-to-have).
+For each REAL issue found:
+- Which screen it belongs to
+- Where exactly in the screenshot (reference a quadrant: top-left, bottom-center, etc.)
+- What is visibly wrong (describe exactly what you see)
+- A concrete, specific fix
 
-Output ONLY a valid JSON array — no markdown fences, no preamble:
+Rate: CRITICAL (broken/unusable right now), HIGH (significantly hurts gameplay), MEDIUM (noticeable annoyance), LOW (minor polish).
+
+Output ONLY a valid JSON array — no markdown, no preamble:
 [
   {
-    "screen": "sc-game|sc-game-hud|sc-game-upgrades|sc-game-buffs|sc-gameover|sc-gameover-stats|sc-menu|sc-faction",
+    "screen": "sc-game|sc-game-hud|sc-game-upgrades|sc-game-buffs|sc-gameover|sc-gameover-stats|sc-menu|sc-faction|sc-draft|sc-online|sc-tournament-setup|sc-tournament-bracket|sc-campaign|sc-mastery|sc-tutorial|sc-controls|sc-game-horde|sc-game-sudden",
     "severity": "CRITICAL|HIGH|MEDIUM|LOW",
-    "category": "layout|readability|usability|wasted_space|design|mobile",
-    "location": "where in the screenshot (e.g. 'bottom-left HUD panel', 'top center mid indicator')",
-    "issue": "clear description of the problem",
-    "why": "why this matters for the user",
-    "suggestion": "specific actionable fix with concrete values",
-    "element_hint": "CSS selector or element name if identifiable (e.g. '#p1-hud .res-row', '.go-stats')"
+    "category": "layout|readability|usability|overflow|design${isMobile ? '|mobile' : ''}",
+    "location": "where in the screenshot",
+    "issue": "what you can clearly see is wrong",
+    "why": "why this breaks the experience",
+    "suggestion": "specific fix with concrete values where possible",
+    "element_hint": "CSS selector or element name if identifiable"
   }
 ]
 
-Rules:
-- Output ONLY the JSON array
-- Be specific — don't say "some text is small", say which text and where
-- Give concrete fix values — don't say "make it bigger", say "increase to 16px" or "use clamp(12px, 2vw, 16px)"
-- If a screen looks good, just don't include issues for it
-- Aim for ${isMobile ? '8-15' : '5-10'} total issues across all ${screensInBatch.length} screenshots — focus on the most impactful
-- ${isMobile ? 'Mobile is the HIGHEST priority — be thorough and strict' : 'Desktop has more room, so focus on major issues only'}`;
+If everything looks fine in the screenshots, return an empty array: []
+Aim for ${isMobile ? '3-8' : '2-5'} total real issues across all ${screensInBatch.length} screenshots.
+Quality over quantity — only report what you can actually see is broken.`;
 }
 
 // ── Main export ────────────────────────────────────────────────────────────────
@@ -154,8 +177,8 @@ async function analyzeScreenshotsWithVision(screenshots, cfg) {
 
     try {
       const response = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 3000,
+        model: 'claude-sonnet-4-6', // Sonnet has far better vision accuracy — fewer false positives
+        max_tokens: 2000,
         messages: [{ role: 'user', content: contentBlocks }],
       });
 

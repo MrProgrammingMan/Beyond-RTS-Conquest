@@ -16,6 +16,31 @@ const ALL_FACTIONS = [
   'illusionists', 'pandemonium', 'psionics', 'umbral',
 ];
 
+// Maps faction-specific mechanics to their owning faction(s).
+// null = universal (every game is relevant, use totalGames as denominator).
+const MECHANIC_FACTIONS = {
+  tar_patches_active:       ['weavers'],
+  corpses_collected:        ['reavers'],
+  echo_spawned:             ['echoes'],
+  dark_zone_created:        ['umbral'],
+  mutation_applied:         ['plagued'],
+  metamorphosis_complete:   ['chrysalis'],
+  decoy_spawned:            ['illusionists'],
+  phase_activated:          ['veilborn'],
+  corruption_applied:       ['psionics'],
+  fortune_double:           ['fortune'],
+  fortune_streak_activated: ['fortune'],
+  random_event_fired:       ['pandemonium'],
+  // Universal mechanics — null means every game counts
+  spy_deployed:             null,
+  mid_captured:             null,
+  upgrade_purchased:        null,
+  buff_activated:           null,
+  last_stand_triggered:     null,
+  aerial_unit_spawned:      null,
+  worker_sent_to_mid:       null,
+};
+
 async function runAllMatchups(cfg, onProgress = () => { }) {
   const factions = cfg.balance.factionFilter || ALL_FACTIONS;
   const mirror = cfg.balance.mirrorMatchups !== false;
@@ -81,6 +106,9 @@ async function runAllMatchups(cfg, onProgress = () => { }) {
     // is universal or faction-specific (e.g. Warriors never buys upgrades).
     // Structure: { faction: { mechanic_key: totalCount } }
     mechanicByFaction: {},
+    // For faction-specific mechanics: how many games involved the owning faction.
+    // Used so "rarely used" warnings don't fire when the faction wasn't playing.
+    mechanicRelevantGames: {},
     // #20: closest games — matchups where combined final HP was lowest,
     // indicating the most competitive outcomes.
     // Each entry: { matchup, p1Faction, p2Faction, combinedHp, p1Hp, p2Hp, elapsed }
@@ -148,6 +176,14 @@ async function runAllMatchups(cfg, onProgress = () => { }) {
         }
 
         qa.totalGamesRun++;
+
+        // Track eligible games per faction-specific mechanic so "rarely used"
+        // warnings only fire when the owning faction was actually in the match.
+        for (const [mech, facs] of Object.entries(MECHANIC_FACTIONS)) {
+          if (facs && facs.some(f => f === job.p1 || f === job.p2)) {
+            qa.mechanicRelevantGames[mech] = (qa.mechanicRelevantGames[mech] || 0) + 1;
+          }
+        }
 
         // ── Balance ──────────────────────────────────────────────────────────
         const r = results[job.p1]?.[job.p2];

@@ -36,6 +36,15 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
       isMobile,
       hasTouch: isMobile,
     });
+    // Suppress portrait-mode canvas rotation: spoof screen.width/height so the
+    // game always sees landscape dimensions, preventing the rotate(-90deg) transform
+    // that makes screenshots sideways. Touch targets are still tested correctly.
+    if (isMobile && vp.height > vp.width) {
+      await ctx.addInitScript(`
+        Object.defineProperty(window.screen, 'width',  { get: () => ${vp.height} });
+        Object.defineProperty(window.screen, 'height', { get: () => ${vp.width}  });
+      `);
+    }
     await ctx.addInitScript(INSTRUMENTATION_SCRIPT);
     const page = await ctx.newPage();
 
@@ -61,8 +70,8 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           continue;
         }
 
-        // For sc-game: wait for the AI to play so screenshot shows actual combat
-        if (screenId === 'sc-game') {
+        // For game screens: wait for the AI to play so screenshot shows actual combat
+        if (screenId === 'sc-game' || screenId === 'sc-game-horde') {
           // The speed hack is set inside _navigateToScreen before initGame().
           // Wait ~2s real time ≈ 60-120 game-seconds at 10x (enough for combat)
           await sleep(2000);
@@ -74,6 +83,9 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
             try { window.updateHUD(); } catch (_) {}
           });
           await sleep(200);
+        } else if (screenId === 'sc-mastery') {
+          // Mastery book needs a beat for the page-turn animation to settle
+          await sleep(1200);
         } else {
           await sleep(screenId === 'sc-gameover' ? 800 : 600);
         }
@@ -127,6 +139,18 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
             await page.evaluate(() => { if (window.G) window.G.paused = false; });
           }
 
+          // ── Horde mode: end game after screenshot so later screens work ──
+          if (screenId === 'sc-game-horde') {
+            await page.evaluate(() => {
+              if (window.G && window.G.running) {
+                window.G.running = false;
+                try { window._hordeCleanup?.(); } catch (_) {}
+                try { window.showScreen('sc-menu'); } catch (_) {}
+              }
+            });
+            await sleep(300);
+          }
+
           // ── Game-over: focused screenshot of just the stats panel ──────
           if (screenId === 'sc-gameover') {
             const goFile = path.join(ssDir, `sc-gameover-stats-${vp.label}.png`);
@@ -144,8 +168,10 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           const found = [];
 
           // Helper: get all visible interactive elements on this screen
-          const screen = document.getElementById(screenId);
-          if (!screen) return [{ type: 'missing_screen_element', severity: 'error', message: `#${screenId} not found in DOM` }];
+          // sc-game-horde and sc-game-sudden share the sc-game DOM element
+          const domId = screenId.startsWith('sc-game-') ? 'sc-game' : screenId;
+          const screen = document.getElementById(domId);
+          if (!screen) return [{ type: 'missing_screen_element', severity: 'error', message: `#${domId} not found in DOM` }];
 
           const interactives = Array.from(screen.querySelectorAll('button, a, input, select, [onclick], [tabindex]'));
           const allText = Array.from(screen.querySelectorAll('p, span, div, h1, h2, h3, h4, label, .btn'));
@@ -332,10 +358,10 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
 async function _navigateToScreen(page, screenId) {
   return await page.evaluate(({ id, speed }) => {
     const target = document.getElementById(id);
-    if (!target) return false;
 
-    // For game screen: use __qaStartAiVsAi to properly start a game with speed hack
+    // ── Standard game start (conquest / vs) ──
     if (id === 'sc-game') {
+      if (!target) return false;
       if (!window.G || !window.G.running) {
         window.__qaSpeedMultiplier = speed;
         if (typeof window.__qaStartAiVsAi === 'function') {
@@ -347,13 +373,66 @@ async function _navigateToScreen(page, screenId) {
       return true;
     }
 
-    // For game-over: force a game end — the speed hack is already active from sc-game
+    // ── Horde mode game start ──
+    if (id === 'sc-game-horde') {
+      const gameEl = document.getElementById('sc-game');
+      if (!gameEl) return false;
+      if (!window.G || !window.G.running) {
+        window.__qaSpeedMultiplier = speed;
+        // Set horde mode then start
+        try { window.GAME_MODE = 'horde'; } catch (_) { }
+        if (typeof window.__qaStartAiVsAi === 'function') {
+          try { window.__qaStartAiVsAi(0, 1, 'easy'); } catch (_) { }
+        }
+        try { window.resizeGameCanvas(); } catch (_) { }
+        try { window.drawGame(); } catch (_) { }
+      }
+      return true;
+    }
+
+    // ── Game-over: force a game end ──
     if (id === 'sc-gameover') {
       if (window.G && window.G.running) {
         window.G.players[1].baseHp = 0;
         try { window.checkWin(); } catch (_) { }
       }
       return true;
+    }
+
+    if (!target) return false;
+
+    // ── Campaign map: navigate + render ──
+    if (id === 'sc-campaign') {
+      if (typeof window.showScreen === 'function') {
+        try { window.showScreen('sc-campaign'); } catch (_) { }
+      }
+      if (typeof window._renderCampaignMap === 'function') {
+        try { window._renderCampaignMap(); } catch (_) { }
+      }
+      return true;
+    }
+
+    // ── Mastery book: navigate + render first page ──
+    if (id === 'sc-mastery') {
+      if (typeof window.showScreen === 'function') {
+        try { window.showScreen('sc-mastery'); } catch (_) { }
+      }
+      if (typeof window._goToBookPage === 'function') {
+        try { window._goToBookPage(0); } catch (_) { }
+      }
+      return true;
+    }
+
+    // ── Tournament bracket: show the bracket view ──
+    if (id === 'sc-tournament-bracket') {
+      // Can only show bracket if a tournament has been set up
+      const el = document.getElementById('sc-tournament-bracket');
+      if (el) {
+        if (typeof window.showScreen === 'function') {
+          try { window.showScreen('sc-tournament-bracket'); } catch (_) { }
+        }
+      }
+      return !!el;
     }
 
     // For other screens: use showScreen if available, else direct DOM manipulation

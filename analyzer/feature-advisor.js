@@ -40,7 +40,7 @@ FEATURES THAT ALREADY EXIST (DO NOT SUGGEST THESE OR VARIATIONS OF THESE):
 - Random Events system: Blood Moon (halved body costs), Arcane Surge (40% soul discount), Time Warp (+80% speed), Dark Eclipse (doubled desperation income) — rolls every 40-70s with visual overlays
 - Faction Mastery system: full skill tree per faction with XP, mastery perks, mastery flags that modify gameplay (fortifyDmgReduce, skyBountyAmt, chainRate, etc.)
 - Upgrade Tree: 7-node skill tree per faction purchased during gameplay with souls/bodies
-- Buff system: War Cry, Iron Wall, Blitz, Soul Tide, Conquest Shield — unlocked at 60s, cooldown-based
+- Buff system: 9 Rally Buffs (War Cry, Iron Wall, Body Boon, Soul Tide, Battle Trance, Mending Wave, Wrath Toll, Soul Spike, Last Rites) — 3×3 grid, unlocked at 60s, cooldown-based
 - Spy system: deploy spies to reveal enemy info
 - Rogue Events: Treasure Courier and Arena Champion that spawn mid-map
 - Mid-zone control: capture the center for income bonuses
@@ -58,7 +58,10 @@ FEATURES THAT ALREADY EXIST (DO NOT SUGGEST THESE OR VARIATIONS OF THESE):
 - Sound effects and music system
 - Base castle themes per faction with unique visual styles
 - Damage escalation: global damage multiplier that increases over time to prevent stalemates
-- Tournament Bracket Mode: full single-elimination tournament with visual bracket UI, auto-advancing matches, and winner fanfare (sc-tournament-setup and sc-tournament-bracket screens)`;
+- Tournament Bracket Mode: full single-elimination tournament with visual bracket UI, auto-advancing matches, and winner fanfare (sc-tournament-setup and sc-tournament-bracket screens)
+- Horde Mode (GAME_MODE='horde'): 10-wave defend-your-base; waves cycle factions warriors→infernal→bloodpact→glacial→summoners→voltborn→brutes→psionics→umbral→pandemonium; P1 units recalled between waves; per-wave background crossfades; battle↔intense music per phase
+- Unit Promotion & Naming: units earn a randomly generated name + glow after 5+ kills, tracked in kill feed with special death announcement
+- File-based adaptive music: calm.wav (menu), battle.wav, intense.wav, victory.wav — real audio files with crossfades`;
 
   // ── Core prompt ─────────────────────────────────────────────────────────────
   const corePrompt = `You are a visionary game designer brainstorming NEW FEATURES for "Beyond RTS Conquest" — a browser-based 2D side-scroller RTS with 24 factions.
@@ -120,7 +123,7 @@ Output ONLY a valid JSON array — no markdown fences, no preamble:
     "factionSynergies": "Which of the 24 factions benefit most or interact interestingly with this feature? Be specific.",
     "effort": "quick|medium|large",
     "implementation": "Concrete steps referencing actual function names and variable names from the game context. Which files/functions to modify, what new state to add to G, etc.",
-    "pasteToClaudePrompt": "Self-contained implementation request. Include: game is a single HTML file, vanilla JS + Canvas, ~20k lines. State the exact feature to add, which functions to modify (by name), what new state/logic is needed, and how it integrates with existing mechanics. End with 'Please implement this in index.html.' Max 1200 chars."
+    "pasteToClaudePrompt": "Self-contained implementation request. Include: game is a single HTML file, vanilla JS + Canvas, ~20k lines. State the exact feature to add, which functions to modify (by name), what new state/logic is needed, and how it integrates with existing mechanics. End with 'Please implement this in index.html.' Max 800 chars."
   }
 ]
 
@@ -136,25 +139,50 @@ Rules:
   try {
     const fullPrompt = injectContext(corePrompt, gameContext, 'compact');
     const response = await client.messages.create({
-      model:      'claude-haiku-4-5-20251001',
-      max_tokens: 4000,
+      model:      'claude-sonnet-4-6',
+      max_tokens: 16000,
+      betas:      ['output-128k-2025-02-19'],
       messages:   [{ role: 'user', content: fullPrompt }],
     });
 
-    const rawText   = response.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const rawText = response.content.filter(b => b.type === 'text').map(b => b.text).join('');
     let suggestions = [];
+
+    // Try 1: clean parse
     try {
       suggestions = JSON.parse(rawText.replace(/```json|```/g, '').trim());
-    } catch (_) {
+    } catch (_) {}
+
+    // Try 2: extract [...] block
+    if (!Array.isArray(suggestions) || suggestions.length === 0) {
       const m = rawText.match(/\[[\s\S]+\]/);
       if (m) try { suggestions = JSON.parse(m[0]); } catch (_) {}
     }
 
+    // Try 3: truncated JSON salvage — close off the last complete object and the array
+    if (!Array.isArray(suggestions) || suggestions.length === 0) {
+      const start = rawText.indexOf('[');
+      if (start !== -1) {
+        let partial = rawText.slice(start);
+        // Find the last complete object (ends with `}`) before truncation
+        const lastClose = partial.lastIndexOf('}');
+        if (lastClose !== -1) {
+          partial = partial.slice(0, lastClose + 1) + ']';
+          try { suggestions = JSON.parse(partial); } catch (_) {}
+        }
+      }
+    }
+
     if (!Array.isArray(suggestions) || suggestions.length === 0) {
       console.error('  ⚠️  Feature advisor: Claude returned no parseable suggestions, falling back to heuristics');
-      console.error('  ⚠️  Raw response (first 300 chars):', rawText.slice(0, 300));
+      console.error('  ⚠️  Raw response (first 500 chars):', rawText.slice(0, 500));
+      console.error('  ⚠️  stop_reason:', response.stop_reason);
       const fallback = _heuristicFallback(rawData, aggStats, qa);
       return { suggestions: fallback, megaPrompt: _buildMegaPrompt(fallback), summary: `${fallback.length} heuristic features (API response was not parseable)` };
+    }
+
+    if (response.stop_reason === 'max_tokens') {
+      console.warn(`  ⚠️  Feature advisor: response was truncated — only ${suggestions.length} suggestions recovered. Partial results used.`);
     }
 
     suggestions = suggestions.map((s, i) => ({
@@ -216,46 +244,47 @@ Let's begin with #1.`;
 
 function _heuristicFallback(rawData, aggStats, qa) {
   // Fallback ideas when API fails.
-  // ╔═══════════════════════════════════════════════════════════════════╗
-  // ║ ALREADY EXISTS — DO NOT SUGGEST:                                 ║
-  // ║  Draft mode, random events/weather, mastery/prestige system,     ║
-  // ║  buffs (warcry/ironwall/blitz/soul tide/conquest shield),        ║
-  // ║  spies, rogue events, kill streaks, wild card, veteran system,   ║
-  // ║  chat/taunts, online multiplayer, AI personalities, post-game    ║
-  // ║  stats, tutorial, kill feed, desperation income, mid control,    ║
-  // ║  upgrade tree, worker scaling, damage escalation, sound/music,   ║
-  // ║  base castle themes, faction lore/matchup tips                   ║
-  // ╚═══════════════════════════════════════════════════════════════════╝
+  // ╔══════════════════════════════════════════════════════════════════════╗
+  // ║ ALREADY EXISTS — DO NOT SUGGEST:                                    ║
+  // ║  Draft mode, random events/weather, mastery/prestige system,        ║
+  // ║  buffs (9 rally buffs: warcry/ironwall/bodyboon/soul tide/          ║
+  // ║  battle trance/mending wave/wrath toll/soul spike/last rites),     ║
+  // ║  spies, rogue events, kill streaks, wild card, veteran system,      ║
+  // ║  chat/taunts, online multiplayer, AI personalities, post-game       ║
+  // ║  stats, tutorial, kill feed, desperation income, mid control,       ║
+  // ║  upgrade tree, worker scaling, damage escalation, sound/music,      ║
+  // ║  base castle themes, faction lore/matchup tips, horde mode,         ║
+  // ║  unit promotion & naming, file-based adaptive music                 ║
+  // ╚══════════════════════════════════════════════════════════════════════╝
   const suggestions = [];
-  const factionCount = rawData.factions?.length || 0;
 
   suggestions.push({
     priority: 1, category: 'mechanic', title: 'Faction Fusion — Dual Faction Hybrid',
     pitch: 'Pick two factions and get a merged roster — 3 units from each plus a unique fusion passive. Creates hundreds of possible combinations from 24 factions.',
     excitement: 'game-changer', effort: 'large',
-    howItWorks: 'In faction select, pick a primary and secondary faction. Primary contributes 3 units + its passive, secondary contributes 3 units. A fusion bonus is generated based on the pair (e.g., Infernal+Glacial = units leave fire/ice zones on death).',
-    factionSynergies: 'Every faction pair creates a unique playstyle. Infernal+Reavers: corpses burn. Merchants+Fortune: double economy RNG. Umbral+Illusionists: invisible decoys.',
+    howItWorks: 'In faction select, pick a primary and secondary faction. Primary contributes 3 units + its passive, secondary contributes 3 units. A fusion bonus is generated based on the pair (e.g., Infernal+Glacial = units leave fire/ice zones on death). Faction select UI adds a second pick step; initGame() merges the rosters.',
+    factionSynergies: 'Every faction pair creates a unique playstyle. Infernal+Reavers: corpses burn. Merchants+Fortune: double economy RNG. Umbral+Illusionists: invisible decoys in darkness.',
     implementation: 'Add fusion select UI after faction pick, roster merge logic in initGame(), fusion passive lookup table, adjusted balance for hybrid rosters.',
     pasteToClaudePrompt: null,
   });
 
   suggestions.push({
-    priority: 3, category: 'mode', title: 'Survival / Horde Mode',
-    pitch: `Defend your base against infinite AI waves that escalate in difficulty. See how long you can last with your chosen faction — leaderboard tracks best survival times per faction.`,
-    excitement: 'awesome', effort: 'medium',
-    howItWorks: 'Player picks a faction and faces auto-spawning enemy waves from random factions. Each wave is stronger (more units, higher tier). Between waves, earn bonus souls to upgrade. Tracks best time in localStorage.',
-    factionSynergies: 'Menders excel with retreat-heal sustain. Summoners snowball with shades. Glacial slows entire waves. Brutes fortify and tank. Each faction creates a different survival strategy.',
-    implementation: 'Add survival mode state to G, wave spawner with escalating difficulty, between-wave upgrade shop, localStorage leaderboard.',
+    priority: 2, category: 'social', title: 'Replay System — Watch & Share Matches',
+    pitch: 'Record match inputs and replay them deterministically. Share replays via a URL code. Players can scrub through the timeline and see exactly what decisions won or lost the game.',
+    excitement: 'game-changer', effort: 'large',
+    howItWorks: 'Each frame: log player spend events (unit bought, upgrade purchased) keyed to G.elapsed. On replay, feed these events back into the normal game loop with a fixed RNG seed. Export as a compact JSON, encode to base64 URL param.',
+    factionSynergies: 'Replays make learning faction matchups educational. Chronomancers replays show rewinds. Pandemonium replays show chaos routing.',
+    implementation: 'Add G._replayLog array, record events in spawnUnit/applyUpgrade/useBuff, add replay playback mode that feeds stored events back to the game loop at matching elapsed times.',
     pasteToClaudePrompt: null,
   });
 
   suggestions.push({
-    priority: 4, category: 'mechanic', title: 'Unit Promotion & Naming',
-    pitch: 'Units that survive long enough or get 5+ kills earn a unique name and stat boost. Named units show a mini-portrait in the HUD and are tracked across the match.',
-    excitement: 'cool', effort: 'medium',
-    howItWorks: 'When a unit hits kill thresholds (5, 10, 15), it earns a randomly generated name (e.g. "Grimjaw the Relentless"), visual crown/glow, and cumulative stat bonuses. A sidebar tracks your named heroes. Losing a named unit triggers a dramatic death animation and kill feed entry.',
-    factionSynergies: 'Wolfborn Dire Wolf with growOnKill stacks becomes legendary. Mender Veterans with multiple retreats earn names fastest. Chrysalis adults that survive metamorphosis feel heroic.',
-    implementation: 'Add name generation table, promotion check in updateUnits, named unit HUD panel, enhanced death handling for promoted units.',
+    priority: 3, category: 'mode', title: 'Daily Challenge — Fixed Seed Leaderboard',
+    pitch: 'Same matchup, same RNG seed, same event roll for everyone each day. One attempt per player. Global leaderboard tracks fastest win. Creates shared conversation ("did you beat today\'s challenge?").',
+    excitement: 'awesome', effort: 'medium',
+    howItWorks: 'Date-based seed determines: faction matchup, which random events fire, rogue unit timing. localStorage stores today\'s result and best time. A lightweight server endpoint (or even a static JSON) publishes the daily seed.',
+    factionSynergies: 'Daily matchups rotate through all 24 factions, forcing players to learn unfamiliar factions.',
+    implementation: 'Add daily seed derivation from Date, seeded PRNG replacing Math.random() for event rolls, localStorage result storage, leaderboard fetch from server endpoint.',
     pasteToClaudePrompt: null,
   });
 

@@ -720,24 +720,31 @@ function buildReport({ balanceData, aggStats, balanceAnalysis, diagnosedBugs, ui
   // ── Mechanics ──────────────────────────────────────────────────────────────
   const totalGames = qa.totalGamesRun || 1;
   const threshold = cfg.mechanics?.unusedThresholdPct || 15;
+  const relevantGames = qa.mechanicRelevantGames || {};
   let mechHtml = '';
   // Sort mechanics: flagged (rare) first, then by avg per game descending
   const mechEntries = Object.entries(qa.mechanicUsage || {}).map(([key, count]) => {
-    const avg = count / totalGames;
-    const pctGames = Math.round(avg * 100); // used as "frequency" — >100 means multiple times per game
-    return { key, count, avg, pctGames, flagged: pctGames < threshold };
+    // Use faction-specific eligible game count if available, otherwise all games
+    const denom = relevantGames[key] ?? totalGames;
+    const avg = count / (denom || 1);
+    const pctGames = Math.round(avg * 100);
+    // Only flag as rarely used if the faction was actually in enough games to judge
+    const isFactionSpecific = denom < totalGames;
+    const hasEnoughSamples = denom >= 5;
+    const flagged = pctGames < threshold && (!isFactionSpecific || hasEnoughSamples);
+    return { key, count, avg, pctGames, flagged, denom, isFactionSpecific };
   }).sort((a, b) => a.flagged === b.flagged ? b.avg - a.avg : a.flagged ? 1 : -1);
   for (const m of mechEntries) {
     const avgStr = m.avg >= 1 ? m.avg.toFixed(1) + '×/game' : (m.avg * 100).toFixed(0) + '%';
-    // Bar width: scale so that avg=10/game fills the bar, lower values proportional
     const barMax = Math.max(10, ...mechEntries.map(e => e.avg));
     const barW = Math.min(100, (m.avg / barMax) * 100);
     const barClr = m.flagged ? 'var(--orange)' : m.avg >= 1 ? 'var(--green)' : 'var(--blue)';
+    const denomLabel = m.isFactionSpecific ? `${m.denom} eligible games` : `${m.denom} games`;
     mechHtml += `<div class="mech-row ${m.flagged ? 'mech-flagged' : ''}">
       <span class="mech-name">${m.key.replace(/_/g, ' ')}</span>
       <div class="mech-track"><div class="mech-fill" style="width:${barW}%;background:${barClr}"></div></div>
       <span class="mech-pct">${avgStr}</span>
-      <span class="mech-count">${m.count}× total</span>
+      <span class="mech-count">${m.count}× / ${denomLabel}</span>
       ${m.flagged ? `<span class="mech-flag">⚠️ rarely used</span>` : ''}
     </div>`;
   }

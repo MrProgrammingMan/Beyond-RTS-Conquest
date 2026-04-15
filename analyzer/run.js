@@ -46,6 +46,46 @@ const { generateFix, generateGenericFix, applyDiff } = require('./auto-fixer');
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
+
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`
+Beyond RTS Conquest — QA Runner
+
+USAGE
+  node run.js [flags]
+
+FLAGS
+  (none)                 Full run: games + UI audit + online test + analysis + report
+  --analyze-only         Re-analyze saved qa-data.json without running new games
+  --report-only          Rebuild HTML report from cached analysis (no API calls)
+  --quick                All factions × 1 game — fast sanity check
+  --resume               Skip phases that already have saved data from a previous run
+
+FILTERING
+  --skip-balance         Skip matchup games (UI + bugs only)
+  --skip-ui              Skip UI audit (games only)
+  --skip-online          Skip online sync test
+  --skip-features        Skip feature advisor (saves 1 API call)
+  --skip-vision          Skip vision UI analysis (saves API calls)
+  --factions=a,b,c       Only test specific factions (comma-separated IDs)
+  --games=N              Override gamesPerMatchup count
+  --focus=TYPE           Only show/diagnose bugs matching TYPE substring
+
+COST / SPEED
+  --cheap                Use Haiku for all API calls (cheaper, slightly lower quality)
+
+FIXES
+  --auto-fix             Apply all HIGH/CRITICAL fixes non-interactively after run
+  --no-server            Skip starting the local fix server (for CI)
+
+EXAMPLES
+  node run.js --quick --skip-ui
+  node run.js --factions=warriors,brutes --games=5
+  node run.js --analyze-only --report-only
+  node run.js --cheap --skip-features --skip-vision
+`);
+  process.exit(0);
+}
 const analyzeOnly = args.includes('--analyze-only');
 const skipBalance = args.includes('--skip-balance');
 const skipUi = args.includes('--skip-ui');
