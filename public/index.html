@@ -3,11 +3,16 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
   <title>Beyond RTS Conquest</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&family=Rajdhani:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 
+  <style>
     :root {
       --p1: #2471a3;
       --p1d: #1a4f72;
@@ -95,22 +100,29 @@
       .unit-stat-panel {
         width: clamp(165px, 15vw, 230px);
       }
-      .usp-label, .usp-val {
+
+      .usp-label,
+      .usp-val {
         font-size: clamp(.75rem, .95vw, .86rem);
       }
+
       .usp-special {
         font-size: clamp(.72rem, .88vw, .82rem);
       }
+
       .usp-name {
         font-size: clamp(.95rem, 1.2vw, 1.1rem);
       }
+
       .upcard-name {
         white-space: normal;
         word-wrap: break-word;
       }
+
       .upcard-desc {
         font-size: clamp(.82rem, 1.18vw, 1.02rem);
       }
+
       .hud-tab {
         font-size: clamp(.68rem, 1vw, .88rem);
         padding: 4px 12px;
@@ -316,21 +328,25 @@
         -webkit-overflow-scrolling: touch;
         align-content: start;
       }
+
       .upcard {
         min-height: 0;
         padding: 3px 4px;
       }
+
       .upcard-name {
         font-size: clamp(.58rem, 2.8vw, .74rem);
         -webkit-line-clamp: 1;
         line-clamp: 1;
       }
+
       .upcard-desc {
         font-size: clamp(.52rem, 2.4vw, .66rem);
         -webkit-line-clamp: 2;
         line-clamp: 2;
         margin-top: 1px;
       }
+
       .upcard-cost {
         margin-top: 2px;
       }
@@ -341,24 +357,30 @@
         -webkit-overflow-scrolling: touch;
         align-content: start;
       }
+
       .bfcard {
         min-height: 0;
         padding: 3px 3px;
         gap: 1px;
       }
+
       .bfcard-icon {
         font-size: clamp(.95rem, 4.5vw, 1.3rem);
       }
+
       .bfcard-name {
         font-size: clamp(.54rem, 2.6vw, .7rem);
       }
+
       .bfcard-desc {
         font-size: clamp(.48rem, 2.2vw, .6rem);
         -webkit-line-clamp: 2;
         line-clamp: 2;
         margin: 1px 0;
       }
-      .bfcard-meta, .bfcard-cost {
+
+      .bfcard-meta,
+      .bfcard-cost {
         font-size: clamp(.46rem, 2vw, .58rem);
       }
     }
@@ -368,17 +390,22 @@
       .unit-stat-panel {
         width: clamp(155px, 14vw, 210px);
       }
-      .usp-label, .usp-val {
+
+      .usp-label,
+      .usp-val {
         font-size: clamp(.72rem, .92vw, .84rem);
       }
+
       .usp-special {
         font-size: clamp(.7rem, .85vw, .8rem);
       }
+
       .hud-tab {
         font-size: clamp(.6rem, 1vw, .78rem);
         padding: 4px 8px;
         min-height: 28px;
       }
+
       .upcard-name {
         white-space: normal;
         word-wrap: break-word;
@@ -418,10 +445,16 @@
 
     /* ── PORTRAIT PHONE — extra fixes ──────────────────────────────────────────── */
     @media (orientation: portrait) and (max-width: 650px) {
+
       /* Hero roster takes up too much vertical space on portrait — hide it */
-      .hero-list { display: none !important; }
+      .hero-list {
+        display: none !important;
+      }
+
       /* Kill feed on right side clips oddly on narrow portrait — reduce max-height */
-      #killfeed { max-height: 80px; }
+      #killfeed {
+        max-height: 80px;
+      }
     }
 
     /* ── TOUCH CONTROLS ────────────────────────────────────────────────────────── */
@@ -679,8 +712,8 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 50% 15%, rgba(6,6,14,.55), transparent 70%),
-        linear-gradient(180deg, rgba(6,6,14,.3) 0%, rgba(10,10,24,.1) 40%, transparent 70%, rgba(10,8,14,.15) 100%);
+        radial-gradient(ellipse 60% 40% at 50% 15%, rgba(6, 6, 14, .55), transparent 70%),
+        linear-gradient(180deg, rgba(6, 6, 14, .3) 0%, rgba(10, 10, 24, .1) 40%, transparent 70%, rgba(10, 8, 14, .15) 100%);
       pointer-events: none;
     }
 
@@ -703,7 +736,7 @@
       color: var(--gold);
       opacity: .75;
       margin-bottom: .3em;
-      text-shadow: 0 0 12px rgba(212,168,67,.3);
+      text-shadow: 0 0 12px rgba(212, 168, 67, .3);
     }
 
     .menu-title {
@@ -712,7 +745,7 @@
       font-weight: 900;
       line-height: 1.05;
       letter-spacing: .06em;
-      text-shadow: 0 0 50px rgba(212,168,67,.35), 0 2px 20px rgba(0,0,0,.6);
+      text-shadow: 0 0 50px rgba(212, 168, 67, .35), 0 2px 20px rgba(0, 0, 0, .6);
     }
 
     /* ── Menu section groups ── */
@@ -736,11 +769,12 @@
       font-family: Rajdhani, sans-serif;
       font-size: clamp(.7rem, 1vw, .85rem);
       letter-spacing: .35em;
-      color: rgba(212,168,67,.45);
+      color: rgba(212, 168, 67, .45);
       text-align: center;
       padding: clamp(8px, 1.2vh, 16px) 0 clamp(3px, .4vh, 6px);
       position: relative;
     }
+
     .menu-section-label::before,
     .menu-section-label::after {
       content: '';
@@ -748,10 +782,16 @@
       top: 50%;
       width: clamp(20px, 5vw, 60px);
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(212,168,67,.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(212, 168, 67, .2), transparent);
     }
-    .menu-section-label::before { right: calc(50% + 3.5em + 10px); }
-    .menu-section-label::after { left: calc(50% + 3.5em + 10px); }
+
+    .menu-section-label::before {
+      right: calc(50% + 3.5em + 10px);
+    }
+
+    .menu-section-label::after {
+      left: calc(50% + 3.5em + 10px);
+    }
 
     .menu-btns .btn {
       width: 100%;
@@ -760,7 +800,7 @@
       padding: clamp(11px, 1.5vh, 18px) clamp(22px, 2.8vw, 44px);
       letter-spacing: .13em;
       border-radius: 5px;
-      background: linear-gradient(135deg, rgba(14,14,27,.95), rgba(20,20,35,.9));
+      background: linear-gradient(135deg, rgba(14, 14, 27, .95), rgba(20, 20, 35, .9));
       border-width: 1.5px;
       position: relative;
       overflow: hidden;
@@ -778,12 +818,12 @@
 
     .menu-btns .btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(0,0,0,.4), 0 0 15px var(--btn-glow, rgba(212,168,67,.15));
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .4), 0 0 15px var(--btn-glow, rgba(212, 168, 67, .15));
     }
 
     .menu-btns .btn:hover::before {
       opacity: 1;
-      background: linear-gradient(135deg, var(--btn-glow, rgba(212,168,67,.08)), transparent 60%);
+      background: linear-gradient(135deg, var(--btn-glow, rgba(212, 168, 67, .08)), transparent 60%);
     }
 
     .menu-btns .btn:active {
@@ -792,9 +832,17 @@
 
     /* Stagger-in animation */
     @keyframes menu-btn-in {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .menu-btn-entry {
       animation: menu-btn-in .35s ease both;
     }
@@ -804,17 +852,20 @@
       .menu-btns {
         width: clamp(280px, 85vw, 380px);
       }
+
       .menu-btns .btn {
         font-size: clamp(.95rem, 4.2vw, 1.15rem);
         padding: clamp(11px, 2.5vh, 16px) 16px;
         min-height: 44px;
       }
     }
+
     @media (min-width: 601px) and (max-width: 1024px) {
       .menu-btns {
         width: clamp(320px, 50vw, 440px);
       }
     }
+
     @media (min-width: 1200px) {
       .menu-btns {
         width: clamp(360px, 30vw, 480px);
@@ -918,86 +969,162 @@
       outline: none;
       transition: border-color .2s;
     }
-    .faction-filter:focus { border-color: var(--accent); }
-    .faction-filter::placeholder { color: var(--dim); opacity: .7; }
-    .fcard.filter-hidden { display: none !important; }
+
+    .faction-filter:focus {
+      border-color: var(--accent);
+    }
+
+    .faction-filter::placeholder {
+      color: var(--dim);
+      opacity: .7;
+    }
+
+    .fcard.filter-hidden {
+      display: none !important;
+    }
 
     /* ── HORDE MODE ─────────────────────────────────────────────────── */
-    #hud.horde-mode #p2-hud { display: none !important; }
-    #hud.horde-mode #p1-hud { flex: 1 !important; }
-    #horde-banner {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      top: 5px; z-index: 30;
-      font-family: 'Rajdhani', sans-serif; font-weight: 700;
-      letter-spacing: .1em; text-align: center;
-      pointer-events: none; white-space: nowrap;
+    #hud.horde-mode #p2-hud {
+      display: none !important;
     }
+
+    #hud.horde-mode #p1-hud {
+      flex: 1 !important;
+    }
+
+    #horde-banner {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 5px;
+      z-index: 30;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-align: center;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
     #horde-wave-label {
       font-size: clamp(.85rem, 1.8vw, 1.3rem);
-      color: #e74c3c; text-shadow: 0 0 12px rgba(231,76,60,.55);
+      color: #e74c3c;
+      text-shadow: 0 0 12px rgba(231, 76, 60, .55);
     }
+
     #horde-wave-sub {
       font-size: clamp(.52rem, 1vw, .75rem);
-      color: rgba(255,255,255,.5); margin-top: 1px;
+      color: rgba(255, 255, 255, .5);
+      margin-top: 1px;
     }
 
     /* ── GAUNTLET MODE ──────────────────────────────────────────────── */
-    #hud.gauntlet-mode #p2-hud { display: none !important; }
-    #hud.gauntlet-mode #p1-hud { flex: 1 !important; }
-    #gauntlet-banner {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      top: 5px; z-index: 30;
-      font-family: 'Rajdhani', sans-serif; font-weight: 700;
-      letter-spacing: .1em; text-align: center;
-      pointer-events: none; white-space: nowrap;
+    #hud.gauntlet-mode #p2-hud {
+      display: none !important;
     }
+
+    #hud.gauntlet-mode #p1-hud {
+      flex: 1 !important;
+    }
+
+    #gauntlet-banner {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 5px;
+      z-index: 30;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-align: center;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
     #gauntlet-fight-label {
       font-size: clamp(.85rem, 1.8vw, 1.3rem);
-      color: #ffa500; text-shadow: 0 0 12px rgba(255,165,0,.55);
+      color: #ffa500;
+      text-shadow: 0 0 12px rgba(255, 165, 0, .55);
     }
+
     #gauntlet-fight-sub {
       font-size: clamp(.52rem, 1vw, .75rem);
-      color: rgba(255,255,255,.5); margin-top: 1px;
+      color: rgba(255, 255, 255, .5);
+      margin-top: 1px;
     }
+
     /* Gauntlet between-fight transition overlay */
     #gauntlet-transition {
-      display: none; position: fixed; inset: 0; z-index: 9999;
-      background: rgba(5,5,15,.95); backdrop-filter: blur(6px);
-      flex-direction: column; align-items: center; justify-content: center;
-      font-family: 'Rajdhani', sans-serif; color: var(--text);
-      text-align: center; gap: 14px;
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(5, 5, 15, .95);
+      backdrop-filter: blur(6px);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--text);
+      text-align: center;
+      gap: 14px;
     }
-    #gauntlet-transition.show { display: flex; }
+
+    #gauntlet-transition.show {
+      display: flex;
+    }
+
     .gtrans-title {
-      font-size: clamp(1.5rem, 4vw, 2.8rem); font-weight: 700;
-      color: #ffa500; text-shadow: 0 0 20px rgba(255,165,0,.5);
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: #ffa500;
+      text-shadow: 0 0 20px rgba(255, 165, 0, .5);
       letter-spacing: .12em;
     }
+
     .gtrans-progress {
-      font-size: clamp(.8rem, 1.5vw, 1.1rem); color: var(--dim);
+      font-size: clamp(.8rem, 1.5vw, 1.1rem);
+      color: var(--dim);
       letter-spacing: .08em;
     }
+
     .gtrans-bar {
-      width: min(80%, 400px); height: 10px; border-radius: 5px;
-      background: rgba(255,255,255,.08); overflow: hidden; margin: 4px 0;
+      width: min(80%, 400px);
+      height: 10px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, .08);
+      overflow: hidden;
+      margin: 4px 0;
     }
+
     .gtrans-bar-fill {
-      height: 100%; border-radius: 5px;
+      height: 100%;
+      border-radius: 5px;
       background: linear-gradient(90deg, #ffa500, #ff6600);
       transition: width .6s ease;
     }
+
     .gtrans-hp {
-      font-size: clamp(.9rem, 1.8vw, 1.3rem); color: #2ecc71;
+      font-size: clamp(.9rem, 1.8vw, 1.3rem);
+      color: #2ecc71;
     }
+
     .gtrans-next {
-      font-size: clamp(1rem, 2.2vw, 1.6rem); font-weight: 700;
-      color: #e74c3c; margin-top: 8px;
+      font-size: clamp(1rem, 2.2vw, 1.6rem);
+      font-weight: 700;
+      color: #e74c3c;
+      margin-top: 8px;
     }
+
     .gtrans-bonus {
-      font-size: clamp(.7rem, 1.2vw, .9rem); color: var(--gold); opacity: .8;
+      font-size: clamp(.7rem, 1.2vw, .9rem);
+      color: var(--gold);
+      opacity: .8;
     }
+
     .gtrans-diff {
-      font-size: clamp(.65rem, 1vw, .8rem); color: rgba(255,255,255,.4);
+      font-size: clamp(.65rem, 1vw, .8rem);
+      color: rgba(255, 255, 255, .4);
       letter-spacing: .1em;
     }
 
@@ -1226,7 +1353,7 @@
 
     /* ── Faction detail preview panel ── */
     .faction-preview {
-      background: rgba(10,10,22,.9);
+      background: rgba(10, 10, 22, .9);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: clamp(8px, 1vh, 14px) clamp(10px, 1.2vw, 16px);
@@ -1236,8 +1363,15 @@
       gap: 5px;
       transition: border-color .2s;
     }
-    .faction-preview.p1-active { border-color: var(--p1d); }
-    .faction-preview.p2-active { border-color: var(--p2d); }
+
+    .faction-preview.p1-active {
+      border-color: var(--p1d);
+    }
+
+    .faction-preview.p2-active {
+      border-color: var(--p2d);
+    }
+
     .faction-preview .fp-empty {
       font-family: Rajdhani, sans-serif;
       font-size: var(--fs-sm);
@@ -1248,23 +1382,30 @@
       align-self: center;
       margin: auto 0;
     }
+
     .faction-preview .fp-header {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .faction-preview .fp-icon { font-size: clamp(1.3rem, 2.2vw, 1.8rem); }
+
+    .faction-preview .fp-icon {
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+    }
+
     .faction-preview .fp-name {
       font-family: Rajdhani, sans-serif;
       font-size: clamp(.9rem, 1.3vw, 1.1rem);
       font-weight: 700;
       letter-spacing: .08em;
     }
+
     .faction-preview .fp-tag {
       font-size: var(--fs-sm);
-      color: rgba(232,224,208,.7);
+      color: rgba(232, 224, 208, .7);
       margin-left: auto;
     }
+
     .faction-preview .fp-passive {
       font-size: var(--fs-sm);
       color: #a29bfe;
@@ -1274,11 +1415,13 @@
       padding: 3px 7px;
       line-height: 1.45;
     }
+
     .faction-preview .fp-units {
       display: flex;
       flex-wrap: wrap;
       gap: 3px;
     }
+
     .faction-preview .fp-units .futag {
       font-size: var(--fs-xs);
       padding: 2px 5px;
@@ -1286,13 +1429,23 @@
       background: #0f0f1c;
       border: 1px solid var(--border);
     }
-    .faction-preview .fp-units .futag.air { border-color: #1abc9c; color: #1abc9c; }
-    .faction-preview .fp-units .futag.rng { border-color: var(--mid); color: var(--mid); }
+
+    .faction-preview .fp-units .futag.air {
+      border-color: #1abc9c;
+      color: #1abc9c;
+    }
+
+    .faction-preview .fp-units .futag.rng {
+      border-color: var(--mid);
+      color: var(--mid);
+    }
+
     .faction-preview .fp-bottom {
       display: flex;
       gap: clamp(8px, 1.5vw, 16px);
       flex-wrap: wrap;
     }
+
     .faction-preview .fp-pros,
     .faction-preview .fp-cons {
       font-size: clamp(.62rem, .88vw, .78rem);
@@ -1300,8 +1453,15 @@
       flex: 1;
       min-width: 100px;
     }
-    .faction-preview .fp-pros { color: #66bb6a; }
-    .faction-preview .fp-cons { color: #ef5350; }
+
+    .faction-preview .fp-pros {
+      color: #66bb6a;
+    }
+
+    .faction-preview .fp-cons {
+      color: #ef5350;
+    }
+
     .faction-preview .fp-start {
       font-family: Rajdhani, sans-serif;
       font-size: var(--fs-xs);
@@ -1340,11 +1500,12 @@
       opacity: .3;
       align-self: center;
       flex-shrink: 0;
-      text-shadow: 0 0 20px rgba(212,168,67,.3);
+      text-shadow: 0 0 20px rgba(212, 168, 67, .3);
       letter-spacing: .15em;
       position: relative;
       padding: 0 6px;
     }
+
     .faction-vs::before,
     .faction-vs::after {
       content: '';
@@ -1353,10 +1514,17 @@
       transform: translateX(-50%);
       width: 1px;
       height: 30px;
-      background: linear-gradient(rgba(212,168,67,.2), transparent);
+      background: linear-gradient(rgba(212, 168, 67, .2), transparent);
     }
-    .faction-vs::before { bottom: 100%; }
-    .faction-vs::after { top: 100%; background: linear-gradient(transparent, rgba(212,168,67,.2)); }
+
+    .faction-vs::before {
+      bottom: 100%;
+    }
+
+    .faction-vs::after {
+      top: 100%;
+      background: linear-gradient(transparent, rgba(212, 168, 67, .2));
+    }
 
     .faction-chosen {
       font-family: 'Rajdhani', sans-serif;
@@ -1369,6 +1537,7 @@
       border-radius: 3px;
       transition: border-color .2s, color .2s, background .2s;
     }
+
     .faction-chosen.confirmed {
       border-color: rgba(39, 174, 96, .6);
       border-style: solid;
@@ -1384,18 +1553,22 @@
         align-items: center;
         gap: 8px;
       }
+
       .faction-side {
         max-width: 100%;
         width: 100%;
       }
+
       .faction-vs {
         font-size: 1.2rem;
         padding: 2px 0;
       }
+
       .faction-cards {
         max-height: clamp(180px, 35vh, 340px);
         grid-template-columns: 1fr 1fr;
       }
+
       .faction-preview {
         min-height: clamp(60px, 10vh, 90px);
       }
@@ -1637,13 +1810,15 @@
       color: var(--p2);
       letter-spacing: .2em;
       padding-bottom: 6px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
       margin-bottom: 4px;
-      text-shadow: 0 0 16px rgba(192,57,43,.3);
+      text-shadow: 0 0 16px rgba(192, 57, 43, .3);
     }
-    #ai-p2-panel, #ai-p1-panel {
-      background: rgba(10,10,22,.6);
-      border: 1px solid rgba(255,255,255,.08);
+
+    #ai-p2-panel,
+    #ai-p1-panel {
+      background: rgba(10, 10, 22, .6);
+      border: 1px solid rgba(255, 255, 255, .08);
       border-radius: 6px;
       padding: clamp(8px, 1.2vh, 14px) clamp(10px, 1.5vw, 18px);
       display: flex;
@@ -1651,10 +1826,11 @@
       align-items: center;
       gap: 4px;
     }
+
     .ai-section-label {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.52rem, .7vw, .62rem);
-      color: rgba(255,255,255,.4);
+      color: rgba(255, 255, 255, .4);
       letter-spacing: .22em;
       text-transform: uppercase;
       margin-top: 8px;
@@ -1748,21 +1924,33 @@
     .diff-btn.active {
       font-weight: 700;
     }
+
     .diff-btn.active[data-diff="easy"],
     .diff-btn.active[data-diff1="easy"] {
-      border-color: #2ecc71; color: #2ecc71; background: rgba(46,204,113,.1);
+      border-color: #2ecc71;
+      color: #2ecc71;
+      background: rgba(46, 204, 113, .1);
     }
+
     .diff-btn.active[data-diff="medium"],
     .diff-btn.active[data-diff1="medium"] {
-      border-color: #f39c12; color: #f39c12; background: rgba(243,156,18,.1);
+      border-color: #f39c12;
+      color: #f39c12;
+      background: rgba(243, 156, 18, .1);
     }
+
     .diff-btn.active[data-diff="hard"],
     .diff-btn.active[data-diff1="hard"] {
-      border-color: #e74c3c; color: #e74c3c; background: rgba(231,76,60,.1);
+      border-color: #e74c3c;
+      color: #e74c3c;
+      background: rgba(231, 76, 60, .1);
     }
+
     .diff-btn.active[data-diff="expert"],
     .diff-btn.active[data-diff1="expert"] {
-      border-color: #9b59b6; color: #9b59b6; background: rgba(155,89,182,.12);
+      border-color: #9b59b6;
+      color: #9b59b6;
+      background: rgba(155, 89, 182, .12);
     }
 
     .ai-faction-chosen {
@@ -1779,7 +1967,7 @@
       font-size: var(--fs-xs);
       padding: 6px 16px;
       background: rgba(255, 255, 255, .04);
-      border: 1.5px solid rgba(212,168,67,.3);
+      border: 1.5px solid rgba(212, 168, 67, .3);
       color: var(--gold);
       cursor: pointer;
       border-radius: 4px;
@@ -1791,7 +1979,7 @@
 
     .ai-faction-reroll:hover {
       border-color: var(--gold);
-      background: rgba(212,168,67,.1);
+      background: rgba(212, 168, 67, .1);
       opacity: 1;
     }
 
@@ -2205,12 +2393,16 @@
     }
 
     /* ── Portrait mode: rotate game-stage -90° so landscape game fills portrait screen ── */
-    #battlefield-wrap.portrait-wrap { position: relative; }
+    #battlefield-wrap.portrait-wrap {
+      position: relative;
+    }
+
     #game-stage.portrait-mode {
       position: absolute !important;
       transform: rotate(-90deg);
       transform-origin: center center;
     }
+
     /* Counter-rotate text overlays so they remain readable upright */
     #game-stage.portrait-mode #mid-indicator,
     #game-stage.portrait-mode #match-timer,
@@ -2218,18 +2410,44 @@
     #game-stage.portrait-mode #siege-indicator,
     #game-stage.portrait-mode #horde-banner,
     #game-stage.portrait-mode #gauntlet-banner,
-    #game-stage.portrait-mode #mid-cap-progress { transform: rotate(90deg); }
+    #game-stage.portrait-mode #mid-cap-progress {
+      transform: rotate(90deg);
+    }
+
     /* Portrait popup float: counter-rotate text + float upward */
     @keyframes popFloatPortrait {
-      0%   { opacity: 1; transform: rotate(90deg) translateY(0); }
-      20%  { opacity: 1; transform: rotate(90deg) translateY(-14px) scale(1.1); }
-      100% { opacity: 0; transform: rotate(90deg) translateY(-44px) scale(.9); }
+      0% {
+        opacity: 1;
+        transform: rotate(90deg) translateY(0);
+      }
+
+      20% {
+        opacity: 1;
+        transform: rotate(90deg) translateY(-14px) scale(1.1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: rotate(90deg) translateY(-44px) scale(.9);
+      }
     }
+
     /* Portrait emote float: counter-rotate + rise */
     @keyframes emoteFloatPortrait {
-      0%   { opacity: 0; transform: rotate(90deg) translateY(0) scale(.4); }
-      15%  { opacity: 1; transform: rotate(90deg) translateY(-20px) scale(1.2); }
-      100% { opacity: 0; transform: rotate(90deg) translateY(-50px) scale(.9); }
+      0% {
+        opacity: 0;
+        transform: rotate(90deg) translateY(0) scale(.4);
+      }
+
+      15% {
+        opacity: 1;
+        transform: rotate(90deg) translateY(-20px) scale(1.2);
+      }
+
+      100% {
+        opacity: 0;
+        transform: rotate(90deg) translateY(-50px) scale(.9);
+      }
     }
 
     #momentum-bar-wrap {
@@ -2351,124 +2569,289 @@
       overflow-y: auto;
       overflow-x: hidden;
     }
+
     #camp-header {
-      text-align: center; padding: 24px 16px 8px; position: relative; flex-shrink: 0;
+      text-align: center;
+      padding: 24px 16px 8px;
+      position: relative;
+      flex-shrink: 0;
     }
+
     #camp-title {
-      font-family: 'Rajdhani', sans-serif; font-size: clamp(1.4rem, 3vw, 2rem);
-      color: #f0c040; letter-spacing: .15em; font-weight: 700;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #f0c040;
+      letter-spacing: .15em;
+      font-weight: 700;
     }
+
     #camp-subtitle {
-      font-family: 'Rajdhani', sans-serif; font-size: clamp(.6rem, 1vw, .8rem);
-      color: rgba(255,255,255,.4); letter-spacing: .1em; margin-top: 2px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(.6rem, 1vw, .8rem);
+      color: rgba(255, 255, 255, .4);
+      letter-spacing: .1em;
+      margin-top: 2px;
     }
+
     #camp-map {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 0; padding: 12px 0 80px; position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      padding: 12px 0 80px;
+      position: relative;
     }
+
     .camp-node {
-      width: clamp(260px, 55vw, 420px); padding: 10px 16px; cursor: pointer;
-      background: rgba(20,20,40,.8); border: 1px solid rgba(255,255,255,.1);
-      border-radius: 8px; display: flex; align-items: center; gap: 12px;
-      transition: all .2s; position: relative; font-family: 'Rajdhani', sans-serif;
-    }
-    .camp-node:hover { border-color: rgba(240,192,64,.5); background: rgba(30,30,55,.9); }
-    .camp-node.locked { opacity: .35; cursor: default; filter: grayscale(.7); }
-    .camp-node.locked:hover { border-color: rgba(255,255,255,.1); background: rgba(20,20,40,.8); }
-    .camp-node.current { border-color: rgba(240,192,64,.7); box-shadow: 0 0 15px rgba(240,192,64,.2); }
-    .camp-node.completed { border-color: rgba(39,174,96,.4); }
-    .camp-node-icon { font-size: 1.6rem; width: 40px; text-align: center; flex-shrink: 0; }
-    .camp-node-info { flex: 1; min-width: 0; }
-    .camp-node-name {
-      font-weight: 700; font-size: clamp(.75rem, 1.2vw, .95rem); color: #eee;
-      letter-spacing: .05em;
-    }
-    .camp-node-terrain {
-      font-size: clamp(.55rem, .85vw, .68rem); color: rgba(255,255,255,.45);
-      letter-spacing: .06em;
-    }
-    .camp-node-status {
-      font-size: .65rem; padding: 2px 8px; border-radius: 4px; flex-shrink: 0;
-      letter-spacing: .08em; font-weight: 600;
-    }
-    .camp-node.completed .camp-node-status { background: rgba(39,174,96,.2); color: #2ecc71; }
-    .camp-node.current .camp-node-status { background: rgba(240,192,64,.2); color: #f0c040; }
-    .camp-node.locked .camp-node-status { background: rgba(255,255,255,.05); color: rgba(255,255,255,.3); }
-    .camp-path {
-      width: 2px; height: 18px; background: rgba(255,255,255,.1); flex-shrink: 0;
-    }
-    .camp-node.completed + .camp-path { background: rgba(39,174,96,.3); }
-    #camp-preview {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
-      background: linear-gradient(0deg, rgba(10,10,24,.97), rgba(10,10,24,.85));
-      border-top: 1px solid rgba(240,192,64,.3); padding: 14px 20px;
-      display: flex; align-items: center; gap: 16px;
+      width: clamp(260px, 55vw, 420px);
+      padding: 10px 16px;
+      cursor: pointer;
+      background: rgba(20, 20, 40, .8);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all .2s;
+      position: relative;
       font-family: 'Rajdhani', sans-serif;
     }
-    #camp-preview-icon { font-size: 2rem; }
-    #camp-preview-name { font-size: 1.1rem; font-weight: 700; color: #f0c040; }
-    #camp-preview-tagline { font-size: .7rem; color: rgba(255,255,255,.5); flex: 1; }
-    #camp-preview-terrain { font-size: .65rem; color: rgba(255,255,255,.35); }
+
+    .camp-node:hover {
+      border-color: rgba(240, 192, 64, .5);
+      background: rgba(30, 30, 55, .9);
+    }
+
+    .camp-node.locked {
+      opacity: .35;
+      cursor: default;
+      filter: grayscale(.7);
+    }
+
+    .camp-node.locked:hover {
+      border-color: rgba(255, 255, 255, .1);
+      background: rgba(20, 20, 40, .8);
+    }
+
+    .camp-node.current {
+      border-color: rgba(240, 192, 64, .7);
+      box-shadow: 0 0 15px rgba(240, 192, 64, .2);
+    }
+
+    .camp-node.completed {
+      border-color: rgba(39, 174, 96, .4);
+    }
+
+    .camp-node-icon {
+      font-size: 1.6rem;
+      width: 40px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .camp-node-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .camp-node-name {
+      font-weight: 700;
+      font-size: clamp(.75rem, 1.2vw, .95rem);
+      color: #eee;
+      letter-spacing: .05em;
+    }
+
+    .camp-node-terrain {
+      font-size: clamp(.55rem, .85vw, .68rem);
+      color: rgba(255, 255, 255, .45);
+      letter-spacing: .06em;
+    }
+
+    .camp-node-status {
+      font-size: .65rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      letter-spacing: .08em;
+      font-weight: 600;
+    }
+
+    .camp-node.completed .camp-node-status {
+      background: rgba(39, 174, 96, .2);
+      color: #2ecc71;
+    }
+
+    .camp-node.current .camp-node-status {
+      background: rgba(240, 192, 64, .2);
+      color: #f0c040;
+    }
+
+    .camp-node.locked .camp-node-status {
+      background: rgba(255, 255, 255, .05);
+      color: rgba(255, 255, 255, .3);
+    }
+
+    .camp-path {
+      width: 2px;
+      height: 18px;
+      background: rgba(255, 255, 255, .1);
+      flex-shrink: 0;
+    }
+
+    .camp-node.completed+.camp-path {
+      background: rgba(39, 174, 96, .3);
+    }
+
+    #camp-preview {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      background: linear-gradient(0deg, rgba(10, 10, 24, .97), rgba(10, 10, 24, .85));
+      border-top: 1px solid rgba(240, 192, 64, .3);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    #camp-preview-icon {
+      font-size: 2rem;
+    }
+
+    #camp-preview-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f0c040;
+    }
+
+    #camp-preview-tagline {
+      font-size: .7rem;
+      color: rgba(255, 255, 255, .5);
+      flex: 1;
+    }
+
+    #camp-preview-terrain {
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .35);
+    }
+
     #camp-preview-dialogue {
-      font-size: .72rem; color: rgba(255,200,100,.7); font-style: italic;
-      max-width: 250px; text-align: right;
+      font-size: .72rem;
+      color: rgba(255, 200, 100, .7);
+      font-style: italic;
+      max-width: 250px;
+      text-align: right;
     }
 
     /* ── DIALOGUE BUBBLE ─────────────────────────────────────── */
     #camp-dialogue-bubble {
-      position: fixed; z-index: 250; pointer-events: none;
-      background: rgba(5,5,18,.96); border: 2px solid rgba(255,220,120,.45);
-      border-radius: 14px; padding: 12px 16px; max-width: min(380px, 82vw);
-      font-family: 'Rajdhani', sans-serif; backdrop-filter: blur(8px);
-      box-shadow: 0 0 24px rgba(0,0,0,.7), 0 0 8px rgba(255,200,80,.15);
+      position: fixed;
+      z-index: 250;
+      pointer-events: none;
+      background: rgba(5, 5, 18, .96);
+      border: 2px solid rgba(255, 220, 120, .45);
+      border-radius: 14px;
+      padding: 12px 16px;
+      max-width: min(380px, 82vw);
+      font-family: 'Rajdhani', sans-serif;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 24px rgba(0, 0, 0, .7), 0 0 8px rgba(255, 200, 80, .15);
       transition: opacity .25s, transform .25s;
       transform: translateY(0);
     }
-    #camp-dialogue-bubble.camp-dia-show { opacity: 1; transform: translateY(0); }
-    #camp-dialogue-bubble.camp-dia-hide { opacity: 0; transform: translateY(-6px); }
+
+    #camp-dialogue-bubble.camp-dia-show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #camp-dialogue-bubble.camp-dia-hide {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
     #camp-dialogue-bubble::after {
-      content: ''; position: absolute; bottom: -10px;
+      content: '';
+      position: absolute;
+      bottom: -10px;
       left: var(--arrow-left, 30px);
-      border-left: 10px solid transparent; border-right: 10px solid transparent;
-      border-top: 10px solid rgba(5,5,18,.96);
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid rgba(5, 5, 18, .96);
     }
+
     #camp-dia-speaker {
-      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
-      margin-bottom: 4px; color: rgba(255,200,100,.9);
-      text-shadow: 0 0 6px rgba(255,180,60,.3);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      margin-bottom: 4px;
+      color: rgba(255, 200, 100, .9);
+      text-shadow: 0 0 6px rgba(255, 180, 60, .3);
     }
+
     #camp-dia-text {
-      font-size: clamp(.74rem, 1.1vw, .88rem); color: #fff;
-      line-height: 1.5; min-height: 1.3em;
-      text-shadow: 0 1px 3px rgba(0,0,0,.5);
+      font-size: clamp(.74rem, 1.1vw, .88rem);
+      color: #fff;
+      line-height: 1.5;
+      min-height: 1.3em;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
     }
 
     /* ── ONLINE CHAT BAR ───────────────────────────────────── */
     #online-chat-bar {
-      position: fixed; bottom: calc(var(--hud) + 10px); left: 50%; transform: translateX(-50%);
-      z-index: 500; display: none; align-items: center; gap: 8px;
-      background: rgba(10,10,30,.95); border: 1px solid rgba(255,200,80,.5);
-      border-radius: 22px; padding: 6px 10px 6px 16px;
-      backdrop-filter: blur(8px); font-family: 'Rajdhani', sans-serif;
-      box-shadow: 0 0 20px rgba(0,0,0,.6), 0 0 8px rgba(255,200,80,.15);
+      position: fixed;
+      bottom: calc(var(--hud) + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: rgba(10, 10, 30, .95);
+      border: 1px solid rgba(255, 200, 80, .5);
+      border-radius: 22px;
+      padding: 6px 10px 6px 16px;
+      backdrop-filter: blur(8px);
+      font-family: 'Rajdhani', sans-serif;
+      box-shadow: 0 0 20px rgba(0, 0, 0, .6), 0 0 8px rgba(255, 200, 80, .15);
       pointer-events: auto;
     }
+
     #online-chat-input {
-      background: transparent; border: none; outline: none;
-      color: #fff; font-family: 'Rajdhani', sans-serif;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.72rem, 1vw, .88rem);
-      width: clamp(180px, 28vw, 340px); padding: 4px 0;
+      width: clamp(180px, 28vw, 340px);
+      padding: 4px 0;
     }
-    #online-chat-input::placeholder { color: rgba(255,255,255,.3); }
+
+    #online-chat-input::placeholder {
+      color: rgba(255, 255, 255, .3);
+    }
+
     #online-chat-send {
-      background: rgba(255,200,80,.15); border: 1px solid rgba(255,200,80,.35);
-      color: rgba(255,200,100,.9); border-radius: 14px;
-      font-family: 'Rajdhani', sans-serif; font-size: .65rem;
-      font-weight: 700; letter-spacing: .1em;
-      padding: 4px 12px; cursor: pointer;
+      background: rgba(255, 200, 80, .15);
+      border: 1px solid rgba(255, 200, 80, .35);
+      color: rgba(255, 200, 100, .9);
+      border-radius: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      padding: 4px 12px;
+      cursor: pointer;
       transition: background .15s;
     }
-    #online-chat-send:hover { background: rgba(255,200,80,.3); }
+
+    #online-chat-send:hover {
+      background: rgba(255, 200, 80, .3);
+    }
 
     #mid-indicator {
       display: none;
@@ -2538,12 +2921,16 @@
       display: flex;
       flex-direction: column;
       gap: 1px;
-      border-top: 1px solid rgba(255,255,255,.06);
+      border-top: 1px solid rgba(255, 255, 255, .06);
       padding-top: 3px;
       margin-top: 2px;
       overflow: hidden;
     }
-    .hero-list:empty { display: none; }
+
+    .hero-list:empty {
+      display: none;
+    }
+
     .hero-list-item {
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.48rem, .68vw, .6rem);
@@ -2722,7 +3109,7 @@
       pointer-events: none;
       z-index: 5;
       letter-spacing: .1em;
-      background: rgba(0,0,0,.55);
+      background: rgba(0, 0, 0, .55);
       padding: 3px 10px;
       border-radius: 4px;
       white-space: nowrap;
@@ -3009,7 +3396,7 @@
       display: none;
       flex-shrink: 0;
       background: linear-gradient(180deg, #0c0c1a 0%, #08081a 100%);
-      border-top: 2px solid rgba(60,60,90,.5);
+      border-top: 2px solid rgba(60, 60, 90, .5);
       position: relative;
       z-index: 10;
     }
@@ -3038,7 +3425,7 @@
     }
 
     #p1-hud {
-      border-right: 2px solid rgba(80,80,120,.4);
+      border-right: 2px solid rgba(80, 80, 120, .4);
     }
 
     #p1-hud::before {
@@ -3057,7 +3444,7 @@
       flex-shrink: 0;
       width: clamp(165px, 18vw, 252px);
       justify-content: space-between;
-      border-right: 1px solid rgba(60,60,90,.3);
+      border-right: 1px solid rgba(60, 60, 90, .3);
       padding: clamp(5px, .7vh, 9px) clamp(5px, .6vw, 9px) clamp(4px, .6vh, 8px) 0;
     }
 
@@ -3124,7 +3511,7 @@
       background: rgba(0, 0, 0, .4);
       padding: clamp(4px, .55vh, 7px) clamp(6px, .65vw, 10px);
       border-radius: 5px;
-      border: 1px solid rgba(60,60,90,.35);
+      border: 1px solid rgba(60, 60, 90, .35);
       transition: background .2s;
     }
 
@@ -3150,7 +3537,7 @@
       justify-content: center;
       background: rgba(0, 0, 0, .45);
       border-radius: 7px;
-      border: 1px solid rgba(60,60,90,.4);
+      border: 1px solid rgba(60, 60, 90, .4);
       padding: clamp(4px, .7vh, 10px) clamp(3px, .4vw, 5px);
       gap: clamp(2px, .3vh, 4px);
       transition: background .2s;
@@ -3239,7 +3626,7 @@
       background: #0e0e20;
       border-radius: 4px;
       overflow: hidden;
-      border: 1px solid rgba(60,60,90,.4);
+      border: 1px solid rgba(60, 60, 90, .4);
       min-width: 20px;
     }
 
@@ -3381,12 +3768,12 @@
       font-weight: 600;
       padding: 3px 10px;
       border-radius: 3px 3px 0 0;
-      border: 1px solid rgba(60,60,90,.3);
+      border: 1px solid rgba(60, 60, 90, .3);
       border-bottom: none;
       color: var(--dim);
       cursor: default;
       letter-spacing: .08em;
-      background: rgba(0,0,0,.2);
+      background: rgba(0, 0, 0, .2);
       transition: all .15s;
       white-space: nowrap;
     }
@@ -3395,14 +3782,14 @@
       color: var(--p1);
       border-color: var(--p1);
       background: rgba(36, 113, 163, .18);
-      box-shadow: 0 -2px 8px rgba(36,113,163,.15);
+      box-shadow: 0 -2px 8px rgba(36, 113, 163, .15);
     }
 
     .hud-tab.active2 {
       color: var(--p2);
       border-color: var(--p2);
       background: rgba(192, 57, 43, .18);
-      box-shadow: 0 -2px 8px rgba(192,57,43,.15);
+      box-shadow: 0 -2px 8px rgba(192, 57, 43, .15);
     }
 
     /* UNIT GRID */
@@ -3417,8 +3804,8 @@
     }
 
     .ucard {
-      background: linear-gradient(180deg, rgba(15,15,30,.6) 0%, rgba(5,5,18,.8) 100%);
-      border: 1.5px solid rgba(60,60,90,.4);
+      background: linear-gradient(180deg, rgba(15, 15, 30, .6) 0%, rgba(5, 5, 18, .8) 100%);
+      border: 1.5px solid rgba(60, 60, 90, .4);
       border-radius: 6px;
       display: flex;
       flex-direction: column;
@@ -3532,7 +3919,7 @@
       justify-content: flex-end;
       padding-bottom: clamp(3px, .5vh, 6px);
       gap: 2px;
-      background: linear-gradient(180deg, rgba(0,0,0,.3) 0%, rgba(0,0,0,.7) 100%);
+      background: linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, rgba(0, 0, 0, .7) 100%);
       border-radius: 4px;
       pointer-events: none;
       z-index: 3;
@@ -3549,7 +3936,7 @@
       font-weight: 700;
       color: #f0c040;
       letter-spacing: .06em;
-      text-shadow: 0 1px 4px rgba(0,0,0,.9);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
     }
 
     @keyframes unlockPop {
@@ -3642,7 +4029,7 @@
       text-align: center;
       line-height: 1.15;
       flex-shrink: 1;
-      text-shadow: 0 1px 2px rgba(0,0,0,.5);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
       width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -3673,13 +4060,13 @@
     .cs {
       background: rgba(155, 89, 182, .3);
       color: #d4a8e8;
-      border: 1px solid rgba(125,60,152,.6);
+      border: 1px solid rgba(125, 60, 152, .6);
     }
 
     .cb {
       background: rgba(39, 174, 96, .3);
       color: #96edb8;
-      border: 1px solid rgba(30,132,73,.6);
+      border: 1px solid rgba(30, 132, 73, .6);
     }
 
     .utypetag {
@@ -3809,12 +4196,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,.55);
+      background: rgba(0, 0, 0, .55);
       color: #f0c040;
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.7rem, 1vw, .9rem);
       font-weight: 700;
-      text-shadow: 0 1px 4px rgba(0,0,0,.8);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
       border-radius: 5px;
       pointer-events: none;
       z-index: 5;
@@ -3940,12 +4327,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,.55);
+      background: rgba(0, 0, 0, .55);
       color: #f0c040;
       font-family: 'Rajdhani', sans-serif;
       font-size: clamp(.7rem, 1vw, .9rem);
       font-weight: 700;
-      text-shadow: 0 1px 4px rgba(0,0,0,.8);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .8);
       border-radius: 5px;
       pointer-events: none;
       z-index: 5;
@@ -4701,6 +5088,7 @@
       overflow: hidden;
       transition: max-height .25s ease, opacity .2s;
     }
+
     .menu-btn-entry:hover .menu-btn-sub {
       max-height: 28px;
       opacity: .85;
@@ -4737,7 +5125,7 @@
       padding: 2px 6px;
       border-radius: 3px;
       background: rgba(255, 255, 255, .06);
-      border: 1px solid rgba(100,100,140,.3);
+      border: 1px solid rgba(100, 100, 140, .3);
       color: #b0a898;
       white-space: nowrap;
       flex-shrink: 0;
@@ -5088,7 +5476,7 @@
     }
 
     .go-row:nth-child(even) {
-      background: rgba(255,255,255,.03);
+      background: rgba(255, 255, 255, .03);
     }
 
     .go-row b {
@@ -5143,29 +5531,35 @@
         align-items: center;
         gap: 10px;
       }
+
       .go-stat-col {
         width: 100%;
         max-width: 360px;
         min-width: unset;
       }
+
       .go-row {
         font-size: clamp(.72rem, 3.2vw, .92rem);
         padding: 3px 0;
       }
+
       .go-row:nth-child(even) {
-        background: rgba(255,255,255,.03);
+        background: rgba(255, 255, 255, .03);
       }
+
       .go-btns {
         flex-direction: column;
         width: 100%;
         max-width: 360px;
         gap: 8px;
       }
+
       .go-btns .btn {
         width: 100%;
         min-height: 48px;
         font-size: clamp(.8rem, 3.5vw, 1rem);
       }
+
       .go-wrap {
         gap: clamp(8px, 2vh, 16px);
         padding-bottom: 16px;
@@ -5803,15 +6197,19 @@
         gap: clamp(4px, .8vh, 8px);
         padding-top: clamp(8px, 1.5vh, 14px);
       }
+
       .menu-btn-sub {
         display: none;
       }
+
       .menu-title {
         font-size: clamp(1.1rem, 3vh, 1.6rem);
       }
+
       .menu-eyebrow {
         font-size: clamp(.5rem, .8vh, .65rem);
       }
+
       .menu-btns .btn {
         padding: clamp(7px, 1vh, 12px) clamp(16px, 2vw, 32px);
         font-size: clamp(.8rem, 1.3vw, .98rem);
@@ -5824,9 +6222,11 @@
         gap: clamp(2px, .5vh, 6px);
         padding-top: clamp(4px, 1vh, 10px);
       }
+
       .menu-title {
         font-size: clamp(.9rem, 2.5vh, 1.3rem);
       }
+
       .menu-btns .btn {
         padding: clamp(5px, .8vh, 9px) clamp(14px, 2vw, 28px);
         font-size: clamp(.72rem, 1.1vw, .88rem);
@@ -5840,7 +6240,8 @@
       position: sticky !important;
       bottom: 0 !important;
       z-index: 3;
-      margin-top: auto; /* push to bottom when content is shorter than viewport */
+      margin-top: auto;
+      /* push to bottom when content is shorter than viewport */
       flex-shrink: 0;
     }
 
@@ -7131,23 +7532,31 @@
           <!-- ── BATTLE ── -->
           <div class="menu-section">
             <div class="menu-section-label">BATTLE</div>
-            <div class="menu-btn-entry" style="animation-delay:.05s"><button class="btn primary" id="btn-play" style="--btn-glow:rgba(212,168,67,.2)">⚔ LOCAL PVP</button>
+            <div class="menu-btn-entry" style="animation-delay:.05s"><button class="btn primary" id="btn-play"
+                style="--btn-glow:rgba(212,168,67,.2)">⚔ LOCAL PVP</button>
               <div class="menu-btn-sub">Same keyboard, two players</div>
             </div>
             <div class="menu-btn-entry" style="animation-delay:.08s"><button class="btn" id="btn-online-play"
-                style="border-color:rgba(116,185,255,.5);color:#74b9ff;--btn-glow:rgba(116,185,255,.2)" onclick="showScreen('sc-online')">🌐 ONLINE PLAY</button>
+                style="border-color:rgba(116,185,255,.5);color:#74b9ff;--btn-glow:rgba(116,185,255,.2)"
+                onclick="showScreen('sc-online')">🌐 ONLINE PLAY</button>
               <div class="menu-btn-sub">Room code or random matchmaking</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.11s"><button class="btn btn-sudden" id="btn-sudden-death" style="--btn-glow:rgba(212,168,67,.15)">⚡ SUDDEN DEATH</button>
+            <div class="menu-btn-entry" style="animation-delay:.11s"><button class="btn btn-sudden"
+                id="btn-sudden-death" style="--btn-glow:rgba(212,168,67,.15)">⚡ SUDDEN DEATH</button>
               <div class="menu-btn-sub">30 HP bases, no workers, pure combat</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.14s"><button class="btn btn-conquest" id="btn-conquest" style="--btn-glow:rgba(212,168,67,.15)">🏴 CONQUEST</button>
+            <div class="menu-btn-entry" style="animation-delay:.14s"><button class="btn btn-conquest" id="btn-conquest"
+                style="--btn-glow:rgba(212,168,67,.15)">🏴 CONQUEST</button>
               <div class="menu-btn-sub">Hold 3 zones to bleed the enemy base</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.17s"><button class="btn" id="btn-draft" style="border-color:rgba(162,155,254,.5);color:#a29bfe;--btn-glow:rgba(162,155,254,.2)">🃏 DRAFT MODE</button>
+            <div class="menu-btn-entry" style="animation-delay:.17s"><button class="btn" id="btn-draft"
+                style="border-color:rgba(162,155,254,.5);color:#a29bfe;--btn-glow:rgba(162,155,254,.2)">🃏 DRAFT
+                MODE</button>
               <div class="menu-btn-sub">Ban 2, pick 1 — counter-pick meta</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.2s"><button class="btn" id="btn-tournament" style="border-color:rgba(240,147,43,.45);color:#f0932b;--btn-glow:rgba(240,147,43,.2)">🏆 TOURNAMENT</button>
+            <div class="menu-btn-entry" style="animation-delay:.2s"><button class="btn" id="btn-tournament"
+                style="border-color:rgba(240,147,43,.45);color:#f0932b;--btn-glow:rgba(240,147,43,.2)">🏆
+                TOURNAMENT</button>
               <div class="menu-btn-sub">Single-elimination bracket, 2–10 players</div>
             </div>
           </div>
@@ -7155,16 +7564,24 @@
           <!-- ── SOLO ── -->
           <div class="menu-section">
             <div class="menu-section-label">SOLO</div>
-            <div class="menu-btn-entry" style="animation-delay:.25s"><button class="btn" id="btn-solo" style="border-color:rgba(0,206,201,.4);color:#00cec9;--btn-glow:rgba(0,206,201,.18)">🤖 SINGLEPLAYER</button>
+            <div class="menu-btn-entry" style="animation-delay:.25s"><button class="btn" id="btn-solo"
+                style="border-color:rgba(0,206,201,.4);color:#00cec9;--btn-glow:rgba(0,206,201,.18)">🤖
+                SINGLEPLAYER</button>
               <div class="menu-btn-sub">Quick match vs AI</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.28s"><button class="btn" id="btn-campaign" style="border-color:rgba(255,200,50,.5);color:#f0c040;--btn-glow:rgba(255,200,50,.18)">📜 CAMPAIGN</button>
+            <div class="menu-btn-entry" style="animation-delay:.28s"><button class="btn" id="btn-campaign"
+                style="border-color:rgba(255,200,50,.5);color:#f0c040;--btn-glow:rgba(255,200,50,.18)">📜
+                CAMPAIGN</button>
               <div class="menu-btn-sub">Fight all factions in order, unlock as you go</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.31s"><button class="btn" id="btn-horde" style="border-color:rgba(231,76,60,.5);color:#e74c3c;--btn-glow:rgba(231,76,60,.18)">💀 HORDE MODE</button>
+            <div class="menu-btn-entry" style="animation-delay:.31s"><button class="btn" id="btn-horde"
+                style="border-color:rgba(231,76,60,.5);color:#e74c3c;--btn-glow:rgba(231,76,60,.18)">💀 HORDE
+                MODE</button>
               <div class="menu-btn-sub">10 waves, escalating difficulty</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.34s"><button class="btn" id="btn-gauntlet" style="border-color:rgba(255,165,0,.5);color:#ffa500;--btn-glow:rgba(255,165,0,.18)">🏟 GAUNTLET</button>
+            <div class="menu-btn-entry" style="animation-delay:.34s"><button class="btn" id="btn-gauntlet"
+                style="border-color:rgba(255,165,0,.5);color:#ffa500;--btn-glow:rgba(255,165,0,.18)">🏟
+                GAUNTLET</button>
               <div class="menu-btn-sub">24 fights, HP carries over, difficulty ramps</div>
             </div>
           </div>
@@ -7172,7 +7589,9 @@
           <!-- ── SPECTATE ── -->
           <div class="menu-section">
             <div class="menu-section-label">SPECTATE</div>
-            <div class="menu-btn-entry" style="animation-delay:.39s"><button class="btn" id="btn-aivsai" style="border-color:rgba(224,86,160,.4);color:#e056a0;--btn-glow:rgba(224,86,160,.18)">👁 AI VS AI</button>
+            <div class="menu-btn-entry" style="animation-delay:.39s"><button class="btn" id="btn-aivsai"
+                style="border-color:rgba(224,86,160,.4);color:#e056a0;--btn-glow:rgba(224,86,160,.18)">👁 AI VS
+                AI</button>
               <div class="menu-btn-sub">Pick both sides and watch</div>
             </div>
           </div>
@@ -7180,7 +7599,9 @@
           <!-- ── EXTRAS ── -->
           <div class="menu-section">
             <div class="menu-section-label">EXTRAS</div>
-            <div class="menu-btn-entry" style="animation-delay:.44s"><button class="btn" id="btn-tutorial" style="border-color:rgba(164,176,190,.4);color:#a4b0be;--btn-glow:rgba(164,176,190,.12)">📖 TUTORIAL</button>
+            <div class="menu-btn-entry" style="animation-delay:.44s"><button class="btn" id="btn-tutorial"
+                style="border-color:rgba(164,176,190,.4);color:#a4b0be;--btn-glow:rgba(164,176,190,.12)">📖
+                TUTORIAL</button>
               <div class="menu-btn-sub">~5 min guided walkthrough</div>
             </div>
             <div class="menu-btn-entry" style="animation-delay:.47s"><button class="btn" id="btn-mastery"
@@ -7188,7 +7609,9 @@
                 onclick="showScreen('sc-mastery');renderMasteryScreen()">🏅 FACTION MASTERY</button>
               <div class="menu-btn-sub">Skill trees and per-faction perks</div>
             </div>
-            <div class="menu-btn-entry" style="animation-delay:.5s"><button class="btn" id="btn-controls" style="border-color:rgba(120,111,166,.4);color:#786fa6;--btn-glow:rgba(120,111,166,.15)">🎮 CONTROLS &amp; KEY BINDS</button>
+            <div class="menu-btn-entry" style="animation-delay:.5s"><button class="btn" id="btn-controls"
+                style="border-color:rgba(120,111,166,.4);color:#786fa6;--btn-glow:rgba(120,111,166,.15)">🎮 CONTROLS
+                &amp; KEY BINDS</button>
               <div class="menu-btn-sub">Rebind keys and direct-spawn hotkeys</div>
             </div>
           </div>
@@ -7324,7 +7747,8 @@
     <div id="online-badge" style="display:none;">🟢 ONLINE</div>
     <div id="online-dc-overlay">
       <div class="dc-title">⚠ OPPONENT DISCONNECTED</div>
-      <div class="dc-sub" style="font-family:Rajdhani,sans-serif;font-size:.95rem;color:var(--dim);">Your opponent left or lost
+      <div class="dc-sub" style="font-family:Rajdhani,sans-serif;font-size:.95rem;color:var(--dim);">Your opponent left
+        or lost
         connection.</div>
       <button class="btn dc-btn" onclick="NET.cleanup()" style="margin-top:8px;">← RETURN TO MENU</button>
     </div>
@@ -7348,7 +7772,9 @@
           <div class="faction-cards" id="fcards-p1"></div>
           <div class="faction-scroll-count" id="fscroll-p1"></div>
         </div>
-        <div class="faction-preview" id="fpreview-p1"><div class="fp-empty">Hover a faction to preview</div></div>
+        <div class="faction-preview" id="fpreview-p1">
+          <div class="fp-empty">Hover a faction to preview</div>
+        </div>
         <div class="faction-chosen" id="fchosen-p1">— No faction chosen —</div>
         <!-- P1 AI settings panel — shown only in aivsai mode -->
         <div id="ai-p1-panel" style="display:none;">
@@ -7376,7 +7802,9 @@
             <div class="faction-cards" id="fcards-p2"></div>
             <div class="faction-scroll-count" id="fscroll-p2"></div>
           </div>
-          <div class="faction-preview" id="fpreview-p2"><div class="fp-empty">Hover a faction to preview</div></div>
+          <div class="faction-preview" id="fpreview-p2">
+            <div class="fp-empty">Hover a faction to preview</div>
+          </div>
           <div class="faction-chosen" id="fchosen-p2">— No faction chosen —</div>
         </div>
         <!-- AI opponent section (shown in solo + aivsai) -->
@@ -7404,15 +7832,13 @@
     <!-- Online-only countdown overlay shown when both players have picked -->
     <div id="online-faction-countdown"
       style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.82);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-      <div
-        style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;">
+      <div style="font-family:Rajdhani,sans-serif;font-size:1rem;color:var(--dim);letter-spacing:.12em;">
         BOTH PLAYERS
         READY</div>
       <div id="online-faction-countdown-num"
         style="font-family:Rajdhani,sans-serif;font-size:6rem;font-weight:700;color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(212,168,67,.6);min-height:1px;">
       </div>
-      <div
-        style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;">
+      <div style="font-family:Rajdhani,sans-serif;font-size:.85rem;color:var(--dim);letter-spacing:.1em;">
         BATTLE
         STARTING…</div>
     </div>
@@ -7624,7 +8050,8 @@
           style="color:var(--text)">←/→</b> = Vote during events</div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:6px;">
         <button class="btn" id="btn-ctrl-back">← BACK</button>
-        <button class="btn" id="btn-ctrl-to-rebind" style="border-color:rgba(212,168,67,.4);color:var(--gold);">🎮 KEY BINDINGS →</button>
+        <button class="btn" id="btn-ctrl-to-rebind" style="border-color:rgba(212,168,67,.4);color:var(--gold);">🎮 KEY
+          BINDINGS →</button>
       </div>
     </div>
   </div>
@@ -7721,15 +8148,23 @@
         style="background:#0d0d1a;border:1px solid #252538;border-radius:8px;padding:28px 36px;display:flex;flex-direction:column;gap:12px;min-width:220px;align-items:center;font-family:Rajdhani,sans-serif;">
         <div style="font-size:1.1rem;letter-spacing:.12em;color:#e8e0d0;margin-bottom:4px;">MENU</div>
         <div style="width:100%;display:flex;flex-direction:column;gap:6px;">
-          <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🔊 SFX <input type="range" class="sfx-vol-slider" min="0" max="1" step="0.05" value="1.0" oninput="setSfxVolume(+this.value)" style="width:60%;accent-color:#74b9ff;"></label>
-          <label style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🎵 MUSIC <input type="range" class="music-vol-slider" min="0" max="1" step="0.05" value="0.3" oninput="setMusicVolume(+this.value)" style="width:60%;accent-color:#a29bfe;"></label>
+          <label
+            style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🔊
+            SFX <input type="range" class="sfx-vol-slider" min="0" max="1" step="0.05" value="1.0"
+              oninput="setSfxVolume(+this.value)" style="width:60%;accent-color:#74b9ff;"></label>
+          <label
+            style="font-size:.65rem;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;align-items:center;">🎵
+            MUSIC <input type="range" class="music-vol-slider" min="0" max="1" step="0.05" value="0.3"
+              oninput="setMusicVolume(+this.value)" style="width:60%;accent-color:#a29bfe;"></label>
         </div>
         <button class="btn mute-btn" onclick="toggleMute()" style="width:100%">🔊 MUTE</button>
         <button class="btn" onclick="_goFullscreen();_closeIngameMenu()" style="width:100%">⛶ FULLSCREEN</button>
         <button class="btn" id="ingame-menu-ragequit" onclick="_closeIngameMenu();triggerRagequit()"
           style="width:100%;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff4444;border-color:#8B0000;">☠
           QUIT MATCH</button>
-        <button class="btn" onclick="_closeIngameMenu();if(G){G.paused=false;document.getElementById('pause-overlay').classList.remove('show');}" style="width:100%;margin-top:4px;">▶ RESUME</button>
+        <button class="btn"
+          onclick="_closeIngameMenu();if(G){G.paused=false;document.getElementById('pause-overlay').classList.remove('show');}"
+          style="width:100%;margin-top:4px;">▶ RESUME</button>
       </div>
     </div>
     <div id="hud">
@@ -7942,7 +8377,9 @@
       <h2 class="go-title" id="go-title"></h2>
       <p class="go-sub" id="go-sub-text">Get rekt.</p>
       <p class="go-sub" id="go-grudge-taunt" style="font-size:.8em;opacity:.7;min-height:1.2em;margin-top:2px;"></p>
-      <div id="go-win-condition" style="font-family:Rajdhani,sans-serif;font-size:clamp(.7rem,1.1vw,.9rem);color:rgba(255,255,255,.45);letter-spacing:.1em;text-align:center;margin-bottom:2px;"></div>
+      <div id="go-win-condition"
+        style="font-family:Rajdhani,sans-serif;font-size:clamp(.7rem,1.1vw,.9rem);color:rgba(255,255,255,.45);letter-spacing:.1em;text-align:center;margin-bottom:2px;">
+      </div>
       <div class="go-time-row" id="go-match-time"
         style="text-align:center;font-family:Rajdhani,sans-serif;font-size:clamp(1rem,1.5vw,1.3rem);color:var(--gold);margin:8px 0 14px;letter-spacing:.08em;">
       </div>
@@ -7951,7 +8388,8 @@
       <div class="go-btns">
         <button class="btn primary" id="btn-rematch">⚔ REMATCH</button>
         <button class="btn" id="btn-change-faction">🔄 CHANGE FACTION</button>
-        <button class="btn" id="btn-camp-return" style="display:none;border-color:rgba(255,200,50,.5);color:#f0c040;">📜 CAMPAIGN MAP</button>
+        <button class="btn" id="btn-camp-return" style="display:none;border-color:rgba(255,200,50,.5);color:#f0c040;">📜
+          CAMPAIGN MAP</button>
         <button class="btn" id="btn-to-menu">🏠 MENU</button>
         <button class="btn" id="btn-go-mastery" style="border-color:rgba(212,168,67,.5);color:var(--gold);">🏅 VIEW
           MASTERY</button>
@@ -7960,7 +8398,9 @@
   </div>
   <!-- CAMPAIGN MAP -->
   <div id="sc-campaign" class="screen" style="background:#0a0a18;">
-    <button class="btn" id="camp-back" style="position:fixed;bottom:18px;right:18px;font-size:clamp(.85rem,1.3vw,1.05rem);padding:10px 22px;background:rgba(30,30,50,.92);border:1px solid rgba(255,255,255,.25);z-index:999;letter-spacing:.08em;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.5);backdrop-filter:blur(6px);">← BACK</button>
+    <button class="btn" id="camp-back"
+      style="position:fixed;bottom:18px;right:18px;font-size:clamp(.85rem,1.3vw,1.05rem);padding:10px 22px;background:rgba(30,30,50,.92);border:1px solid rgba(255,255,255,.25);z-index:999;letter-spacing:.08em;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.5);backdrop-filter:blur(6px);">←
+      BACK</button>
     <div id="camp-header">
       <div id="camp-title">📜 CAMPAIGN</div>
       <div id="camp-subtitle">defeat each faction to unlock them</div>
@@ -7987,7 +8427,9 @@
   <div id="gauntlet-transition">
     <div class="gtrans-title" id="gtrans-title">FIGHT WON!</div>
     <div class="gtrans-progress" id="gtrans-progress">Fight 1 of 24</div>
-    <div class="gtrans-bar"><div class="gtrans-bar-fill" id="gtrans-bar-fill" style="width:0%"></div></div>
+    <div class="gtrans-bar">
+      <div class="gtrans-bar-fill" id="gtrans-bar-fill" style="width:0%"></div>
+    </div>
     <div class="gtrans-hp" id="gtrans-hp">❤ Base HP: 120 / 150</div>
     <div class="gtrans-bonus" id="gtrans-bonus">+20💀 rest bonus</div>
     <div class="gtrans-next" id="gtrans-next">NEXT: 🔥 Infernal Horde</div>
@@ -9098,7 +9540,7 @@
               if (pid === 1) P1_SEL = cardIdx; else P2_SEL = cardIdx;
             }
             refreshSel(pid); // applies .sel highlight to the correct card
-            
+
             break;
           }
           case 'draftAction': {
@@ -9217,7 +9659,7 @@
         _onlineMode = true;
         myPid = 1;
         connected = true;
-        socket = window.__qaSocket || { _h: {}, on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); }, off() {}, emit() {}, dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) {} }); } };
+        socket = window.__qaSocket || { _h: {}, on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); }, off() { }, emit() { }, dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) { } }); } };
         _startStateSync(); // begin 30fps snapshot broadcasts
       }
 
@@ -9227,7 +9669,7 @@
         _onlineMode = true;
         myPid = 2;
         connected = true;
-        socket = window.__qaSocket || { _h: {}, on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); }, off() {}, emit() {}, dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) {} }); } };
+        socket = window.__qaSocket || { _h: {}, on(e, fn) { (this._h[e] = this._h[e] || []).push(fn); }, off() { }, emit() { }, dispatch(ev, data) { (this._h[ev] || []).forEach(h => { try { h(data); } catch (_) { } }); } };
         // Register the stateUpdate handler on the fake socket so dispatched
         // snapshots reach _receiveStateSnapshot → _applyInstantState.
         socket.on('stateUpdate', (snap) => { _receiveStateSnapshot(snap); });
@@ -9341,11 +9783,11 @@
         _musicStarted = true;
         if (!MUSIC.isPlaying()) MUSIC.start('menu');
         // Resume Web Audio context for SFX (can be async — SFX only plays in-game)
-        if (AC && AC.state === 'suspended') AC.resume().catch(() => {});
+        if (AC && AC.state === 'suspended') AC.resume().catch(() => { });
       }
-      document.addEventListener('click',      _startMusic, { once: true });
-      document.addEventListener('keydown',    _startMusic, { once: true });
-      document.addEventListener('pointerdown',_startMusic, { once: true });
+      document.addEventListener('click', _startMusic, { once: true });
+      document.addEventListener('keydown', _startMusic, { once: true });
+      document.addEventListener('pointerdown', _startMusic, { once: true });
       // Fade music when tab visibility changes — handled inside MUSIC via _setTabVisible
       document.getElementById('btn-quickmatch').addEventListener('click', () => NET.quickMatch());
       document.getElementById('btn-createroom').addEventListener('click', () => NET.createRoom());
@@ -9637,7 +10079,7 @@
       }
       if (vw >= 1600) return 1920;        // full HD+ — original size
       if (vw >= 1200) return Math.round(vw * 1.15); // ~1380-1840
-      if (vw >= 800)  return Math.round(vw * 1.25);  // ~1000-1500
+      if (vw >= 800) return Math.round(vw * 1.25);  // ~1000-1500
       return Math.max(800, Math.round(vw * 1.3));     // landscape phones/small tablets
     }
     let VIRTUAL_W = _calcVirtualW();
@@ -9691,21 +10133,21 @@
 
       // ── Portrait mode: rotate game stage so the landscape game fills a tall screen ──
       const _pfStage = document.getElementById('game-stage');
-      const _pfWrap  = document.getElementById('battlefield-wrap');
+      const _pfWrap = document.getElementById('battlefield-wrap');
       if (screen.height > screen.width + 50 && window.matchMedia('(pointer: coarse)').matches) {
         _portraitMode = true;
         // Scale so rotated canvas fits: canvas W maps to screen H, canvas H to screen W
-        const ps  = Math.min(availW / VIRTUAL_H, availH / VIRTUAL_W);
+        const ps = Math.min(availW / VIRTUAL_H, availH / VIRTUAL_W);
         _canvasScale = ps;
         const csW = Math.round(VIRTUAL_W * ps), csH = Math.round(VIRTUAL_H * ps);
-        canvas.style.width  = csW + 'px';
+        canvas.style.width = csW + 'px';
         canvas.style.height = csH + 'px';
         if (_pfStage) {
-          _pfStage.style.width  = csW + 'px';
+          _pfStage.style.width = csW + 'px';
           _pfStage.style.height = csH + 'px';
           // After rotate(-90deg) visual size is csH×csW — center it in available area
           _pfStage.style.left = Math.round((availW - csH) / 2) + 'px';
-          _pfStage.style.top  = Math.round((availH - csW) / 2) + 'px';
+          _pfStage.style.top = Math.round((availH - csW) / 2) + 'px';
           _pfStage.classList.add('portrait-mode');
         }
         if (_pfWrap) _pfWrap.classList.add('portrait-wrap');
@@ -9716,7 +10158,7 @@
       if (_pfStage) {
         _pfStage.classList.remove('portrait-mode');
         _pfStage.style.left = '';
-        _pfStage.style.top  = '';
+        _pfStage.style.top = '';
       }
       if (_pfWrap) _pfWrap.classList.remove('portrait-wrap');
 
@@ -10303,18 +10745,18 @@
         // Hard-stop any previous fade-out track before starting new one
         if (_fadingOut && _fadingOut !== _el[fromKey]) { _fadingOut.pause(); _fadingOut.volume = 0; _fadingOut = null; }
         const fromEl = fromKey ? _el[fromKey] : null;
-        const toEl   = toKey   ? _el[toKey]   : null;
+        const toEl = toKey ? _el[toKey] : null;
         const startV = fromEl ? fromEl.volume : 0;
-        const endV   = _vol(toKey);
+        const endV = _vol(toKey);
         const STEPS = 60, iv = Math.max(16, ms / STEPS);
         let step = 0;
         if (fromEl) _fadingOut = fromEl;
-        if (toEl) { toEl.volume = 0; toEl.play().catch(() => {}); }
+        if (toEl) { toEl.volume = 0; toEl.play().catch(() => { }); }
         _fadeTimer = setInterval(() => {
           step++;
           const t = _ease(Math.min(1, step / STEPS));
           if (fromEl) fromEl.volume = Math.max(0, startV * (1 - t));
-          if (toEl)   toEl.volume   = Math.min(endV, endV * t);
+          if (toEl) toEl.volume = Math.min(endV, endV * t);
           if (step >= STEPS) {
             clearInterval(_fadeTimer); _fadeTimer = null;
             if (fromEl && fromEl !== toEl) { fromEl.pause(); fromEl.volume = 0; _fadingOut = null; }
@@ -10355,7 +10797,7 @@
         _playing = true;
       }
 
-      function setFactions(id1, id2) {} // no-op
+      function setFactions(id1, id2) { } // no-op
 
       function isPlaying() { return _playing && !!_curKey && !!_el[_curKey] && !_el[_curKey].paused; }
 
@@ -10378,7 +10820,7 @@
         } else {
           _fadingOut = null;
           if (_curKey && _el[_curKey]) {
-            _el[_curKey].play().catch(() => {});
+            _el[_curKey].play().catch(() => { });
             _el[_curKey].volume = _vol(_curKey);
           }
         }
@@ -10451,36 +10893,36 @@
     // ── PROJECTILE STYLES — per-faction projectile shape/glow/trail ──
     // Shapes: circle, diamond, arrow, bolt, orb, shard
     const PROJECTILE_STYLE = {
-      warriors:      { shape: 'arrow',   size: 4, glow: 8,  glowCol: '#d4a843', trailFreq: 3, trailAlpha: 0.4 },
-      summoners:     { shape: 'orb',     size: 4, glow: 10, glowCol: '#9b59b6', trailFreq: 2, trailAlpha: 0.5 },
-      brutes:        { shape: 'shard',   size: 5, glow: 6,  glowCol: '#8d6e63', trailFreq: 4, trailAlpha: 0.3 },
-      spirits:       { shape: 'orb',     size: 4, glow: 12, glowCol: '#00d2d3', trailFreq: 2, trailAlpha: 0.5 },
-      verdant:       { shape: 'circle',  size: 3, glow: 8,  glowCol: '#2ecc71', trailFreq: 4, trailAlpha: 0.3 },
-      infernal:      { shape: 'diamond', size: 4, glow: 12, glowCol: '#ff4500', trailFreq: 2, trailAlpha: 0.5 },
-      glacial:       { shape: 'shard',   size: 5, glow: 10, glowCol: '#74b9ff', trailFreq: 3, trailAlpha: 0.4 },
-      voltborn:      { shape: 'bolt',    size: 4, glow: 14, glowCol: '#f9ca24', trailFreq: 2, trailAlpha: 0.6 },
-      bloodpact:     { shape: 'diamond', size: 4, glow: 10, glowCol: '#c0392b', trailFreq: 3, trailAlpha: 0.4 },
-      menders:       { shape: 'circle',  size: 3, glow: 8,  glowCol: '#a8ff78', trailFreq: 4, trailAlpha: 0.3 },
-      weavers:       { shape: 'shard',   size: 4, glow: 6,  glowCol: '#636e72', trailFreq: 4, trailAlpha: 0.3 },
-      merchants:     { shape: 'diamond', size: 4, glow: 8,  glowCol: '#fdcb6e', trailFreq: 3, trailAlpha: 0.4 },
-      reavers:       { shape: 'shard',   size: 5, glow: 6,  glowCol: '#8B4513', trailFreq: 4, trailAlpha: 0.3 },
-      fortune:       { shape: 'diamond', size: 4, glow: 10, glowCol: '#f9ca24', trailFreq: 3, trailAlpha: 0.4 },
-      plagued:       { shape: 'orb',     size: 4, glow: 10, glowCol: '#7bed9f', trailFreq: 2, trailAlpha: 0.5 },
-      chrysalis:     { shape: 'orb',     size: 4, glow: 10, glowCol: '#00b894', trailFreq: 3, trailAlpha: 0.4 },
-      tideborn:      { shape: 'circle',  size: 4, glow: 10, glowCol: '#0984e3', trailFreq: 3, trailAlpha: 0.4 },
-      echoes:        { shape: 'orb',     size: 4, glow: 12, glowCol: '#a29bfe', trailFreq: 2, trailAlpha: 0.5 },
-      veilborn:      { shape: 'bolt',    size: 4, glow: 12, glowCol: '#6c5ce7', trailFreq: 2, trailAlpha: 0.5 },
+      warriors: { shape: 'arrow', size: 4, glow: 8, glowCol: '#d4a843', trailFreq: 3, trailAlpha: 0.4 },
+      summoners: { shape: 'orb', size: 4, glow: 10, glowCol: '#9b59b6', trailFreq: 2, trailAlpha: 0.5 },
+      brutes: { shape: 'shard', size: 5, glow: 6, glowCol: '#8d6e63', trailFreq: 4, trailAlpha: 0.3 },
+      spirits: { shape: 'orb', size: 4, glow: 12, glowCol: '#00d2d3', trailFreq: 2, trailAlpha: 0.5 },
+      verdant: { shape: 'circle', size: 3, glow: 8, glowCol: '#2ecc71', trailFreq: 4, trailAlpha: 0.3 },
+      infernal: { shape: 'diamond', size: 4, glow: 12, glowCol: '#ff4500', trailFreq: 2, trailAlpha: 0.5 },
+      glacial: { shape: 'shard', size: 5, glow: 10, glowCol: '#74b9ff', trailFreq: 3, trailAlpha: 0.4 },
+      voltborn: { shape: 'bolt', size: 4, glow: 14, glowCol: '#f9ca24', trailFreq: 2, trailAlpha: 0.6 },
+      bloodpact: { shape: 'diamond', size: 4, glow: 10, glowCol: '#c0392b', trailFreq: 3, trailAlpha: 0.4 },
+      menders: { shape: 'circle', size: 3, glow: 8, glowCol: '#a8ff78', trailFreq: 4, trailAlpha: 0.3 },
+      weavers: { shape: 'shard', size: 4, glow: 6, glowCol: '#636e72', trailFreq: 4, trailAlpha: 0.3 },
+      merchants: { shape: 'diamond', size: 4, glow: 8, glowCol: '#fdcb6e', trailFreq: 3, trailAlpha: 0.4 },
+      reavers: { shape: 'shard', size: 5, glow: 6, glowCol: '#8B4513', trailFreq: 4, trailAlpha: 0.3 },
+      fortune: { shape: 'diamond', size: 4, glow: 10, glowCol: '#f9ca24', trailFreq: 3, trailAlpha: 0.4 },
+      plagued: { shape: 'orb', size: 4, glow: 10, glowCol: '#7bed9f', trailFreq: 2, trailAlpha: 0.5 },
+      chrysalis: { shape: 'orb', size: 4, glow: 10, glowCol: '#00b894', trailFreq: 3, trailAlpha: 0.4 },
+      tideborn: { shape: 'circle', size: 4, glow: 10, glowCol: '#0984e3', trailFreq: 3, trailAlpha: 0.4 },
+      echoes: { shape: 'orb', size: 4, glow: 12, glowCol: '#a29bfe', trailFreq: 2, trailAlpha: 0.5 },
+      veilborn: { shape: 'bolt', size: 4, glow: 12, glowCol: '#6c5ce7', trailFreq: 2, trailAlpha: 0.5 },
       chronomancers: { shape: 'diamond', size: 4, glow: 10, glowCol: '#2e86c1', trailFreq: 3, trailAlpha: 0.4 },
-      illusionists:  { shape: 'orb',     size: 4, glow: 10, glowCol: '#fd79a8', trailFreq: 2, trailAlpha: 0.5 },
-      pandemonium:   { shape: 'bolt',    size: 4, glow: 12, glowCol: '#e17055', trailFreq: 2, trailAlpha: 0.5 },
-      psionics:      { shape: 'orb',     size: 4, glow: 12, glowCol: '#9b59b6', trailFreq: 2, trailAlpha: 0.5 },
-      umbral:        { shape: 'shard',   size: 5, glow: 8,  glowCol: '#2d3436', trailFreq: 3, trailAlpha: 0.4 },
+      illusionists: { shape: 'orb', size: 4, glow: 10, glowCol: '#fd79a8', trailFreq: 2, trailAlpha: 0.5 },
+      pandemonium: { shape: 'bolt', size: 4, glow: 12, glowCol: '#e17055', trailFreq: 2, trailAlpha: 0.5 },
+      psionics: { shape: 'orb', size: 4, glow: 12, glowCol: '#9b59b6', trailFreq: 2, trailAlpha: 0.5 },
+      umbral: { shape: 'shard', size: 5, glow: 8, glowCol: '#2d3436', trailFreq: 3, trailAlpha: 0.4 },
     };
 
     // ── HERO PROMOTION — name tables ────────────────────────────────────────────
-    const _HERO_PREFIXES = ['Grim','Iron','Blood','Stone','Dark','Swift','Fell','Frost','Bone','Ash','Void','Scar','War','Doom','Shadow','Storm','Silver','Ember','Thorn','Cinder','Ruin','Grave','Blaze','Dusk','Fury'];
-    const _HERO_SUFFIXES = ['jaw','fang','claw','blade','born','bane','hide','eye','heart','skull','fist','maw','sting','spike','will','tide','shard','wraith','thorn','gore'];
-    const _HERO_EPITHETS = ['the Relentless','the Undying','the Merciless','Bonebreaker','the Ancient','Deathwalker','the Fearless','the Unyielding','Bloodthirst','the Eternal','the Cursed','the Undaunted','Ironside','Warborn','the Unstoppable','the Legendary','of Ash','the Deathless','Oathbreaker','the Inevitable'];
+    const _HERO_PREFIXES = ['Grim', 'Iron', 'Blood', 'Stone', 'Dark', 'Swift', 'Fell', 'Frost', 'Bone', 'Ash', 'Void', 'Scar', 'War', 'Doom', 'Shadow', 'Storm', 'Silver', 'Ember', 'Thorn', 'Cinder', 'Ruin', 'Grave', 'Blaze', 'Dusk', 'Fury'];
+    const _HERO_SUFFIXES = ['jaw', 'fang', 'claw', 'blade', 'born', 'bane', 'hide', 'eye', 'heart', 'skull', 'fist', 'maw', 'sting', 'spike', 'will', 'tide', 'shard', 'wraith', 'thorn', 'gore'];
+    const _HERO_EPITHETS = ['the Relentless', 'the Undying', 'the Merciless', 'Bonebreaker', 'the Ancient', 'Deathwalker', 'the Fearless', 'the Unyielding', 'Bloodthirst', 'the Eternal', 'the Cursed', 'the Undaunted', 'Ironside', 'Warborn', 'the Unstoppable', 'the Legendary', 'of Ash', 'the Deathless', 'Oathbreaker', 'the Inevitable'];
     function _genHeroName() { return _HERO_PREFIXES[Math.random() * _HERO_PREFIXES.length | 0] + _HERO_SUFFIXES[Math.random() * _HERO_SUFFIXES.length | 0]; }
     function _genEpithet() { return _HERO_EPITHETS[Math.random() * _HERO_EPITHETS.length | 0]; }
 
@@ -10489,26 +10931,46 @@
     // Each wave: factionId selects which faction's units are used as enemies.
     // hpMult / dmgMult scale the spawned units' stats to make each wave harder.
     const HORDE_WAVES = [
-      { wave: 1, label: 'Warriors',     icon: '⚔️',  factionId: 'warriors',    hpMult: 1.0,  dmgMult: 1.0,
-        units: [{ id: 'w_soldier', count: 2 }, { id: 'w_archer', count: 2 }] },
-      { wave: 2, label: 'Infernal',     icon: '🔥',  factionId: 'infernal',    hpMult: 1.3,  dmgMult: 1.2,
-        units: [{ id: 'if_fiend', count: 4 }, { id: 'if_hellshot', count: 3 }, { id: 'if_nightmare', count: 1 }] },
-      { wave: 3, label: 'Bloodpact',    icon: '🩸',  factionId: 'bloodpact',   hpMult: 1.45, dmgMult: 1.3,
-        units: [{ id: 'bp_wolfborn', count: 4 }, { id: 'bp_plaguebow', count: 3 }, { id: 'bp_bloodborn', count: 2 }] },
-      { wave: 4, label: 'Glacial',      icon: '❄️',  factionId: 'glacial',     hpMult: 1.6,  dmgMult: 1.4,
-        units: [{ id: 'gl_sleet', count: 5 }, { id: 'gl_icebolt', count: 3 }, { id: 'gl_snowhawk', count: 2 }] },
-      { wave: 5, label: 'Summoners',    icon: '💀',  factionId: 'summoners',   hpMult: 1.8,  dmgMult: 1.5,
-        units: [{ id: 'su_wraith', count: 5 }, { id: 'su_archer', count: 3 }, { id: 'su_necro', count: 2 }] },
-      { wave: 6, label: 'Voltborn',     icon: '⚡',  factionId: 'voltborn',    hpMult: 2.0,  dmgMult: 1.6,
-        units: [{ id: 'vb_shockblade', count: 4 }, { id: 'vb_bolt', count: 4 }, { id: 'vb_arckite', count: 3 }] },
-      { wave: 7, label: 'Brutes',       icon: '🪨',  factionId: 'brutes',      hpMult: 2.2,  dmgMult: 1.75,
-        units: [{ id: 'br_soldier', count: 4 }, { id: 'br_bouldershot', count: 3 }, { id: 'br_warlord', count: 2 }, { id: 'br_gravebrute', count: 1 }] },
-      { wave: 8, label: 'Psionics',     icon: '🧠',  factionId: 'psionics',    hpMult: 2.5,  dmgMult: 1.9,
-        units: [{ id: 'ps_whisper', count: 4 }, { id: 'ps_thief', count: 4 }, { id: 'ps_dom', count: 3 }, { id: 'ps_mind', count: 2 }] },
-      { wave: 9, label: 'Umbral',       icon: '🌑',  factionId: 'umbral',      hpMult: 2.8,  dmgMult: 2.1,
-        units: [{ id: 'um_night', count: 5 }, { id: 'um_archer', count: 4 }, { id: 'um_blot', count: 3 }, { id: 'um_eclipse', count: 2 }] },
-      { wave: 10, label: 'Pandemonium', icon: '🌀',  factionId: 'pandemonium', hpMult: 3.2,  dmgMult: 2.5,
-        units: [{ id: 'pd_wild', count: 6 }, { id: 'pd_maelstrom', count: 4 }, { id: 'pd_unhng', count: 4 }, { id: 'pd_chaos', count: 3 }] },
+      {
+        wave: 1, label: 'Warriors', icon: '⚔️', factionId: 'warriors', hpMult: 1.0, dmgMult: 1.0,
+        units: [{ id: 'w_soldier', count: 2 }, { id: 'w_archer', count: 2 }]
+      },
+      {
+        wave: 2, label: 'Infernal', icon: '🔥', factionId: 'infernal', hpMult: 1.3, dmgMult: 1.2,
+        units: [{ id: 'if_fiend', count: 4 }, { id: 'if_hellshot', count: 3 }, { id: 'if_nightmare', count: 1 }]
+      },
+      {
+        wave: 3, label: 'Bloodpact', icon: '🩸', factionId: 'bloodpact', hpMult: 1.45, dmgMult: 1.3,
+        units: [{ id: 'bp_wolfborn', count: 4 }, { id: 'bp_plaguebow', count: 3 }, { id: 'bp_bloodborn', count: 2 }]
+      },
+      {
+        wave: 4, label: 'Glacial', icon: '❄️', factionId: 'glacial', hpMult: 1.6, dmgMult: 1.4,
+        units: [{ id: 'gl_sleet', count: 5 }, { id: 'gl_icebolt', count: 3 }, { id: 'gl_snowhawk', count: 2 }]
+      },
+      {
+        wave: 5, label: 'Summoners', icon: '💀', factionId: 'summoners', hpMult: 1.8, dmgMult: 1.5,
+        units: [{ id: 'su_wraith', count: 5 }, { id: 'su_archer', count: 3 }, { id: 'su_necro', count: 2 }]
+      },
+      {
+        wave: 6, label: 'Voltborn', icon: '⚡', factionId: 'voltborn', hpMult: 2.0, dmgMult: 1.6,
+        units: [{ id: 'vb_shockblade', count: 4 }, { id: 'vb_bolt', count: 4 }, { id: 'vb_arckite', count: 3 }]
+      },
+      {
+        wave: 7, label: 'Brutes', icon: '🪨', factionId: 'brutes', hpMult: 2.2, dmgMult: 1.75,
+        units: [{ id: 'br_soldier', count: 4 }, { id: 'br_bouldershot', count: 3 }, { id: 'br_warlord', count: 2 }, { id: 'br_gravebrute', count: 1 }]
+      },
+      {
+        wave: 8, label: 'Psionics', icon: '🧠', factionId: 'psionics', hpMult: 2.5, dmgMult: 1.9,
+        units: [{ id: 'ps_whisper', count: 4 }, { id: 'ps_thief', count: 4 }, { id: 'ps_dom', count: 3 }, { id: 'ps_mind', count: 2 }]
+      },
+      {
+        wave: 9, label: 'Umbral', icon: '🌑', factionId: 'umbral', hpMult: 2.8, dmgMult: 2.1,
+        units: [{ id: 'um_night', count: 5 }, { id: 'um_archer', count: 4 }, { id: 'um_blot', count: 3 }, { id: 'um_eclipse', count: 2 }]
+      },
+      {
+        wave: 10, label: 'Pandemonium', icon: '🌀', factionId: 'pandemonium', hpMult: 3.2, dmgMult: 2.5,
+        units: [{ id: 'pd_wild', count: 6 }, { id: 'pd_maelstrom', count: 4 }, { id: 'pd_unhng', count: 4 }, { id: 'pd_chaos', count: 3 }]
+      },
     ];
 
     // Returns a wave definition for any wave index (0-based). Uses curated definitions for the
@@ -10516,7 +10978,7 @@
     function _getHordeWaveDef(waveNum) {
       if (waveNum < HORDE_WAVES.length) return HORDE_WAVES[waveNum];
       // Endless: exponential-ish scaling — every 10 waves is roughly another tier
-      const hpMult  = parseFloat((1.0 + waveNum * 0.18).toFixed(2));
+      const hpMult = parseFloat((1.0 + waveNum * 0.18).toFixed(2));
       const dmgMult = parseFloat((1.0 + waveNum * 0.12).toFixed(2));
       // Cycle through all factions (skip the first-come-first-served index 0 curated run)
       const faction = FACTIONS[waveNum % FACTIONS.length];
@@ -11331,15 +11793,15 @@
     }
 
     const RALLY_BUFFS = [
-      { id: 'warcry',        name: 'War Cry',       icon: '⚡', cost: 35, duration: 8,  cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 8s.' },
-      { id: 'ironwall',      name: 'Iron Wall',     icon: '🛡', cost: 30, duration: 10, cooldown: 50, desc: 'All units take 40% less damage for 10s.' },
-      { id: 'bodyboon',      name: 'Body Boon',     icon: '💥', cost: 45, duration: 0,  cooldown: 40, desc: 'Instantly converts 45 Souls into +22 Bodies.' },
-      { id: 'soul_tide',     name: 'Soul Tide',     icon: '🌊', cost: 8,  duration: 25, cooldown: 90, desc: 'Spend 8 Souls to gain +3.0💀/s for 25s (+75 net). Use early or when behind on economy.' },
+      { id: 'warcry', name: 'War Cry', icon: '⚡', cost: 35, duration: 8, cooldown: 45, desc: 'All units +25% speed and +15% attack rate for 8s.' },
+      { id: 'ironwall', name: 'Iron Wall', icon: '🛡', cost: 30, duration: 10, cooldown: 50, desc: 'All units take 40% less damage for 10s.' },
+      { id: 'bodyboon', name: 'Body Boon', icon: '💥', cost: 45, duration: 0, cooldown: 40, desc: 'Instantly converts 45 Souls into +22 Bodies.' },
+      { id: 'soul_tide', name: 'Soul Tide', icon: '🌊', cost: 8, duration: 25, cooldown: 90, desc: 'Spend 8 Souls to gain +3.0💀/s for 25s (+75 net). Use early or when behind on economy.' },
       { id: 'battle_trance', name: 'Battle Trance', icon: '🗡️', cost: 28, duration: 10, cooldown: 48, desc: 'All units deal +25% damage for 10s. Stack with War Cry for a devastating push.' },
-      { id: 'mending_wave',  name: 'Mending Wave',  icon: '💚', cost: 38, duration: 0,  cooldown: 60, desc: 'All units instantly restore 30% of their max HP. Best used mid-fight to sustain a hold.' },
-      { id: 'wrath_toll',    name: 'Wrath Toll',    icon: '💢', cost: 20, duration: 7,  cooldown: 55, desc: '+50% attack rate for 7s, but your units take 30% more damage. High risk, high reward.' },
-      { id: 'soul_spike',    name: 'Soul Spike',    icon: '✨', cost: 15, duration: 0,  cooldown: 48, desc: 'Instantly gain +1.5💀 per living unit you have on the field (min 8, max 30). Scales with army size.' },
-      { id: 'last_rites',    name: 'Last Rites',    icon: '👻', cost: 40, duration: 3,  cooldown: 70, desc: 'All units take 80% less damage for 3s. Use to survive a burst engagement or cross enemy fire.' },
+      { id: 'mending_wave', name: 'Mending Wave', icon: '💚', cost: 38, duration: 0, cooldown: 60, desc: 'All units instantly restore 30% of their max HP. Best used mid-fight to sustain a hold.' },
+      { id: 'wrath_toll', name: 'Wrath Toll', icon: '💢', cost: 20, duration: 7, cooldown: 55, desc: '+50% attack rate for 7s, but your units take 30% more damage. High risk, high reward.' },
+      { id: 'soul_spike', name: 'Soul Spike', icon: '✨', cost: 15, duration: 0, cooldown: 48, desc: 'Instantly gain +1.5💀 per living unit you have on the field (min 8, max 30). Scales with army size.' },
+      { id: 'last_rites', name: 'Last Rites', icon: '👻', cost: 40, duration: 3, cooldown: 70, desc: 'All units take 80% less damage for 3s. Use to survive a burst engagement or cross enemy fire.' },
     ];
 
     // ── TUTORIAL ──
@@ -12231,19 +12693,19 @@
       const can6 = p.buffCooldowns[6] <= 0 && p.souls >= bf[6].cost; // Wrath Toll   (20💀 +atk/-dr)
       const can7 = p.buffCooldowns[7] <= 0 && p.souls >= bf[7].cost; // Soul Spike   (15💀 +1.5/unit)
       const can8 = p.buffCooldowns[8] <= 0 && p.souls >= bf[8].cost; // Last Rites   (40💀 80%DR 3s)
-      const winning     = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
-      const winningBig  = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
-      const losing      = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
+      const winning = myCount > enCount + 1 || enemy.baseHp < p.baseHp - 15;
+      const winningBig = myCount > enCount + 2 || enemy.baseHp < p.baseHp - 30;
+      const losing = enCount > myCount + 2 || p.baseHp < enemy.baseHp - 20;
       const losingBadly = enCount > myCount + 3 || p.baseHp < enemy.baseHp - 35;
-      const midOwned    = G.midOwner === pid;
-      const lowBodies   = p.bodies < 10;
-      const critBodies  = p.bodies < 5;
-      const lowSouls    = p.souls < 25;
+      const midOwned = G.midOwner === pid;
+      const lowBodies = p.bodies < 10;
+      const critBodies = p.bodies < 5;
+      const lowSouls = p.souls < 25;
       const soulStarved = p.souls < 15 && p.souls >= 8;
-      const richSouls   = p.souls > bf[2].cost + 20;   // 65+
-      const flushSouls  = p.souls > bf[2].cost + 60;   // 105+
-      const pushingSouls= p.souls > bf[2].cost + 40;   // 85+
-      const bigArmy     = myCount >= 5;
+      const richSouls = p.souls > bf[2].cost + 20;   // 65+
+      const flushSouls = p.souls > bf[2].cost + 60;   // 105+
+      const pushingSouls = p.souls > bf[2].cost + 40;   // 85+
+      const bigArmy = myCount >= 5;
       const soulOverflow = can2 && flushSouls && p.bodies < p.workerCap * 6;
 
       if (diff === 'expert') {
@@ -13163,7 +13625,7 @@
             tt.style.display = 'block';
             tt.style.left = Math.min(ev.clientX + 10, window.innerWidth - 260) + 'px';
             tt.style.top = Math.max(ev.clientY - tt.offsetHeight - 8, 4) + 'px';
-          }); 
+          });
           el.addEventListener('mouseleave', hideTT);
           el.addEventListener('mousemove', ev => {
             const tt = document.getElementById('tooltip');
@@ -13345,7 +13807,7 @@
           card.addEventListener('mouseenter', () => {
             if (pid === 1) { P1_SEL = i; P1_MODE = 1; } else { P2_SEL = i; P2_MODE = 1; }
             refreshSel(pid); updateStatPanel(pid);
-            
+
             if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 1 });
           });
           card.addEventListener('mouseleave', () => { _clearStatPanel(pid); });
@@ -13369,7 +13831,7 @@
           card.addEventListener('mouseenter', () => {
             if (pid === 1) { P1_SEL = i; P1_MODE = 2; } else { P2_SEL = i; P2_MODE = 2; }
             refreshSel(pid); updateStatPanel(pid);
-            
+
             if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 2 });
           });
           card.addEventListener('mouseleave', () => { _clearStatPanel(pid); });
@@ -14079,19 +14541,19 @@
             break;
           }
         case 'all_speed': case 'faction_speed':
-        {
-          const spdVal = up.val || up.value || 0.14;
-          const spdAtkVal = up.atkRateBonus || ((up.effect === 'all_speed') ? 0.10 : 0); // Spirits: +15% atk rate (or legacy 10%)
-          liveUnits.filter(u => !u.def.isWorker).forEach(u => {
-            u.def.speed *= (1 + spdVal);
-            if (spdAtkVal) u.def.attackRate *= (1 + spdAtkVal);
-          });
-          G.unitDefs[pid - 1].filter(d => !d.isWorker).forEach(d => {
-            d.speed *= (1 + spdVal);
-            if (spdAtkVal) d.attackRate *= (1 + spdAtkVal);
-          });
-          break;
-        }
+          {
+            const spdVal = up.val || up.value || 0.14;
+            const spdAtkVal = up.atkRateBonus || ((up.effect === 'all_speed') ? 0.10 : 0); // Spirits: +15% atk rate (or legacy 10%)
+            liveUnits.filter(u => !u.def.isWorker).forEach(u => {
+              u.def.speed *= (1 + spdVal);
+              if (spdAtkVal) u.def.attackRate *= (1 + spdAtkVal);
+            });
+            G.unitDefs[pid - 1].filter(d => !d.isWorker).forEach(d => {
+              d.speed *= (1 + spdVal);
+              if (spdAtkVal) d.attackRate *= (1 + spdAtkVal);
+            });
+            break;
+          }
         case 'sky_bounty': p.skyBountyAmt = up.value || up.val || 10; break;
         case 'hellfire_rate': p.hellfireRate = up.value || up.val; break;
         case 'chill_dur': case 'chill_upgrade':
@@ -14649,13 +15111,13 @@
         // Stage is rotated -90°: positions in stage-local space map correctly after rotation.
         // Skip getBoundingClientRect (screen-space) and use local coords directly.
         el.style.left = (x * _canvasScale - 30) + 'px';
-        el.style.top  = Math.max(y * _canvasScale - 40, 10) + 'px';
+        el.style.top = Math.max(y * _canvasScale - 40, 10) + 'px';
         el.style.animationName = 'popFloatPortrait';
       } else {
         const cx = canvas.getBoundingClientRect();
         const pp = popParent ? popParent.getBoundingClientRect() : cx;
         el.style.left = (cx.left - pp.left + x * _canvasScale - 30) + 'px';
-        el.style.top  = (cx.top  - pp.top  + Math.max(y * _canvasScale - 40, 10)) + 'px';
+        el.style.top = (cx.top - pp.top + Math.max(y * _canvasScale - 40, 10)) + 'px';
       }
       popParent.appendChild(el);
       setTimeout(() => el.remove(), 1600);
@@ -14689,12 +15151,12 @@
         // In portrait the rotated canvas: visual left = cx.left, visual bottom = cx.top + cx.height
         // game (gx, gy) → screen X = cx.left + gy*scale, screen Y = (cx.top+cx.height) - gx*scale
         el.style.left = (cx.left + G.groundY * _canvasScale - 24) + 'px';
-        el.style.top  = (cx.top + cx.height - baseX * _canvasScale - 80) + 'px';
+        el.style.top = (cx.top + cx.height - baseX * _canvasScale - 80) + 'px';
         el.style.animationName = 'emoteFloatPortrait';
       } else {
         const ppR = popP ? popP.getBoundingClientRect() : cx;
         el.style.left = (cx.left - ppR.left + baseX * _canvasScale - 24) + 'px';
-        el.style.top  = (cx.top  - ppR.top  + G.groundY * _canvasScale - 80) + 'px';
+        el.style.top = (cx.top - ppR.top + G.groundY * _canvasScale - 80) + 'px';
       }
       popP.appendChild(el);
       setTimeout(() => el.remove(), 1900);
@@ -15261,8 +15723,8 @@
         const _tOwner = G.players[target.player - 1];
         if (_tOwner && Math.abs(target.x - _tOwner.baseX) < 180) actualDmg *= 0.88;
         if (target._ironwalled > 0) actualDmg *= 0.6;
-        if (target._lastRites > 0)  actualDmg *= 0.20;
-        if (target._wrathToll > 0)  actualDmg *= 1.30;
+        if (target._lastRites > 0) actualDmg *= 0.20;
+        if (target._wrathToll > 0) actualDmg *= 1.30;
         if (target._cocoonArmor) actualDmg *= (1 - target._cocoonArmor); // Chrysalis cocoon damage reduction
         // Brutes Fortify — 22% DR when standing still (+ mastery bonus)
         if (target.fortified) {
@@ -16463,9 +16925,9 @@
         // Live milestone popups so players know the stakes
         for (let i = 0; i < 2; i++) {
           const prev = ev._kothProgress[i] - dt, cur = ev._kothProgress[i];
-          if (prev < 10 && cur >= 10) showPopup(G.midX, G.groundY - 80, `👑 P${i+1} 10s held`, '#fdcb6e', i + 1);
-          if (prev < 20 && cur >= 20) showPopup(G.midX, G.groundY - 80, `👑 P${i+1} 20s held`, '#fdcb6e', i + 1);
-          if (prev < 40 && cur >= 40) showPopup(G.midX, G.groundY - 80, `👑 P${i+1} 40s held`, '#fdcb6e', i + 1);
+          if (prev < 10 && cur >= 10) showPopup(G.midX, G.groundY - 80, `👑 P${i + 1} 10s held`, '#fdcb6e', i + 1);
+          if (prev < 20 && cur >= 20) showPopup(G.midX, G.groundY - 80, `👑 P${i + 1} 20s held`, '#fdcb6e', i + 1);
+          if (prev < 40 && cur >= 40) showPopup(G.midX, G.groundY - 80, `👑 P${i + 1} 40s held`, '#fdcb6e', i + 1);
         }
         // Pay out when 60s expires — each player earns based on their own hold time
         if (ev.timer >= (ev.duration || 60)) {
@@ -16483,9 +16945,9 @@
             wp.bodies += bodies;
             wp.totalSoulsEarned = (wp.totalSoulsEarned || 0) + souls;
             wp.totalBodiesEarned = (wp.totalBodiesEarned || 0) + bodies;
-            showPopup(G.midX, G.groundY - 70, `👑 P${i+1} ${held.toFixed(0)}s → +${souls}💀 +${bodies}🦴`, '#fdcb6e', i + 1);
+            showPopup(G.midX, G.groundY - 70, `👑 P${i + 1} ${held.toFixed(0)}s → +${souls}💀 +${bodies}🦴`, '#fdcb6e', i + 1);
             spawnParticles(G.midX, G.groundY - 10, '#fdcb6e', Math.round(15 + t * 30));
-            addKillFeed(`👑 P${i+1} held mid ${held.toFixed(0)}s → +${souls}💀 +${bodies}🦴`, '#fdcb6e');
+            addKillFeed(`👑 P${i + 1} held mid ${held.toFixed(0)}s → +${souls}💀 +${bodies}🦴`, '#fdcb6e');
             anyPaid = true;
           }
           if (!anyPaid) {
@@ -16720,8 +17182,8 @@
           }
           let dmg = Number.isFinite(p.dmg) ? p.dmg : 1;
           if (t._ironwalled > 0) dmg *= 0.6;
-          if (t._lastRites > 0)  dmg *= 0.20;
-          if (t._wrathToll > 0)  dmg *= 1.30;
+          if (t._lastRites > 0) dmg *= 0.20;
+          if (t._wrathToll > 0) dmg *= 1.30;
           if (t._cocoonArmor) dmg *= (1 - t._cocoonArmor); // Chrysalis cocoon damage reduction
           // Brutes Fortify — 22% DR when standing still (+ mastery bonus)
           if (t.fortified) {
@@ -16844,8 +17306,8 @@
           p.souls = Math.min(900, p.souls + 3.0 * dt);
         }
         if (p.activeBuffs.battle_trance > 0) p.activeBuffs.battle_trance = Math.max(0, p.activeBuffs.battle_trance - dt);
-        if (p.activeBuffs.wrath_toll > 0)    p.activeBuffs.wrath_toll    = Math.max(0, p.activeBuffs.wrath_toll    - dt);
-        if (p.activeBuffs.last_rites > 0)    p.activeBuffs.last_rites    = Math.max(0, p.activeBuffs.last_rites    - dt);
+        if (p.activeBuffs.wrath_toll > 0) p.activeBuffs.wrath_toll = Math.max(0, p.activeBuffs.wrath_toll - dt);
+        if (p.activeBuffs.last_rites > 0) p.activeBuffs.last_rites = Math.max(0, p.activeBuffs.last_rites - dt);
         // Fortune Seekers: streak timer decay (once per player per frame, NOT per unit)
         if (G._fortuneStreakTimer && G._fortuneStreakTimer[si] > 0) {
           G._fortuneStreakTimer[si] -= dt;
@@ -16865,15 +17327,15 @@
         // Spawn protection
         if (u.spawnProtectionTimer > 0) u.spawnProtectionTimer = Math.max(0, u.spawnProtectionTimer - dt);
         // Buff timers on unit
-        if (u._warcryed > 0)     u._warcryed     = Math.max(0, u._warcryed     - dt);
-        if (u._ironwalled > 0)   u._ironwalled   = Math.max(0, u._ironwalled   - dt);
+        if (u._warcryed > 0) u._warcryed = Math.max(0, u._warcryed - dt);
+        if (u._ironwalled > 0) u._ironwalled = Math.max(0, u._ironwalled - dt);
         if (u._battleTrance > 0) u._battleTrance = Math.max(0, u._battleTrance - dt);
-        if (u._wrathToll > 0)    u._wrathToll    = Math.max(0, u._wrathToll    - dt);
-        if (u._lastRites > 0)    u._lastRites    = Math.max(0, u._lastRites    - dt);
+        if (u._wrathToll > 0) u._wrathToll = Math.max(0, u._wrathToll - dt);
+        if (u._lastRites > 0) u._lastRites = Math.max(0, u._lastRites - dt);
         if (u._ironResolvePopup > 0) u._ironResolvePopup = Math.max(0, u._ironResolvePopup - dt);
         if (u._misfirePopup > 0) u._misfirePopup = Math.max(0, u._misfirePopup - dt);
         if (u._finalStand > 0) u._finalStand = Math.max(0, u._finalStand - dt);
-        if (u._phaseFlash > 0)  u._phaseFlash  = Math.max(0, u._phaseFlash  - dt);
+        if (u._phaseFlash > 0) u._phaseFlash = Math.max(0, u._phaseFlash - dt);
         // Royal Guard regen
         if (u.def.regenPerSec) u.hp = Math.min(u.maxHp, u.hp + (u.def.regenPerSec) * dt);
         // Stun
@@ -17059,7 +17521,7 @@
               const berserkHPM = (u.def.berserkHPThresh && u.hp < u.maxHp * u.def.berserkHPThresh) ? 2.0 : 1.0;
               const berserkM = u._berserkActive ? 2.0 : 1.0;
               const warcryAtkM = u._warcryed > 0 ? 1.15 : 1.0;
-              const wrathAtkM  = u._wrathToll > 0 ? 1.50 : 1.0;
+              const wrathAtkM = u._wrathToll > 0 ? 1.50 : 1.0;
               doAttack(u, enemy, frenzyM);
               const densitySlow = (u.def.type === 'rng' && u._densitySlowMult > 1) ? u._densitySlowMult : 1;
               const meleeSlow = (u.def.type === 'rng' && u._meleeDisrupted) ? 1.35 : 1; // disrupted archers fire 35% slower
@@ -17338,13 +17800,13 @@
             u._chrysPhase = 'adult';
             u._cocoonArmor = 0;
             const d = u.def;
-            if (d.chrysAdultHp)    { u.maxHp = d.chrysAdultHp; u.hp = d.chrysAdultHp; }
-            if (d.chrysAdultDmg)   { u.def.dmg = d.chrysAdultDmg; }
+            if (d.chrysAdultHp) { u.maxHp = d.chrysAdultHp; u.hp = d.chrysAdultHp; }
+            if (d.chrysAdultDmg) { u.def.dmg = d.chrysAdultDmg; }
             if (d.chrysAdultSpeed) { u.def.speed = d.chrysAdultSpeed; }
             if (d.chrysAdultAerial) { u.def.aerial = true; }
             if (d.chrysAdultImmune) { u.def.immuneDebuff = true; }
-            if (d.chrysAdultName)  { u.def.name = d.chrysAdultName; }
-            if (d.chrysAdultIcon)  { u.def.icon = d.chrysAdultIcon; }
+            if (d.chrysAdultName) { u.def.name = d.chrysAdultName; }
+            if (d.chrysAdultIcon) { u.def.icon = d.chrysAdultIcon; }
             spawnParticles(u.x, u.y, '#fdcb6e', 22);
             showPopup(u.x, u.y - 40, '🦋 EMERGED!', '#fdcb6e', u.player);
           }
@@ -17567,9 +18029,11 @@
       const elapsed = G.elapsed || 0;
 
       // Tier-based announcement — fire ONCE per tier, not per player
-      const _tierInfo = { 30: { tier: 2, label: 'TIER 2', desc: 'Secondary units now available' },
+      const _tierInfo = {
+        30: { tier: 2, label: 'TIER 2', desc: 'Secondary units now available' },
         60: { tier: 3, label: 'TIER 3', desc: 'Special units now available' },
-        150: { tier: 4, label: 'TIER 4', desc: 'Elite units now available' } };
+        150: { tier: 4, label: 'TIER 4', desc: 'Elite units now available' }
+      };
       for (const [tStr, info] of Object.entries(_tierInfo)) {
         const t = Number(tStr);
         if (elapsed >= t && elapsed - G.dt < t) {
@@ -21828,7 +22292,8 @@
       // ── Per-frame unit cache ─────────────────────────────────────────────────
       // Built once here so findEnemy / doAttack / updateUnits don't each re-scan
       // the full unit list for the same player/type sub-sets every call.
-      { const _on1 = [], _on2 = [], _m1 = [], _m2 = [], _r1 = [], _r2 = [], _c1 = [], _c2 = [];
+      {
+        const _on1 = [], _on2 = [], _m1 = [], _m2 = [], _r1 = [], _r2 = [], _c1 = [], _c2 = [];
         for (let _ci = 0; _ci < G.units.length; _ci++) {
           const _cu = G.units[_ci];
           if (_cu.offscreen) continue;
@@ -21942,7 +22407,7 @@
             MUSIC.setMood('victory');
             // Save badge
             const _badgeKey = 'gauntlet_' + FACTIONS[_gr.playerFactionIdx].id;
-            try { localStorage.setItem(_badgeKey, Date.now()); } catch (e) {}
+            try { localStorage.setItem(_badgeKey, Date.now()); } catch (e) { }
             setTimeout(() => {
               _gauntletCleanup();
               _resetCanvas();
@@ -22919,8 +23384,8 @@
       }
       // Music mood transitions
       if (id === 'sc-menu' || id === 'sc-online' || id === 'sc-faction' || id === 'sc-controls' ||
-          id === 'sc-mastery' || id === 'sc-campaign' || id === 'sc-rebind' || id === 'sc-tutorial' ||
-          id === 'sc-tournament-setup' || id === 'sc-tournament-bracket' || id === 'sc-draft') {
+        id === 'sc-mastery' || id === 'sc-campaign' || id === 'sc-rebind' || id === 'sc-tutorial' ||
+        id === 'sc-tournament-setup' || id === 'sc-tournament-bracket' || id === 'sc-draft') {
         if (!MUSIC.isPlaying()) MUSIC.start('menu'); else MUSIC.setMood('menu');
       } else if (id === 'sc-game') {
         MUSIC.setMood('battle');
@@ -23010,7 +23475,7 @@
       if (_isGauntlet() && P1_FACTION) {
         const _pIdx = FACTIONS.indexOf(P1_FACTION);
         const _gOrder = FACTIONS.map((_, i) => i);
-        for (let i = _gOrder.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [_gOrder[i], _gOrder[j]] = [_gOrder[j], _gOrder[i]]; }
+        for (let i = _gOrder.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[_gOrder[i], _gOrder[j]] = [_gOrder[j], _gOrder[i]]; }
         window._gauntletRun = { playerFactionIdx: _pIdx >= 0 ? _pIdx : 0, order: _gOrder, fight: 0, carriedHp: 150, restBonus: 20, totalKills: 0, totalTime: 0, fightResults: [] };
         P2_FACTION = FACTIONS[_gOrder[0]];
         AI_DIFFICULTY = 'easy'; AI_PERSONALITY = null;
@@ -25248,7 +25713,7 @@
         gain.connect(_masterGain);
         osc.start(t);
         osc.stop(t + dur);
-      } catch(e) {}
+      } catch (e) { }
     }
 
     // Player voice config — slightly different from enemies
@@ -26096,7 +26561,7 @@
         P1_FACTION = FACTIONS[fSelected[0]];
         // Build shuffled opponent order (all 24 factions)
         const _gOrder = FACTIONS.map((_, i) => i);
-        for (let i = _gOrder.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [_gOrder[i], _gOrder[j]] = [_gOrder[j], _gOrder[i]]; }
+        for (let i = _gOrder.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[_gOrder[i], _gOrder[j]] = [_gOrder[j], _gOrder[i]]; }
         window._gauntletRun = {
           playerFactionIdx: fSelected[0],
           order: _gOrder,
