@@ -7993,7 +7993,7 @@
           style="margin-left:5px;font-size:.75em;opacity:.65;background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);border-radius:3px;padding:1px 5px;letter-spacing:.05em;min-width:1.6em;display:inline-block;text-align:center;"></span></button>
       <span
         style="font-family:Rajdhani,sans-serif;font-size:clamp(.44rem,.68vw,.58rem);color:var(--dim);letter-spacing:.07em;opacity:.55;">BEYOND
-        RTS CONQUEST · v1.0</span>
+        RTS CONQUEST · v2.0</span>
     </div>
   </div>
   <!-- AI VS AI mode label inlined into faction screen JS -->
@@ -9125,6 +9125,17 @@
                 if (_graceLeft <= 0) {
                   clearInterval(window._graceInterval);
                   window._graceInterval = null;
+                  // Grace expired with no reconnect — trigger win
+                  document.getElementById('online-dc-overlay').classList.remove('show');
+                  if (typeof G !== 'undefined' && G) {
+                    const _oppIdx = myPid === 1 ? 1 : 0;
+                    if (G.players[_oppIdx]) G.players[_oppIdx].baseHp = 0;
+                    G.paused = false;
+                    G._disconnectWin = true;
+                    if (typeof showPopup === 'function') showPopup(G.w / 2, G.groundY - 120, '⚠ OPPONENT LEFT — YOU WIN', '#f39c12', null);
+                    G.running = false;
+                    setTimeout(() => { if (typeof checkWin === 'function') checkWin(); }, 1200);
+                  }
                 }
               }, 1000);
             } else if (onGame && youWin && typeof G !== 'undefined' && G && G.running) {
@@ -9134,6 +9145,7 @@
               const oppIdx = myPid === 1 ? 1 : 0;
               if (G.players[oppIdx]) G.players[oppIdx].baseHp = 0;
               G.paused = false;
+              G._disconnectWin = true;
               showPopup(G.w / 2, G.groundY - 120, '⚠ OPPONENT LEFT — YOU WIN', '#f39c12', null);
               G.running = false;
               setTimeout(() => checkWin(), 1200);
@@ -10282,15 +10294,16 @@
       bubble.style.display = 'block';
       bubble.style.pointerEvents = 'none';
       bubble.className = 'camp-dia-show';
-      // Position near the correct base — simpler than _campPosBubble for online chat
+      // Position above the base — bases sit at ~72% of canvas height
       const _cx = canvas.getBoundingClientRect();
       const _bh = bubble.offsetHeight || 60;
+      const _baseY = _cx.top + _cx.height * 0.60; // above groundY
       if (side === 'player') {
         bubble.style.left = Math.max(10, _cx.left + 20) + 'px';
       } else {
         bubble.style.left = Math.min(window.innerWidth - 10, _cx.right - 20) - Math.min(380, window.innerWidth * 0.82) + 'px';
       }
-      bubble.style.top = Math.max(10, _cx.top + 10) + 'px';
+      bubble.style.top = Math.max(10, _baseY - _bh - 10) + 'px';
       bubble.style.setProperty('--arrow-left', side === 'player' ? '30px' : 'calc(100% - 50px)');
       // Typewriter with per-letter sound
       let charIdx = 0, soundCounter = 0;
@@ -23337,7 +23350,7 @@
         gt.style.color = _winner.id === 1 ? '#2471a3' : '#c0392b';
         gt.style.textShadow = '';
         const _wcEl = document.getElementById('go-win-condition');
-        if (_wcEl) _wcEl.textContent = 'VICTORY BY BASE DESTRUCTION';
+        if (_wcEl) _wcEl.textContent = _G._disconnectWin ? 'OPPONENT DISCONNECTED' : 'VICTORY BY BASE DESTRUCTION';
         const mockSubs = [
           'Get rekt.', 'Absolutely demolished.', 'Not even close.',
           'They never stood a chance.', 'Pack it up.',
