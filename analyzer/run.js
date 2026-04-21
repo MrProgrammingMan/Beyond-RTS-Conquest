@@ -721,17 +721,18 @@ async function main() {
   // PHASE 9 (optional): LOCAL FIX SERVER
   // Keeps process alive on port 3742 so the HTML report's "Apply Fix" buttons
   // can call back to Node to generate and apply diffs without a separate step.
-  // Skip with --no-server or when running in CI (no TTY).
+  // Skip only when --no-server is explicitly passed or running in a known CI env.
+  // isTTY is intentionally NOT checked — VS Code terminals report isTTY=false.
+  // hasApiKey is intentionally NOT required — server still serves ping + diff
+  // endpoints; AI fix generation degrades gracefully when no key is present.
   // ════════════════════════════════════════════════════════════════════════════
-  const isTTY = process.stdout.isTTY;
-  if (!noServer && isTTY && hasApiKey && diagnosedBugs.length > 0) {
+  const isCI = !!(process.env.CI || process.env.GITHUB_ACTIONS || process.env.GITLAB_CI);
+  if (!noServer && !isCI) {
     log(`  🔧 Fix server starting on http://localhost:${FIX_PORT}`);
     log(`     Open the report, click "Apply Fix" on any bug card.`);
     log(`     Press Ctrl+C to exit.\n`);
 
     _startFixServer(diagnosedBugs, cfg, FIX_PORT);
-  } else if (!noServer && !isTTY) {
-    // Non-interactive (CI/pipe) — silently skip the server
   } else if (noServer) {
     log('  ℹ️  Fix server skipped (--no-server)');
   }
@@ -757,6 +758,11 @@ function _startFixServer(diagnosedBugs, cfg, port) {
 
     // ── POST /fix  { bugIndex: number } ───────────────────────────────────
     if (req.method === 'POST' && req.url === '/fix') {
+      if (!hasApiKey) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: false, summary: 'No Anthropic API key set. Add ANTHROPIC_API_KEY to your environment or .env file to enable AI fix generation.' }));
+        return;
+      }
       let body = '';
       req.on('data', c => body += c);
       req.on('end', async () => {
@@ -790,6 +796,11 @@ function _startFixServer(diagnosedBugs, cfg, port) {
 
     // ── POST /fix-generic  { type, severity, message, suggestion, elementHint, searchHints } ──
     if (req.method === 'POST' && req.url === '/fix-generic') {
+      if (!hasApiKey) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: false, summary: 'No Anthropic API key set. Add ANTHROPIC_API_KEY to your environment or .env file to enable AI fix generation.' }));
+        return;
+      }
       let body = '';
       req.on('data', c => body += c);
       req.on('end', async () => {

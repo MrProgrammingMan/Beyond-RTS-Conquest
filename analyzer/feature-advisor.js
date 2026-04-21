@@ -34,34 +34,8 @@ async function generateFeatureAdvice(rawData, aggStats, anomalyReport, onlineRep
   const anomalyCount = (anomalyReport?.anomalies || []).length;
 
   // ── Existing features list (prevents duplicate suggestions) ────────────────
-  const existingFeatures = `
-FEATURES THAT ALREADY EXIST (DO NOT SUGGEST THESE OR VARIATIONS OF THESE):
-- Draft Mode: full ban/pick phase with P1 bans → P2 bans → P1 picks → P2 picks, greyed-out banned factions
-- Random Events system: Blood Moon (halved body costs), Arcane Surge (40% soul discount), Time Warp (+80% speed), Dark Eclipse (doubled desperation income) — rolls every 40-70s with visual overlays
-- Faction Mastery system: full skill tree per faction with XP, mastery perks, mastery flags that modify gameplay (fortifyDmgReduce, skyBountyAmt, chainRate, etc.)
-- Upgrade Tree: 7-node skill tree per faction purchased during gameplay with souls/bodies
-- Buff system: 9 Rally Buffs (War Cry, Iron Wall, Body Boon, Soul Tide, Battle Trance, Mending Wave, Wrath Toll, Soul Spike, Last Rites) — 3×3 grid, unlocked at 60s, cooldown-based
-- Spy system: deploy spies to reveal enemy info
-- Rogue Events: Treasure Courier and Arena Champion that spawn mid-map
-- Mid-zone control: capture the center for income bonuses
-- Desperation income: losing player gets accelerating passive income
-- Kill streaks: every 10 kills triggers a Wild Card (free surprise unit from another faction)
-- Kill feed: scrolling combat log with faction icons
-- Veteran system: units with 5+ kills or 3 retreats become veterans with visual star
-- Worker scaling: worker body cost increases with count
-- Chat/taunt system: faction-specific voice lines and taunts
-- Online multiplayer: WebRTC-based P2P with lobby system
-- AI personalities: 16 different AI playstyles (aggressive, defensive, swarm, economist, etc.)
-- Post-game stats: detailed breakdown with damage dealt, souls earned, unit efficiency
-- Tutorial mode: guided introduction for new players
-- Faction select with lore, pros/cons, matchup tips, and difficulty ratings
-- Sound effects and music system
-- Base castle themes per faction with unique visual styles
-- Damage escalation: global damage multiplier that increases over time to prevent stalemates
-- Tournament Bracket Mode: full single-elimination tournament with visual bracket UI, auto-advancing matches, and winner fanfare (sc-tournament-setup and sc-tournament-bracket screens)
-- Horde Mode (GAME_MODE='horde'): 10-wave defend-your-base; waves cycle factions warriors→infernal→bloodpact→glacial→summoners→voltborn→brutes→psionics→umbral→pandemonium; P1 units recalled between waves; per-wave background crossfades; battle↔intense music per phase
-- Unit Promotion & Naming: units earn a randomly generated name + glow after 5+ kills, tracked in kill feed with special death announcement
-- File-based adaptive music: calm.wav (menu), battle.wav, intense.wav, victory.wav — real audio files with crossfades`;
+  const existingFeatures = `ALREADY EXISTS — DO NOT SUGGEST OR REFRAME:
+Draft mode, random events (Blood Moon/Arcane Surge/Time Warp/Dark Eclipse), faction mastery skill tree, upgrade tree (7 nodes/faction), 9 rally buffs (War Cry/Iron Wall/Body Boon/Soul Tide/Battle Trance/Mending Wave/Wrath Toll/Soul Spike/Last Rites), spy system, rogue events (Treasure Courier/Arena Champion), mid-zone control, desperation income, kill streaks + wild card, kill feed, veteran system + unit naming/promotion, worker scaling, chat/taunts, online multiplayer (WebRTC), 16 AI personalities, post-game stats, tutorial mode, faction lore + matchup tips, sound/music system (calm/battle/intense/victory), base castle themes, damage escalation, tournament bracket mode, horde mode (10 waves).`;
 
   // ── Core prompt ─────────────────────────────────────────────────────────────
   const corePrompt = `You are a visionary game designer brainstorming NEW FEATURES for "Beyond RTS Conquest" — a browser-based 2D side-scroller RTS with 24 factions.
@@ -81,34 +55,15 @@ ${existingFeatures}
 
 ══ YOUR MISSION ══
 
-Generate as many genuinely EXCITING new feature ideas as you can think of — quality over quantity, but don't hold back if you have more good ideas. These should be the kind of features that make the developer go "oh shit, I need to build this". Think big, think creative, think about what would make this game UNFORGETTABLE.
+Generate the 5–7 best new feature ideas — the ones that make the developer go "I need to build this." Quality over quantity; don't pad.
 
-WHAT I WANT:
-- Brand new game mechanics that don't exist yet
-- New game modes that leverage the 24-faction system
-- Innovative UI features that feel premium
-- Social/competitive features that create emergent gameplay
-- Clever systems that create "one more game" addiction
-- Features that make the 24 factions feel even more distinct
-
-WHAT I DON'T WANT:
-- Bug fixes or patches to existing issues
-- Minor balance tweaks (nerfs/buffs)
-- Small QoL improvements that are obvious
-- Features that already exist — CHECK THE LIST ABOVE. Draft mode, random events/weather, mastery/prestige, buffs, spies, rogue events, kill streaks, veteran system, etc. ALL EXIST ALREADY
-- Generic RTS suggestions — be specific to THIS game and its unique identity
-- Variations of existing features disguised as new ones (e.g. "weather system" = random events, "progression system" = mastery tree)
-
-For each feature, think about:
-- How COOL would this feel to discover as a player?
-- Does it create interesting decisions or just more complexity?
-- Does it leverage the game's unique strengths (24 factions, side-scroller format, soul economy)?
-- Would watching this in an AI vs AI match be entertaining?
+WANT: genuinely new mechanics, modes, social/competitive features, "one more game" hooks. Must leverage the game's strengths: 24 factions, side-scroller format, soul+body economy.
+DON'T WANT: bug fixes, balance tweaks, minor QoL, anything already listed above, generic RTS suggestions not specific to this game.
 
 EXCITEMENT RATINGS:
-- 🔥🔥🔥 GAME-CHANGER — "This alone would make me tell friends about the game"
-- 🔥🔥 AWESOME — "This would significantly elevate the experience"
-- 🔥 COOL — "Nice addition that adds real depth"
+- game-changer: "This alone would make me tell friends about the game"
+- awesome: "This significantly elevates the experience"
+- cool: "Nice addition that adds real depth"
 
 Output ONLY a valid JSON array — no markdown fences, no preamble:
 
@@ -117,31 +72,27 @@ Output ONLY a valid JSON array — no markdown fences, no preamble:
     "priority": 1,
     "category": "mechanic|mode|ui|social|meta|economy|visual",
     "title": "Short punchy feature name",
-    "pitch": "2-3 sentence elevator pitch. Sell me on WHY this is exciting. Be specific to the game — reference faction names, existing mechanics, the soul economy, etc.",
+    "pitch": "2–3 sentences. Sell the WHY — be specific to this game, reference factions/mechanics by name.",
     "excitement": "game-changer|awesome|cool",
-    "howItWorks": "3-5 sentences explaining the mechanic in detail. How does it interact with existing systems? What decisions does it create?",
-    "factionSynergies": "Which of the 24 factions benefit most or interact interestingly with this feature? Be specific.",
+    "howItWorks": "4–5 sentences. Explain the mechanic in full detail. How does it interact with existing systems (upgrade tree, soul economy, faction passives)? What decisions does it create?",
+    "factionSynergies": "2–3 sentences. Which factions benefit most or create the most interesting interactions? Be specific — name them.",
     "effort": "quick|medium|large",
-    "implementation": "Concrete steps referencing actual function names and variable names from the game context. Which files/functions to modify, what new state to add to G, etc.",
-    "pasteToClaudePrompt": "Self-contained implementation request. Include: game is a single HTML file, vanilla JS + Canvas, ~20k lines. State the exact feature to add, which functions to modify (by name), what new state/logic is needed, and how it integrates with existing mechanics. End with 'Please implement this in index.html.' Max 800 chars."
+    "implementation": "3–4 sentences. Reference actual function names (spawnUnit, handleDeath, doAttack, updateUnits, applyUpgrade, etc.), what new state to add to G, and which screens/loops to modify.",
+    "pasteToClaudePrompt": "Self-contained implementation prompt ≤700 chars. Must include: game is a single HTML file, vanilla JS + Canvas, ~20k lines. State the exact feature, which functions to modify by name, what new G state is needed, and how it integrates with existing mechanics. End with 'Please implement this in index.html.'"
   }
 ]
 
 Rules:
-- Output ONLY the JSON array
-- Include a mix of game-changers, awesome features, and quick wins — but only if each one genuinely deserves to be on the list
-- Don't pad the list with filler — every suggestion should make the developer excited
-- Reference specific faction names, mechanic names, and function names from the game context
-- Do NOT suggest anything that already exists — check the mechanic list and faction context
-- Each pasteToClaudePrompt must be fully self-contained (someone with no context should understand it)
+- Output ONLY the JSON array — 5 to 7 entries
+- Every suggestion must be something genuinely new — check the existing list above
+- Reference specific faction names, mechanic names, and function names
 - Think like a player who loves this game and wants it to be INCREDIBLE`;
 
   try {
     const fullPrompt = injectContext(corePrompt, gameContext, 'compact');
     const response = await client.messages.create({
       model:      'claude-sonnet-4-6',
-      max_tokens: 16000,
-      betas:      ['output-128k-2025-02-19'],
+      max_tokens: 6000,
       messages:   [{ role: 'user', content: fullPrompt }],
     });
 

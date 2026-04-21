@@ -103,6 +103,8 @@ module.exports = {
       '.modal',
       'canvas',         // not a DOM interactive element
       '[data-qa-ignore]', // explicit opt-out marker
+      '#menu-footer *', // sticky footer intentionally overlays menu scroll area
+      '[aria-hidden="true"]', // hidden ghost buttons (mode triggers, etc.)
     ],
   },
 

@@ -192,6 +192,18 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
           const contrastThreshold = cfg.ui.contrastThreshold ?? 2.5;
 
           // ── Off-screen check ──────────────────────────────────────────────
+          // Helper: check if el is inside any scrollable ancestor (including the screen element itself)
+          function _inScrollableContainer(el) {
+            let p = el.parentElement;
+            while (p && p !== document.body) {
+              const ov = window.getComputedStyle(p);
+              if (ov.overflowY === 'auto' || ov.overflowY === 'scroll' ||
+                  ov.overflow === 'auto' || ov.overflow === 'scroll') return true;
+              p = p.parentElement;
+            }
+            return false;
+          }
+
           if (cfg.ui.checkOffscreen) {
             for (const el of filteredInteractives) {
               const r = el.getBoundingClientRect();
@@ -199,6 +211,9 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
               // Also skip elements with display:none or visibility:hidden
               const st = window.getComputedStyle(el);
               if (st.display === 'none' || st.visibility === 'hidden') continue;
+              // Skip elements that are below the fold in a scrollable container (accessible via scroll)
+              const belowFold = r.top > vpH;
+              if (belowFold && _inScrollableContainer(el)) continue;
               if (r.right < 0 || r.bottom < 0 || r.left > vpW || r.top > vpH) {
                 found.push({
                   type: 'element_offscreen',
@@ -296,14 +311,14 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
               const color = style.color;
               const bg = style.backgroundColor;
               // Parse rgb values
-              const parseRgb = s => {
-                const m = s.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-                return m ? [+m[1], +m[2], +m[3]] : null;
+              const parseRgba = s => {
+                const m = s.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                return m ? [+m[1], +m[2], +m[3], m[4] !== undefined ? +m[4] : 1] : null;
               };
-              const c = parseRgb(color);
-              const b = parseRgb(bg);
+              const c = parseRgba(color);
+              const b = parseRgba(bg);
               if (!c || !b) continue;
-              if (b[3] === 0) continue; // transparent bg
+              if (b[3] < 0.5) continue; // skip transparent/semi-transparent bg — can't compute true contrast
               // Relative luminance
               const lum = rgb => {
                 const [r, g, bl] = rgb.map(v => {
