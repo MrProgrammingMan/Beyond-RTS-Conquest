@@ -760,11 +760,13 @@
 
     .menu-title {
       font-family: 'Rajdhani', sans-serif;
-      font-size: var(--fs-xxl);
+      font-size: clamp(2rem, 5.5vw, 4.2rem);
       font-weight: 900;
       line-height: 1.05;
-      letter-spacing: .06em;
-      text-shadow: 0 0 50px rgba(212, 168, 67, .35), 0 2px 20px rgba(0, 0, 0, .6);
+      letter-spacing: .08em;
+      text-shadow: 0 0 80px rgba(212, 168, 67, .6), 0 0 40px rgba(212, 168, 67, .4), 0 4px 30px rgba(0, 0, 0, .8), inset 0 0 20px rgba(212, 168, 67, .15);
+      color: #f5f5f5;
+      filter: brightness(1.15) drop-shadow(0 0 15px rgba(212, 168, 67, .5));
     }
 
     /* ── Menu section groups ── */
@@ -3347,7 +3349,7 @@
 
     #siege-indicator {
       position: absolute;
-      top: clamp(22px, 3.5vh, 36px);
+      top: clamp(40px, 6vh, 56px);
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Rajdhani', sans-serif;
@@ -4706,85 +4708,115 @@
     }
 
     .dev-section {
-      background: rgba(255, 255, 255, .04);
-      border: 1px solid #333;
+      background: rgba(255,255,255,.04);
+      border: 1px solid #2a2a2a;
       border-radius: 6px;
-      padding: 14px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
-
+    .dev-section.dev-danger {
+      border-color: #5a1818;
+      background: rgba(231,76,60,.05);
+    }
     .dev-head {
-      font-size: .9rem;
+      font-size: .95rem;
       font-weight: 700;
-      letter-spacing: .08em;
-      margin-bottom: 6px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 6px;
+      letter-spacing: .1em;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 8px;
     }
-
     .dev-btn-active {
-      background: rgba(243, 156, 18, .2) !important;
+      background: rgba(243,156,18,.25) !important;
       border-color: #f39c12 !important;
       color: #f39c12 !important;
     }
-
     .dev-row-label {
-      color: #aaa;
-      font-size: .68rem;
-      min-width: 90px;
+      color: #bbb;
+      font-size: .78rem;
+      min-width: 100px;
+      letter-spacing: .03em;
     }
-
     .dev-row-controls {
       display: flex;
-      gap: 4px;
+      gap: 5px;
       flex-wrap: wrap;
       align-items: center;
     }
-
     .dev-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      font-size: .7rem;
+      font-size: .78rem;
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,.03);
     }
-
+    .dev-row:last-child { border-bottom: none; }
     .dev-row span {
-      color: #aaa;
+      color: #ddd;
+      font-size: .84rem;
+      font-weight: 600;
     }
-
     .dev-btn {
       font-family: 'Rajdhani', sans-serif;
-      font-size: .62rem;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid #555;
-      color: #fff;
-      padding: 3px 10px;
-      border-radius: 3px;
+      font-size: .72rem;
+      background: rgba(255,255,255,.07);
+      border: 1px solid #444;
+      color: #ccc;
+      padding: 5px 12px;
+      border-radius: 4px;
       cursor: pointer;
+      letter-spacing: .04em;
+      transition: background .12s, border-color .12s, color .12s;
     }
-
     .dev-btn:hover {
-      background: rgba(243, 156, 18, .2);
+      background: rgba(243,156,18,.22);
       border-color: #f39c12;
+      color: #f39c12;
     }
-
+    .dev-tab-btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .75rem;
+      letter-spacing: .08em;
+      background: rgba(255,255,255,.05);
+      border: 1px solid #333;
+      color: #777;
+      padding: 5px 18px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all .12s;
+    }
+    .dev-tab-btn.active {
+      background: rgba(243,156,18,.18);
+      border-color: #f39c12;
+      color: #f39c12;
+    }
+    .dev-tab-btn:hover:not(.active) {
+      background: rgba(255,255,255,.1);
+      color: #ccc;
+      border-color: #555;
+    }
     [title] {
       cursor: help;
     }
-
     .dev-inp {
       font-family: 'Rajdhani', sans-serif;
-      font-size: .65rem;
-      background: #1a1a1a;
+      font-size: .78rem;
+      background: #111;
       border: 1px solid #444;
       color: #fff;
-      padding: 3px 8px;
-      border-radius: 3px;
-      width: 70px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      width: 80px;
       text-align: right;
+      transition: border-color .12s;
+    }
+    .dev-inp:focus {
+      border-color: #f39c12;
+      outline: none;
     }
 
     .rebind-wrap {
@@ -8255,7 +8287,7 @@
     style="display:none;position:fixed;z-index:10001;background:#1a1a2e;border:1px solid #f39c12;color:#fff;font-family:Rajdhani,sans-serif;font-size:.72rem;padding:5px 9px;border-radius:4px;max-width:220px;pointer-events:none;">
   </div>
   <div id="dev-panel"
-    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:320px;min-height:200px;max-width:min(90vw,780px);background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Rajdhani,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:visible;flex-direction:column;box-sizing:border-box;">
+    style="display:none;position:fixed;top:60px;left:60px;width:680px;height:80vh;min-width:260px;min-height:160px;background:#0a0a14;border:2px solid #f39c12;border-radius:8px;z-index:9998;font-family:Rajdhani,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,.9);overflow:hidden;flex-direction:column;box-sizing:border-box;">
     <!-- Drag handle -->
     <div id="dev-drag-bar"
       style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#12120a;border-bottom:1px solid #333;cursor:grab;user-select:none;">
@@ -8533,6 +8565,7 @@
       </div>
     </div>
     <div id="hud">
+      <button id="dev-toggle-btn" onclick="(function(){if(typeof NET!=='undefined'&&NET.isOnline())return;const d=document.getElementById('dev-panel');if(d.style.display==='flex'){d.style.display='none';}else if(_devUnlocked){openDevPanel(false);}else{_devShowAuth();}})()" style="display:none;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:12;background:rgba(243,156,18,.12);border:1px solid rgba(243,156,18,.35);color:rgba(243,156,18,.7);width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:.65rem;padding:0;line-height:1;font-family:monospace;" title="Dev Panel">⚡</button>
       <div class="player-hud" id="p1-hud">
         <div class="hud-info">
           <div class="hud-top">
@@ -11139,9 +11172,17 @@
     // Volume is controlled directly via element.volume. Mute/volume slider
     // sync by calling MUSIC._updateVolume() from toggleMute/setMusicVolume.
     const MUSIC = (() => {
-      const _SRC = { menu: 'music/calm.wav', battle: 'music/battle.wav', intense: 'music/intense.wav', victory: 'music/victory.wav' };
+      const _SRC = {
+        menu: 'music/calm.wav', battle: 'music/battle.wav',
+        intense: 'music/intense.wav', victory: 'music/victory.wav',
+        tension: 'music/tension.wav', defeat: 'music/defeat.wav',
+        epic: 'music/epic.wav', ambient: 'music/ambient.wav',
+      };
       // Per-track gain to normalize loudness differences between files
-      const _GAIN = { menu: 0.55, battle: 1.0, intense: 1.0, victory: 1.0 };
+      const _GAIN = {
+        menu: 0.55, battle: 1.0, intense: 1.0, victory: 1.0,
+        tension: 0.90, defeat: 0.85, epic: 0.90, ambient: 0.60,
+      };
       const _el = {};
       for (const [key, src] of Object.entries(_SRC)) {
         const a = new Audio(src);
@@ -12058,7 +12099,8 @@
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null, p2Slot5: null, p2Slot6: null,
     };
     let _rebinding = null; // { key: 'p1Left', el: element }
-    let _devUnlocked = false; // true once correct password entered
+    let _devUnlocked = (() => { try { return !!localStorage.getItem('_devAuth'); } catch(_){return false;} })();
+    let _devTab = 'p1'; // active tab: 'p1' | 'p2' | 'game'
 
     function startRebind(keyName, el) {
       _rebinding = { key: keyName, el };
@@ -12697,6 +12739,13 @@
         holdUntilAdvantage: true,  // won't commit unless it has ≥1 more unit OR enemy base < 70hp
         strikeCooldown: 12,        // minimum seconds between coordinated pushes
         scoutBeforeStrike: true,   // checks enemy unit count before spawning
+        // Wave system — holds between waves instead of mindless interval spawning
+        waveSystem: true,
+        waveHold:    [6, 6],   // hold phase duration: 6–12s (slow, misses some windows)
+        waveAssault: [4, 3],   // assault phase: 4–7s of rapid spawning
+        waveRecover: [4, 4],   // recovery: 4–8s
+        quietSpawn:  [9, 5],   // quiet single spawn every 9–14s during hold
+        instantStrike: false,  // waits for hold timer before committing (can miss openings)
       },
       // EXPERT — near-perfect tactician. Builds up quietly, reads your economy, then hits
       // HARD exactly when you're depleted. Should feel like playing a human who knows what
@@ -12715,6 +12764,13 @@
         scoutBeforeStrike: true,
         punishAfterSpend: true,     // watches for enemy big spend, then surges immediately after
         adaptiveTiming: true,       // delays next spawn if enemy JUST spent big (they're rebuilding)
+        // Wave system — sharper timing than hard, commits immediately on openings
+        waveSystem: true,
+        waveHold:    [3, 4],   // hold phase: 3–7s (faster to react than hard)
+        waveAssault: [5, 3],   // assault: 5–8s
+        waveRecover: [5, 4],   // recovery: 5–9s
+        quietSpawn:  [7, 3],   // quiet spawn every 7–10s
+        instantStrike: true,   // commits the moment a strike window opens
         // Expert cheats: slight passive income advantage
         soulBonus: 0.18, bodyBonus: 0.08,
       },
@@ -12735,6 +12791,13 @@
         punishAfterSpend: true,
         adaptiveTiming: true,
         perfectBrain: true,         // removes ALL Math.random() from decisions
+        // Wave system — tightest timing, longest recovery (deliberate pacing)
+        waveSystem: true,
+        waveHold:    [4, 4],   // hold phase: 4–8s
+        waveAssault: [5, 4],   // assault: 5–9s
+        waveRecover: [7, 4],   // recovery: 7–11s (longer = more deliberate between waves)
+        quietSpawn:  [6, 4],   // quiet spawn every 6–10s
+        instantStrike: true,   // commits immediately
         // No stat bonuses — pure intelligence only
       },
     };
@@ -13040,11 +13103,12 @@
           (enemySoulsLow && midIsMine && myCount >= enCount) || // mid bonus compensates for even army
           (enemyBaseWeak && myCount >= enCount && strikeReady)   // base HP window
         );
+        // Expose strike state for the wave system below
+        if (cfg.waveSystem) { if (!G._impStrike) G._impStrike = [false, false]; G._impStrike[pid - 1] = shouldStrike; }
 
         if (!shouldStrike && myCount >= 2) {
-          // Don't just sit idle — if army is big enough, keep building QUIETLY
-          // (we still let the AI spawn, just skip the "strike" mentality)
-          if (myCount >= p.unitCap - 2) return; // already near cap — hold and wait
+          if (myCount >= p.unitCap - 2) return;
+          if (cfg.waveSystem) return; // wave system below decides when to commit
           // Otherwise fall through and spawn normally (keep building up)
         }
 
@@ -13077,6 +13141,56 @@
       if (cfg.tacticalPatience) {
         const _stKey = pid === 1 ? '_aiStrikeTimer1' : '_aiStrikeTimer';
         if (G[_stKey] > 0) G[_stKey] -= (G.dt || 0.016);
+      }
+
+      // ── 3.6 WAVE SYSTEM — hard / expert / impossible ─────────────────────────────
+      // A smart player doesn't spend the moment they can afford something.
+      // They hold quietly, commit in a deliberate wave, then recover before going again.
+      // Phases: hold (quiet build) → wave (rapid assault) → recover (hard stop) → hold
+      // Parameters scale per difficulty; hard misses openings, impossible is razor-sharp.
+      if (cfg.waveSystem && !forceDefend && !_aiOutnumbered) {
+        const _phKey  = pid === 1 ? '_impPhase1'  : '_impPhase';
+        const _untKey = pid === 1 ? '_impUntil1'  : '_impUntil';
+        const _now    = G.elapsed || 0;
+        const _strikeLive = !!(G._impStrike && G._impStrike[pid - 1]) || (G._aiPunishWindow === pid);
+        const _wHold    = cfg.waveHold    || [4, 4];
+        const _wAssault = cfg.waveAssault || [5, 4];
+        const _wRecover = cfg.waveRecover || [7, 4];
+        const _wQuiet   = cfg.quietSpawn  || [7, 4];
+
+        if (!G[_phKey]) { G[_phKey] = 'hold'; G[_untKey] = _now + _wHold[0] + Math.random() * _wHold[1]; }
+
+        const _ph = G[_phKey];
+
+        if (_ph === 'recover') {
+          if (_now >= G[_untKey]) { G[_phKey] = 'hold'; G[_untKey] = _now + _wHold[0] + Math.random() * _wHold[1]; }
+          return; // hard block — no combat spawns during recovery; defense reaction bypasses via forceDefend
+        }
+
+        if (_ph === 'hold') {
+          const _canCommitNow = _strikeLive && (cfg.instantStrike || _now >= G[_untKey]);
+          if (_canCommitNow) {
+            // Opening detected — enter wave (instantly if instantStrike, else only after hold expires)
+            G[_phKey] = 'wave'; G[_untKey] = _now + _wAssault[0] + Math.random() * _wAssault[1];
+            // fall through to spawn
+          } else if (_now >= G[_untKey]) {
+            // Hold expired, no opening: drop ONE quiet unit to maintain presence, then hold again
+            G[_untKey] = _now + _wQuiet[0] + Math.random() * _wQuiet[1];
+            // fall through to spawn once
+          } else {
+            return; // still holding — not spending
+          }
+        }
+
+        if (G[_phKey] === 'wave') {
+          const _waveOver = _now >= G[_untKey];
+          const _conditionsGone = !_strikeLive && !_aiOutnumbered && myCount >= enCount;
+          if (_waveOver || _conditionsGone) {
+            G[_phKey] = 'recover'; G[_untKey] = _now + _wRecover[0] + Math.random() * _wRecover[1];
+            return;
+          }
+          // fall through — rapid spawning during wave
+        }
       }
 
       // ── 4. Hold back if saving and have enough army ──
@@ -13153,7 +13267,7 @@
       const flushSouls = p.souls > bf[2].cost + 60;   // 105+
       const pushingSouls = p.souls > bf[2].cost + 40;   // 85+
       const bigArmy = myCount >= 5;
-      const soulOverflow = can2 && flushSouls && p.bodies < p.workerCap * 6;
+      const soulOverflow = can2 && flushSouls && p.bodies < p.workerCap * 3; // only buy Body Boon when bodies are actually scarce
 
       // ── Personality-specific buff overrides (run before difficulty logic) ──
       const _persBuffOverride = () => {
@@ -13174,7 +13288,7 @@
             // Economy buffs first, always
             if (can3 && p.souls < 60) return 3;           // Soul Tide greedily
             if (can3) return 3;
-            if (can2 && p.bodies < p.workerCap * 5) return 2; // Body Boon often
+            if (can2 && p.bodies < p.workerCap * 3) return 2; // Body Boon only when genuinely scarce
             if (can7 && bigArmy) return 7;                // Soul Spike with big army
             break;
           case 'tactician':
@@ -13378,35 +13492,30 @@
         const isMel = u.type === 'mel', isRng = u.type === 'rng', isAir = u.type === 'air', isSum = u.type === 'sum';
         const cost = u.souls + u.bodies * 0.8;
 
-        // ── Impossible: pure math — no personality, no randomness ──
+        // ── Impossible: value-ratio base score — personality skipped, counter/diversity apply below ──
         if (diff === 'impossible') {
           const dps = u.dmg * (u.attackRate || 1);
           const valueRatio = dps / Math.max(1, cost);
-          const deficit = myCount < enCount - 1; // outnumbered — need bodies fast
+          const deficit = myCount < enCount - 1;
           const closing = enemy.baseHp < 35 && enemy.baseHp < p.baseHp - 20;
           if (deficit) {
-            // Outnumbered: speed + cheapness wins — get numbers on the field
             score += u.speed * 0.14;
             score -= cost * 0.28;
             if (cost <= 9) score += 8;
           } else {
-            // Normal: best value unit — damage-per-soul matters most
             score += valueRatio * 14;
             score += u.hp * 0.012;
-            if (cost >= 12 && cost <= 26) score += 3; // mid-tier sweet spot
+            if (cost >= 12 && cost <= 26) score += 3;
           }
           if (closing) {
-            // End game: fast + high damage to push through a dying base
             score += u.dmg * 0.22;
             if (u.speed > 70) score += 5;
-            if (isAir) score += 4; // aerial bypasses ground walls
+            if (isAir) score += 4;
           }
-          // Never let personality switch run for impossible
-          return { unit: u, score };
+          // Falls through to counter-picking, composition diversity, and faction scoring below
         }
 
-        // ── Personality weights — bias decisions, not veto them ──
-        // Positives are strong; negatives are gentle so faction identity survives
+        // ── Personality weights ──
         switch (personality) {
           case 'aggressive':
             score += u.dmg * 0.28;
@@ -13591,7 +13700,7 @@
               if (isAir) score += 4;
             }
             break;
-        }
+        } // end personality switch
 
         // Tutorial: very gentle, cheap melee preference
         if (diff === 'tutorial') {
@@ -13600,22 +13709,48 @@
           score -= cost * 0.08;
         }
 
-        // Counter-picking — scaled by counterStr (0 = none, 0.25 = medium partial, 0.65 = hard, 1.0 = expert)
+        // ── Counter-picking — scaled by counterStr ──
+        // Applies to ALL difficulties with counterStr > 0, including impossible.
         if (cfg.counterStr > 0 && totalEnemy > 2) {
           const cs = cfg.counterStr;
-          // Primary counters: ranged beats air, air beats melee, melee beats ranged
-          if (isRng && dominantEnemy === 'air') score += 14 * cs;
-          if (isAir && dominantEnemy === 'mel') score += 11 * cs;
-          if (isMel && dominantEnemy === 'rng') score += 9 * cs;
-          // Secondary: react to heavy counts of a type
-          if (isRng && enemyTypes.air >= 3) score += 5 * cs;
-          if (isAir && enemyTypes.mel >= 4) score += 5 * cs;
-          if (isMel && enemyTypes.rng >= 3) score += 4 * cs;
-          // Expert/hard also penalise the WRONG counter (anti-synergy units are actively bad picks)
-          if (cs >= 0.6 && diff !== 'medium') {
-            if (isMel && dominantEnemy === 'air' && enemyTypes.air >= 3) score -= 6 * cs;  // melee can't hit air
-            if (isAir && dominantEnemy === 'rng' && enemyTypes.rng >= 3) score -= 4 * cs;  // air gets shredded by ranged
+          // Primary counters: much stronger than before — must actually override unit base score
+          if (isRng && dominantEnemy === 'air') score += 22 * cs;
+          if (isAir && dominantEnemy === 'mel') score += 17 * cs;
+          if (isMel && dominantEnemy === 'rng') score += 14 * cs;
+          // Secondary: heavy type counts reinforce the choice
+          if (isRng && enemyTypes.air >= 3) score += 7 * cs;
+          if (isAir && enemyTypes.mel >= 4) score += 7 * cs;
+          if (isMel && enemyTypes.rng >= 3) score += 5 * cs;
+          // Wrong counter: strong penalty — melee into air / air into heavy ranged is actively bad
+          if (cs >= 0.45) {
+            if (isMel && dominantEnemy === 'air' && enemyTypes.air >= 2) score -= 14 * cs;
+            if (isAir && dominantEnemy === 'rng' && enemyTypes.rng >= 3) score -= 10 * cs;
+            if (isRng && dominantEnemy === 'mel' && enemyTypes.mel >= 4) score -= 6 * cs;
           }
+        }
+
+        // ── Composition diversity (hard+) ──
+        // Scores toward a type ratio that counters the enemy's dominant composition.
+        // Prevents the AI from mindlessly stacking one type when it already has enough.
+        if (cfg.counterStr > 0.3 && !forceDefend) {
+          const _myU = G.units.filter(uu => uu.player === pid && !uu.def.isWorker && !uu.isGuard && !uu.offscreen);
+          const _myMel = _myU.filter(uu => uu.def.type === 'mel').length;
+          const _myRng = _myU.filter(uu => uu.def.type === 'rng').length;
+          const _myAir = _myU.filter(uu => uu.def.type === 'air').length;
+          const _myT = (_myMel + _myRng + _myAir) || 1;
+          // Target ratio: tilt toward the type that beats the enemy's dominant type
+          let _tMel = 0.35, _tRng = 0.35, _tAir = 0.30;
+          if (dominantEnemy === 'air') { _tRng = 0.55; _tMel = 0.28; _tAir = 0.17; }
+          if (dominantEnemy === 'mel') { _tAir = 0.45; _tRng = 0.30; _tMel = 0.25; }
+          if (dominantEnemy === 'rng') { _tMel = 0.55; _tAir = 0.20; _tRng = 0.25; }
+          // Gap = how much under-represented this type is relative to target
+          const _gMel = _tMel - _myMel / _myT;
+          const _gRng = _tRng - _myRng / _myT;
+          const _gAir = _tAir - _myAir / _myT;
+          const _divStr = 16 * cfg.counterStr;
+          if (isMel) score += _gMel * _divStr;
+          if (isRng) score += _gRng * _divStr;
+          if (isAir) score += _gAir * _divStr;
         }
 
         // Mid control urgency — easy/tutorial don't care about mid at all
@@ -13631,7 +13766,7 @@
         if ((diff === 'expert' || diff === 'impossible') && enemy.baseHp < 40 && enemy.baseHp < p.baseHp - 25) {
           score += u.dmg * 0.14;
           if (u.speed > 70) score += 4;
-          if (isAir) score += 3; // aerials bypass melee walls
+          if (isAir) score += 3;
         }
 
         // Defense emergency
@@ -13639,17 +13774,26 @@
           score += u.hp * 0.06;
           score += u.speed * 0.05;
           if (isMel) score += 5;
-          if (isAir) score += 2; // aerials also useful for base defense
+          if (isAir) score += 2;
         }
 
         // Near unit cap: strongly prefer cheaper units
         if (myCount >= p.unitCap - 2 && cost > 14) score -= 5;
         if (myCount >= p.unitCap - 1 && cost > 8) score -= 3;
 
-        // Hard/expert: don't spam the same unit — variety bonus
-        if ((diff === 'hard' || diff === 'expert') && G.units.filter(uu => uu.player === pid && uu.defId === u.id).length > 4) {
-          score -= 2.5;
+        // ── Anti-spam: scaling penalty for buying too many of the same unit ──
+        // Applies to hard+. Penalty grows with count so the AI naturally diversifies.
+        if (cfg.counterStr > 0.3) {
+          const _sameCount = G.units.filter(uu => uu.player === pid && uu.defId === u.id).length;
+          if (_sameCount >= 2) score -= (_sameCount - 1) * 5 * cfg.counterStr;
+          if (_sameCount >= 5) score -= 15; // hard wall — 5+ of the same unit is always wrong
         }
+
+        // ── Body resource awareness ──
+        // When bodies are plentiful, prefer units that actually spend them.
+        // When bodies are scarce, avoid body-expensive picks unless defending.
+        if (p.bodies >= 14 && u.bodies >= 2) score += (p.bodies - 12) * 0.4;
+        if (p.bodies < 4 && u.bodies >= 3 && !forceDefend) score -= 6;
 
         // ── Faction-aware scoring (medium+ only) ──
         if (diff !== 'tutorial' && diff !== 'easy' && factionId) {
@@ -13824,16 +13968,20 @@
 
       // In aivsai mode run BOTH sides
       // Spectator mode indicator
+      const specBadge = document.getElementById('aivsai-spectate-badge');
       if (_isAiVsAiMode) {
-        const specBadge = document.getElementById('aivsai-spectate-badge');
         if (!specBadge) {
           const b = document.createElement('div');
           b.id = 'aivsai-spectate-badge';
-          b.style.cssText = 'position:absolute;top:clamp(46px,6.5vh,60px);left:50%;transform:translateX(-50%);z-index:6;background:rgba(0,0,0,.7);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Rajdhani,sans-serif;font-size:.55rem;padding:1px 10px;border-radius:8px;letter-spacing:.1em;pointer-events:none;';
-          b.textContent = '👁 SPECTATING';
+          b.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:6;background:rgba(0,0,0,.8);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Rajdhani,sans-serif;font-size:.5rem;padding:4px 10px;border-radius:6px;letter-spacing:.05em;pointer-events:none;';
           const _bfWrap = document.getElementById('battlefield-wrap');
           (_bfWrap || document.getElementById('sc-game')).appendChild(b);
         }
+        const mins = Math.floor((G.elapsed || 0) / 60);
+        const secs = Math.floor((G.elapsed || 0) % 60);
+        specBadge.textContent = `👁 SPECTATING ${mins}:${String(secs).padStart(2, '0')}`;
+      } else if (specBadge) {
+        specBadge.remove();
       }
       const aiPids = _isAiVsAiMode ? [1, 2] : [2];
       aiPids.forEach(pid => {
@@ -13885,7 +14033,7 @@
         // ── Normal decision timer ──
         if (!G._aiTimers) G._aiTimers = [0, 0];
         G._aiTimers[pid - 1] = (G._aiTimers[pid - 1] || 0) + dt;
-        const jitterScale = { tutorial: 0.8, easy: 0.7, medium: 0.9, hard: 0.3, expert: 0.08 }[diffKey] || 0.4;
+        const jitterScale = { tutorial: 0.8, easy: 0.7, medium: 0.9, hard: 0.3, expert: 0.08, impossible: 0.06 }[diffKey] || 0.4;
         const jitter = (Math.random() - 0.5) * jitterScale;
         // Shorten interval when outnumbered early — AI shouldn't fall behind to spam
         const _aiMyCount = G.units.filter(u => u.player === pid && !u.def.isWorker && !u.def.isSpawned).length;
@@ -13903,7 +14051,7 @@
           if (!G._aiDefTimers) G._aiDefTimers = [0, 0];
           G._aiDefTimers[pid - 1] = (G._aiDefTimers[pid - 1] || 0) + dt;
           // Defense reaction speed — wider gaps make each tier feel different
-          const defReactTime = { tutorial: 7.0, easy: 5.0, medium: 3.5, hard: 1.4, expert: 0.55 }[diffKey] || 3.5;
+          const defReactTime = { tutorial: 7.0, easy: 5.0, medium: 3.5, hard: 1.4, expert: 0.55, impossible: 0.3 }[diffKey] || 3.5;
           // How many enemies near base triggers a response
           const defThreshold = { tutorial: 6, easy: 5, medium: 3, hard: 1, expert: 1 }[diffKey] || 3;
           if (G._aiDefTimers[pid - 1] >= defReactTime) {
@@ -19620,6 +19768,7 @@
     function _showGauntletRunSummary(gr, completed) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('sc-gameover').classList.add('active');
+      if (typeof MUSIC !== 'undefined') MUSIC.setMood(completed ? 'epic' : 'defeat');
       const gt = document.getElementById('go-title');
       const goSub = document.getElementById('go-sub-text');
       const goWc = document.getElementById('go-win-condition');
@@ -22645,8 +22794,8 @@
         ctx.shadowBlur = 0;
         ctx.restore();
       }
-      // ── Psionics: corruption overlay — glowing purple eyes + tendrils ──
-      if (u._corrupted && u._corrupted > 0.1) {
+      // ── Psionics: corruption overlay — glowing purple eyes + tendrils + charge bar ──
+      if (u._corrupted && u._corrupted > 0.1 && !u._corruptedOrig) {
         const cp2 = u._corrupted;
         ctx.save();
         // Corruption ring
@@ -22675,6 +22824,40 @@
           ctx.beginPath(); ctx.arc(x - eyeOff, eyeY2, eyeR, 0, Math.PI * 2); ctx.fill();
           ctx.beginPath(); ctx.arc(x + eyeOff, eyeY2, eyeR, 0, Math.PI * 2); ctx.fill();
         }
+        ctx.shadowBlur = 0;
+        // Corruption charge bar — shows how close to mind control
+        const _cBw = r * 2 + 6, _cBy = u.def.aerial ? y + r * 1.6 : y + r + 4;
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.fillRect(x - _cBw / 2, _cBy, _cBw, 3);
+        ctx.fillStyle = cp2 > 0.7 ? '#c39bd3' : '#9b59b6';
+        ctx.shadowBlur = 5; ctx.shadowColor = '#9b59b6';
+        ctx.fillRect(x - _cBw / 2, _cBy, _cBw * cp2, 3);
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      }
+      // ── Psionics: mind control active — spinning arc + countdown bar ──
+      if (u._corruptTimer > 0) {
+        const _ctPct = Math.max(0, u._corruptTimer / 8);
+        const _ctBw = r * 2 + 6, _ctBy = u.def.aerial ? y + r * 1.6 : y + r + 4;
+        const _ctLow = _ctPct < 0.35;
+        const _rotA = (_now / 600) % (Math.PI * 2);
+        ctx.save();
+        // Spinning double-arc to signal active control
+        ctx.globalAlpha = 0.65 + Math.sin(_now / 180) * 0.2;
+        ctx.strokeStyle = _ctLow ? '#e74c3c' : '#9b59b6';
+        ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 10; ctx.shadowColor = _ctLow ? '#c0392b' : '#9b59b6';
+        ctx.beginPath(); ctx.arc(x, y, r + 7, _rotA, _rotA + Math.PI * 1.3); ctx.stroke();
+        ctx.beginPath(); ctx.arc(x, y, r + 7, _rotA + Math.PI, _rotA + Math.PI * 2.3); ctx.stroke();
+        ctx.shadowBlur = 0;
+        // Countdown bar
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.fillRect(x - _ctBw / 2, _ctBy, _ctBw, 3);
+        ctx.fillStyle = _ctLow ? '#e74c3c' : '#c39bd3';
+        ctx.shadowBlur = 5; ctx.shadowColor = _ctLow ? '#c0392b' : '#9b59b6';
+        ctx.fillRect(x - _ctBw / 2, _ctBy, _ctBw * _ctPct, 3);
         ctx.shadowBlur = 0;
         ctx.restore();
       }
@@ -23166,12 +23349,16 @@
         } else if (unitCount > 4 || G.elapsed > 30) {
           MUSIC.setMood('battle');
         } else {
-          MUSIC.setMood('menu'); // early game, no units out — stay calm
+          MUSIC.setMood('tension'); // early game, no units out — ominous buildup
         }
       }
       // Auto-refresh dev panel every ~1s while it's open
       _devRefreshTick = (_devRefreshTick + 1) % 60;
-      if (_devRefreshTick === 0 && document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
+      if (_devRefreshTick === 0) {
+        if (document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
+        const _dtb = document.getElementById('dev-toggle-btn');
+        if (_dtb) _dtb.style.display = _devUnlocked ? 'block' : 'none';
+      }
       requestAnimationFrame(gameLoop);
     }
 
@@ -23182,13 +23369,13 @@
         if (!G.running) return;
         G.running = false;
         G.collapseTime = 0;
-        MUSIC.setMood('victory');
         const _h = G.horde;
         setTimeout(() => {
           _hordeCleanup();
           _resetCanvas();
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('sc-gameover').classList.add('active');
+          if (typeof MUSIC !== 'undefined') MUSIC.setMood('defeat');
           const gt = document.getElementById('go-title');
           gt.textContent = '💀 BASE DESTROYED';
           gt.style.color = '#c0392b'; gt.style.textShadow = '0 0 20px rgba(192,57,43,.6)';
@@ -23200,7 +23387,11 @@
           document.getElementById('go-match-time').style.color = '#c0392b';
           document.getElementById('go-stats').innerHTML = `<div style="text-align:center;color:var(--gold);font-family:Rajdhani,sans-serif;font-size:1rem;padding:30px;">Wave ${wavesCleared + 1} broke through.<br>Total kills: ${G.players[0].kills || 0}</div>`;
           const cfBtn = document.getElementById('btn-change-faction');
-          if (cfBtn) cfBtn.textContent = '🔄 TRY AGAIN';
+          if (cfBtn) { cfBtn.textContent = '🔄 TRY AGAIN'; cfBtn.style.display = ''; }
+          const remBtn = document.getElementById('btn-rematch');
+          if (remBtn) remBtn.style.display = 'none';
+          const campBtn = document.getElementById('btn-camp-return');
+          if (campBtn) campBtn.style.display = 'none';
         }, 1650);
         return;
       }
@@ -23228,7 +23419,7 @@
         });
         if (p1Dead) {
           // P1 lost — gauntlet run over
-          MUSIC.setMood('victory');
+          MUSIC.setMood('defeat');
           setTimeout(() => {
             _gauntletCleanup();
             _resetCanvas();
@@ -23240,7 +23431,7 @@
           _gr.fight++;
           if (_gr.fight >= _gr.order.length) {
             // Completed all 24 — gauntlet victory!
-            MUSIC.setMood('victory');
+            MUSIC.setMood('epic');
             // Save badge
             const _badgeKey = 'gauntlet_' + FACTIONS[_gr.playerFactionIdx].id;
             try { localStorage.setItem(_badgeKey, Date.now()); } catch (e) { }
@@ -23272,6 +23463,7 @@
           _resetCanvas();
           document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
           document.getElementById('sc-gameover').classList.add('active');
+          if (typeof MUSIC !== 'undefined') MUSIC.setMood('defeat');
           const gt = document.getElementById('go-title');
           gt.textContent = 'MUTUAL DESTRUCTION';
           gt.style.color = '#f39c12'; gt.style.textShadow = '0 0 20px #cc8800';
@@ -23323,6 +23515,13 @@
         _resetCanvas();
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('sc-gameover').classList.add('active');
+        // Pick end-of-match music by outcome
+        if (typeof MUSIC !== 'undefined') {
+          const _p1Won = _winner.id === 1;
+          const _isBigWin = _isConquest() || CAMPAIGN.active || GAME_MODE === 'campaign';
+          const _endMood = !_p1Won ? 'defeat' : _isBigWin ? 'epic' : 'victory';
+          MUSIC.setMood(_endMood);
+        }
         // Reset crown from ragequit/gauntlet overrides
         const _crownEl = document.querySelector('.go-crown');
         if (_crownEl) _crownEl.textContent = '👑';
@@ -23331,13 +23530,20 @@
         const _soloMode = _vPs === 'solo' || GAME_MODE === 'solo' || GAME_MODE === 'tutorial';
         const _isTournament = GAME_MODE === 'tournament' && TOURNAMENT;
         const _isDraft = GAME_MODE === 'draft';
+        const _isHordeGO = GAME_MODE === 'horde';
+        const _isConquestGO = _isConquest();
+        const _isOnlineGO2 = typeof NET !== 'undefined' && NET.isOnline();
         // Update change-faction button label contextually
         const cfBtn = document.getElementById('btn-change-faction');
         if (cfBtn) cfBtn.textContent = _isDraft ? '🃏 REDRAFT' : '🔄 CHANGE FACTION';
-        // Show campaign return button if we came from campaign
+        // Show campaign return button only if came from campaign
         const campRetBtn = document.getElementById('btn-camp-return');
         if (campRetBtn) campRetBtn.style.display = CAMPAIGN.progress._wasCampaign ? 'inline-block' : 'none';
         CAMPAIGN.progress._wasCampaign = false;
+        // Hide rematch/change-faction for modes where replaying the same match makes no sense
+        const rematchBtn = document.getElementById('btn-rematch');
+        if (rematchBtn) rematchBtn.style.display = (_isConquestGO || _isHordeGO) ? 'none' : '';
+        if (cfBtn) cfBtn.style.display = (_isConquestGO || _isHordeGO) ? 'none' : '';
         const _tournamentWinner = _isTournament ? (_winner.id === 1 ? TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p1 : TOURNAMENT.rounds[TOURNAMENT.currentRound]?.[TOURNAMENT.currentMatchInRound]?.p2) : null;
         const _isAiVsAi = _vPs === 'aivsai' || GAME_MODE === 'aivsai';
         const _winnerName = _isTournament && _tournamentWinner
@@ -23525,6 +23731,7 @@
       _resetCanvas(); // clear any ragequit rendering artifacts
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('sc-gameover').classList.add('active');
+      if (typeof MUSIC !== 'undefined') MUSIC.setMood('victory');
 
       const tauntTitles = [
         'SORE LOSER, HUH?', 'RAGE DETECTED.', 'SKILL ISSUE.',
@@ -23986,47 +24193,6 @@
           e.preventDefault(); return;
         }
       }
-      // Dev panel open (Shift+M)
-      if (e.code === 'KeyM' && e.shiftKey) {
-        const _active = document.activeElement;
-        if (_active && (_active.tagName === 'INPUT' || _active.tagName === 'TEXTAREA')) return;
-        e.preventDefault();
-        const dvp = document.getElementById('dev-panel');
-        // Toggle closed if already open
-        if (dvp.style.display === 'flex') { dvp.style.display = 'none'; return; }
-        // If already unlocked, go straight to panel
-        if (_devUnlocked) { openDevPanel(false); return; }
-        // Show password prompt
-        dvp.style.display = 'flex';
-        document.getElementById('dev-panel-body').innerHTML = `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 0;">
-            <div style="font-size:1.4rem;color:#f39c12;letter-spacing:.1em;">🔒 DEV ACCESS</div>
-            <div style="font-size:.75rem;color:#888;">Enter password to unlock</div>
-            <input id="dev-pw-input" type="password" placeholder="password"
-              style="font-family:Rajdhani,sans-serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:200px;">
-            <div id="dev-pw-err" style="color:#e74c3c;font-size:.75rem;min-height:1em;"></div>
-            <div style="display:flex;gap:8px;">
-              <button id="dev-pw-enter-btn" style="font-family:Rajdhani,sans-serif;background:#f39c12;color:#000;border:none;padding:7px 20px;border-radius:4px;cursor:pointer;font-weight:700;">ENTER</button>
-              <button id="dev-pw-cancel-btn" style="font-family:Rajdhani,sans-serif;background:#333;color:#fff;border:1px solid #555;padding:7px 20px;border-radius:4px;cursor:pointer;">CANCEL</button>
-            </div>
-          </div>`;
-        setTimeout(() => {
-          const pi = document.getElementById('dev-pw-input');
-          const enterBtn = document.getElementById('dev-pw-enter-btn');
-          const cancelBtn = document.getElementById('dev-pw-cancel-btn');
-          if (enterBtn) enterBtn.addEventListener('click', e2 => { e2.stopPropagation(); checkDevPW(); });
-          if (cancelBtn) cancelBtn.addEventListener('click', () => { dvp.style.display = 'none'; });
-          if (pi) {
-            pi.focus();
-            pi.addEventListener('keydown', ev => {
-              if (ev.code === 'Enter' || ev.code === 'NumpadEnter') { ev.stopPropagation(); checkDevPW(); }
-              if (ev.code === 'Escape') dvp.style.display = 'none';
-              ev.stopPropagation();
-            });
-          }
-        }, 30);
-        return;
-      }
       if (e.code === 'Escape') {
         if (!G) return;
         if (!G.running) return;
@@ -24219,15 +24385,16 @@
         if (_mi2) _mi2.style.display = '';
       }
       // Music mood transitions
-      if (id === 'sc-menu' || id === 'sc-online' || id === 'sc-faction' || id === 'sc-controls' ||
+      if (id === 'sc-menu' || id === 'sc-online' || id === 'sc-controls' ||
         id === 'sc-mastery' || id === 'sc-campaign' || id === 'sc-rebind' || id === 'sc-tutorial' ||
         id === 'sc-tournament-setup' || id === 'sc-tournament-bracket' || id === 'sc-draft') {
         if (!MUSIC.isPlaying()) MUSIC.start('menu'); else MUSIC.setMood('menu');
+      } else if (id === 'sc-faction') {
+        if (!MUSIC.isPlaying()) MUSIC.start('ambient'); else MUSIC.setMood('ambient');
       } else if (id === 'sc-game') {
-        MUSIC.setMood('battle');
-      } else if (id === 'sc-gameover') {
-        MUSIC.setMood('victory');
+        MUSIC.setMood('tension'); // start tense; adaptive logic ramps to battle/intense
       }
+      // sc-gameover music is set per-outcome inside checkWin() / horde defeat paths
       if (id === 'sc-game' && typeof NET !== 'undefined' && NET.isOnline()) {
         setTimeout(() => _onlineChatShow(), 100);
       }
@@ -24600,7 +24767,7 @@
       medium: 'Buys upgrades occasionally, reacts slowly to threats. Makes frequent mistakes and ignores counters. Manageable with some practice.',
       hard: 'Fast spawns, counter-picks your army, uses buffs and upgrades strategically, deploys spies when ahead. Punishes poor choices. A real challenge.',
       expert: 'Near-instant reactions, nearly always optimal picks, uses spy, adapts every few seconds. Will punish any mistake. Very difficult.',
-      impossible: 'Zero randomness. Every decision is the mathematically correct move — perfect counters, perfect buff timing, perfect economic reads. Plays like the #1 human player.',
+      impossible: 'Zero randomness. Holds quietly between deliberate waves, strikes the moment you are depleted, then recovers before hitting again. Perfect counters, perfect buff timing. Plays like the #1 human player.',
     };
     function setGameMode(mode) {
       GAME_MODE = mode;
@@ -24985,9 +25152,21 @@
     const _menuEmbers = [], _menuSoldiers = [], _menuBanners = [], _menuSmoke = [];
     let _menuInited = false;
     const _menuBuildings = [], _menuFires = [];
+    const _menuLightningStrikes = [], _menuClouds = [];
+    function _mkCloud(w, h, startX) {
+      return {
+        x: startX,
+        y: Math.random() * h * 0.22,
+        rx: w * (0.22 + Math.random() * 0.20),
+        ry: h * (0.10 + Math.random() * 0.10),
+        speed: 3 + Math.random() * 7,
+        alpha: 0.55 + Math.random() * 0.3,
+      };
+    }
     function _initMenuScene(w, h) {
       _menuEmbers.length = 0; _menuSoldiers.length = 0; _menuBanners.length = 0; _menuSmoke.length = 0;
-      _menuBuildings.length = 0; _menuFires.length = 0;
+      _menuBuildings.length = 0; _menuFires.length = 0; _menuLightningStrikes.length = 0; _menuClouds.length = 0;
+      for (let i = 0; i < 10; i++) _menuClouds.push(_mkCloud(w, h, Math.random() * w));
       const groundY = h * 0.72;
 
       // City ruins on the horizon — towers, walls, arches
@@ -25080,6 +25259,50 @@
         sky.addColorStop(0.85, '#1e0c10');
         sky.addColorStop(1, '#2a0e0e');
         mctx.fillStyle = sky; mctx.fillRect(0, 0, w, groundY + 5);
+
+        // ── Storm clouds — gradient band + drifting radial blobs, no hard edges ──
+        // Base cloud layer: solid dark band filling the upper sky, fading downward
+        // Extra dense storm ceiling — very top of screen is solid, oppressive cloud mass
+        mctx.fillStyle = 'rgba(16,9,32,1)'; mctx.fillRect(0, 0, w, 6);
+        const cloudCeil = mctx.createLinearGradient(0, 0, 0, groundY * 0.18);
+        cloudCeil.addColorStop(0,   'rgba(28,16,52,1.0)');
+        cloudCeil.addColorStop(0.5, 'rgba(22,13,42,0.97)');
+        cloudCeil.addColorStop(1,   'rgba(16,9,32,0.85)');
+        mctx.fillStyle = cloudCeil; mctx.fillRect(0, 0, w, groundY * 0.18);
+        // Wispy cloud texture breaking up the flat ceiling
+        for (let ci = 0; ci < 8; ci++) {
+          const wx = (ci / 7 + Math.sin(_menuT * 0.004 + ci * 1.3) * 0.04) * w;
+          const wg = mctx.createRadialGradient(wx, groundY * 0.08, 0, wx, groundY * 0.1, w * 0.14);
+          wg.addColorStop(0,  'rgba(38,22,62,0.55)');
+          wg.addColorStop(0.6,'rgba(24,13,44,0.28)');
+          wg.addColorStop(1,  'rgba(0,0,0,0)');
+          mctx.fillStyle = wg; mctx.beginPath(); mctx.ellipse(wx, groundY * 0.09, w * 0.14, groundY * 0.09, 0, 0, Math.PI * 2); mctx.fill();
+        }
+        // Fade band from dense ceiling into open sky
+        const cloudBand = mctx.createLinearGradient(0, groundY * 0.15, 0, groundY * 0.60);
+        cloudBand.addColorStop(0,   'rgba(20,12,38,0.88)');
+        cloudBand.addColorStop(0.40,'rgba(14,8,28,0.60)');
+        cloudBand.addColorStop(0.75,'rgba(8,4,18,0.28)');
+        cloudBand.addColorStop(1,   'rgba(0,0,0,0)');
+        mctx.fillStyle = cloudBand; mctx.fillRect(0, groundY * 0.15, w, groundY * 0.45);
+        // Drifting cloud volumes — large radial gradients, always transparent at edge
+        _menuClouds.forEach(c => {
+          c.x -= c.speed * 0.016;
+          if (c.x - c.rx > w) c.x = -c.rx;
+          else if (c.x + c.rx < 0) c.x = w + c.rx;
+          const g = mctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.rx);
+          g.addColorStop(0,   `rgba(32,18,56,${c.alpha})`);
+          g.addColorStop(0.4, `rgba(22,12,40,${c.alpha * 0.72})`);
+          g.addColorStop(0.75,`rgba(12,6,22,${c.alpha * 0.35})`);
+          g.addColorStop(1,   'rgba(0,0,0,0)');
+          mctx.fillStyle = g;
+          mctx.save();
+          mctx.scale(1, c.ry / c.rx);
+          mctx.beginPath();
+          mctx.arc(c.x, c.y * c.rx / c.ry, c.rx, 0, Math.PI * 2);
+          mctx.fill();
+          mctx.restore();
+        });
 
         // ── Distant mountains ──
         mctx.fillStyle = '#0a050e';
@@ -25474,51 +25697,136 @@
         }
         mctx.globalAlpha = 1;
 
-        // ── War lightning — held 1.4s bolt, double-pass glow+core ──
-        {
-          const ltCycle = _menuT % 9;
-          const ltSeed  = Math.floor(_menuT / 9);
-          if (ltCycle > 7.6) {
-            const ltT     = (ltCycle - 7.6) / 1.4;
-            const ltFlash = Math.sin(ltT * Math.PI);
-            const ltX0    = w * (0.18 + (ltSeed % 5) * 0.16);
-            // Pre-compute bolt path (stable within cycle — no jitter)
-            const ltPts = [];
-            let lx = ltX0, ly = 0;
-            while (ly < groundY * 0.75) {
-              ltPts.push([lx, ly]);
-              ly += 12 + Math.sin(ltSeed * 4.3 + ly * 0.07) * 5;
-              lx += Math.sin(ltSeed * 3.1 + ly * 0.08) * 30;
+        // ── Lightning — recursive forking tree, stays in sky, dramatic wide spread ──
+        const _skyMax = groundY * 1.0; // bolts can reach ground level exactly
+        const _mkPath = (x1, y1, x2, y2, rough, iters) => {
+          const y2c = Math.min(y2, _skyMax);
+          let pts = [[x1, y1], [x2, y2c]];
+          for (let i = 0; i < iters; i++) {
+            const n = [];
+            for (let j = 0; j < pts.length - 1; j++) {
+              n.push(pts[j]);
+              n.push([(pts[j][0]+pts[j+1][0])/2 + (Math.random()-0.5)*rough, Math.min(_skyMax,(pts[j][1]+pts[j+1][1])/2)]);
             }
-            const drawBolt = () => { mctx.beginPath(); ltPts.forEach(([x,y],i) => i===0 ? mctx.moveTo(x,y) : mctx.lineTo(x,y)); mctx.stroke(); };
-            // Wide sky illumination
-            mctx.fillStyle = `rgba(255,190,70,${0.28 * ltFlash})`;
-            mctx.fillRect(0, 0, w, groundY);
-            mctx.lineJoin = 'round';
-            // Pass 1 — thick amber glow
-            mctx.strokeStyle = `rgba(255,150,20,${0.5 * ltFlash})`; mctx.lineWidth = 14;
-            mctx.shadowColor = `rgba(255,120,0,${ltFlash})`; mctx.shadowBlur = 35; drawBolt();
-            // Pass 2 — medium warm halo
-            mctx.strokeStyle = `rgba(255,220,100,${0.65 * ltFlash})`; mctx.lineWidth = 5;
-            mctx.shadowBlur = 20; drawBolt();
-            // Pass 3 — crisp white-yellow core
-            mctx.strokeStyle = `rgba(255,255,230,${ltFlash})`; mctx.lineWidth = 2.5;
-            mctx.shadowColor = `rgba(255,240,140,${ltFlash})`; mctx.shadowBlur = 10; drawBolt();
-            // Branch from ⅓ down
-            const brIdx = Math.floor(ltPts.length * 0.32);
-            const [brx0, bry0] = ltPts[brIdx];
-            let bx = brx0, by = bry0;
-            mctx.strokeStyle = `rgba(255,230,140,${0.6 * ltFlash})`; mctx.lineWidth = 1.8;
-            mctx.shadowBlur = 12;
-            mctx.beginPath(); mctx.moveTo(bx, by);
-            for (let i = 0; i < 6; i++) {
-              bx += Math.sin(ltSeed * 5.7 + i * 2.9) * 24 + 10;
-              by += 14 + Math.sin(ltSeed * 3.9 + i) * 4;
-              mctx.lineTo(bx, by);
-            }
-            mctx.stroke();
-            mctx.shadowBlur = 0; mctx.lineJoin = 'miter';
+            n.push(pts[pts.length-1]); pts = n; rough *= 0.5;
           }
+          return pts;
+        };
+        const _fork = (segs, x1, y1, x2, y2, rough, iters, thick, depth) => {
+          if (depth > 4 || thick < 0.035 || y1 > _skyMax) return;
+          const y2c = Math.min(y2, _skyMax);
+          const pts = _mkPath(x1, y1, x2, y2c, rough, iters);
+          segs.push({ pts, thick });
+          const [ex, ey] = pts[pts.length - 1];
+          if (ey >= _skyMax - 5) return;
+          const dx = x2 - x1, dy = y2c - y1;
+          const baseAngle = Math.atan2(dy, dx);
+          const childLen = Math.sqrt(dx*dx + dy*dy) * (0.5 + Math.random() * 0.3);
+          const childRough = rough * 0.52; const childIters = Math.max(3, iters - 1);
+          // Clamp child endpoint so branches always trend downward — no going above parent
+          const _childEnd = (angle, len) => {
+            const cx = ex + Math.cos(angle) * len;
+            const cy = Math.max(ey + 12, ey + Math.sin(angle) * len); // always at least 12px below
+            return [cx, cy];
+          };
+          // Fork left
+          const la = baseAngle - (0.4 + Math.random() * 0.8);
+          const [lx, ly] = _childEnd(la, childLen);
+          _fork(segs, ex, ey, lx, ly, childRough, childIters, thick*0.6, depth+1);
+          // Fork right — usually
+          if (Math.random() < 0.75) {
+            const ra = baseAngle + (0.4 + Math.random() * 0.8);
+            const [rx2, ry2] = _childEnd(ra, childLen);
+            _fork(segs, ex, ey, rx2, ry2, childRough, childIters, thick*0.55, depth+1);
+          }
+          // Mid-branch offshoots — also clamped downward
+          if (depth < 3 && pts.length > 5 && Math.random() < 0.5) {
+            const mp = pts[Math.floor(pts.length*(0.3+Math.random()*0.4))];
+            const side = Math.random() < 0.5 ? -1 : 1;
+            const sa = baseAngle + side * (0.6 + Math.random() * 0.9);
+            const sl = childLen * (0.5 + Math.random() * 0.4);
+            const [sx, sy] = _childEnd(sa, sl);
+            _fork(segs, mp[0], mp[1], sx + (mp[0] - ex), Math.max(mp[1] + 12, sy + (mp[1] - ey)), childRough, childIters, thick*0.38, depth+2);
+          }
+        };
+        const _spawnMainBolt = (segs, x0, startY, endX, endY, thick) => {
+          const pts = _mkPath(x0, startY, endX, endY, 130, 8);
+          segs.push({ pts, thick });
+          const branchCount = 5 + Math.floor(Math.random() * 4);
+          const step = Math.max(3, Math.floor(pts.length / branchCount));
+          for (let bi = step; bi < pts.length - 2; bi += step) {
+            if (Math.random() < 0.85) {
+              const [bx, by] = pts[bi];
+              const side = Math.random() < 0.5 ? -1 : 1;
+              const isWide = Math.random() < 0.4;
+              const blen = isWide ? 120 + Math.random() * 160 : 80 + Math.random() * 120;
+              const ba = isWide ? side * (0.9 + Math.random() * 0.5) : side * (0.3 + Math.random() * 0.5) + Math.PI * 0.45;
+              const ex2 = bx + Math.cos(ba) * blen;
+              const ey2 = Math.max(by + 10, Math.min(_skyMax, by + Math.sin(ba) * blen));
+              _fork(segs, bx, by, ex2, ey2, 60, 6, thick * 0.65, 0);
+            }
+          }
+          // Bottom fingers
+          const [bex, bey] = pts[pts.length - 1];
+          const fingerCount = 2 + Math.floor(Math.random() * 3);
+          for (let fi = 0; fi < fingerCount; fi++) {
+            const fa = (Math.PI * 0.35) + (fi / (fingerCount - 1)) * (Math.PI * 0.3) - Math.PI * 0.15;
+            const flen = 50 + Math.random() * 80;
+            const fey = Math.min(_skyMax, bey + Math.sin(fa) * flen);
+            _fork(segs, bex, bey, bex + Math.cos(fa - Math.PI*0.5)*flen, fey, 40, 5, thick * 0.45, 1);
+          }
+        };
+        if (Math.random() < 0.003) {
+          const x0 = w * (0.2 + Math.random() * 0.6);
+          const startY = groundY * (0.01 + Math.random() * 0.07);
+          const segs = [];
+          // 30% chance of multi-pronged mega strike — 2 or 3 main bolts from same origin
+          const multiStrike = Math.random() < 0.30;
+          const boltCount = multiStrike ? 2 + Math.floor(Math.random() * 2) : 1;
+          for (let bi = 0; bi < boltCount; bi++) {
+            const spread = boltCount > 1 ? (bi - (boltCount - 1) / 2) * (w * 0.18) : 0;
+            const boltEndY = groundY * (0.78 + Math.random() * 0.22);
+            const mainThick = boltCount > 1 ? 0.75 + Math.random() * 0.2 : 1.0;
+            _spawnMainBolt(segs, x0, startY, x0 + spread + (Math.random()-0.5)*w*0.06, boltEndY, mainThick);
+          }
+          _menuLightningStrikes.push({ startTime: _menuT, segs, duration: 1.1, ox: x0, oy: startY });
+        }
+        for (let si = _menuLightningStrikes.length - 1; si >= 0; si--) {
+          const strike = _menuLightningStrikes[si];
+          const elapsed = _menuT - strike.startTime;
+          if (elapsed > strike.duration) { _menuLightningStrikes.splice(si, 1); continue; }
+          const ltFlash = elapsed < 0.07 ? 1.0 : Math.max(0, 1 - (elapsed - 0.07) / (strike.duration - 0.07));
+          const drawPath = (pts) => { mctx.beginPath(); pts.forEach(([x,y],i) => i===0 ? mctx.moveTo(x,y) : mctx.lineTo(x,y)); mctx.stroke(); };
+          // Sky-wide flash
+          mctx.fillStyle = `rgba(180,160,255,${0.18 * ltFlash})`; mctx.fillRect(0, 0, w, groundY);
+          // Cloud illumination — glow bursting upward from strike origin, blending into cloud ceiling
+          const cg1 = mctx.createRadialGradient(strike.ox, strike.oy, 0, strike.ox, strike.oy * 0.5, w * 0.35);
+          cg1.addColorStop(0,   `rgba(220,200,255,${0.55 * ltFlash})`);
+          cg1.addColorStop(0.35,`rgba(160,130,255,${0.30 * ltFlash})`);
+          cg1.addColorStop(0.7, `rgba(80,50,180,${0.12 * ltFlash})`);
+          cg1.addColorStop(1,   'rgba(0,0,0,0)');
+          mctx.fillStyle = cg1; mctx.fillRect(0, 0, w, groundY * 0.55);
+          // Tight bright core burst right at origin
+          const cg2 = mctx.createRadialGradient(strike.ox, strike.oy, 0, strike.ox, strike.oy, w * 0.09);
+          cg2.addColorStop(0,   `rgba(255,240,255,${0.7 * ltFlash})`);
+          cg2.addColorStop(0.4, `rgba(200,170,255,${0.35 * ltFlash})`);
+          cg2.addColorStop(1,   'rgba(0,0,0,0)');
+          mctx.fillStyle = cg2; mctx.fillRect(0, 0, w, groundY * 0.55);
+          mctx.lineJoin = 'round';
+          const sorted = [...strike.segs].sort((a,b) => b.thick - a.thick);
+          // No shadowBlur — use multi-pass thick→thin strokes for glow (much cheaper)
+          sorted.forEach(s => {
+            const t = s.thick;
+            mctx.globalAlpha = 0.28 * ltFlash;
+            mctx.strokeStyle = 'rgba(80,40,180,1)'; mctx.lineWidth = Math.max(2, t * 28); drawPath(s.pts);
+            mctx.globalAlpha = 0.45 * ltFlash;
+            mctx.strokeStyle = 'rgba(160,120,255,1)'; mctx.lineWidth = Math.max(1, t * 14); drawPath(s.pts);
+            mctx.globalAlpha = 0.65 * ltFlash;
+            mctx.strokeStyle = 'rgba(210,190,255,1)'; mctx.lineWidth = Math.max(0.6, t * 6); drawPath(s.pts);
+            mctx.globalAlpha = Math.min(1, t * 2.5) * ltFlash;
+            mctx.strokeStyle = 'rgba(255,255,255,1)'; mctx.lineWidth = Math.max(0.3, t * 2); drawPath(s.pts);
+          });
+          mctx.globalAlpha = 1; mctx.lineJoin = 'miter';
         }
 
         requestAnimationFrame(loop);
@@ -27855,6 +28163,26 @@
       const _fsMenuBadge = document.getElementById('menu-fs-key-badge');
       if (_fsMenuBadge && !document.fullscreenElement) _fsMenuBadge.textContent = '';
     }
+    // ── Dev panel: click title 7 times quickly ───────────────────────────────
+    (function () {
+      const title = document.querySelector('.menu-title');
+      if (!title) return;
+      let _clicks = 0, _timer = null;
+      title.style.cursor = 'default';
+      title.addEventListener('click', () => {
+        if (typeof NET !== 'undefined' && NET.isOnline()) return;
+        _clicks++;
+        clearTimeout(_timer);
+        _timer = setTimeout(() => { _clicks = 0; }, 1800);
+        if (_clicks >= 7) {
+          _clicks = 0; clearTimeout(_timer);
+          const dvp = document.getElementById('dev-panel');
+          if (dvp.style.display === 'flex') { dvp.style.display = 'none'; return; }
+          if (_devUnlocked) { openDevPanel(false); return; }
+          _devShowAuth();
+        }
+      });
+    })();
     document.getElementById('btn-faction-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-ctrl-back').addEventListener('click', () => showScreen('sc-menu'));
     document.getElementById('btn-tut-prev').addEventListener('click', tutPrev);
@@ -28025,45 +28353,141 @@
 
     let _escCount = 0, _escTimer = null;
 
-    function checkDevPW() {
+    let _devFailCount = 0;
+    function _devShowAuth() {
+      const dvp = document.getElementById('dev-panel');
+      dvp.style.display = 'flex';
+      const creating = !localStorage.getItem('_devPW');
+      document.getElementById('dev-panel-body').innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 20px;">
+          <div style="font-size:1.3rem;color:#f39c12;letter-spacing:.1em;">🔒 DEV PANEL</div>
+          <div style="font-size:.8rem;color:#888;text-align:center;">${creating ? 'First time setup — create a password for this panel.' : 'Enter your dev password.'}</div>
+          <input id="dev-pw-input" type="password" placeholder="${creating ? 'Choose a password' : 'Password'}"
+            style="font-family:Rajdhani,sans-serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:210px;">
+          ${creating ? '<input id="dev-pw-confirm" type="password" placeholder="Confirm password" style="font-family:Rajdhani,sans-serif;background:#111;border:1.5px solid #444;color:#fff;padding:8px 16px;border-radius:4px;font-size:1rem;text-align:center;outline:none;width:210px;">' : ''}
+          <div id="dev-pw-err" style="color:#e74c3c;font-size:.75rem;min-height:1em;text-align:center;"></div>
+          <div style="display:flex;gap:8px;">
+            <button id="dev-pw-enter-btn" style="font-family:Rajdhani,sans-serif;background:#f39c12;color:#000;border:none;padding:7px 22px;border-radius:4px;cursor:pointer;font-weight:700;letter-spacing:.06em;">${creating ? 'CREATE' : 'ENTER'}</button>
+            <button id="dev-pw-cancel-btn" style="font-family:Rajdhani,sans-serif;background:#222;color:#aaa;border:1px solid #444;padding:7px 22px;border-radius:4px;cursor:pointer;">CANCEL</button>
+          </div>
+          <div id="dev-pw-reset-wrap" style="display:${_devFailCount >= 3 ? 'block' : 'none'};margin-top:4px;">
+            <button id="dev-pw-reset-btn" style="font-family:Rajdhani,sans-serif;background:none;color:#e74c3c;border:none;font-size:.72rem;cursor:pointer;text-decoration:underline;letter-spacing:.04em;">Forgot password? Reset it</button>
+          </div>
+        </div>`;
+      setTimeout(() => {
+        const pi = document.getElementById('dev-pw-input');
+        const eb = document.getElementById('dev-pw-enter-btn');
+        const cb = document.getElementById('dev-pw-cancel-btn');
+        const rb = document.getElementById('dev-pw-reset-btn');
+        if (eb) eb.addEventListener('click', e2 => { e2.stopPropagation(); _devCheckPW(creating); });
+        if (cb) cb.addEventListener('click', () => { dvp.style.display = 'none'; _devFailCount = 0; });
+        if (rb) rb.addEventListener('click', () => {
+          try { localStorage.removeItem('_devPW'); localStorage.removeItem('_devAuth'); } catch(_) {}
+          _devFailCount = 0; _devShowAuth();
+        });
+        if (pi) {
+          pi.focus();
+          pi.addEventListener('keydown', ev => {
+            if (ev.code === 'Enter' || ev.code === 'NumpadEnter') { ev.stopPropagation(); _devCheckPW(creating); }
+            if (ev.code === 'Escape') { dvp.style.display = 'none'; _devFailCount = 0; }
+            ev.stopPropagation();
+          });
+          const confirm = document.getElementById('dev-pw-confirm');
+          if (confirm) confirm.addEventListener('keydown', ev => {
+            if (ev.code === 'Enter' || ev.code === 'NumpadEnter') { ev.stopPropagation(); _devCheckPW(creating); }
+            ev.stopPropagation();
+          });
+        }
+      }, 30);
+    }
+    function _devCheckPW(creating) {
       const inp = document.getElementById('dev-pw-input');
+      const err = document.getElementById('dev-pw-err');
       if (!inp) return;
-      const val = inp.value;
-      const pw = atob('SUxvdmVCbGFja1Blb3BsZQ==');
-      if (val === pw) {
-        _devUnlocked = true;
-        openDevPanel(true);
+      const val = inp.value.trim();
+      if (!val) { if (err) err.textContent = 'Password cannot be empty.'; return; }
+      if (creating) {
+        const conf = document.getElementById('dev-pw-confirm');
+        if (conf && conf.value.trim() !== val) { if (err) err.textContent = 'Passwords do not match.'; return; }
+        try { localStorage.setItem('_devPW', btoa(val)); localStorage.setItem('_devAuth', '1'); } catch(_) {}
+        _devUnlocked = true; _devFailCount = 0; const _dtb2=document.getElementById('dev-toggle-btn'); if(_dtb2) _dtb2.style.display='block'; openDevPanel(true);
       } else {
-        const err = document.getElementById('dev-pw-err');
-        if (err) { err.textContent = 'Invalid password'; setTimeout(() => { if (err) err.textContent = ''; }, 2000); }
-        inp.value = ''; inp.focus();
+        let stored = '';
+        try { stored = atob(localStorage.getItem('_devPW') || ''); } catch(_) {}
+        if (val === stored) {
+          try { localStorage.setItem('_devAuth', '1'); } catch(_) {}
+          _devUnlocked = true; _devFailCount = 0; const _dtb2=document.getElementById('dev-toggle-btn'); if(_dtb2) _dtb2.style.display='block'; openDevPanel(true);
+        } else {
+          _devFailCount++;
+          if (err) err.textContent = 'Wrong password.' + (_devFailCount >= 3 ? ' See reset option below.' : '');
+          const rw = document.getElementById('dev-pw-reset-wrap');
+          if (rw && _devFailCount >= 3) rw.style.display = 'block';
+          inp.value = ''; inp.focus();
+        }
       }
     }
-    // pw-input listener added dynamically inside openDevPanel
 
     // ── DEV PANEL DRAG ──────────────────────────────────────────────────────
     (function () {
       const panel = document.getElementById('dev-panel');
       const bar = document.getElementById('dev-drag-bar');
-
-      // Create resize handle as child of panel (absolute positioning, always in corner)
-      const handle = document.createElement('div');
-      handle.id = 'dev-resize-handle';
-      handle.style.cssText = 'position:absolute;bottom:0;right:0;width:20px;height:20px;cursor:nwse-resize;z-index:10;';
-      // Draw the gripper lines via SVG
-      handle.innerHTML = `<svg width="20" height="20" style="display:block;opacity:0.6"><line x1="6" y1="20" x2="20" y2="6" stroke="#f39c12" stroke-width="2"/><line x1="12" y1="20" x2="20" y2="12" stroke="#f39c12" stroke-width="2"/><line x1="18" y1="20" x2="20" y2="18" stroke="#f39c12" stroke-width="2"/></svg>`;
-      panel.appendChild(handle);
-
-      // Panel needs position:relative so absolute child works, and overflow:hidden
-      // to clip the scrollable body — but panel itself is position:fixed already,
-      // so just ensure overflow clips correctly
       panel.style.overflow = 'hidden';
 
-      // ── Drag ──
-      let dragging = false, resizing = false, ox = 0, oy = 0, rsx = 0, rsy = 0, rsw = 0, rsh = 0;
+      const EDGE = 6; // px from panel edge that counts as a resize zone
+      const MIN_W = 260, MIN_H = 160;
+
+      // edge flags: n=top, s=bottom, w=left, e=right
+      let dragging = false, resEdge = null;
+      let ox = 0, oy = 0, startX = 0, startY = 0, startW = 0, startH = 0, startL = 0, startT = 0;
+
+      function getEdge(e) {
+        const r = panel.getBoundingClientRect();
+        const mx = e.clientX, my = e.clientY;
+        const n = my - r.top    < EDGE;
+        const s = r.bottom - my < EDGE;
+        const w = mx - r.left   < EDGE;
+        const ee = r.right - mx < EDGE;
+        if (!n && !s && !w && !ee) return null;
+        return { n, s, w, e: ee };
+      }
+
+      function edgeCursor(ed) {
+        if (!ed) return '';
+        if (ed.n && ed.w) return 'nwse-resize';
+        if (ed.n && ed.e) return 'nesw-resize';
+        if (ed.s && ed.w) return 'nesw-resize';
+        if (ed.s && ed.e) return 'nwse-resize';
+        if (ed.n || ed.s) return 'ns-resize';
+        if (ed.w || ed.e) return 'ew-resize';
+        return '';
+      }
+
+      panel.addEventListener('mousemove', e => {
+        if (dragging || resEdge) return;
+        const ed = getEdge(e);
+        panel.style.cursor = edgeCursor(ed) || '';
+      });
+
+      panel.addEventListener('mouseleave', () => {
+        if (!dragging && !resEdge) panel.style.cursor = '';
+      });
+
+      panel.addEventListener('mousedown', e => {
+        // Don't steal drag-bar clicks or button clicks
+        if (e.target.closest('#dev-drag-bar') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
+        const ed = getEdge(e);
+        if (!ed) return;
+        resEdge = ed;
+        startX = e.clientX; startY = e.clientY;
+        startW = panel.offsetWidth; startH = panel.offsetHeight;
+        startL = panel.offsetLeft; startT = panel.offsetTop;
+        document.body.style.userSelect = 'none';
+        document.body.style.cursor = edgeCursor(ed);
+        e.preventDefault();
+      });
 
       bar.addEventListener('mousedown', e => {
-        if (e.target === handle) return;
+        if (e.target.tagName === 'BUTTON') return;
         dragging = true;
         ox = e.clientX - panel.offsetLeft;
         oy = e.clientY - panel.offsetTop;
@@ -28071,46 +28495,57 @@
         e.preventDefault();
       });
 
-      handle.addEventListener('mousedown', e => {
-        resizing = true;
-        rsx = e.clientX; rsy = e.clientY;
-        rsw = panel.offsetWidth; rsh = panel.offsetHeight;
-        document.body.style.userSelect = 'none';
-        e.preventDefault(); e.stopPropagation();
-      });
-
       document.addEventListener('mousemove', e => {
         if (dragging) {
-          panel.style.left = Math.max(0, Math.min(window.innerWidth - panel.offsetWidth, e.clientX - ox)) + 'px';
-          panel.style.top = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, e.clientY - oy)) + 'px';
+          panel.style.left = Math.max(0, Math.min(window.innerWidth  - panel.offsetWidth,  e.clientX - ox)) + 'px';
+          panel.style.top  = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, e.clientY - oy)) + 'px';
         }
-        if (resizing) {
-          panel.style.width = Math.max(340, rsw + (e.clientX - rsx)) + 'px';
-          panel.style.height = Math.max(200, rsh + (e.clientY - rsy)) + 'px';
+        if (resEdge) {
+          const dx = e.clientX - startX, dy = e.clientY - startY;
+          const maxW = window.innerWidth, maxH = window.innerHeight;
+          if (resEdge.e) panel.style.width  = Math.min(maxW - startL, Math.max(MIN_W, startW + dx)) + 'px';
+          if (resEdge.s) panel.style.height = Math.min(maxH - startT, Math.max(MIN_H, startH + dy)) + 'px';
+          if (resEdge.w) {
+            const nw = Math.min(startL + startW, Math.max(MIN_W, startW - dx));
+            panel.style.width = nw + 'px';
+            panel.style.left  = Math.max(0, startL + startW - nw) + 'px';
+          }
+          if (resEdge.n) {
+            const nh = Math.min(startT + startH, Math.max(MIN_H, startH - dy));
+            panel.style.height = nh + 'px';
+            panel.style.top    = Math.max(0, startT + startH - nh) + 'px';
+          }
         }
       });
 
       document.addEventListener('mouseup', () => {
-        dragging = false; resizing = false;
+        dragging = false; resEdge = null;
         bar.style.cursor = 'grab';
+        panel.style.cursor = '';
         document.body.style.userSelect = '';
+        document.body.style.cursor = '';
       });
     })();
 
     // Dev panel tooltip: instant, not browser native title
     function devTip(tip) { return tip ? `data-dev-tip="${tip.replace(/"/g, "'")}"` : ''; }
     function devRow(label, content, tip) {
-      return '<div class="dev-row" ' + devTip(tip) + ' style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span class="dev-row-label" style="flex:0 0 auto;">' + label + '</span><div class="dev-row-controls" style="flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:4px;align-items:center;">' + content + '</div></div>';
+      return `<div class="dev-row" ${devTip(tip)}><span class="dev-row-label">${label}</span><div class="dev-row-controls">${content}</div></div>`;
     }
     function devBtn(label, onclick, tip) {
-      return '<button class="dev-btn" onclick="' + onclick + '" ' + devTip(tip) + '>' + label + '</button>';
+      return `<button class="dev-btn" onclick="${onclick}" ${devTip(tip)}>${label}</button>`;
     }
     function devInp(id, val, devPath, tip) {
-      // Safe: stores a dot-path into G (e.g. "players.0.souls") instead of raw JS
-      return '<input class="dev-inp" id="' + id + '" type="number" value="' + val + '" data-dev-path="' + (devPath || '') + '" ' + devTip(tip) + ' step="1">';
+      // Auto-applies on input change via _devApplyPath — no APPLY button needed
+      const onin = devPath ? `_devApplyPath('${devPath}',this.value);updateHUD();` : '';
+      return `<input class="dev-inp" id="${id}" type="number" value="${val}" data-dev-path="${devPath||''}" ${devTip(tip||'')} step="1" oninput="${onin}">`;
     }
     function devToggle(label, active, onclick, tip) {
-      return `<button class="dev-btn ${active ? 'dev-btn-active' : ''}" onclick="${onclick}" ${devTip(tip)}>${active ? '✓ ' : ''} ${label}</button>`;
+      return `<button class="dev-btn ${active ? 'dev-btn-active' : ''}" onclick="${onclick}" ${devTip(tip)}>${active ? '✓ ' : ''}${label}</button>`;
+    }
+    function _devApplyPath(path, val) {
+      if (!path || !G) return;
+      try { const p = path.split('.'); let o = G; for (let i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = +val; } catch (_) {}
     }
     // Wire up instant tooltip for dev panel
     function wireDevTooltips() {
@@ -28133,67 +28568,99 @@
     function openDevPanel(forceRebuild) {
       const panel = document.getElementById('dev-panel');
       panel.style.display = 'flex';
-      // Rebuild HTML skeleton for sections if needed (first open or forced)
+      // Rebuild skeleton (tabs + sections) on first open or when forced
       if (forceRebuild || !document.getElementById('dev-p1-section')) {
         document.getElementById('dev-panel-body').innerHTML = `
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div class="dev-section" id="dev-p1-section"><div class="dev-head" style="color:#2471a3">PLAYER 1</div></div>
-            <div class="dev-section" id="dev-p2-section"><div class="dev-head" style="color:#c0392b">PLAYER 2</div></div>
+          <div style="display:flex;gap:5px;align-items:center;padding-bottom:10px;border-bottom:1px solid #1e1e1e;flex-wrap:wrap;">
+            <button class="dev-tab-btn" id="dev-tab-p1" onclick="_devTab='p1';openDevPanel(false)">👤 PLAYER 1</button>
+            <button class="dev-tab-btn" id="dev-tab-p2" onclick="_devTab='p2';openDevPanel(false)">👤 PLAYER 2</button>
+            <button class="dev-tab-btn" id="dev-tab-game" onclick="_devTab='game';openDevPanel(false)">🎮 GAME</button>
+            <div style="flex:1;min-width:6px;"></div>
+            <span id="dev-qs-time" style="color:#555;font-size:.72rem;font-family:Rajdhani,sans-serif;letter-spacing:.05em;"></span>
+            <span id="dev-qs-units" style="color:#555;font-size:.72rem;font-family:Rajdhani,sans-serif;letter-spacing:.05em;margin-left:8px;"></span>
           </div>
-          <div class="dev-section" id="dev-game-section"><div class="dev-head" style="color:#f39c12">GAME STATE</div></div>
+          <div class="dev-section" id="dev-p1-section"></div>
+          <div class="dev-section" id="dev-p2-section"></div>
+          <div class="dev-section" id="dev-game-section"></div>
           <div class="dev-section" id="dev-units-section" style="display:none;"><div class="dev-head" style="color:#9b59b6">UNIT EDITOR</div><div id="dev-unit-list"></div></div>`;
         wireDevTooltips();
       }
-      // Show placeholder if no game is running
+      // Update tab active states + quick stats
+      ['p1','p2','game'].forEach(t => {
+        const btn = document.getElementById('dev-tab-' + t);
+        if (btn) btn.className = 'dev-tab-btn' + (t === _devTab ? ' active' : '');
+      });
+      const _qt = document.getElementById('dev-qs-time');
+      const _qu = document.getElementById('dev-qs-units');
+      if (_qt) _qt.textContent = G ? '⏱ ' + Math.floor(G.elapsed||0) + 's' : '';
+      if (_qu) _qu.textContent = G ? '🧑 ' + (G.units ? G.units.length : 0) : '';
+      document.getElementById('dev-paused-badge').style.display = G?.paused ? 'inline' : 'none';
+      // No active game
       if (!G || !(G.running || G.collapseTime)) {
-        document.getElementById('dev-p1-section').innerHTML = '<div class="dev-head" style="color:#2471a3">PLAYER 1</div><div style="color:#e74c3c;font-size:.75rem;padding:6px;">⚠ No active game — start a match first</div>';
-        document.getElementById('dev-p2-section').innerHTML = '<div class="dev-head" style="color:#c0392b">PLAYER 2</div><div style="color:#e74c3c;font-size:.75rem;padding:6px;"></div>';
-        document.getElementById('dev-game-section').innerHTML = '<div class="dev-head" style="color:#f39c12">GAME STATE</div><div style="color:#666;font-size:.75rem;padding:6px;">Game not running. Launch a match and re-open.</div>';
+        ['p1','p2','game'].forEach(t => {
+          const s = document.getElementById('dev-' + t + '-section');
+          if (s) { s.style.display = t === _devTab ? 'flex' : 'none'; s.innerHTML = '<div style="color:#555;font-size:.84rem;padding:20px;text-align:center;letter-spacing:.05em;">⚠ No active game — start a match first</div>'; }
+        });
         return;
       }
-      document.getElementById('dev-paused-badge').style.display = G.paused ? 'inline' : 'none';
+      // Show only the active tab
+      document.getElementById('dev-p1-section').style.display = _devTab === 'p1' ? 'flex' : 'none';
+      document.getElementById('dev-p2-section').style.display = _devTab === 'p2' ? 'flex' : 'none';
+      document.getElementById('dev-game-section').style.display = _devTab === 'game' ? 'flex' : 'none';
       [1, 2].forEach(pid => {
+        const sec = document.getElementById('dev-p' + pid + '-section');
+        if (sec.style.display === 'none') return;
         const p = G.players[pid - 1];
-        const pc = pid === 1 ? '#2471a3' : '#c0392b';
-        const sec = document.getElementById(`dev-p${pid}-section`);
-        sec.innerHTML = `<div class="dev-head" style="color:${pc}">PLAYER ${pid} — ${G.factions[pid - 1].name}</div>
-          ${devRow('💀 Souls', devInp(`d-p${pid}-souls`, Math.floor(p.souls), `players.${pid - 1}.souls`) + devBtn('+200', `G.players[${pid - 1}].souls+=200;updateHUD();openDevPanel()`, '+200 souls'), 'Set or add souls directly')}
-          ${devRow('🦴 Bodies', devInp(`d-p${pid}-bodies`, p.bodies, `players.${pid - 1}.bodies`) + devBtn('+30', `G.players[${pid - 1}].bodies+=30;updateHUD();openDevPanel()`, '+30 bodies'), 'Set or add bodies directly')}
-          ${devRow('❤️ Base HP', devInp(`d-p${pid}-hp`, Math.ceil(p.baseHp), `players.${pid - 1}.baseHp`), 'Edit base health directly (0 = game over)')}
-          ${devRow('⚔ Unit Cap', devInp(`d-p${pid}-cap`, p.unitCap, `players.${pid - 1}.unitCap`), 'Override unit cap for this player')}
-          ${devRow('⛏ Worker Cap', devInp(`d-p${pid}-wcap`, p.workerCap || 3, `players.${pid - 1}.workerCap`), 'Override worker cap (default 3→5 over time)')}
-          ${devRow('', devBtn('👑 SPAWN GUARD', `G.players[${pid - 1}].lastStandUsed=false;G.players[${pid - 1}].baseHp=31;`, `Trigger last stand + royal guard for P${pid}`) + devBtn('☠ KILL ENEMIES', `G.units.filter(u=>u.player!==${pid}).forEach(u=>{u.hp=0;handleDeath(u,null)})`, `Kill all of Player ${pid === 1 ? 2 : 1}'s units`))}
-          ${devRow('', devBtn(`💣 DESTROY P${pid === 1 ? 2 : 1} BASE`, `G.players[${pid === 1 ? 1 : 0}].baseHp=0;checkWin()`, `Destroy Player ${pid === 1 ? 2 : 1}'s base — Player ${pid} wins`) + `<input id="dev-p${pid}-dmg" type="number" value="25" min="1" max="100" style="width:52px;background:#111;border:1px solid #555;color:#fff;padding:3px 5px;font-family:Rajdhani,sans-serif;font-size:.7rem;border-radius:3px;text-align:center;">` + devBtn(`🩸 HIT OWN BASE`, `const v=+(document.getElementById('dev-p${pid}-dmg').value||25);G.players[${pid - 1}].baseHp=Math.max(0,G.players[${pid - 1}].baseHp-v);updateHUD();`, `Deal custom damage to Player ${pid}'s own base`))}
-          ${devRow('', devBtn(`📋 UNIT LIST`, `openUnitList(${pid})`, `Browse and edit all active units for Player ${pid}`))}`;
+        const pc = pid === 1 ? '#3498db' : '#e74c3c';
+        const pe = pid === 1 ? 2 : 1;
+        sec.innerHTML =
+          '<div class="dev-head" style="color:' + pc + '">PLAYER ' + pid + ' — ' + (G.factions[pid-1]?.name||'?') + '</div>' +
+          devRow('💀 Souls', devInp('d-p'+pid+'-souls', Math.floor(p.souls), 'players.'+(pid-1)+'.souls', 'Soul count') + devBtn('+200', 'G.players['+(pid-1)+'].souls+=200;updateHUD();openDevPanel()', 'Add 200 souls') + devBtn('+500', 'G.players['+(pid-1)+'].souls+=500;updateHUD();openDevPanel()', 'Add 500 souls'), 'Set soul count or add a quick amount') +
+          devRow('🦴 Bodies', devInp('d-p'+pid+'-bodies', p.bodies, 'players.'+(pid-1)+'.bodies', 'Body count') + devBtn('+20', 'G.players['+(pid-1)+'].bodies+=20;updateHUD();openDevPanel()', 'Add 20 bodies') + devBtn('+50', 'G.players['+(pid-1)+'].bodies+=50;updateHUD();openDevPanel()', 'Add 50 bodies'), 'Set body count or add a quick amount') +
+          devRow('❤️ Base HP', devInp('d-p'+pid+'-hp', Math.ceil(p.baseHp), 'players.'+(pid-1)+'.baseHp', 'Base HP — 0 ends the game') + devBtn('RESTORE', 'G.players['+(pid-1)+'].baseHp=200;updateHUD();openDevPanel()', 'Restore base to 200 HP'), 'Edit base health directly') +
+          devRow('⚔ Unit Cap', devInp('d-p'+pid+'-cap', p.unitCap, 'players.'+(pid-1)+'.unitCap', 'Max units on field at once'), 'Override the unit cap') +
+          devRow('⛏ Worker Cap', devInp('d-p'+pid+'-wcap', p.workerCap||3, 'players.'+(pid-1)+'.workerCap', 'Max workers'), 'Override worker cap') +
+          '<div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:6px;border-top:1px solid #222;">' +
+            devBtn('🎁 All Upgrades', 'G.factions['+(pid-1)+'].upgrades.forEach(u=>{if(!G.players['+(pid-1)+'].ownedUpgrades.has(u.id)){G.players['+(pid-1)+'].ownedUpgrades.add(u.id);applyUpgrade('+(pid-1)+',u);}});openDevPanel();', 'Unlock every upgrade instantly') +
+            devBtn('👑 Spawn Guard', 'G.players['+(pid-1)+'].lastStandUsed=false;G.players['+(pid-1)+'].baseHp=31;', 'Trigger last stand + royal guard') +
+            devBtn('⚡ Cooldowns', 'G.players['+(pid-1)+'].buffCooldowns=[0,0,0,0,0];', 'Reset all buff cooldowns to ready') +
+            devBtn('📋 Unit List', 'openUnitList('+pid+')', 'Browse and edit all live units for Player '+pid) +
+          '</div>' +
+          '<div class="dev-section dev-danger" style="padding:10px 12px;gap:6px;">' +
+            '<div style="color:#c0392b;font-size:.72rem;letter-spacing:.08em;font-weight:700;margin-bottom:2px;">⚠ DANGER</div>' +
+            '<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;">' +
+              devBtn('☠ Kill P'+pe+' Units', 'G.units.filter(u=>u.player!=='+pid+').forEach(u=>{u.hp=0;handleDeath(u,null)})', 'Instantly kill all of Player '+pe+'\'s units') +
+              devBtn('💣 Destroy P'+pe+' Base', 'G.players['+(pe-1)+'].baseHp=0;checkWin()', 'Set Player '+pe+'\'s base to 0 — Player '+pid+' wins') +
+              '<input id="dev-p'+pid+'-dmg" type="number" value="25" min="1" max="9999" style="width:56px;background:#111;border:1px solid #555;color:#fff;padding:5px 6px;font-family:Rajdhani,sans-serif;font-size:.75rem;border-radius:4px;text-align:center;">' +
+              devBtn('🩸 Hit Own Base', 'const v=+(document.getElementById(\'dev-p'+pid+'-dmg\').value||25);G.players['+(pid-1)+'].baseHp=Math.max(0,G.players['+(pid-1)+'].baseHp-v);updateHUD();', 'Deal custom damage to own base') +
+            '</div>' +
+          '</div>';
       });
       const gs = document.getElementById('dev-game-section');
+      if (gs.style.display === 'none') return;
       const spd = G._speedMult || 1;
-      gs.innerHTML = `<div class="dev-head" style="color:#f39c12">GAME STATE</div>
-        ${devRow('⏱ Game Time', `<span style="color:#fff">${Math.floor(G.elapsed || 0)}s</span>`, 'Elapsed game time in seconds')}
-        ${devRow('🧍 Units on field', `<span style="color:#fff">${G.units.length}</span>`, 'Total active units (both players)')}
-        ${devRow('✨ Particles', `<span style="color:#fff">${G.particles.length}</span>`, 'Active particle count')}
-        ${devRow('⚡ Game Speed',
-        `<input type="range" min="0.1" max="4" step="0.1" value="${spd}" oninput="G._speedMult=+this.value;document.getElementById('dev-spd-label').textContent=this.value+'x'" style="width:80px;vertical-align:middle"> <span id="dev-spd-label">${spd}x</span>`,
-        'Multiplier applied to deltaTime — 1.0 = normal, 2.0 = 2× speed, 0.5 = slow-mo')}
-        ${devRow('🔥 Siege Decay', devToggle('SIEGE DECAY', G.siegeDecay, 'G.siegeDecay=!G.siegeDecay;openDevPanel()', 'Toggle base HP drain after 3 min'))}
-        ${devRow('🎯 Mid Control',
-          devBtn('→ P1', "G.midOwner=1;G.midHolder=1;", 'Give mid ownership to Player 1') +
-          devBtn('→ P2', "G.midOwner=2;G.midHolder=2;", 'Give mid ownership to Player 2') +
-          devBtn('NEUTRAL', "G.midOwner=null;G.midHolder=null;", 'Reset mid to neutral'),
-          'Set who controls the mid point')}
-        ${devRow('💥 Particles', devBtn('BURST', "spawnParticles(G.midX,G.groundY-50,'#f39c12',80)", 'Spawn a particle burst at mid'))}
-        ${devRow('🎁 Give All Upgrades',
-            devBtn('P1 ALL', "G.factions[0].upgrades.forEach(u=>{if(!G.players[0].ownedUpgrades.has(u.id)){G.players[0].ownedUpgrades.add(u.id);applyUpgrade(0,u);}});openDevPanel();", 'Unlock every upgrade for Player 1') +
-            devBtn('P2 ALL', "G.factions[1].upgrades.forEach(u=>{if(!G.players[1].ownedUpgrades.has(u.id)){G.players[1].ownedUpgrades.add(u.id);applyUpgrade(1,u);}});openDevPanel();", 'Unlock every upgrade for Player 2'),
-            'Give all faction upgrades instantly')}
-        ${devRow('⚡ Cooldowns', devBtn('RESET ALL', "G.players.forEach(p=>{p.buffCooldowns=[0,0,0,0,0];});openDevPanel();", 'Set all buff cooldowns to 0'), 'Reset all buff cooldowns to ready')}
-        ${devRow('🌪 Chaos Mode',
-              devBtn('3× DMG+SPD', "G.units.forEach(u=>{u.def.dmg*=3;u.def.speed*=2;u.dmgMult=3;});showPopup(G.midX,G.groundY-80,'💀 CHAOS!','#e74c3c',1);", 'Triple all unit damage and double speed') +
-              devBtn('💥 QUAKE', "G.shake=2;spawnParticles(G.midX,G.groundY,'#f39c12',200);", 'Huge screenshake + particle burst'),
-              'Cause total mayhem on the battlefield')}
-        ${devRow('☠ Kill All', devBtn('KILL EVERYONE', "[...G.units].forEach(u=>{spawnParticles(u.x,u.y,'#cc0000',8);handleDeath(u,null)});", 'Instantly kill every unit on both sides'), 'Wipe the entire battlefield')}
-
-        <button id="dev-apply-btn" onclick="_devApplyAll();this.textContent='✅ APPLIED!';setTimeout(()=>this.textContent='✅ APPLY CHANGES',800);" style="width:100%;padding:10px;margin-top:8px;font-family:Rajdhani,sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.08em;background:linear-gradient(135deg,#f39c12,#e67e22);color:#000;border:none;border-radius:5px;cursor:pointer;transition:background .15s,transform .1s;" onmouseover="this.style.background='#000';this.style.color='#f39c12';this.style.border='1px solid #f39c12';" onmouseout="this.style.background='linear-gradient(135deg,#f39c12,#e67e22)';this.style.color='#000';this.style.border='none';">✅ APPLY CHANGES</button>`;
+      gs.innerHTML =
+        '<div class="dev-head" style="color:#f39c12">GAME STATE</div>' +
+        devRow('⏱ Time', '<span>' + Math.floor(G.elapsed||0) + 's elapsed</span>', 'Elapsed game time') +
+        devRow('🧍 Units', '<span>' + (G.units.filter(u=>u.player===1).length) + ' P1 &nbsp;·&nbsp; ' + (G.units.filter(u=>u.player===2).length) + ' P2</span>', 'Active units per player') +
+        devRow('✨ Particles', '<span>' + G.particles.length + '</span>', 'Active particle count') +
+        devRow('⚡ Speed',
+          '<input type="range" min="0.1" max="4" step="0.1" value="' + spd + '" oninput="G._speedMult=+this.value;document.getElementById(\'dev-spd-label\').textContent=(Math.round(+this.value*10)/10)+\'x\'" style="width:110px;vertical-align:middle;accent-color:#f39c12;"> <span id="dev-spd-label" style="min-width:34px;display:inline-block;">' + spd + 'x</span>',
+          '1.0=normal · 2.0=double speed · 0.5=slow-mo') +
+        devRow('🔥 Siege Decay', devToggle('SIEGE DECAY', G.siegeDecay, 'G.siegeDecay=!G.siegeDecay;openDevPanel()', 'Toggle base HP drain after 3 min'), 'Toggle stalemate base decay') +
+        devRow('🎯 Mid Control',
+          devBtn('P1', 'G.midOwner=1;G.midHolder=1;', 'Give mid to Player 1') +
+          devBtn('P2', 'G.midOwner=2;G.midHolder=2;', 'Give mid to Player 2') +
+          devBtn('NEUTRAL', 'G.midOwner=null;G.midHolder=null;', 'Reset mid to neutral'),
+          'Override who controls the mid point') +
+        '<div class="dev-section dev-danger" style="padding:10px 12px;gap:6px;">' +
+          '<div style="color:#c0392b;font-size:.72rem;letter-spacing:.08em;font-weight:700;margin-bottom:2px;">⚠ DANGER</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
+            devBtn('3× DMG+SPD', "G.units.forEach(u=>{u.def.dmg*=3;u.def.speed*=2;u.dmgMult=3;});showPopup(G.midX,G.groundY-80,'💀 CHAOS!','#e74c3c',1);", 'Triple all damage + double all speed') +
+            devBtn('💥 Quake', "G.shake=2;spawnParticles(G.midX,G.groundY,'#f39c12',200);", 'Massive screenshake + particle burst') +
+            devBtn('☠ Kill Everyone', "[...G.units].forEach(u=>{spawnParticles(u.x,u.y,'#cc0000',8);handleDeath(u,null)});", 'Instantly kill every unit on both sides') +
+          '</div>' +
+        '</div>';
     }
 
     function _devApplyAll() {
