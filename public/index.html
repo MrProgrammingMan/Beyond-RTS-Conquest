@@ -9418,6 +9418,7 @@
       // them to P2 in the next snapshot so P2 can render them locally.
       const _p1PopQueue = [];       // { x, y, txt, col, pid }
       const _p1LastStandQueue = []; // { pid, isSuddenDeath }
+      const _p1EventQueue = [];     // { msg, col, sub, lbl } — random event announcements
 
       function queuePopupForP2(x, y, txt, col, pid) {
         if (myPid === 1 && _onlineMode) _p1PopQueue.push({ x: Math.round(x), y: Math.round(y), txt, col, pid });
@@ -9478,6 +9479,7 @@
             zn: (GAME_MODE === 'conquest' && G.zones) ? G.zones.map(z => [z.owner || 0, Math.round((z.capTimer || 0) * 100), z.capPlayer || 0]) : null,
             pops: _p1PopQueue.splice(0),       // popup events queued this frame
             lsTriggered: _p1LastStandQueue.splice(0), // last stand events
+            evAnn: _p1EventQueue.splice(0),    // random event announcements
             // Active event state so P2 draw functions (blood moon tint, eclipse, soul cache arc) work
             ae: G.activeEvent ? {
               type: G.activeEvent.type,
@@ -9629,6 +9631,10 @@
           // Fire last stand overlay/SFX if P1 just triggered one
           if (snap.lsTriggered && snap.lsTriggered.length) {
             snap.lsTriggered.forEach(({ pid, isSuddenDeath }) => _p2FireLastStand(pid, isSuddenDeath === 1));
+          }
+          // Replay random event announcements queued by P1
+          if (snap.evAnn && snap.evAnn.length) {
+            snap.evAnn.forEach(({ msg, col, sub, lbl }) => _announceEvent(msg, col, sub, lbl));
           }
           // Sync new faction visual state from P1
           if (snap.tp) G.tarPatches = snap.tp.map(t => ({ x: t[0], life: t[1] / 10, dur: t[2] / 10, toxic: t[3] === 1, owner: t[4], radius: t[5] }));
@@ -9798,6 +9804,19 @@
         return u;
       }
 
+      // Recompute y from P2's local G.groundY — P1 and P2 may have different VIRTUAL_H
+      // so applying P1's absolute y directly makes units float/sink. Ground units sit
+      // at groundY - radius; aerial units bob above ground independent of x-motion.
+      function _p2FixY(u) {
+        if (!u || !u.def) return;
+        if (u.aerial || u.def.aerial) {
+          const bobPhase = (performance.now() / 1000) * 1.8 + (Number(u.id) || 0) * 0.7;
+          u.y = G.groundY - 85 + Math.sin(bobPhase) * 8;
+        } else {
+          u.y = G.groundY - (u.def.radius || 10);
+        }
+      }
+
       function _applyInterpolated(snapA, snapB, t) {
         if (typeof G === 'undefined' || !G) return;
         try {
@@ -9835,6 +9854,7 @@
             u._warcryed = warcryT10 / 10;
             u._ironwalled = ironwallT10 / 10;
             u.goToMid = goToMid === 1;
+            _p2FixY(u);
           }
 
           // Projectiles: interpolate between snapshots
@@ -9889,6 +9909,7 @@
             u._warcryed = warcryT10 / 10;
             u._ironwalled = ironwallT10 / 10;
             u.goToMid = goToMid === 1;
+            _p2FixY(u);
           }
 
           // Projectiles: place at latest known position
@@ -17038,6 +17059,10 @@
 
     function _announceEvent(msg, col, subtitle, labelText) {
       col = col || '#f39c12';
+      // Queue for P2 replay in online mode
+      if (typeof myPid !== 'undefined' && myPid === 1 && typeof _onlineMode !== 'undefined' && _onlineMode) {
+        _p1EventQueue.push({ msg, col, sub: subtitle || '', lbl: labelText || '' });
+      }
       // Mid indicator
       const ind = document.getElementById('mid-indicator');
       ind.textContent = msg;
@@ -18911,6 +18936,8 @@
     function updateUnitUnlocks() {
       if (!G || !G.running || _unlocksBypassed()) return;
       const elapsed = G.elapsed || 0;
+      // P2 in online mode receives tier/spy announcements via the snapshot event queue
+      const _isP2Online = typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === 2;
 
       // Tier-based announcement — fire ONCE per tier, not per player
       const _tierInfo = {
@@ -18920,7 +18947,7 @@
       };
       for (const [tStr, info] of Object.entries(_tierInfo)) {
         const t = Number(tStr);
-        if (elapsed >= t && elapsed - G.dt < t) {
+        if (!_isP2Online && elapsed >= t && elapsed - G.dt < t) {
           // Collect unit names from both factions for the subtitle
           const names = [1, 2].map(pid => {
             const fac = G.factions[pid - 1];
@@ -18963,7 +18990,7 @@
         });
 
         // Spy unlock
-        if (elapsed >= SPY_UNLOCK_TIME && elapsed - G.dt < SPY_UNLOCK_TIME) {
+        if (!_isP2Online && elapsed >= SPY_UNLOCK_TIME && elapsed - G.dt < SPY_UNLOCK_TIME) {
           _announceEvent('🕵️ SPY UNLOCKED', '#b2bec3', 'Both players can now deploy Spies — infiltrate the enemy base', '🕵️ UNIT UNLOCKED');
           [1, 2].forEach(p2 => {
             const spyEl = document.querySelector(`#p${p2}-grid .spy-card`);
@@ -18977,6 +19004,34 @@
               setTimeout(() => spyEl.classList.remove('unlock-anim'), 600);
             }
           });
+        }
+      });
+
+      // Clean up DOM lock state for any cards that became unlocked — runs every frame
+      // so P2 always converges even when the one-shot trigger above misses due to
+      // snapshot-rounded G.elapsed (can jump >1 frame of G.dt).
+      [1, 2].forEach(pid => {
+        const fac = G.factions[pid - 1];
+        const defs = fac.units.filter(d => !d.isSpawned);
+        defs.forEach((def, filteredIdx) => {
+          if (def.isWorker) return;
+          const origIdx = fac.units.indexOf(def);
+          const slotIdx = origIdx >= 0 ? origIdx : filteredIdx;
+          if (!_slotUnlocked(slotIdx)) return;
+          const cardEl = document.getElementById(`p${pid}-ucard-${filteredIdx}`);
+          if (cardEl && cardEl.classList.contains('locked')) {
+            cardEl.classList.remove('locked');
+            const ov = document.getElementById(`p${pid}-lockoverlay-${filteredIdx}`);
+            if (ov) ov.remove();
+          }
+        });
+        if (_spyUnlocked()) {
+          const spyEl = document.querySelector(`#p${pid}-grid .spy-card`);
+          if (spyEl && spyEl.classList.contains('locked')) {
+            spyEl.classList.remove('locked');
+            const ov = document.getElementById(`p${pid}-lockoverlay-spy`);
+            if (ov) ov.remove();
+          }
         }
       });
 
@@ -23269,6 +23324,7 @@
           if (p.buffCooldowns) p.buffCooldowns = p.buffCooldowns.map(c => Math.max(0, c - G.dt));
         });
         updateParticles(G.dt);   // local cosmetic effects
+        updateUnitUnlocks();     // P2 needs countdown ticking + .locked class removal on unlock
         drawGame();
         updateHUD();
         requestAnimationFrame(gameLoop);
