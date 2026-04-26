@@ -767,6 +767,9 @@
       text-shadow: 0 0 80px rgba(212, 168, 67, .6), 0 0 40px rgba(212, 168, 67, .4), 0 4px 30px rgba(0, 0, 0, .8), inset 0 0 20px rgba(212, 168, 67, .15);
       color: #f5f5f5;
       filter: brightness(1.15) drop-shadow(0 0 15px rgba(212, 168, 67, .5));
+      padding: 0.5em 1.5em;
+      cursor: default;
+      user-select: none;
     }
 
     /* ── Menu section groups ── */
@@ -7974,6 +7977,11 @@
                 GAUNTLET</button>
               <div class="menu-btn-sub">24 fights, HP carries over, difficulty ramps</div>
             </div>
+            <div class="menu-btn-entry" style="animation-delay:.37s"><button class="btn" id="btn-warfront"
+                style="border-color:rgba(200,50,50,.5);color:#e05050;--btn-glow:rgba(200,50,50,.18)">⚔
+                WARFRONT</button>
+              <div class="menu-btn-sub">Persistent 45-node war — faction locked, encirclement, capital on the line</div>
+            </div>
           </div>
 
           <!-- ── SPECTATE ── -->
@@ -8786,6 +8794,7 @@
         <button class="btn" id="btn-change-faction">🔄 CHANGE FACTION</button>
         <button class="btn" id="btn-camp-return" style="display:none;border-color:rgba(255,200,50,.5);color:#f0c040;">📜
           CAMPAIGN MAP</button>
+        <button class="btn" id="btn-wf-return" style="display:none;border-color:rgba(200,50,50,.4);color:#e05050;">⚔ WARFRONT MAP</button>
         <button class="btn" id="btn-to-menu">🏠 MENU</button>
         <button class="btn" id="btn-go-mastery" style="border-color:rgba(212,168,67,.5);color:var(--gold);">🏅 VIEW
           MASTERY</button>
@@ -8818,6 +8827,151 @@
         <div id="camp-modal-passive"></div>
         <div id="camp-modal-quote"></div>
         <button class="btn primary" id="camp-start-btn">⚔ FIGHT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVING WARFRONT SCREEN -->
+  <div id="sc-warfront" class="screen" style="background:radial-gradient(ellipse 80% 60% at 50% 0%,#150511 0%,#0a0210 55%,#04020a 100%);flex-direction:column;align-items:stretch;justify-content:flex-start;overflow:hidden;">
+    <div id="wf-topbar" style="flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px;background:rgba(0,0,0,.55);border-bottom:1px solid rgba(200,80,80,.25);font-family:Rajdhani,sans-serif;">
+      <button class="btn" id="wf-back" style="font-size:.85rem;padding:6px 14px;">← BACK</button>
+      <button class="btn" id="wf-dev-btn" style="display:none;font-size:.75rem;padding:4px 10px;border-color:rgba(255,160,30,.4);color:rgba(255,160,30,.75);">⚙ DEV</button>
+      <div style="font-family:Cinzel,serif;font-size:1.15rem;color:#e05050;letter-spacing:.18em;text-shadow:0 0 14px rgba(200,50,50,.5);">⚔ LIVING WARFRONT</div>
+      <div id="wf-faction-badge" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:4px 10px;font-size:.9rem;"></div>
+      <div style="flex:1"></div>
+      <div id="wf-topbar-stats">
+        <div><span style="color:#aaa;letter-spacing:.1em;font-size:.75rem;">DAY</span> <strong id="wf-day-val" style="color:#fff;font-size:1.1rem;">1</strong></div>
+        <div><span style="color:#aaa;letter-spacing:.1em;font-size:.75rem;">ATTACKS IN</span> <strong id="wf-reset-val" style="color:#ffb444;">--</strong></div>
+        <div title="Time until AI can attack your tiles again"><span style="color:#aaa;letter-spacing:.1em;font-size:.75rem;">AI ATTACKS</span> <strong id="wf-ai-cd-val" style="color:#e05050;font-size:1.1rem;">--</strong></div>
+        <div><span style="color:#aaa;letter-spacing:.1em;font-size:.75rem;">CONTROL</span> <strong id="wf-control-val" style="color:#27ae60;font-size:1.1rem;">2%</strong></div>
+      </div>
+    </div>
+    <div id="wf-mainarea" style="flex:1 1 auto;display:flex;align-items:stretch;min-height:0;">
+      <div id="wf-map-container" style="flex:1 1 auto;position:relative;background:#06030c;overflow:hidden;cursor:grab;touch-action:none;user-select:none;">
+        <div id="wf-map" style="position:absolute;inset:0;"></div>
+        <div id="wf-help-overlay" style="position:absolute;top:12px;left:12px;background:rgba(8,4,12,.78);border:1px solid rgba(255,200,80,.30);border-radius:6px;padding:10px 14px;font-family:Rajdhani,sans-serif;font-size:.85rem;color:rgba(255,235,200,.92);letter-spacing:.04em;line-height:1.55;pointer-events:none;max-width:300px;">
+          <div style="color:#ffd060;font-weight:700;letter-spacing:.18em;font-size:.78rem;margin-bottom:4px;">HOW TO PLAY</div>
+          <div><strong>Drag / swipe</strong> to pan &nbsp;·&nbsp; <strong>pinch</strong> to zoom</div>
+          <div><strong>Tap</strong> a tile next to yours to <strong style="color:#ffb444;">attack/claim</strong></div>
+          <div><strong>Click your own tile</strong> to <strong style="color:#27ae60;">fortify</strong> (★ = +15% defence)</div>
+        </div>
+      </div>
+      <div id="wf-sidebar" style="flex:0 0 340px;display:flex;flex-direction:column;border-left:1px solid rgba(200,80,80,.20);background:rgba(0,0,0,.50);font-family:Rajdhani,sans-serif;overflow:hidden;">
+        <div style="padding:10px 16px;border-bottom:1px solid rgba(255,200,50,.15);background:rgba(255,200,50,.03);display:flex;align-items:center;gap:12px;">
+          <div style="text-align:center;min-width:56px;">
+            <div style="font-size:2rem;color:#ffd060;font-family:Cinzel,serif;line-height:1;" id="wf-influence-big">0</div>
+            <div style="font-size:.62rem;letter-spacing:.14em;color:#c8a820;margin-top:1px;">INFLUENCE</div>
+          </div>
+          <div style="flex:1;font-size:.82rem;color:rgba(255,210,80,.65);line-height:1.45;">Win battles to earn ⚡.<br>Click your tiles to spend it reinforcing them.</div>
+        </div>
+        <div style="padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;">
+          <div style="font-size:.65rem;letter-spacing:.14em;color:#aaa;min-width:58px;">ATTACKS</div>
+          <strong id="wf-atk-big" style="font-size:1.35rem;color:#ffb444;">4 / 4</strong>
+          <span id="wf-atk-timer" style="font-size:.78rem;color:rgba(255,180,80,.55);margin-left:4px;"></span>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);">
+          <div style="font-size:.88rem;letter-spacing:.14em;color:#ffb850;font-weight:700;margin-bottom:8px;">⚔ FACTIONS IN THIS WAR</div>
+          <div id="wf-faction-list" style="display:flex;flex-direction:column;gap:6px;font-size:.95rem;"></div>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06);">
+          <div style="font-size:.88rem;letter-spacing:.14em;color:#ffd060;font-weight:700;margin-bottom:8px;">🏆 HOW TO WIN</div>
+          <div style="font-size:.95rem;color:rgba(255,235,200,.85);line-height:1.55;">Hold <strong style="color:#27ae60;">70%</strong> of the map (32 of 45 tiles), <em>or</em> hold the <strong style="color:#ffd060;">Crossroads</strong> with at least <strong style="color:#27ae60;">40%</strong> control.</div>
+        </div>
+        <div id="wf-battlelog-wrap" style="flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding:12px 16px;">
+          <div style="font-size:.88rem;letter-spacing:.14em;color:#ff6060;font-weight:700;margin-bottom:8px;">⚔ LIVE BATTLES</div>
+          <div id="wf-battlelog" style="flex:1 1 auto;overflow-y:auto;display:flex;flex-direction:column;gap:7px;font-size:.95rem;color:rgba(255,235,200,.85);line-height:1.45;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Node info modal -->
+    <div id="wf-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:800;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+      <div id="wf-modal-inner" style="background:#0d0208;border:2px solid rgba(200,80,80,.5);border-radius:12px;padding:28px 36px;max-width:480px;width:92%;max-height:90vh;overflow-y:auto;text-align:center;font-family:Rajdhani,sans-serif;position:relative;">
+        <button id="wf-modal-close" style="position:absolute;top:10px;right:14px;background:none;border:none;color:rgba(255,255,255,.45);font-size:1.4rem;cursor:pointer;">✕</button>
+        <div id="wf-modal-icon" style="font-size:3.2rem;margin-bottom:4px;"></div>
+        <div id="wf-modal-name" style="font-size:1.7rem;letter-spacing:.08em;color:#fff;margin-bottom:6px;font-weight:800;"></div>
+        <div id="wf-modal-owner" style="font-size:1rem;margin-bottom:14px;letter-spacing:.05em;"></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:14px 16px;margin-bottom:16px;text-align:left;">
+          <div style="font-size:.78rem;color:#ffb850;letter-spacing:.18em;font-weight:700;margin-bottom:6px;">FORTIFICATION</div>
+          <div id="wf-modal-fort" style="font-size:1.5rem;letter-spacing:.12em;margin-bottom:6px;"></div>
+          <div style="font-size:.85rem;color:rgba(255,235,200,.7);line-height:1.45;">Each ★ adds <strong style="color:#27ae60;">+15%</strong> defence. <strong>Fortify</strong> your own tiles by attacking them — winning bumps the level up to 3 max.</div>
+        </div>
+        <div id="wf-modal-msg" style="font-size:.95rem;color:rgba(255,235,200,.92);margin-bottom:18px;line-height:1.5;"></div>
+        <div style="display:flex;gap:8px;"><button class="btn primary" id="wf-start-btn" style="flex:1;font-size:1rem;letter-spacing:.1em;padding:12px;">⚔ FIGHT</button><button class="btn" id="wf-autoresolve-btn" style="flex:1;font-size:1rem;letter-spacing:.08em;padding:12px;">⚖ AUTO</button></div>
+      </div>
+    </div>
+
+    <!-- Offline update overlay -->
+    <div id="wf-offline-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:810;align-items:center;justify-content:center;">
+      <div style="background:#0d0208;border:1px solid rgba(200,50,50,.5);border-radius:12px;padding:28px 36px;max-width:460px;width:90%;text-align:center;font-family:Rajdhani,sans-serif;">
+        <div style="font-size:1.4rem;letter-spacing:.15em;color:#e05050;margin-bottom:14px;">⚔ WARFRONT UPDATE</div>
+        <div id="wf-offline-body" style="font-size:.95rem;color:rgba(255,200,180,.88);line-height:1.7;margin-bottom:18px;"></div>
+        <button class="btn primary" id="wf-offline-dismiss" style="min-width:140px;">GOT IT</button>
+      </div>
+    </div>
+
+    <!-- Defense prompt — shown when an enemy attacks the player -->
+    <div id="wf-defense-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:820;align-items:center;justify-content:center;">
+      <div style="background:#100408;border:2px solid rgba(255,80,80,.6);border-radius:12px;padding:30px 38px;max-width:480px;width:92%;text-align:center;font-family:Rajdhani,sans-serif;box-shadow:0 0 60px rgba(255,40,40,.3);">
+        <div style="font-size:1.5rem;letter-spacing:.18em;color:#ff6060;margin-bottom:6px;font-weight:800;">🛡 UNDER ATTACK</div>
+        <div id="wf-defense-body" style="font-size:1rem;color:rgba(255,235,200,.92);margin:14px 0 22px;line-height:1.55;"></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn primary" id="wf-defense-fight" style="flex:1;letter-spacing:.1em;padding:12px;">🛡 DEFEND (+2⚡ if win)</button>
+          <button class="btn" id="wf-defense-auto" style="flex:1;letter-spacing:.1em;padding:12px;">⚖ AUTO-RESOLVE (no bonus)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily reset overlay -->
+    <div id="wf-reset-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:810;align-items:center;justify-content:center;">
+      <div style="background:#0d0208;border:1px solid rgba(200,50,50,.5);border-radius:12px;padding:32px 40px;max-width:460px;width:90%;text-align:center;font-family:Rajdhani,sans-serif;">
+        <div style="font-size:1.5rem;letter-spacing:.15em;color:#e05050;margin-bottom:10px;">📅 NEW DAY</div>
+        <div id="wf-reset-body" style="font-size:.95rem;color:rgba(255,200,180,.85);line-height:1.6;margin-bottom:20px;"></div>
+        <button class="btn primary" id="wf-reset-dismiss" style="min-width:140px;">BEGIN THE DAY</button>
+      </div>
+    </div>
+
+    <!-- Victory overlay -->
+    <div id="wf-victory-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:830;align-items:center;justify-content:center;">
+      <div style="background:#0a060c;border:2px solid rgba(255,215,80,.7);border-radius:14px;padding:38px 44px;max-width:520px;width:92%;text-align:center;font-family:Rajdhani,sans-serif;box-shadow:0 0 80px rgba(255,200,80,.35);">
+        <div id="wf-victory-title" style="font-size:1.8rem;letter-spacing:.2em;font-weight:800;margin-bottom:12px;"></div>
+        <div id="wf-victory-body" style="font-size:1rem;color:rgba(255,235,200,.92);margin-bottom:22px;line-height:1.6;"></div>
+        <button class="btn primary" id="wf-victory-newwar" style="min-width:200px;letter-spacing:.12em;padding:12px;">⚔ START NEW WAR</button>
+      </div>
+    </div>
+
+    <!-- Warfront defeat overlay -->
+    <div id="wf-defeat-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:830;align-items:center;justify-content:center;">
+      <div style="background:#0a060c;border:2px solid rgba(220,50,50,.7);border-radius:14px;padding:38px 44px;max-width:520px;width:92%;text-align:center;font-family:Rajdhani,sans-serif;box-shadow:0 0 80px rgba(200,40,40,.35);">
+        <div style="font-size:1.8rem;letter-spacing:.2em;font-weight:800;margin-bottom:12px;color:#e74c3c;">CAPITAL FALLEN</div>
+        <div id="wf-defeat-body" style="font-size:1rem;color:rgba(255,200,200,.88);margin-bottom:22px;line-height:1.6;"></div>
+        <button class="btn" id="wf-defeat-newwar" style="min-width:200px;letter-spacing:.12em;padding:12px;background:linear-gradient(135deg,#8B0000,#2d0000);color:#ff6666;border-color:#8B0000;">⚔ START NEW WAR</button>
+      </div>
+    </div>
+
+    <!-- Warfront dev overlay (map screen only — hidden during actual fights) -->
+    <div id="wf-dev-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:840;align-items:center;justify-content:center;" onclick="if(event.target===this)this.style.display='none'">
+      <div style="background:#0c0a06;border:2px solid rgba(255,160,30,.55);border-radius:12px;padding:28px 32px;max-width:400px;width:92%;font-family:Rajdhani,sans-serif;position:relative;">
+        <button onclick="document.getElementById('wf-dev-overlay').style.display='none'" style="position:absolute;top:10px;right:14px;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;">✕</button>
+        <div style="font-size:1.1rem;color:#ffa020;letter-spacing:.2em;font-weight:800;margin-bottom:18px;">⚙ WARFRONT DEV</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn" id="wf-dev-reset" style="border-color:rgba(231,76,60,.6);color:#e74c3c;text-align:left;padding:10px 14px;">
+            🗑 Reset Map &amp; Campaign — wipe all territory, start fresh
+          </button>
+          <button class="btn" id="wf-dev-add-influence" style="border-color:rgba(255,200,50,.4);color:#ffd060;text-align:left;padding:10px 14px;">
+            ⚡ Add 10 Influence
+          </button>
+          <button class="btn" id="wf-dev-refresh-attacks" style="border-color:rgba(255,180,70,.4);color:#ffb444;text-align:left;padding:10px 14px;">
+            🗡 Refresh Attacks (fill to max)
+          </button>
+          <button class="btn" id="wf-dev-add-attacks" style="border-color:rgba(255,180,70,.3);color:#ffb444;text-align:left;padding:10px 14px;">
+            🗡 Add 10 Bonus Attacks
+          </button>
+          <div id="wf-dev-msg" style="font-size:.82rem;color:rgba(255,200,80,.7);min-height:1.2em;margin-top:4px;text-align:center;"></div>
+        </div>
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:.06em;">
+          Dev tools are disabled during active battles.
+        </div>
       </div>
     </div>
   </div>
@@ -11159,6 +11313,9 @@
     function _isConquest() { return GAME_MODE === 'conquest' || GAME_MODE === 'conquest_solo' || GAME_MODE === 'conquest_aivsai'; }
     function _isHorde() { return GAME_MODE === 'horde'; }
     function _isGauntlet() { return GAME_MODE === 'gauntlet'; }
+    function _isWarfront() { return GAME_MODE === 'warfront'; }
+    let _warfrontActiveNodeId = null;
+    let _wfChoosingFaction = false; // true when on faction screen just to pick war faction (not start a battle)
     let AI_DIFFICULTY = 'medium';   // 'easy'|'medium'|'hard'|'expert'|'tutorial'
     let AI1_DIFFICULTY = 'medium';  // P1 AI difficulty in aivsai mode
     let AI1_PERSONALITY = null;     // P1 AI personality in aivsai mode
@@ -11402,6 +11559,112 @@
     const _HERO_EPITHETS = ['the Relentless', 'the Undying', 'the Merciless', 'Bonebreaker', 'the Ancient', 'Deathwalker', 'the Fearless', 'the Unyielding', 'Bloodthirst', 'the Eternal', 'the Cursed', 'the Undaunted', 'Ironside', 'Warborn', 'the Unstoppable', 'the Legendary', 'of Ash', 'the Deathless', 'Oathbreaker', 'the Inevitable'];
     function _genHeroName() { return _HERO_PREFIXES[Math.random() * _HERO_PREFIXES.length | 0] + _HERO_SUFFIXES[Math.random() * _HERO_SUFFIXES.length | 0]; }
     function _genEpithet() { return _HERO_EPITHETS[Math.random() * _HERO_EPITHETS.length | 0]; }
+
+    // ── LIVING WARFRONT — 45-tile hex map ─────────────────────────────────────
+    // Pointy-top hex grid, 9 cols × 5 rows. Active AI factions are randomized each
+    // war and start at the four corners. Most tiles begin neutral.
+    const WF_COLS = 9;
+    const WF_ROWS = 5;
+    const WF_NODE_COUNT = WF_COLS * WF_ROWS;
+    const WF_HEX_SIZE = 110;
+    const WF_HEX_W   = Math.sqrt(3) * WF_HEX_SIZE;
+    const WF_HEX_H   = 2 * WF_HEX_SIZE;
+    const WF_ROW_DY  = 1.5 * WF_HEX_SIZE;
+    const WF_MARGIN  = 90;
+    const WF_WORLD_W = WF_MARGIN * 2 + WF_HEX_W * (WF_COLS) + WF_HEX_W / 2;
+    const WF_WORLD_H = WF_MARGIN * 2 + WF_ROW_DY * (WF_ROWS - 1) + WF_HEX_H;
+    const WF_VIEW_W  = 1300;
+    const WF_VIEW_H  = 760;
+
+    const WF_DAILY_ATTACKS = 4;
+    const WF_ATTACK_REFRESH_MS = 10 * 60 * 1000;  // attacks refill every 10 minutes
+    const WF_AI_ATTACK_CD_MS  = 3 * 60 * 1000;  // 3 min cooldown between AI player-tile attacks
+    const WF_AI_EXPAND_CD_MS  = 45 * 1000;       // 45s cooldown between AI neutral expansions (per faction)
+    const WF_ACTIVE_FAC_COUNT = 3;
+    const WF_WIN_PCT = 0.70;          // 70% map = domination win
+    const WF_CENTER_PCT = 0.40;       // hold center + 40% map = center win
+    const WF_CENTER_ID = Math.floor(WF_NODE_COUNT / 2);   // = 22, the geographic center
+
+    // The pool of factions that can show up as enemies. Random subset per war.
+    const WF_FACTION_POOL = ['warriors','infernal','glacial','voltborn','verdant','umbral','tideborn','plagued','reavers','echoes','illusionists','pandemonium','brutes','bloodpact','spirits'];
+
+    const WF_NODE_NAMES = [
+      'Frostpeak','Skybreach','Stormcliff','Coldspire',"Glacier's Edge",'Ironvein','Pyrespire','Ashen Rise','Hellmaw',
+      'Whitepass','Wolfsong','Mistwood','Greenmire','Crow Hollow','Boulder Ford','Embergate','Smokepeak','Bloodmire',
+      'Tideheart','Silverwail','Thornwood','Stillwater','The Crossroads','Goldreach','Ashfields','Crowtongue','Bonereef',
+      'Wavebreak','Drownedhold','Owltree','Veilmoor','Echovault','Whisperhalt','Hollowdeep','Doomspire','Wraithcliff',
+      'Saltspire','Bonefall','Rotmarsh','Dreadwatch','Bastion','Ironwall','Warmark','Plagueholt','Phantomgate',
+    ];
+
+    function _wfHexAdj(col, row) {
+      const odd = row % 2 === 1;
+      // pointy-top offset coords — neighbour deltas depend on whether the row is odd
+      const dirs = odd
+        ? [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,0]]
+        : [[-1,-1],[0,-1],[1,0],[0,1],[-1,1],[-1,0]];
+      const out = [];
+      for (const [dc, dr] of dirs) {
+        const cc = col + dc, rr = row + dr;
+        if (cc >= 0 && cc < WF_COLS && rr >= 0 && rr < WF_ROWS) out.push(rr * WF_COLS + cc);
+      }
+      return out;
+    }
+    function _wfHexCenter(col, row) {
+      const odd = row % 2 === 1;
+      const cx = WF_MARGIN + WF_HEX_W * col + (odd ? WF_HEX_W / 2 : 0) + WF_HEX_W / 2;
+      const cy = WF_MARGIN + WF_ROW_DY * row + WF_HEX_H / 2;
+      return [cx, cy];
+    }
+    function _wfHexPolygon(cx, cy, size) {
+      const pts = [];
+      for (let i = 0; i < 6; i++) {
+        // pointy-top: vertex 0 at top
+        const a = Math.PI / 3 * i - Math.PI / 2;
+        pts.push((cx + size * Math.cos(a)).toFixed(1) + ',' + (cy + size * Math.sin(a)).toFixed(1));
+      }
+      return pts.join(' ');
+    }
+    function _wfBuildNodes() {
+      const out = [];
+      for (let r = 0; r < WF_ROWS; r++) {
+        for (let c = 0; c < WF_COLS; c++) {
+          const id = r * WF_COLS + c;
+          const [cx, cy] = _wfHexCenter(c, r);
+          out.push({ id, col: c, row: r, cx, cy, name: WF_NODE_NAMES[id] || ('Tile ' + id), adj: _wfHexAdj(c, r) });
+        }
+      }
+      return out;
+    }
+    const WARFRONT_NODES = Object.freeze(_wfBuildNodes());
+
+    // 4 corner spawns for active factions (NW, NE, SW, SE)
+    const WF_CORNER_SPAWNS = [0, WF_COLS - 1, (WF_ROWS - 1) * WF_COLS, WF_ROWS * WF_COLS - 1];
+
+    const _WF_FAC_COLORS = Object.freeze({
+      warriors: '#d4af37', infernal: '#ff5530', bloodpact: '#a02525', glacial: '#5db5ff',
+      voltborn: '#ffd83d', brutes: '#8b6f3c', summoners: '#6b3380', psionics: '#c050d0',
+      umbral: '#5a3f8a', pandemonium: '#ff44b0', spirits: '#9bf0ff', verdant: '#3da053',
+      tideborn: '#2080c0', echoes: '#9080d0', veilborn: '#5a4080', illusionists: '#d05dd0',
+      reavers: '#9a6040', plagued: '#7da030',
+    });
+    function _wfFacColor(facId) { return _WF_FAC_COLORS[facId] || '#888'; }
+    const WF_PLAYER_COLOR = '#27ae60';
+    const WF_NEUTRAL_COLOR = '#5e556e';
+
+    // Win odds for invader vs defender; otherwise 50/50
+    function _wfWinRate(invader, defender) {
+      if (!invader || !defender || invader === defender) return 0.50;
+      const TBL = {
+        'brutes-verdant': 0.72, 'verdant-brutes': 0.32,
+        'voltborn-glacial': 0.60, 'glacial-voltborn': 0.42,
+        'plagued-reavers': 0.60, 'reavers-plagued': 0.42,
+        'illusionists-echoes': 0.58, 'echoes-illusionists': 0.42,
+        'infernal-glacial': 0.62, 'glacial-infernal': 0.40,
+        'umbral-warriors': 0.55, 'warriors-umbral': 0.46,
+        'pandemonium-warriors': 0.50, 'warriors-pandemonium': 0.50,
+      };
+      return TBL[invader + '-' + defender] || 0.50;
+    }
 
     // ── FACTIONS ──
     // ── HORDE MODE — wave definitions ─────────────────────────────────────────
@@ -11730,7 +11993,7 @@
       },
       {
         id: 'merchants', name: 'Merchants', icon: '💰', tagline: 'Every death is a transaction',
-        passive: 'Compound Interest: killing enemies refunds 100% of their soul cost (instead of ~50%). Souls above 30 passively earn +0.3/s. Soul cap raised to 1200.',
+        passive: 'Market Economy: Coin Guard and Gold Hawk earn bonus souls on each kill (+3 and +2 respectively). When your soul pool exceeds 30, earn +0.3/s passively (upgradeable). Soul cap raised to 1200.',
         pros: ['100% kill refunds reward aggressive play', 'Passive income above 30 souls rewards banking', 'Higher soul cap allows saving for powerful units'],
         cons: ['No special combat mechanics — pure soul efficiency', 'Passive income requires kills to pull ahead', 'No healing or defensive mechanics'],
         matchup: 'Best against: expensive-unit factions (Brutes, Glacial, Reavers) | Weak to: swarm factions (Summoners, Pandemonium), Warriors (aggression outpaces economy)',
@@ -12121,6 +12384,7 @@
     };
     let _rebinding = null; // { key: 'p1Left', el: element }
     let _devUnlocked = (() => { try { return !!localStorage.getItem('_devAuth'); } catch(_){return false;} })();
+    let _devSessionActivated = false; // only true after clicking title this session
     let _devTab = 'p1'; // active tab: 'p1' | 'p2' | 'game'
 
     function startRebind(keyName, el) {
@@ -13989,14 +14253,14 @@
 
       // In aivsai mode run BOTH sides
       // Spectator mode indicator
-      const specBadge = document.getElementById('aivsai-spectate-badge');
+      let specBadge = document.getElementById('aivsai-spectate-badge');
       if (_isAiVsAiMode) {
         if (!specBadge) {
-          const b = document.createElement('div');
-          b.id = 'aivsai-spectate-badge';
-          b.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:6;background:rgba(0,0,0,.8);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Rajdhani,sans-serif;font-size:.5rem;padding:4px 10px;border-radius:6px;letter-spacing:.05em;pointer-events:none;';
+          specBadge = document.createElement('div');
+          specBadge.id = 'aivsai-spectate-badge';
+          specBadge.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:6;background:rgba(0,0,0,.8);border:1px solid rgba(212,168,67,.5);color:rgba(212,168,67,.9);font-family:Rajdhani,sans-serif;font-size:.5rem;padding:4px 10px;border-radius:6px;letter-spacing:.05em;pointer-events:none;';
           const _bfWrap = document.getElementById('battlefield-wrap');
-          (_bfWrap || document.getElementById('sc-game')).appendChild(b);
+          (_bfWrap || document.getElementById('sc-game')).appendChild(specBadge);
         }
         const mins = Math.floor((G.elapsed || 0) / 60);
         const secs = Math.floor((G.elapsed || 0) % 60);
@@ -15468,7 +15732,7 @@
         // ── Merchants ──
         case 'merchant_rate': p._merchantPassive = (p._merchantPassive || 0.3) + (up.value || up.val || 0.2); break;
         case 'merchant_discount':
-          G.unitDefs[pid - 1].forEach(d => { if (!d.isWorker) d.souls = Math.max(1, Math.round(d.souls * (1 - (up.value || 0.15)))); });
+          G.unitDefs[pid - 1].forEach(d => { if (!d.isWorker) d.souls = Math.max(1, d.souls - (up.value || 2)); if (d.isWorker) d._midBonus = (d._midBonus || 0) + 1; });
           break;
         case 'merchant_kill_bonus':
           // GOLDEN AGE: triple kill bonuses, banker +3/s, -3 soul cost, +1.0 passive
@@ -23413,7 +23677,7 @@
       if (_devRefreshTick === 0) {
         if (document.getElementById('dev-panel').style.display === 'flex') openDevPanel(false);
         const _dtb = document.getElementById('dev-toggle-btn');
-        if (_dtb) _dtb.style.display = _devUnlocked ? 'block' : 'none';
+        if (_dtb) _dtb.style.display = _devSessionActivated ? 'block' : 'none';
       }
       requestAnimationFrame(gameLoop);
     }
@@ -23562,6 +23826,8 @@
         ? _awardMasteryXPForGame(_winner.id, _G) : [];
       // Campaign hook — delay game over screen so dialogue can play
       if (CAMPAIGN.active) _campOnGameOver(_winner.id);
+      // Warfront hook — update node state on match end
+      if (WARFRONT.active) _wfOnGameOver(_winner.id);
       const _goDelay = CAMPAIGN.active ? 10000 : 1650;
       // Hide chat immediately when game ends (don't wait for gameover delay)
       _onlineChatHide();
@@ -23596,6 +23862,8 @@
         const campRetBtn = document.getElementById('btn-camp-return');
         if (campRetBtn) campRetBtn.style.display = CAMPAIGN.progress._wasCampaign ? 'inline-block' : 'none';
         CAMPAIGN.progress._wasCampaign = false;
+        const wfRetBtn = document.getElementById('btn-wf-return');
+        if (wfRetBtn) wfRetBtn.style.display = _isWarfront() ? 'inline-block' : 'none';
         // Hide rematch/change-faction for modes where replaying the same match makes no sense
         const rematchBtn = document.getElementById('btn-rematch');
         if (rematchBtn) rematchBtn.style.display = (_isConquestGO || _isHordeGO) ? 'none' : '';
@@ -24443,7 +24711,7 @@
       // Music mood transitions
       if (id === 'sc-menu' || id === 'sc-online' || id === 'sc-controls' ||
         id === 'sc-mastery' || id === 'sc-campaign' || id === 'sc-rebind' || id === 'sc-tutorial' ||
-        id === 'sc-tournament-setup' || id === 'sc-tournament-bracket' || id === 'sc-draft') {
+        id === 'sc-tournament-setup' || id === 'sc-tournament-bracket' || id === 'sc-draft' || id === 'sc-warfront') {
         if (!MUSIC.isPlaying()) MUSIC.start('menu'); else MUSIC.setMood('menu');
       } else if (id === 'sc-faction') {
         if (!MUSIC.isPlaying()) MUSIC.start('ambient'); else MUSIC.setMood('ambient');
@@ -24579,6 +24847,8 @@
       G = null; stopIngameTutorial();
       window._gauntletRun = null;
       _gauntletCleanup();
+      if (WARFRONT.active) { WARFRONT.active = false; WARFRONT.save(); }
+      if (typeof _wfStopSkirmishLoop === 'function') _wfStopSkirmishLoop();
       // Clean up tournament state if quitting mid-tournament
       if (GAME_MODE === 'tournament' && TOURNAMENT) {
         TOURNAMENT = null;
@@ -24905,7 +25175,7 @@
       if (titleElR && !titleElR.textContent.includes('CHOOSE')) titleElR.textContent = 'CHOOSE YOUR FACTION';
 
       const solo = (GAME_MODE === 'solo' || GAME_MODE === 'tutorial' ||
-        GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo');
+        GAME_MODE === 'conquest_solo' || GAME_MODE === 'sudden_death_solo' || _isWarfront());
       const isVsLike = (GAME_MODE === 'vs' || GAME_MODE === 'sudden_death' || _isConquest());
       const aivsai = (GAME_MODE === 'aivsai' || GAME_MODE === 'conquest_aivsai' || GAME_MODE === 'sudden_death_aivsai');
       // In solo: show the P2 card grid (relabelled) so player can pick the AI faction
@@ -24919,7 +25189,7 @@
       document.getElementById('fchosen-p1').style.display = '';
       // Update P2 faction panel label
       const p2lbl = document.getElementById('faction-hint-p2');
-      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : solo ? '🤖 AI FACTION' : 'PLAYER 2';
+      if (p2lbl) p2lbl.firstChild.textContent = aivsai ? '🤖 AI 2' : solo ? (_isWarfront() ? '⚔ INVADER FACTION' : '🤖 AI FACTION') : 'PLAYER 2';
       const _aiP2Label = document.getElementById('ai-p2-label');
       if (_aiP2Label) _aiP2Label.textContent = aivsai ? '🤖 AI 2' : '🤖 AI';
       // Update P1 label
@@ -24939,9 +25209,35 @@
       const titleEl = document.querySelector('#sc-faction .sc-title');
       if (titleEl) {
         if (aivsai) titleEl.textContent = 'AI VS AI — CHOOSE FACTIONS';
-        else if (solo) titleEl.textContent = 'CHOOSE YOUR FACTION';
+        else if (_isWarfront()) titleEl.textContent = '⚔ WARFRONT — CHOOSE YOUR FACTION';
         else titleEl.textContent = 'CHOOSE YOUR FACTION';
       }
+
+      // In warfront faction-choosing mode: hide P2 side entirely, no AI panel, no difficulty
+      if (_isWarfront() && _wfChoosingFaction) {
+        const p2Side = document.querySelector('.faction-layout .faction-side:last-child');
+        if (p2Side) p2Side.style.display = 'none';
+        document.querySelector('.faction-vs').style.display = 'none';
+        document.getElementById('ai-p2-panel').style.display = 'none';
+        document.getElementById('ai-p1-panel').style.display = 'none';
+        const titleEl2 = document.querySelector('#sc-faction .sc-title');
+        if (titleEl2) titleEl2.textContent = '⚔ WARFRONT — CHOOSE YOUR FACTION';
+        const startBtn2 = document.getElementById('btn-start');
+        if (startBtn2) startBtn2.textContent = 'CONFIRM FACTION →';
+        fSelected[1] = 0; // dummy so button enables
+        _updateStartBtn();
+        return;
+      }
+      // Restore vs text if coming back from choosing mode
+      document.querySelector('.faction-vs').style.display = '';
+      // In warfront battle mode: P2 faction is locked to the node — block clicks on the P2 grid.
+      const _p2Grid = document.getElementById('fcards-p2');
+      const _p2Filter = document.getElementById('ffilter-p2');
+      if (_p2Grid) {
+        _p2Grid.style.pointerEvents = _isWarfront() ? 'none' : '';
+        _p2Grid.style.opacity = _isWarfront() ? '0.85' : '';
+      }
+      if (_p2Filter) _p2Filter.style.display = _isWarfront() ? 'none' : '';
 
       if (solo || aivsai) {
         _aiAutoPickFaction();
@@ -25972,6 +26268,110 @@
       cons: ['Expensive units — needs strong economy to sustain', 'No early game pressure — must survive the first 90 seconds', 'Relies on staying clumped — spread attacks counter the aura'],
       startSouls: 18, startBodies: 7,
     };
+
+    // ── LIVING WARFRONT — persistent state ──────────────────────────────────────
+    // 45-tile hex map. Each war picks 4 random AI factions that start in the corners
+    // and fight outward. The other 41 tiles begin neutral, painted with random
+    // "neutral" factions (purely cosmetic — neutrals never expand on their own).
+    // Player starts at the center (Crossroads, id 22) and pushes outward.
+    const DAY_MS = 24 * 3600 * 1000;
+    function _wfShuffled(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+    const WARFRONT = (() => {
+      function _pickActiveFactions() {
+        return _wfShuffled(WF_FACTION_POOL).slice(0, WF_ACTIVE_FAC_COUNT);
+      }
+      function _buildFreshState(prev) {
+        const active = _pickActiveFactions();
+        const inactive = WF_FACTION_POOL.filter(f => !active.includes(f));
+        const nodes = WARFRONT_NODES.map((n, i) => {
+          // Player starts at corner 0 (NW)
+          if (i === WF_CORNER_SPAWNS[0]) {
+            return { id: i, owner: 'player', faction: null, fortification: 1 };
+          }
+          // Active AI factions occupy corners 1-3 (NE, SW, SE)
+          const cornerIdx = [1, 2, 3].findIndex(ci => WF_CORNER_SPAWNS[ci] === i);
+          if (cornerIdx >= 0) {
+            return { id: i, owner: 'ai', faction: active[cornerIdx], fortification: 1 };
+          }
+          // Everything else: neutral, painted with a random non-active faction (cosmetic)
+          const pool = inactive.length > 0 ? inactive : WF_FACTION_POOL;
+          const fac = pool[Math.floor(Math.random() * pool.length)];
+          return { id: i, owner: 'neutral', faction: fac, fortification: 0 };
+        });
+        return {
+          campaignStart: (prev && prev.campaignStart) ? prev.campaignStart : Date.now(),
+          lastSeen: Date.now(),
+          campaignComplete: false,
+          victor: null,
+          _victoryShown: false,
+          _defeatShown: false,
+          attacksRemaining: WF_DAILY_ATTACKS,
+          _nextAttackRefresh: Date.now() + WF_ATTACK_REFRESH_MS,
+          activeFactions: active,
+          nodes,
+          _dayReset: true,
+          playerFaction: (prev && prev.playerFaction) ? prev.playerFaction : null,
+          _skirmishLog: [],
+          _activeBattles: [],
+          _pendingDefense: null,
+          _aiNextAttackTime: 0,
+          _aiNeutralCDs: {},
+          influence: 0,
+        };
+      }
+      function _isStaleState(s) {
+        if (!s || typeof s !== 'object') return true;
+        if (!Array.isArray(s.nodes) || s.nodes.length !== WF_NODE_COUNT) return true;
+        if (!Array.isArray(s.activeFactions) || s.activeFactions.length !== WF_ACTIVE_FAC_COUNT) return true;
+        return false;
+      }
+      let _state = null;
+      return {
+        get state() { return _state; },
+        active: false,
+        currentDay() {
+          if (!_state || !_state.campaignStart) return 1;
+          return Math.floor((Date.now() - _state.campaignStart) / DAY_MS) + 1;
+        },
+        msUntilReset() {
+          if (!_state) return WF_ATTACK_REFRESH_MS;
+          return Math.max(0, (_state._nextAttackRefresh || 0) - Date.now());
+        },
+        // Reset everything for a brand-new campaign (after victory or manual reset)
+        resetCampaign() {
+          _state = _buildFreshState(null);
+          this.save();
+        },
+        load() {
+          let s = null;
+          try { s = JSON.parse(localStorage.getItem('brc_warfront') || 'null'); } catch (_) { }
+          if (_isStaleState(s)) { _state = _buildFreshState(s); return; }
+          // Territory persists until victory — no daily wipe.
+          if (typeof s.attacksRemaining !== 'number') s.attacksRemaining = WF_DAILY_ATTACKS;
+          if (typeof s._nextAttackRefresh !== 'number') s._nextAttackRefresh = Date.now() + WF_ATTACK_REFRESH_MS;
+          if (!Array.isArray(s._skirmishLog)) s._skirmishLog = [];
+          if (!Array.isArray(s._activeBattles)) s._activeBattles = [];
+          if (s._pendingDefense === undefined) s._pendingDefense = null;
+          if (s.playerFaction === undefined) s.playerFaction = null;
+          if (typeof s._aiNextAttackTime !== 'number') s._aiNextAttackTime = 0;
+          if (!s._aiNeutralCDs || typeof s._aiNeutralCDs !== 'object') s._aiNeutralCDs = {};
+          if (typeof s.influence !== 'number') s.influence = 0;
+          _state = s;
+        },
+        save() {
+          if (!_state) return;
+          _state.lastSeen = Date.now();
+          try { localStorage.setItem('brc_warfront', JSON.stringify(_state)); } catch (_) { }
+        },
+      };
+    })();
 
     // Campaign level definitions — one per faction in narrative order
     const CAMP_LEVELS = [
@@ -27786,6 +28186,1069 @@
       setTimeout(() => { CAMPAIGN.active = false; }, 9500);
     }
 
+    // ── LIVING WARFRONT — functions ──────────────────────────────────────────────
+
+    // Camera state
+    let _wfCam = { x: 0, y: 0 };
+    let _wfZoom = 1.0;          // zoom level (0.5 – 2.5)
+    let _wfZoomTarget = 1.0;    // smooth zoom target
+    let _wfZoomAnchor = null;   // {wx,wy,sx,sy} world+screen point to keep fixed during zoom lerp
+    let _wfDrag = null;
+    let _wfPointers = {};       // active pointer positions (id → {x,y})
+    let _wfPinch = null;        // pinch state {dist, zoom0, cx0, cy0, worldCX, worldCY, midSX, midSY}
+    let _wfKeys = {};
+    let _wfCamTimer = null;
+    let _wfHeaderTimer = null;
+
+    function _wfClampCamera(cx, cy) {
+      const vw = WF_VIEW_W / _wfZoom, vh = WF_VIEW_H / _wfZoom;
+      return { x: Math.max(0, Math.min(Math.max(0, WF_WORLD_W - vw), cx)),
+               y: Math.max(0, Math.min(Math.max(0, WF_WORLD_H - vh), cy)) };
+    }
+    function _wfCenterCamera() {
+      _wfZoom = 1.0;
+      // On mobile, zoom out slightly so more of the map is visible
+      if (window.innerWidth <= 820) _wfZoom = 0.65;
+      _wfZoomTarget = _wfZoom; _wfZoomAnchor = null;
+      const nd = WARFRONT_NODES[WF_CORNER_SPAWNS[0]];
+      const cx = nd ? nd.cx : WF_WORLD_W / 2;
+      const cy = nd ? nd.cy : WF_WORLD_H / 2;
+      _wfCam = _wfClampCamera(cx - (WF_VIEW_W / _wfZoom) / 2, cy - (WF_VIEW_H / _wfZoom) / 2);
+    }
+    function _wfApplyCamera() {
+      const svg = document.getElementById('wf-map-svg');
+      if (!svg) return;
+      const vw = (WF_VIEW_W / _wfZoom).toFixed(1), vh = (WF_VIEW_H / _wfZoom).toFixed(1);
+      svg.setAttribute('viewBox', _wfCam.x.toFixed(1) + ' ' + _wfCam.y.toFixed(1) + ' ' + vw + ' ' + vh);
+    }
+    function _wfCamTick() {
+      const spd = 320 / _wfZoom, dt = 1 / 60;
+      let changed = false;
+
+      // Smooth zoom lerp toward target
+      const zDiff = _wfZoomTarget - _wfZoom;
+      if (Math.abs(zDiff) > 0.0008) {
+        _wfZoom += zDiff * 0.14;
+        if (_wfZoomAnchor) {
+          // Keep the anchor world-point fixed under its screen position
+          _wfCam = _wfClampCamera(
+            _wfZoomAnchor.wx - _wfZoomAnchor.sx / _wfZoom,
+            _wfZoomAnchor.wy - _wfZoomAnchor.sy / _wfZoom
+          );
+        } else {
+          _wfCam = _wfClampCamera(_wfCam.x, _wfCam.y);
+        }
+        changed = true;
+      } else if (_wfZoomAnchor) {
+        _wfZoom = _wfZoomTarget;
+        _wfZoomAnchor = null;
+      }
+
+      // Keyboard pan
+      let dx = 0, dy = 0;
+      if (_wfKeys['KeyA'] || _wfKeys['ArrowLeft'])  dx -= spd * dt;
+      if (_wfKeys['KeyD'] || _wfKeys['ArrowRight']) dx += spd * dt;
+      if (_wfKeys['KeyW'] || _wfKeys['ArrowUp'])    dy -= spd * dt;
+      if (_wfKeys['KeyS'] || _wfKeys['ArrowDown'])  dy += spd * dt;
+      if (dx !== 0 || dy !== 0) {
+        _wfCam = _wfClampCamera(_wfCam.x + dx, _wfCam.y + dy);
+        changed = true;
+      }
+      if (changed) _wfApplyCamera();
+      _wfCamTimer = requestAnimationFrame(_wfCamTick);
+    }
+    function _wfStartCamera() {
+      if (_wfCamTimer) return;
+      _wfCamTimer = requestAnimationFrame(_wfCamTick);
+    }
+    function _wfStopCamera() {
+      if (_wfCamTimer) { cancelAnimationFrame(_wfCamTimer); _wfCamTimer = null; }
+    }
+    function _wfBindCamera() {
+      const cont = document.getElementById('wf-map-container');
+      if (!cont || cont._wfBound) return;
+      cont._wfBound = true;
+
+      // Pointer Events — handles mouse, touch, and stylus with one code path.
+      // We do NOT call preventDefault on pointerdown and do NOT use setPointerCapture,
+      // so that SVG onclick handlers still fire normally on short taps/clicks.
+      // Drag detection uses a movement threshold (10px) to separate drags from taps.
+
+      cont.addEventListener('pointerdown', e => {
+        if (e.button > 1) return;
+        _wfPointers[e.pointerId] = { x: e.clientX, y: e.clientY, moved: 0 };
+        const ids = Object.keys(_wfPointers);
+        if (ids.length === 1) {
+          _wfDrag  = { startX: e.clientX, startY: e.clientY, cx0: _wfCam.x, cy0: _wfCam.y };
+          _wfPinch = null;
+        } else if (ids.length === 2) {
+          const pts = Object.values(_wfPointers);
+          _wfDrag = null;
+          const dx = pts[1].x - pts[0].x, dy = pts[1].y - pts[0].y;
+          const midSX = (pts[0].x + pts[1].x) / 2, midSY = (pts[0].y + pts[1].y) / 2;
+          const rect = cont.getBoundingClientRect();
+          const worldCX = _wfCam.x + (midSX - rect.left) / _wfZoom;
+          const worldCY = _wfCam.y + (midSY - rect.top)  / _wfZoom;
+          _wfPinch = { dist: Math.sqrt(dx * dx + dy * dy), zoom0: _wfZoom, cx0: _wfCam.x, cy0: _wfCam.y, worldCX, worldCY, midSX, midSY };
+        }
+      });
+
+      // Listen on window so dragging off the container edge still works
+      window.addEventListener('pointermove', e => {
+        if (!_wfPointers[e.pointerId]) return;
+        const prev = _wfPointers[e.pointerId];
+        const ddx = e.clientX - prev.x, ddy = e.clientY - prev.y;
+        _wfPointers[e.pointerId] = { x: e.clientX, y: e.clientY, moved: prev.moved + Math.sqrt(ddx*ddx + ddy*ddy) };
+        const pts = Object.values(_wfPointers);
+        if (pts.length >= 2 && _wfPinch) {
+          const dx = pts[1].x - pts[0].x, dy = pts[1].y - pts[0].y;
+          const newDist = Math.sqrt(dx * dx + dy * dy);
+          const newZoom = Math.max(0.65, Math.min(2.5, _wfPinch.zoom0 * (newDist / _wfPinch.dist)));
+          _wfZoom = newZoom; _wfZoomTarget = newZoom; _wfZoomAnchor = null;
+          const rect = cont.getBoundingClientRect();
+          _wfCam = _wfClampCamera(
+            _wfPinch.worldCX - (_wfPinch.midSX - rect.left) / newZoom,
+            _wfPinch.worldCY - (_wfPinch.midSY - rect.top)  / newZoom
+          );
+          _wfApplyCamera();
+        } else if (pts.length === 1 && _wfDrag && _wfPointers[e.pointerId].moved > 10) {
+          // Only pan once we've confirmed this is a drag (not a tap)
+          _wfCam = _wfClampCamera(
+            _wfDrag.cx0 + (_wfDrag.startX - e.clientX) / _wfZoom,
+            _wfDrag.cy0 + (_wfDrag.startY - e.clientY) / _wfZoom
+          );
+          _wfApplyCamera();
+          cont.style.cursor = 'grabbing';
+        }
+      });
+
+      window.addEventListener('pointerup', e => {
+        delete _wfPointers[e.pointerId];
+        const pts = Object.values(_wfPointers);
+        if (pts.length === 0) {
+          _wfDrag = null; _wfPinch = null;
+          cont.style.cursor = 'grab';
+        } else if (pts.length === 1) {
+          _wfPinch = null;
+          _wfDrag  = { startX: pts[0].x, startY: pts[0].y, cx0: _wfCam.x, cy0: _wfCam.y };
+        }
+      });
+      window.addEventListener('pointercancel', e => {
+        delete _wfPointers[e.pointerId];
+        if (!Object.keys(_wfPointers).length) { _wfDrag = null; _wfPinch = null; }
+      });
+
+      // Scroll-wheel zoom (desktop) — updates target; _wfCamTick lerps smoothly
+      cont.addEventListener('wheel', e => {
+        e.preventDefault();
+        const step = Math.min(Math.abs(e.deltaY), 120) / 120;
+        const factor = e.deltaY > 0 ? 1 - step * 0.15 : 1 + step * 0.15;
+        const newTarget = Math.max(0.65, Math.min(2.5, _wfZoomTarget * factor));
+        if (newTarget === _wfZoomTarget) return;
+        // Anchor the world-point under the cursor so it stays fixed as zoom lerps
+        const rect = cont.getBoundingClientRect();
+        const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+        _wfZoomAnchor = { wx: _wfCam.x + sx / _wfZoom, wy: _wfCam.y + sy / _wfZoom, sx, sy };
+        _wfZoomTarget = newTarget;
+      }, { passive: false });
+
+      // WASD / arrow keys (desktop)
+      window.addEventListener('keydown', e => {
+        if (!document.getElementById('sc-warfront')?.classList.contains('active')) return;
+        if (['KeyA','KeyD','KeyW','KeyS','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)) {
+          _wfKeys[e.code] = true; e.preventDefault();
+        }
+      });
+      window.addEventListener('keyup', e => { delete _wfKeys[e.code]; });
+    }
+
+    function _wfSimulateOffline() {
+      const st = WARFRONT.state;
+      if (!st) return;
+      const hoursSince = Math.max(0, (Date.now() - (st.lastSeen || Date.now())) / 3600000);
+      if (hoursSince < 0.25) return;
+      const events = [];
+      const playerHits = Math.min(2, Math.floor(hoursSince / 3));
+      if (playerHits > 0) {
+        const candidates = [];
+        st.nodes.forEach((nd, nid) => {
+          if (nd.owner !== 'player') return;
+          if (nid === WF_CORNER_SPAWNS[0]) return; // capital is indestructible
+          WARFRONT_NODES[nid].adj.forEach(j => {
+            if (st.nodes[j].owner === 'ai') candidates.push({ targetId: nid, attackerId: j });
+          });
+        });
+        for (let hi = 0; hi < playerHits && candidates.length > 0; hi++) {
+          const pick = candidates.splice(Math.floor(Math.random() * candidates.length), 1)[0];
+          const target = st.nodes[pick.targetId];
+          const attacker = st.nodes[pick.attackerId];
+          const defNode = WARFRONT_NODES[pick.targetId];
+          if (Math.random() < Math.min(0.60, _wfWinRate(attacker.faction, 'neutral'))) {
+            target.fortification = Math.max(0, target.fortification - 1);
+            if (target.fortification === 0) {
+              target.owner = 'ai'; target.faction = attacker.faction; target.fortification = 1;
+              events.push({ type: 'lost', nodeName: defNode.name, by: attacker.faction });
+            } else {
+              events.push({ type: 'damaged', nodeName: defNode.name, by: attacker.faction });
+            }
+          }
+        }
+      }
+      const aiSkirmishes = Math.min(8, Math.floor(hoursSince / 1.5));
+      for (let si = 0; si < aiSkirmishes; si++) {
+        const r = _wfDoSkirmish();
+        if (r) events.push(r);
+      }
+      st._offlineEvents = events;
+    }
+
+    // Runs one AI battle tick for offline simulation (instant, no UI indicators).
+    function _wfDoSkirmish() {
+      const st = WARFRONT.state;
+      if (!st || st._pendingDefense) return null;
+      const now = Date.now();
+      const facChoices = {};
+      st.nodes.forEach((nd, nid) => {
+        if (nd.owner !== 'ai') return;
+        const facId = nd.faction;
+        WARFRONT_NODES[nid].adj.forEach(j => {
+          const t = st.nodes[j];
+          if (t.owner === 'player') return;
+          if (t.owner === 'ai' && t.faction === facId) return;
+          if (t.owner === 'neutral' && now < ((st._aiNeutralCDs || {})[facId] || 0)) return;
+          (facChoices[facId] = facChoices[facId] || []).push({ atkId: nid, defId: j });
+        });
+      });
+      const activeFacsWithChoices = Object.keys(facChoices);
+      if (activeFacsWithChoices.length === 0) return null;
+      const pickedFac = activeFacsWithChoices[Math.floor(Math.random() * activeFacsWithChoices.length)];
+      const choices = facChoices[pickedFac];
+      const c = choices[Math.floor(Math.random() * choices.length)];
+      const atk = st.nodes[c.atkId], def = st.nodes[c.defId];
+      const defNode = WARFRONT_NODES[c.defId];
+      const defFac = def.faction || 'neutral';
+      const win = Math.random() < _wfWinRate(atk.faction, defFac);
+      if (win) {
+        if (def.owner === 'neutral') {
+          def.owner = 'ai'; def.faction = atk.faction; def.fortification = 1;
+          st._aiNeutralCDs = st._aiNeutralCDs || {};
+          st._aiNeutralCDs[atk.faction] = now + WF_AI_EXPAND_CD_MS;
+        } else {
+          def.fortification = Math.max(0, def.fortification - 1);
+          if (def.fortification === 0) { def.faction = atk.faction; def.fortification = 1; }
+        }
+      }
+      return { type: 'skirmish', win, by: atk.faction, vs: defFac, nodeName: defNode.name, t: Date.now() };
+    }
+
+    function _wfShowDefensePrompt(pending) {
+      const st = WARFRONT.state;
+      const atkNs = st.nodes[pending.atkId];
+      const defNs = st.nodes[pending.defId];
+      const defNode = WARFRONT_NODES[pending.defId];
+      const atkFac = FACTIONS.find(f => f.id === atkNs.faction);
+      const defChancePct = Math.round((0.40 + defNs.fortification * 0.15) * 100);
+      const bodyEl = document.getElementById('wf-defense-body');
+      if (bodyEl) {
+        const stars = '★'.repeat(defNs.fortification) + '☆'.repeat(3 - defNs.fortification);
+        bodyEl.innerHTML =
+          `<strong style="color:#ff8080">${atkFac ? atkFac.icon + ' ' + atkFac.name : 'Enemy forces'}</strong>` +
+          ` are attacking <strong style="color:#fff">${defNode.name}</strong>!<br><br>` +
+          `Fortification: <span style="letter-spacing:.1em">${stars}</span><br><br>` +
+          `<span style="color:rgba(255,235,200,.65);font-size:.9rem">` +
+          `Auto-resolve win chance: <strong style="color:#ffb444">${defChancePct}%</strong></span>`;
+      }
+      const fightBtn = document.getElementById('wf-defense-fight');
+      const autoBtn  = document.getElementById('wf-defense-auto');
+      if (fightBtn) fightBtn.onclick = () => {
+        document.getElementById('wf-defense-overlay').style.display = 'none';
+        _wfBeginFactionSelect(pending.defId);
+      };
+      if (autoBtn) autoBtn.onclick = () => _wfAutoResolveDefense();
+      const ov = document.getElementById('wf-defense-overlay');
+      if (ov) ov.style.display = 'flex';
+    }
+
+    function _wfAutoResolveDefense() {
+      const st = WARFRONT.state;
+      const pending = st._pendingDefense;
+      if (!pending) return;
+      st._pendingDefense = null;
+      const defNs = st.nodes[pending.defId];
+      const atkNs = st.nodes[pending.atkId];
+      const defNode = WARFRONT_NODES[pending.defId];
+      const isCapital = pending.defId === WF_CORNER_SPAWNS[0];
+      const encircled = !isCapital && _wfEncircledNodes(st).has(pending.defId);
+      const playerWon = isCapital || Math.random() < (0.40 + defNs.fortification * 0.15 - (encircled ? 0.20 : 0));
+      if (playerWon) {
+        defNs.fortification = Math.min(3, defNs.fortification + 1);
+      } else {
+        defNs.fortification = Math.max(0, defNs.fortification - 1);
+        if (defNs.fortification === 0) {
+          defNs.owner = 'ai'; defNs.faction = atkNs.faction; defNs.fortification = 1;
+          if (pending.defId === WF_CENTER_ID) st.centerStreak = 0;
+        }
+      }
+      document.getElementById('wf-defense-overlay').style.display = 'none';
+      _wfShowResultToast(
+        playerWon ? '\u{1F6E1} AUTO: Held ' + defNode.name + '!' : '\u{1F480} AUTO: ' + defNode.name + ' fell!',
+        playerWon ? '#27ae60' : '#e74c3c'
+      );
+      WARFRONT.save();
+      _wfRenderMap(); _wfRenderSidebar(); _wfUpdateHeader();
+      _wfCheckVictory(); _wfCheckDefeat();
+      _wfStartSkirmishLoop();
+    }
+
+    function _wfShowResultToast(msg, col) {
+      const t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:rgba(8,4,12,.95);border-left:4px solid ' + col + ';' +
+        'border-radius:6px;padding:10px 18px;font-family:Rajdhani,sans-serif;font-size:.9rem;color:rgba(255,255,255,.92);' +
+        'z-index:890;max-width:360px;box-shadow:0 4px 18px rgba(0,0,0,.6);opacity:0;' +
+        'transform:translateX(40px);transition:opacity .3s,transform .3s;pointer-events:none;';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(0)'; });
+      setTimeout(() => {
+        t.style.opacity = '0'; t.style.transform = 'translateX(40px)';
+        setTimeout(() => t.remove(), 400);
+      }, 4000);
+    }
+
+    function _wfRenderMap() {
+      const mapEl = document.getElementById('wf-map');
+      if (!mapEl || !WARFRONT.state) return;
+      const st = WARFRONT.state;
+      const playerAdj = new Set();
+      st.nodes.forEach((nd, i) => {
+        if (nd.owner === 'player') WARFRONT_NODES[i].adj.forEach(j => playerAdj.add(j));
+      });
+      const atksLeft = st.attacksRemaining || 0;
+      const canInteract = i => {
+        const nd = st.nodes[i];
+        if (nd.owner === 'player') return true;
+        return playerAdj.has(i) && atksLeft > 0;
+      };
+      const innerR = WF_HEX_SIZE - 6;
+      const _svgVW = (WF_VIEW_W / _wfZoom).toFixed(1), _svgVH = (WF_VIEW_H / _wfZoom).toFixed(1);
+      let s = '<svg id="wf-map-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" ' +
+        'viewBox="' + _wfCam.x.toFixed(1) + ' ' + _wfCam.y.toFixed(1) + ' ' + _svgVW + ' ' + _svgVH + '" ' +
+        'style="display:block;position:absolute;inset:0;">';
+      s += '<defs>' +
+        '<filter id="wfg1" x="-40%" y="-40%" width="180%" height="180%">' +
+          '<feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/>' +
+          '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+        '<filter id="wfg2" x="-60%" y="-60%" width="220%" height="220%">' +
+          '<feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b"/>' +
+          '<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+        '<filter id="wftxt">' +
+          '<feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="#000" flood-opacity="0.99"/>' +
+        '</filter>' +
+        '</defs>';
+      s += '<rect x="0" y="0" width="' + WF_WORLD_W + '" height="' + WF_WORLD_H + '" fill="#06030c"/>';
+
+      // Pre-compute encircled player nodes for visual + mechanical penalty
+      const _encircled = _wfEncircledNodes(st);
+      // Pass 1: faction colour wash
+      WARFRONT_NODES.forEach((nd, i) => {
+        const ns = st.nodes[i];
+        const col = ns.owner === 'player' ? WF_PLAYER_COLOR
+          : ns.owner === 'neutral' ? WF_NEUTRAL_COLOR
+          : _wfFacColor(ns.faction);
+        s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '" fill="' + col + '" opacity="0.22"/>';
+        // Encircled: red-orange overlay to show isolation
+        if (_encircled.has(i)) s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '" fill="rgba(220,80,20,0.22)"/>';
+      });
+      // Pass 2: dark hex borders
+      s += '<g fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round">';
+      WARFRONT_NODES.forEach(nd => { s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '"/>'; });
+      s += '</g>';
+      // Pass 3: inner seam highlight
+      s += '<g fill="none" stroke="rgba(255,255,255,0.055)" stroke-width="1" stroke-linejoin="round">';
+      WARFRONT_NODES.forEach(nd => { s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR - 5) + '"/>'; });
+      s += '</g>';
+      // Pass 4: glows on player / interactable / center tiles
+      WARFRONT_NODES.forEach((nd, i) => {
+        const ns = st.nodes[i];
+        const isC = (i === WF_CENTER_ID);
+        const can = canInteract(i);
+        if (isC) s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '" fill="none" stroke="rgba(255,215,0,0.55)" stroke-width="4" filter="url(#wfg2)"/>';
+        if (ns.owner === 'player') {
+          s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '" fill="none" stroke="' + WF_PLAYER_COLOR + '" stroke-width="' + (isC ? 4 : 3) + '" opacity="0.8" filter="url(#wfg1)"/>';
+        } else if (can) {
+          const gc = ns.owner === 'neutral' ? '#ffb850' : _wfFacColor(ns.faction);
+          s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '" fill="none" stroke="' + gc + '" stroke-width="2.5" opacity="0.7" filter="url(#wfg1)"/>';
+        }
+      });
+      // Pass 5: tile content (icon, name, fortification dots, action label)
+      WARFRONT_NODES.forEach((nd, i) => {
+        const ns = st.nodes[i];
+        const isC = (i === WF_CENTER_ID);
+        const can = canInteract(i);
+        const facId = ns.owner === 'player'
+          ? (typeof P1_FACTION !== 'undefined' && P1_FACTION ? P1_FACTION.id : 'warriors')
+          : ns.faction;
+        const fac = FACTIONS.find(f => f.id === facId);
+        const icon = fac ? fac.icon : (ns.owner === 'neutral' ? '◇' : '⚔');
+        const op = can ? '1' : ns.owner === 'ai' ? '0.58' : '0.72';
+        if (isC) {
+          s += '<text x="' + nd.cx + '" y="' + (nd.cy - 66) + '" text-anchor="middle" ' +
+            'font-family="Rajdhani,sans-serif" font-size="11" fill="rgba(255,215,0,0.9)" ' +
+            'letter-spacing="3" font-weight="700" filter="url(#wftxt)">◆ CROSSROADS ◆</text>';
+        }
+        s += '<text x="' + nd.cx + '" y="' + (nd.cy - 8) + '" text-anchor="middle" ' +
+          'dominant-baseline="middle" font-size="' + (isC ? 36 : 32) + '" opacity="' + op + '" filter="url(#wftxt)">' + icon + '</text>';
+        const fs = nd.name.length > 13 ? 9 : isC ? 12 : 10;
+        s += '<text x="' + nd.cx + '" y="' + (nd.cy + 22) + '" text-anchor="middle" ' +
+          'font-family="Rajdhani,sans-serif" font-size="' + fs + '" fill="rgba(255,255,255,0.92)" ' +
+          'font-weight="800" letter-spacing="0.5" opacity="' + op + '" filter="url(#wftxt)">' + nd.name.toUpperCase() + '</text>';
+        if (_encircled.has(i)) s += '<text x="' + nd.cx + '" y="' + (nd.cy - 46) + '" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="8" fill="rgba(255,120,40,0.95)" font-weight="800" letter-spacing="1.5" filter="url(#wftxt)">⚠ ENCIRCLED</text>';
+        if (ns.owner !== 'neutral') {
+          const dotCol = ns.owner === 'player' ? WF_PLAYER_COLOR : _wfFacColor(ns.faction);
+          const dg = 8.5;
+          for (let b = 0; b < 3; b++) {
+            const dx = nd.cx - dg + b * dg;
+            const filled = b < ns.fortification;
+            s += '<circle cx="' + dx + '" cy="' + (nd.cy + 35) + '" r="3.5"' +
+              ' fill="' + (filled ? dotCol : 'rgba(255,255,255,0.08)') + '"' +
+              ' stroke="' + dotCol + '" stroke-width="' + (filled ? 0 : 1) + '"' +
+              ' opacity="' + (filled ? 1 : 0.5) + '"/>';
+          }
+        }
+        if (can) {
+          let lbl, lblCol;
+          if (ns.owner === 'player') {
+            lbl = ns.fortification < 3 ? '⬆ FORTIFY' : '\u{1F6E1} MAX FORT';
+            lblCol = WF_PLAYER_COLOR;
+          } else if (ns.owner === 'neutral') {
+            lbl = '⚔ CLAIM'; lblCol = '#ffb850';
+          } else {
+            lbl = '⚔ ATTACK'; lblCol = _wfFacColor(ns.faction);
+          }
+          const bw = lbl.length * 6.5 + 18;
+          s += '<rect x="' + (nd.cx - bw/2) + '" y="' + (nd.cy + 43) + '" width="' + bw + '" height="17" rx="3" fill="rgba(0,0,0,0.55)"/>';
+          s += '<rect x="' + (nd.cx - bw/2) + '" y="' + (nd.cy + 43) + '" width="' + bw + '" height="17" rx="3" fill="none" stroke="' + lblCol + '" stroke-width="1.5" opacity="0.85"/>';
+          s += '<text x="' + nd.cx + '" y="' + (nd.cy + 56) + '" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="9" fill="' + lblCol + '" font-weight="800" letter-spacing="1.5">' + lbl + '</text>';
+        }
+      });
+      // Pass 6: battle indicators between tiles (⚔️ on attacker side, 🛡️ on defender side)
+      (st._activeBattles || []).forEach(b => {
+        if (b.expires <= Date.now() || b.atkId === undefined || b.defId === undefined) return;
+        const nA = WARFRONT_NODES[b.atkId], nD = WARFRONT_NODES[b.defId];
+        if (!nA || !nD) return;
+        const ax = nA.cx + (nD.cx - nA.cx) * 0.32, ay = nA.cy + (nD.cy - nA.cy) * 0.32;
+        const dx = nA.cx + (nD.cx - nA.cx) * 0.68, dy = nA.cy + (nD.cy - nA.cy) * 0.68;
+        s += '<text x="' + ax.toFixed(1) + '" y="' + ay.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="26" filter="url(#wftxt)">⚔️</text>';
+        s += '<text x="' + dx.toFixed(1) + '" y="' + dy.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle" font-size="26" filter="url(#wftxt)">🛡️</text>';
+      });
+      // Pass 7: transparent click overlays
+      WARFRONT_NODES.forEach((nd, i) => {
+        const can = canInteract(i);
+        const onclk = can ? ' onclick="_wfSelectNode(' + i + ')"' : '';
+        s += '<polygon points="' + _wfHexPolygon(nd.cx, nd.cy, innerR) + '"' +
+          ' fill="rgba(0,0,0,0.001)" pointer-events="all"' +
+          ' style="cursor:' + (can ? 'pointer' : 'default') + '"' + onclk + '/>';
+      });
+      s += '</svg>';
+      mapEl.innerHTML = s;
+    }
+
+    function _wfRenderSidebar() {
+      const st = WARFRONT.state;
+      if (!st) return;
+      const facListEl = document.getElementById('wf-faction-list');
+      if (facListEl) {
+        const tally = {};
+        st.nodes.forEach(n => {
+          const key = n.owner === 'player' ? '__player__' : (n.owner === 'ai' ? n.faction : null);
+          if (key) tally[key] = (tally[key] || 0) + 1;
+        });
+        const neutralCt = st.nodes.filter(n => n.owner === 'neutral').length;
+        let html = '';
+        const pCt = tally['__player__'] || 0;
+        html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.07);">' +
+          '<span style="font-size:1.2rem">⚔</span>' +
+          '<span style="flex:1;color:#27ae60;font-weight:700;letter-spacing:.06em;">YOU</span>' +
+          '<span style="color:#27ae60;font-size:1rem">' + pCt + ' tiles (' + Math.round(pCt / WF_NODE_COUNT * 100) + '%)</span>' +
+          '</div>';
+        const aiFacs = Array.from(new Set(st.nodes.filter(n => n.owner === 'ai').map(n => n.faction))).filter(Boolean);
+        aiFacs.sort((a, b) => (tally[b] || 0) - (tally[a] || 0));
+        aiFacs.forEach(facId => {
+          const fac = FACTIONS.find(f => f.id === facId);
+          const ct = tally[facId] || 0;
+          const col = _wfFacColor(facId);
+          html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+            '<span style="font-size:1.05rem">' + (fac ? fac.icon : '?') + '</span>' +
+            '<span style="flex:1;color:' + col + ';font-weight:700;font-size:.88rem">' + (fac ? fac.name : facId) + '</span>' +
+            '<span style="color:rgba(255,180,160,.8);font-size:.82rem">' + ct + ' (' + Math.round(ct / WF_NODE_COUNT * 100) + '%)</span>' +
+            '</div>';
+        });
+        if (neutralCt > 0) {
+          html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;opacity:.42;">' +
+            '<span>◇</span><span style="flex:1;color:#aaa;font-size:.88rem">Neutral</span>' +
+            '<span style="color:#888;font-size:.82rem">' + neutralCt + '</span></div>';
+        }
+        facListEl.innerHTML = html;
+      }
+      const logEl = document.getElementById('wf-battlelog');
+      if (logEl) {
+        const log = (st._skirmishLog || []).slice(0, 12);
+        if (!log.length) {
+          logEl.innerHTML = '<div style="color:rgba(255,255,255,.3);font-style:italic;font-size:.95rem">Waiting for battle reports...</div>';
+        } else {
+          logEl.innerHTML = log.map(ev => {
+            const byFac = FACTIONS.find(f => f.id === ev.by);
+            const col = _wfFacColor(ev.by);
+            const verb = ev.win ? 'seized' : 'repelled from';
+            const age = ev.t ? Math.round((Date.now() - ev.t) / 1000) : 0;
+            const ageStr = age < 60 ? age + 's' : Math.round(age / 60) + 'm';
+            return '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);">' +
+              '<span style="color:' + col + ';font-weight:700;font-size:1rem">' + (byFac ? byFac.icon : '⚔') + ' ' + ev.by + '</span>' +
+              '<span style="color:rgba(255,235,200,.55);font-size:.9rem"> ' + verb + ' </span>' +
+              '<strong style="font-size:1rem">' + ev.nodeName + '</strong>' +
+              '<span style="color:rgba(255,255,255,.3);font-size:.75rem;float:right">' + ageStr + '</span>' +
+              '</div>';
+          }).join('');
+        }
+      }
+    }
+
+    function _wfSelectNode(nodeId) {
+      const nd = WARFRONT_NODES[nodeId];
+      const ns = WARFRONT.state.nodes[nodeId];
+      const st = WARFRONT.state;
+      const isOff = ns.owner !== 'player';
+      if (isOff && (st.attacksRemaining || 0) <= 0) return;
+      let opFacId = isOff ? (ns.faction || null) : null;
+      if (!isOff) {
+        const adjAi = WARFRONT_NODES[nodeId].adj.find(j => st.nodes[j].owner === 'ai');
+        opFacId = adjAi !== undefined ? st.nodes[adjAi].faction : null;
+      }
+      const opFac = opFacId ? FACTIONS.find(f => f.id === opFacId) : null;
+      const thisFac = ns.faction ? FACTIONS.find(f => f.id === ns.faction) : null;
+      const iconEl = document.getElementById('wf-modal-icon');
+      if (!iconEl) return;
+      iconEl.textContent = thisFac ? thisFac.icon : (ns.owner === 'player' ? '\u{1F6E1}' : '◇');
+      document.getElementById('wf-modal-name').textContent = nd.name;
+      const ownerCol = ns.owner === 'player' ? '#2ecc71' : ns.owner === 'ai' ? '#e74c3c' : '#95a5a6';
+      const ownerLbl = ns.owner === 'player' ? '\u{1F7E2} HELD BY YOU'
+        : ns.owner === 'ai' ? '\u{1F534} ENEMY — ' + (opFac ? opFac.name : (ns.faction || '?'))
+        : '⚫ NEUTRAL TERRITORY';
+      document.getElementById('wf-modal-owner').innerHTML =
+        '<span style="color:' + ownerCol + ';font-weight:700">' + ownerLbl + '</span>';
+      const stars = '★'.repeat(ns.fortification) + '☆'.repeat(3 - ns.fortification);
+      document.getElementById('wf-modal-fort').textContent = stars;
+      const atksLeft = st.attacksRemaining || 0;
+      let msg = '';
+      if (ns.owner === 'player') {
+        msg = ns.fortification < 3
+          ? 'Costs 1 attack to fortify (' + atksLeft + ' left). Higher fortification = tougher to lose.'
+          : 'Fully fortified (3★). Takes 3 losses to capture.';
+        if (opFac) msg += ' Nearest threat: ' + opFac.icon + ' ' + opFac.name + '.';
+      } else if (ns.owner === 'neutral') {
+        msg = 'Unclaimed. Costs 1 attack (' + atksLeft + ' remaining). No faction defends it.';
+      } else {
+        msg = 'Held by ' + (opFac ? opFac.icon + ' ' + opFac.name : (ns.faction || '?')) +
+          '. Costs 1 attack (' + atksLeft + ' remaining). Difficulty scales with fortification.';
+      }
+      document.getElementById('wf-modal-msg').textContent = msg;
+      const startBtn = document.getElementById('wf-start-btn');
+      const autoBtn  = document.getElementById('wf-autoresolve-btn');
+      if (ns.owner === 'player') {
+        // Own tile: reinforce using influence (no fighting yourself)
+        const inf = st.influence || 0;
+        const canReinforce = ns.fortification < 3 && inf >= 1;
+        startBtn.textContent = ns.fortification < 3
+          ? '\u26A1 REINFORCE (' + (ns.fortification + 1) + ' infl.)'
+          : '\u{1F6E1} FULLY FORTIFIED';
+        startBtn.disabled = !canReinforce;
+        startBtn.onclick = () => {
+          if (!canReinforce) return;
+          document.getElementById('wf-modal').style.display = 'none';
+          ns.fortification = Math.min(3, ns.fortification + 1);
+          st.influence = Math.max(0, inf - (ns.fortification));  // cost = new fort level
+          WARFRONT.save(); _wfRenderMap(); _wfRenderSidebar(); _wfUpdateHeader();
+          _wfShowResultToast('⬆ ' + nd.name + ' reinforced to ' + '\u2605'.repeat(ns.fortification), WF_PLAYER_COLOR);
+        };
+        if (autoBtn) {
+          autoBtn.textContent = canReinforce ? '\u26A1 REINFORCE' : 'Need influence';
+          autoBtn.disabled = !canReinforce;
+          autoBtn.style.display = 'flex';
+          autoBtn.onclick = () => {
+            if (!canReinforce) return;
+            document.getElementById('wf-modal').style.display = 'none';
+            ns.fortification = Math.min(3, ns.fortification + 1);
+            st.influence = Math.max(0, inf - (ns.fortification));
+            WARFRONT.save(); _wfRenderMap(); _wfRenderSidebar(); _wfUpdateHeader();
+            _wfShowResultToast('⬆ ' + nd.name + ' reinforced to ' + '\u2605'.repeat(ns.fortification), WF_PLAYER_COLOR);
+          };
+        }
+      } else {
+        // Neutral or enemy tile: fight or auto-resolve
+        startBtn.disabled = atksLeft <= 0;
+        startBtn.textContent = ns.owner === 'neutral' ? '⚔ CLAIM (+4⚡, ★★ fort)' : '⚔ ATTACK (+4⚡, ★★ fort)';
+        startBtn.onclick = () => {
+          document.getElementById('wf-modal').style.display = 'none';
+          _wfBeginFactionSelect(nodeId);
+        };
+        if (autoBtn) {
+          const pct = ns.owner === 'neutral' ? 75 : Math.round(Math.max(0.20, 0.60 - ns.fortification * 0.12) * 100);
+          autoBtn.textContent = '⚖ AUTO ' + pct + '% (+1⚡, ★ fort)';
+          autoBtn.disabled = atksLeft <= 0;
+          autoBtn.style.display = 'flex';
+          autoBtn.onclick = () => {
+            document.getElementById('wf-modal').style.display = 'none';
+            _wfAutoResolveOffense(nodeId);
+          };
+        }
+      }
+      document.getElementById('wf-modal-close').onclick = () => {
+        document.getElementById('wf-modal').style.display = 'none';
+      };
+      document.getElementById('wf-modal').style.display = 'flex';
+    }
+
+    function _wfAutoResolveOffense(nodeId) {
+      // Only for neutral/AI tiles — own tiles handled inline in _wfSelectNode
+      const st = WARFRONT.state;
+      const ns = st.nodes[nodeId];
+      const nd = WARFRONT_NODES[nodeId];
+      if (ns.owner === 'player') return;
+      if ((st.attacksRemaining || 0) <= 0) return;
+      const winChance = ns.owner === 'neutral' ? 0.75 : Math.max(0.20, 0.60 - ns.fortification * 0.12);
+      const playerWon = Math.random() < winChance;
+      if (playerWon) {
+        ns.owner = 'player'; ns.faction = null;
+        ns.fortification = Math.min(3, ns.fortification + 1);
+        if (nodeId === WF_CENTER_ID) st.centerStreak = (st.centerStreak || 0) + 1;
+        st.influence = (st.influence || 0) + 1;  // auto win: +1 influence
+        _wfShowResultToast('⚔ AUTO: Seized ' + nd.name + '! +1⚡', '#ffb444');
+      } else {
+        _wfShowResultToast('✗ AUTO: Failed at ' + nd.name, '#888');
+      }
+      st.attacksRemaining = Math.max(0, (st.attacksRemaining || 0) - 1);
+      WARFRONT.save(); _wfRenderMap(); _wfRenderSidebar(); _wfUpdateHeader();
+      _wfCheckVictory();
+    }
+
+    function _wfBeginFactionSelect(nodeId) {
+      _warfrontActiveNodeId = nodeId;
+      WARFRONT.active = true;
+      GAME_MODE = 'warfront';
+      window._pendingPlayerSetup = 'solo';
+      _rulesetMode = null;
+      const st = WARFRONT.state;
+      const ns = st.nodes[nodeId];
+      // Determine AI opponent faction
+      let opponentFacId;
+      if (ns.owner === 'player') {
+        const pd = st._pendingDefense;
+        opponentFacId = pd ? st.nodes[pd.atkId].faction : null;
+        if (!opponentFacId) {
+          const adjAi = WARFRONT_NODES[nodeId].adj.find(j => st.nodes[j].owner === 'ai');
+          opponentFacId = adjAi !== undefined ? st.nodes[adjAi].faction : (st.activeFactions[0] || 'warriors');
+        }
+        st._pendingDefense = null;
+      } else {
+        opponentFacId = ns.faction || (st.activeFactions[0] || 'warriors');
+      }
+      const p2Idx = FACTIONS.findIndex(f => f.id === opponentFacId);
+      AI_FACTION_IDX = p2Idx >= 0 ? p2Idx : 0;
+      // Difficulty: neutral/fort0-1 = hard, fort2 = expert, fort3 = expert (impossible)
+      const diffMap = { 0: 'hard', 1: 'hard', 2: 'expert', 3: 'expert' };
+      AI_DIFFICULTY = ns.owner === 'neutral' ? 'hard' : (diffMap[Math.min(3, ns.fortification)] || 'hard');
+      AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
+      _wfStopSkirmishLoop(); _wfStopCamera(); _wfStopHeaderTicker();
+      // If player has a stored warfront faction, skip the faction screen
+      if (st.playerFaction) {
+        const storedFac = FACTIONS.find(f => f.id === st.playerFaction);
+        if (storedFac) {
+          P1_FACTION = storedFac;
+          P2_FACTION = FACTIONS[AI_FACTION_IDX] || FACTIONS[0];
+          if (typeof AC !== 'undefined' && AC.state === 'suspended') AC.resume();
+          window._soloAiActive = true;
+          initGame();
+          return;
+        }
+      }
+      // First time: show faction screen (player picks their warfront faction once)
+      const row = document.getElementById('faction-mode-row');
+      if (row) row.style.display = 'none';
+      showScreen('sc-faction');
+    }
+
+    function _wfOnGameOver(winnerPid) {
+      if (!WARFRONT.active || _warfrontActiveNodeId === null) return;
+      const st = WARFRONT.state;
+      const ns = st.nodes[_warfrontActiveNodeId];
+      const wasOffensive = (ns.owner !== 'player');
+      const p1Won = (winnerPid === 1);
+      // Clear any battle emoji for this node immediately
+      if (st._activeBattles) st._activeBattles = st._activeBattles.filter(b => b.defId !== _warfrontActiveNodeId && b.atkId !== _warfrontActiveNodeId);
+      if (p1Won) {
+        ns.owner = 'player'; ns.faction = null;
+        // Manual offense win: start at fort 2 (vs 1 for auto), +4 influence
+        ns.fortification = wasOffensive ? Math.min(3, Math.max(2, ns.fortification + 1)) : Math.min(3, ns.fortification + 1);
+        if (_warfrontActiveNodeId === WF_CENTER_ID) st.centerStreak = (st.centerStreak || 0) + 1;
+        st.influence = (st.influence || 0) + (wasOffensive ? 4 : 2);  // offense: +4, defense: +2
+      } else {
+        if (ns.owner === 'player') {
+          const isEncircled = _wfEncircledNodes(st).has(_warfrontActiveNodeId);
+          ns.fortification = Math.max(0, ns.fortification - (isEncircled ? 2 : 1));
+          if (ns.fortification === 0) {
+            ns.owner = 'ai';
+            const adjAi = WARFRONT_NODES[_warfrontActiveNodeId].adj.find(j => st.nodes[j].owner === 'ai');
+            ns.faction = adjAi !== undefined ? st.nodes[adjAi].faction : (st.activeFactions[0] || 'warriors');
+            ns.fortification = 1;
+          }
+        }
+        if (_warfrontActiveNodeId === WF_CENTER_ID) st.centerStreak = 0;
+      }
+      if (wasOffensive && p1Won) st.attacksRemaining = Math.max(0, (st.attacksRemaining || 0) - 1);
+      // Save player's faction (persists for this whole war)
+      if (typeof P1_FACTION !== 'undefined' && P1_FACTION && !st.playerFaction) {
+        st.playerFaction = P1_FACTION.id;
+      }
+      WARFRONT.save();
+      WARFRONT.active = false;
+      _warfrontActiveNodeId = null;
+      _wfCheckVictory();
+    }
+
+    function _wfTallyControl() {
+      const st = WARFRONT.state;
+      if (!st) return { pCount: 0, pPct: 0 };
+      const pCount = st.nodes.filter(n => n.owner === 'player').length;
+      return { pCount, pPct: pCount / WF_NODE_COUNT };
+    }
+
+    function _wfCheckVictory() {
+      const st = WARFRONT.state;
+      if (!st || st.campaignComplete) return;
+      const { pCount, pPct } = _wfTallyControl();
+      const holdCenter = st.nodes[WF_CENTER_ID].owner === 'player';
+      let reason = null;
+      if (pPct >= WF_WIN_PCT) reason = 'domination';
+      else if (holdCenter && pPct >= WF_CENTER_PCT) reason = 'center';
+      if (!reason) return;
+      st.campaignComplete = true;
+      st._victoryShown = true;
+      WARFRONT.save();
+      _wfFireVictory(reason, pCount);
+    }
+
+    function _wfFireVictory(reason, pCount) {
+      const ov       = document.getElementById('wf-victory-overlay');
+      const titleEl  = document.getElementById('wf-victory-title');
+      const bodyEl   = document.getElementById('wf-victory-body');
+      if (!ov || !titleEl) return;
+      const pct = Math.round((pCount || 0) / WF_NODE_COUNT * 100);
+      if (reason === 'domination') {
+        titleEl.innerHTML = '<span style="color:#ffd060">\u{1F451} TOTAL DOMINATION</span>';
+        bodyEl.innerHTML = 'You conquered <strong>' + pCount + ' of 45 tiles</strong> (' + pct + '%), crushing all opposition.';
+      } else {
+        titleEl.innerHTML = '<span style="color:#27ae60">⚔ CROSSROADS SECURED</span>';
+        bodyEl.innerHTML = 'You hold <strong>The Crossroads</strong> and command <strong>' + pct + '%</strong> of the map — the enemy is broken.';
+      }
+      ov.style.display = 'flex';
+    }
+
+    function _wfCheckDefeat() {
+      const st = WARFRONT.state;
+      if (!st || st.campaignComplete || st._defeatShown) return;
+      const pCount = st.nodes.filter(n => n.owner === 'player').length;
+      if (pCount > 0) return;
+      st._defeatShown = true;
+      WARFRONT.save();
+      _wfStopSkirmishLoop();
+      const bodyEl = document.getElementById('wf-defeat-body');
+      if (bodyEl) bodyEl.innerHTML = 'All your territory has been lost. The war is over — but another can begin.';
+      const ov = document.getElementById('wf-defeat-overlay');
+      if (ov) ov.style.display = 'flex';
+    }
+
+    function _wfUpdateHeader() {
+      const st = WARFRONT.state;
+      if (!st) return;
+      const dayEl    = document.getElementById('wf-day-val');
+      const ctrlEl   = document.getElementById('wf-control-val');
+      const cdEl     = document.getElementById('wf-ai-cd-val');
+      const atkBig   = document.getElementById('wf-atk-big');
+      const atkTimer = document.getElementById('wf-atk-timer');
+      const infBig   = document.getElementById('wf-influence-big');
+      if (dayEl)   dayEl.textContent = WARFRONT.currentDay();
+      if (infBig)  infBig.textContent = st.influence || 0;
+      if (atkBig) {
+        const atk = st.attacksRemaining || 0;
+        atkBig.textContent = atk + ' / ' + WF_DAILY_ATTACKS;
+        atkBig.style.color = atk > 0 ? '#ffb444' : '#e05050';
+      }
+      if (atkTimer) {
+        const atk = st.attacksRemaining || 0;
+        if (atk <= 0) {
+          // Show countdown to next day reset
+          const ms = WARFRONT.msUntilReset ? WARFRONT.msUntilReset() : 0;
+          const s = Math.ceil(ms / 1000);
+          const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+          atkTimer.textContent = '— refreshes in ' + (h > 0 ? h + 'h ' : '') + m + 'm';
+          atkTimer.style.color = 'rgba(255,100,80,.7)';
+        } else {
+          atkTimer.textContent = '';
+        }
+      }
+      if (cdEl) {
+        const ms = (st._aiNextAttackTime || 0) - Date.now();
+        if (ms <= 0) {
+          cdEl.textContent = 'NOW'; cdEl.style.color = '#e05050';
+        } else {
+          const s = Math.ceil(ms / 1000);
+          cdEl.textContent = s >= 60 ? Math.floor(s / 60) + 'm ' + (s % 60) + 's' : s + 's';
+          cdEl.style.color = '#aaa';
+        }
+      }
+      const { pCount } = _wfTallyControl();
+      if (ctrlEl) ctrlEl.textContent = Math.round(pCount / WF_NODE_COUNT * 100) + '%';
+      _wfUpdateResetCountdown();  // also update the topbar countdown
+    }
+
+    function _wfUpdateResetCountdown() {
+      const el = document.getElementById('wf-reset-val');
+      if (!el) return;
+      const st = WARFRONT.state;
+      if (st && st.attacksRemaining >= WF_DAILY_ATTACKS) { el.textContent = 'FULL'; el.style.color = '#27ae60'; return; }
+      const ms = WARFRONT.msUntilReset();
+      const m = Math.floor(ms / 60000);
+      const sec = Math.floor((ms % 60000) / 1000);
+      el.textContent = m + 'm ' + sec + 's';
+      el.style.color = '#ffb444';
+    }
+
+    function _wfCheckAttackRefresh() {
+      const st = WARFRONT.state;
+      if (!st) return;
+      if ((st._nextAttackRefresh || 0) <= Date.now() && st.attacksRemaining < WF_DAILY_ATTACKS) {
+        st.attacksRemaining = WF_DAILY_ATTACKS;
+        st._nextAttackRefresh = Date.now() + WF_ATTACK_REFRESH_MS;
+        WARFRONT.save();
+        _wfShowResultToast('⚡ Attacks refreshed — ' + WF_DAILY_ATTACKS + ' ready!', '#ffb444');
+        _wfUpdateHeader(); _wfRenderSidebar();
+      }
+    }
+    function _wfStartHeaderTicker() {
+      _wfStopHeaderTicker();
+      _wfHeaderTimer = setInterval(() => {
+        if (!document.getElementById('sc-warfront')?.classList.contains('active')) { _wfStopHeaderTicker(); return; }
+        _wfCheckAttackRefresh();
+        _wfUpdateHeader();
+      }, 1000);
+    }
+    function _wfStopHeaderTicker() {
+      if (_wfHeaderTimer) { clearInterval(_wfHeaderTimer); _wfHeaderTimer = null; }
+    }
+
+    let _wfSkirmishTimer = null;
+    function _wfStartSkirmishLoop() {
+      _wfStopSkirmishLoop();
+
+      // Phase 2: apply result after battle plays out, then schedule next battle
+      const resolve = (c, win) => {
+        const st = WARFRONT.state;
+        if (!st) return;
+        const atk = st.nodes[c.atkId], def = st.nodes[c.defId];
+        const defFac = def.faction || 'neutral';
+        const defNode = WARFRONT_NODES[c.defId];
+        if (win) {
+          if (def.owner === 'neutral') {
+            def.owner = 'ai'; def.faction = atk.faction; def.fortification = 1;
+            st._aiNeutralCDs = st._aiNeutralCDs || {};
+            st._aiNeutralCDs[atk.faction] = Date.now() + WF_AI_EXPAND_CD_MS;
+          } else {
+            def.fortification = Math.max(0, def.fortification - 1);
+            if (def.fortification === 0) { def.faction = atk.faction; def.fortification = 1; }
+          }
+        }
+        // Remove this battle's emoji (matched by tile pair)
+        if (st._activeBattles) st._activeBattles = st._activeBattles.filter(b => !(b.atkId === c.atkId && b.defId === c.defId));
+        st._skirmishLog = st._skirmishLog || [];
+        st._skirmishLog.unshift({ type: 'skirmish', win, by: atk.faction, vs: defFac, nodeName: defNode.name, t: Date.now() });
+        if (st._skirmishLog.length > 12) st._skirmishLog.length = 12;
+        WARFRONT.save(); _wfRenderMap(); _wfRenderSidebar();
+        _wfSkirmishTimer = setTimeout(tick, 2500 + Math.random() * 2500);
+      };
+
+      // Phase 1: pick a battle, show emoji, schedule resolution
+      const tick = () => {
+        if (!WARFRONT.state) return;
+        const sc = document.getElementById('sc-warfront');
+        if (!sc || !sc.classList.contains('active')) { _wfStopSkirmishLoop(); return; }
+        const st = WARFRONT.state;
+        if (st._activeBattles) st._activeBattles = st._activeBattles.filter(b => b.expires > Date.now());
+        if (st._pendingDefense) { _wfSkirmishTimer = setTimeout(tick, 2000); return; }
+
+        // AI attack check (player-tile defense prompt)
+        if (Date.now() >= (st._aiNextAttackTime || 0) && Math.random() < 0.15) {
+          const ptargets = [];
+          st.nodes.forEach((nd, nid) => {
+            if (nd.owner !== 'ai') return;
+            WARFRONT_NODES[nid].adj.forEach(j => {
+              if (st.nodes[j].owner === 'player' && j !== WF_CORNER_SPAWNS[0]) ptargets.push({ atkId: nid, defId: j });
+            });
+          });
+          if (ptargets.length > 0) {
+            const pick = ptargets[Math.floor(Math.random() * ptargets.length)];
+            st._pendingDefense = pick;
+            st._aiNextAttackTime = Date.now() + WF_AI_ATTACK_CD_MS;
+            st._activeBattles = st._activeBattles || [];
+            st._activeBattles.push({ atkId: pick.atkId, defId: pick.defId, expires: Date.now() + 30000 });
+            _wfStopSkirmishLoop(); _wfShowDefensePrompt(pick); WARFRONT.save(); return;
+          }
+        }
+
+        // Pick a faction and target tile (same logic as _wfDoSkirmish)
+        const now = Date.now();
+        const facChoices = {};
+        st.nodes.forEach((nd, nid) => {
+          if (nd.owner !== 'ai') return;
+          const facId = nd.faction;
+          WARFRONT_NODES[nid].adj.forEach(j => {
+            const t = st.nodes[j];
+            if (t.owner === 'player') return;
+            if (t.owner === 'ai' && t.faction === facId) return;
+            if (t.owner === 'neutral' && now < ((st._aiNeutralCDs || {})[facId] || 0)) return;
+            (facChoices[facId] = facChoices[facId] || []).push({ atkId: nid, defId: j });
+          });
+        });
+        const activeFacs = Object.keys(facChoices);
+        if (!activeFacs.length) { _wfSkirmishTimer = setTimeout(tick, 4000 + Math.random() * 2000); return; }
+        const pickedFac = activeFacs[Math.floor(Math.random() * activeFacs.length)];
+        const c = facChoices[pickedFac][Math.floor(Math.random() * facChoices[pickedFac].length)];
+        const win = Math.random() < _wfWinRate(st.nodes[c.atkId].faction, st.nodes[c.defId].faction || 'neutral');
+
+        // Show battle emoji for the duration of the fight
+        const battleDur = 3500 + Math.random() * 3500;
+        st._activeBattles = st._activeBattles || [];
+        st._activeBattles.push({ atkId: c.atkId, defId: c.defId, expires: Date.now() + battleDur + 800 });
+        _wfRenderMap();
+
+        // Resolve after battle plays out
+        _wfSkirmishTimer = setTimeout(() => resolve(c, win), battleDur);
+      };
+
+      _wfSkirmishTimer = setTimeout(tick, 1500 + Math.random() * 1500);
+    }
+    function _wfStopSkirmishLoop() {
+      if (_wfSkirmishTimer) { clearTimeout(_wfSkirmishTimer); _wfSkirmishTimer = null; }
+    }
+
+    function _wfOpen() {
+      WARFRONT.load();
+      const st = WARFRONT.state;
+      _wfCenterCamera();
+      // First visit of a new war — ask player to pick their faction before anything else
+      if (!st.playerFaction && !st.campaignComplete && !st._defeatShown) {
+        _wfChoosingFaction = true;
+        GAME_MODE = 'warfront';
+        const row = document.getElementById('faction-mode-row');
+        if (row) row.style.display = 'none';
+        _wfUpdateHeader(); _wfUpdateFactionBadge(); _wfRenderMap(); _wfRenderSidebar();
+        _wfStartCamera(); _wfStartHeaderTicker();
+        showScreen('sc-faction');
+        _applyFactionScreenMode();
+        return;
+      }
+      if (st.campaignComplete && !st._victoryShown) {
+        st._victoryShown = true; WARFRONT.save();
+        _wfUpdateHeader(); _wfUpdateFactionBadge(); _wfRenderMap(); _wfRenderSidebar();
+        _wfStartCamera(); _wfStartHeaderTicker();
+        _wfFireVictory('domination', st.nodes.filter(n => n.owner === 'player').length);
+        return;
+      }
+      if (st._dayReset) {
+        st._dayReset = false; WARFRONT.save();
+        const facs = (st.activeFactions || []).map(id => {
+          const f = FACTIONS.find(x => x.id === id); return f ? f.icon + ' ' + f.name : id;
+        }).join(', ');
+        const rb = document.getElementById('wf-reset-body');
+        if (rb) rb.innerHTML = 'Attacks refreshed to <strong>' + WF_DAILY_ATTACKS + '</strong>. Active factions: <strong>' + (facs || '—') + '</strong>.';
+        const ov = document.getElementById('wf-reset-overlay');
+        if (ov) {
+          ov.style.display = 'flex';
+          document.getElementById('wf-reset-dismiss').onclick = () => {
+            ov.style.display = 'none';
+            _wfUpdateHeader(); _wfUpdateFactionBadge(); _wfSyncDevBtn(); _wfRenderMap(); _wfRenderSidebar();
+            _wfStartSkirmishLoop(); _wfStartHeaderTicker(); _wfStartCamera();
+          };
+        }
+        return;
+      }
+      _wfSimulateOffline(); WARFRONT.save(); _wfCheckDefeat(); if (st._defeatShown) return;
+      const offEvents = (st._offlineEvents || []).filter(e => e.type !== 'skirmish');
+      st._offlineEvents = [];
+      if (offEvents.length > 0) {
+        const offLines = offEvents.map(e => {
+          if (e.type === 'lost')    return '\u{1F480} <strong>' + e.nodeName + '</strong> captured by <em>' + (e.by || 'enemy') + '</em>';
+          if (e.type === 'damaged') return '\u{1F53B} <strong>' + e.nodeName + '</strong> hit by <em>' + (e.by || 'enemy') + '</em>';
+          return '';
+        }).filter(Boolean).join('<br>');
+        const ob = document.getElementById('wf-offline-body');
+        if (ob) ob.innerHTML = offLines;
+        const ov = document.getElementById('wf-offline-overlay');
+        if (ov) {
+          ov.style.display = 'flex';
+          document.getElementById('wf-offline-dismiss').onclick = () => {
+            ov.style.display = 'none';
+            _wfUpdateHeader(); _wfSyncDevBtn(); _wfRenderMap(); _wfRenderSidebar();
+            _wfStartSkirmishLoop(); _wfStartHeaderTicker(); _wfStartCamera();
+          };
+        }
+        return;
+      }
+      _wfUpdateHeader(); _wfUpdateFactionBadge(); _wfSyncDevBtn(); _wfRenderMap(); _wfRenderSidebar();
+      _wfStartSkirmishLoop(); _wfStartHeaderTicker(); _wfStartCamera();
+    }
+
+    // Returns a Set of player node IDs that are cut off from the capital via player-owned adjacency.
+    function _wfEncircledNodes(st) {
+      const capital = WF_CORNER_SPAWNS[0];
+      if (!st || st.nodes[capital].owner !== 'player') return new Set();
+      const reached = new Set();
+      const queue = [capital];
+      reached.add(capital);
+      while (queue.length) {
+        const cur = queue.shift();
+        WARFRONT_NODES[cur].adj.forEach(j => {
+          if (!reached.has(j) && st.nodes[j].owner === 'player') { reached.add(j); queue.push(j); }
+        });
+      }
+      const encircled = new Set();
+      st.nodes.forEach((nd, i) => { if (nd.owner === 'player' && !reached.has(i)) encircled.add(i); });
+      return encircled;
+    }
+
+    function _wfSyncDevBtn() {
+      const b = document.getElementById('wf-dev-btn');
+      if (b) b.style.display = (typeof _devSessionActivated !== 'undefined' && _devSessionActivated) ? '' : 'none';
+    }
+
+    function _wfUpdateFactionBadge() {
+      const badge = document.getElementById('wf-faction-badge');
+      if (!badge) return;
+      const st = WARFRONT.state;
+      if (!st || !st.playerFaction) {
+        badge.innerHTML = '<span style="color:rgba(255,255,255,.45);font-size:.82rem">No faction — pick one when you fight</span>';
+        return;
+      }
+      const fac = FACTIONS.find(f => f.id === st.playerFaction);
+      badge.innerHTML = fac
+        ? '<span style="font-size:1.1rem">' + fac.icon + '</span><span style="color:#fff;font-weight:700;letter-spacing:.06em">' + fac.name + '</span>'
+        : '<span style="color:rgba(255,255,255,.45)">' + st.playerFaction + '</span>';
+    }
+
+    // One-time camera binding (runs on page load)
+    _wfBindCamera();
+
     // Campaign button handler
     document.getElementById('btn-campaign').addEventListener('click', () => {
       showScreen('sc-campaign');
@@ -27823,6 +29286,45 @@
       showScreen('sc-faction');
     });
     document.getElementById('btn-draft').addEventListener('click', () => { startDraftMode(); });
+    document.getElementById('btn-warfront').addEventListener('click', () => { showScreen('sc-warfront'); _wfOpen(); });
+    document.getElementById('wf-back').addEventListener('click', () => { _wfChoosingFaction = false; document.getElementById('btn-start').textContent = 'START BATTLE →'; _wfStopSkirmishLoop(); _wfStopCamera(); _wfStopHeaderTicker(); showScreen('sc-menu'); animMenuCanvas(); });
+    document.getElementById('btn-wf-return').addEventListener('click', () => { showScreen('sc-warfront'); _wfOpen(); });
+    document.getElementById('wf-victory-newwar').addEventListener('click', () => { document.getElementById('wf-victory-overlay').style.display = 'none'; _wfChoosingFaction = false; WARFRONT.resetCampaign(); _wfOpen(); });
+    document.getElementById('wf-defeat-newwar').addEventListener('click', () => { document.getElementById('wf-defeat-overlay').style.display = 'none'; _wfChoosingFaction = false; WARFRONT.resetCampaign(); _wfOpen(); });
+
+    // ── Warfront dev panel ───────────────────────────────────────────────────────
+    document.getElementById('wf-dev-btn').addEventListener('click', () => {
+      // Disabled during active battles so you can't cheat mid-fight
+      if (WARFRONT.active) return;
+      document.getElementById('wf-dev-msg').textContent = '';
+      document.getElementById('wf-dev-overlay').style.display = 'flex';
+    });
+    document.getElementById('wf-dev-reset').addEventListener('click', () => {
+      if (WARFRONT.active) return;
+      if (!confirm('Reset the entire warfront campaign? All territory and progress will be wiped.')) return;
+      document.getElementById('wf-dev-overlay').style.display = 'none';
+      WARFRONT.resetCampaign();
+      _wfOpen();
+    });
+    document.getElementById('wf-dev-add-influence').addEventListener('click', () => {
+      if (WARFRONT.active || !WARFRONT.state) return;
+      WARFRONT.state.influence = (WARFRONT.state.influence || 0) + 10;
+      WARFRONT.save(); _wfUpdateHeader(); _wfRenderSidebar();
+      document.getElementById('wf-dev-msg').textContent = '⚡ +10 influence added.';
+    });
+    document.getElementById('wf-dev-refresh-attacks').addEventListener('click', () => {
+      if (WARFRONT.active || !WARFRONT.state) return;
+      WARFRONT.state.attacksRemaining = WF_DAILY_ATTACKS;
+      WARFRONT.state._nextAttackRefresh = Date.now() + WF_ATTACK_REFRESH_MS;
+      WARFRONT.save(); _wfUpdateHeader(); _wfRenderSidebar();
+      document.getElementById('wf-dev-msg').textContent = '🗡 Attacks filled to ' + WF_DAILY_ATTACKS + '.';
+    });
+    document.getElementById('wf-dev-add-attacks').addEventListener('click', () => {
+      if (WARFRONT.active || !WARFRONT.state) return;
+      WARFRONT.state.attacksRemaining = (WARFRONT.state.attacksRemaining || 0) + 10;
+      WARFRONT.save(); _wfUpdateHeader(); _wfRenderSidebar();
+      document.getElementById('wf-dev-msg').textContent = '🗡 +10 attacks added.';
+    });
 
     // ── Menu button tooltips ─────────────────────────────────────────────────────
     const _menuTips = [
@@ -27908,6 +29410,14 @@
         '<span class="st">Defend against 10 themed waves, each a different faction.</span>',
         ' ',
         'No mid, no wildcards, no spies. Pure survival.',
+      ]],
+      ['btn-warfront', '⚔ WARFRONT', [
+        '<span class="st">A persistent 45-node war that continues between sessions.</span>',
+        ' ',
+        'Choose your faction at the start — it stays for the whole war.',
+        'Fight manually for <span class="st">influence bonuses</span>, or auto-resolve for a smaller gain.',
+        'Cut-off nodes are <span class="st">encircled</span> — they defend at a penalty.',
+        'Your <span class="st">capital cannot be captured</span>. Lose all other nodes and it\'s over.',
       ]],
       ['btn-gauntlet', '🏟 GAUNTLET', [
         '<span class="st">Fight all 24 factions in shuffled 1v1 sequence.</span>',
@@ -28224,7 +29734,6 @@
       const title = document.querySelector('.menu-title');
       if (!title) return;
       let _clicks = 0, _timer = null;
-      title.style.cursor = 'default';
       title.addEventListener('click', () => {
         if (typeof NET !== 'undefined' && NET.isOnline()) return;
         _clicks++;
@@ -28234,7 +29743,7 @@
           _clicks = 0; clearTimeout(_timer);
           const dvp = document.getElementById('dev-panel');
           if (dvp.style.display === 'flex') { dvp.style.display = 'none'; return; }
-          if (_devUnlocked) { openDevPanel(false); return; }
+          if (_devUnlocked) { _devSessionActivated = true; openDevPanel(false); return; }
           _devShowAuth();
         }
       });
@@ -28279,6 +29788,31 @@
         P2_FACTION = FACTIONS[_gOrder[0]];
         AI_DIFFICULTY = 'easy';
         AI_PERSONALITY = null;
+        window._pendingPlayerSetup = 'solo';
+        window._soloAiActive = true;
+        initGame();
+        return;
+      }
+      // Warfront mode — P1 picks their faction; P2 is the node's invader faction (set in _wfBeginFactionSelect)
+      if (_isWarfront()) {
+        if (AC.state === 'suspended') AC.resume();
+        P1_FACTION = FACTIONS[fSelected[0]];
+        // Save warfront faction (persists for this campaign)
+        if (WARFRONT.state && !WARFRONT.state.playerFaction) {
+          WARFRONT.state.playerFaction = P1_FACTION.id;
+          WARFRONT.save();
+        }
+        if (_wfChoosingFaction) {
+          // Just choosing war faction — go back to map, don't start a battle
+          _wfChoosingFaction = false;
+          document.getElementById('btn-start').textContent = 'START BATTLE →';
+          showScreen('sc-warfront');
+          _wfOpen();
+          return;
+        }
+        if (AI_FACTION_IDX === null) AI_FACTION_IDX = 0;
+        P2_FACTION = FACTIONS[AI_FACTION_IDX];
+        if (!AI_PERSONALITY) AI_PERSONALITY = AI_PERSONALITIES[Math.floor(Math.random() * AI_PERSONALITIES.length)];
         window._pendingPlayerSetup = 'solo';
         window._soloAiActive = true;
         initGame();
@@ -28466,13 +30000,13 @@
         const conf = document.getElementById('dev-pw-confirm');
         if (conf && conf.value.trim() !== val) { if (err) err.textContent = 'Passwords do not match.'; return; }
         try { localStorage.setItem('_devPW', btoa(val)); localStorage.setItem('_devAuth', '1'); } catch(_) {}
-        _devUnlocked = true; _devFailCount = 0; const _dtb2=document.getElementById('dev-toggle-btn'); if(_dtb2) _dtb2.style.display='block'; openDevPanel(true);
+        _devUnlocked = true; _devSessionActivated = true; _devFailCount = 0; const _dtb2=document.getElementById('dev-toggle-btn'); if(_dtb2) _dtb2.style.display='block'; openDevPanel(true);
       } else {
         let stored = '';
         try { stored = atob(localStorage.getItem('_devPW') || ''); } catch(_) {}
         if (val === stored) {
           try { localStorage.setItem('_devAuth', '1'); } catch(_) {}
-          _devUnlocked = true; _devFailCount = 0; const _dtb2=document.getElementById('dev-toggle-btn'); if(_dtb2) _dtb2.style.display='block'; openDevPanel(true);
+          _devUnlocked = true; _devSessionActivated = true; _devFailCount = 0; const _dtb2=document.getElementById('dev-toggle-btn'); if(_dtb2) _dtb2.style.display='block'; openDevPanel(true);
         } else {
           _devFailCount++;
           if (err) err.textContent = 'Wrong password.' + (_devFailCount >= 3 ? ' See reset option below.' : '');
