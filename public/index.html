@@ -1598,6 +1598,34 @@
       font-weight: 700;
     }
 
+
+    /* ── WARFRONT — mobile responsive ──────────────────────────────────────── */
+    #wf-topbar { flex-wrap: wrap; }
+    #wf-topbar-stats { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .95rem; }
+
+    @media (max-width: 820px) {
+      #wf-topbar { padding: 8px 10px; gap: 8px; }
+      #wf-topbar-stats { gap: 8px; font-size: .82rem; overflow-x: auto; flex-wrap: nowrap; }
+      #wf-faction-badge { display: none !important; }
+
+    }
+    @media (max-width: 820px) {
+      #wf-mainarea { flex-direction: column-reverse !important; }
+      #wf-sidebar {
+        flex: 0 0 auto !important;
+        max-height: 36vh !important;
+        border-left: none !important;
+        border-top: 1px solid rgba(200,80,80,.20);
+        overflow-y: auto;
+      }
+      #wf-battlelog-wrap { min-height: 0; }
+      #wf-help-overlay { font-size: .72rem; padding: 7px 10px; max-width: 200px; }
+      #wf-modal-inner { padding: 16px 14px; max-height: 90vh; overflow-y: auto; }
+    }
+    @media (max-width: 480px) {
+      #wf-topbar-stats > div > strong { font-size: .95rem !important; }
+      #wf-topbar-stats > div > span  { font-size: .62rem !important; }
+    }
     /* ── FACTION SELECT — mobile stack ─────────────────────────────────────── */
     @media (max-width: 700px) {
       .faction-layout {
