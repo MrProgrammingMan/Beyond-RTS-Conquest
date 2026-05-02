@@ -74,6 +74,7 @@ const INSTRUMENTATION_SCRIPT = `
   // ── CONSOLE INTERCEPT ─────────────────────────────────────────────────────
   const _origError = console.error.bind(console);
   const _origWarn  = console.warn.bind(console);
+  const _origLog   = console.log.bind(console);
 
   console.error = function(...args) {
     window.__qa.errors.push({
@@ -91,6 +92,22 @@ const INSTRUMENTATION_SCRIPT = `
       time: Date.now(),
     });
     _origWarn(...args);
+  };
+
+  // Catch error-like strings logged via console.log (game devs often do this).
+  // Only flag messages that look like real JS errors — ignore routine log output.
+  const _LOG_ERROR_RE = /TypeError|ReferenceError|SyntaxError|RangeError|Uncaught|is not a function|Cannot read|Cannot set|is not defined|is undefined|is null|stack overflow|maximum call stack/i;
+  console.log = function(...args) {
+    const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+    if (_LOG_ERROR_RE.test(msg)) {
+      window.__qa.errors.push({
+        type: 'console_log_error',
+        message: '[console.log] ' + msg.slice(0, 300),
+        time: Date.now(),
+        gameState: _safeSnapshotState(),
+      });
+    }
+    _origLog(...args);
   };
 
   // ── NaN / INFINITY SCANNER ────────────────────────────────────────────────
@@ -375,6 +392,148 @@ const INSTRUMENTATION_SCRIPT = `
     } catch (_) { return { snapshotError: true }; }
   }
 
+  // ── GAME STATE SANITY CHECKS ──────────────────────────────────────────────
+  // Catches logic bugs that never throw a JS error: resource underflow, unit
+  // count explosions, position escapes, stuck faction mechanics, array leaks.
+
+  const _reportedSanity = new Set();
+  function _reportSanity(type, message) {
+    // Deduplicate within a single game run to avoid flooding the report
+    const key = type + ':' + message.slice(0, 80);
+    if (_reportedSanity.has(key)) return;
+    _reportedSanity.add(key);
+    window.__qa.errors.push({
+      type: 'sanity_' + type,
+      message: '[SANITY] ' + message,
+      time: Date.now(),
+      gameState: _safeSnapshotState(),
+    });
+  }
+
+  let _sanityTimer = null;
+  let _prevElapsed      = null;
+  let _elapsedFrozenFor = 0;
+  const _cocoonTimers   = {};  // unit id → game-elapsed when cocoon entered
+
+  function _startSanityChecks() {
+    if (_sanityTimer) return;
+    _sanityTimer = setInterval(() => {
+      const G = window.G;
+      if (!G || !G.running) return;
+
+      const elapsed  = G.elapsed || 0;
+      const units    = G.units || [];
+      const projs    = G.projectiles || [];
+      const players  = G.players || [];
+      const w        = G.w || 3200;
+      const h        = G.h || 600;
+
+      // ── Resource sanity ──────────────────────────────────────────────────
+      for (let i = 0; i < players.length; i++) {
+        const p = players[i];
+        if (!p) continue;
+        if (typeof p.souls === 'number' && p.souls < -25) {
+          _reportSanity('negative_souls', \`P\${i+1} souls=\${Math.round(p.souls)} — spending exceeded resources\`);
+        }
+        if (typeof p.bodies === 'number' && p.bodies < -5) {
+          _reportSanity('negative_bodies', \`P\${i+1} bodies=\${Math.round(p.bodies)} — Reaver resource underflow\`);
+        }
+      }
+
+      // ── Unit / projectile count overflow ─────────────────────────────────
+      if (units.length > 400) {
+        _reportSanity('unit_count_overflow', \`\${units.length} units on field — likely spawn loop or dead-unit cleanup bug\`);
+      }
+      if (projs.length > 800) {
+        _reportSanity('projectile_leak', \`\${projs.length} projectiles active — updateProjectiles cleanup may be broken\`);
+      }
+
+      // ── Units outside map bounds ─────────────────────────────────────────
+      const margin = 250;
+      let oobCount = 0;
+      for (const u of units) {
+        if (u.x < -margin || u.x > w + margin || u.y < -margin || u.y > h + margin) oobCount++;
+      }
+      if (oobCount > 3) {
+        _reportSanity('units_out_of_bounds', \`\${oobCount} units outside map (±\${margin}px from \${w}×\${h}) — pathfinding or teleport bug\`);
+      }
+
+      // ── Dead units not removed from G.units ──────────────────────────────
+      let deadCount = 0;
+      for (const u of units) {
+        if ((typeof u.hp === 'number' && u.hp <= 0) || u.dead === true) deadCount++;
+      }
+      if (deadCount > 8) {
+        _reportSanity('dead_units_lingering', \`\${deadCount} dead units still in G.units — handleDeath may not be splicing them out\`);
+      }
+
+      // ── G.elapsed frozen while game is running ───────────────────────────
+      if (_prevElapsed !== null && elapsed === _prevElapsed) {
+        _elapsedFrozenFor += 3;
+        if (_elapsedFrozenFor >= 12) {
+          _reportSanity('elapsed_frozen', \`G.elapsed stuck at \${elapsed}s for \${_elapsedFrozenFor}s real-time — game loop may have stalled\`);
+          _elapsedFrozenFor = 0;
+        }
+      } else {
+        _elapsedFrozenFor = 0;
+      }
+      _prevElapsed = elapsed;
+
+      // ── Array / collection leaks ─────────────────────────────────────────
+      const tarLen = (G.tarPatches || []).length;
+      if (tarLen > 40) _reportSanity('tar_patch_leak', \`\${tarLen} tar patches — updateTarPatches not expiring them\`);
+
+      const dzLen = (G.darkZones || []).length;
+      if (dzLen > 20) _reportSanity('dark_zone_leak', \`\${dzLen} dark zones — updateDarkZones not expiring them\`);
+
+      const echoLen = (G.echoSchedule || []).length;
+      if (echoLen > 50) _reportSanity('echo_schedule_leak', \`\${echoLen} entries in G.echoSchedule — updateEchoSchedule may be stuck or not draining\`);
+
+      const corpseLen = (G.corpses || []).length;
+      if (corpseLen > 50) _reportSanity('corpse_leak', \`\${corpseLen} corpses in G.corpses — Reaver pickup or expiry logic broken\`);
+
+      // ── Faction-specific mechanic sanity ─────────────────────────────────
+      for (const u of units) {
+        const uid = u.id || u._uid || u.__qaId;
+
+        // Chrysalis: cocoon phase should complete in ~8-12s game-time
+        if (u.chrysalis && u._chrysPhase === 'cocoon' && uid !== undefined) {
+          if (_cocoonTimers[uid] === undefined) _cocoonTimers[uid] = elapsed;
+          else if (elapsed - _cocoonTimers[uid] > 120) {
+            _reportSanity('chrysalis_stuck_cocoon', \`Chrysalis unit \${uid} stuck in cocoon for \${Math.round(elapsed - _cocoonTimers[uid])}s — _chrysTimer may not be decrementing\`);
+            delete _cocoonTimers[uid];
+          }
+        } else if (uid !== undefined) {
+          delete _cocoonTimers[uid];
+        }
+
+        // Plagued: max mutations is plagueMaxMutations (typically 5)
+        if (u.plagued && typeof u._mutations === 'number' && u._mutations > 10) {
+          _reportSanity('plague_mutation_overflow', \`Plagued unit has \${u._mutations} mutations — exceeds plagueMaxMutations cap\`);
+        }
+
+        // Veilborn: _phaseDur counts down; if it keeps growing the timer is broken
+        if (u.veilborn && u._phased && typeof u._phaseDur === 'number' && u._phaseDur > 20) {
+          _reportSanity('veilborn_phase_infinite', \`Veilborn unit phased for \${u._phaseDur.toFixed(1)}s — _phaseDur not decrementing\`);
+        }
+
+        // Tideborn split: a unit shouldn't reach hp > tideHighHP threshold repeatedly
+        // (would indicate the split-and-regrow cycle is broken / infinite)
+        if (u.tideborn && u.tideHighHP && typeof u.hp === 'number' && u.hp > (u.def?.hp || 9999) * 1.5) {
+          _reportSanity('tideborn_hp_overflow', \`Tideborn unit HP=\${Math.round(u.hp)} exceeds 150% of base — split threshold logic broken\`);
+        }
+      }
+
+      // ── Psionics: corrupted unit count shouldn't be unbounded ────────────
+      let corruptedCount = 0;
+      for (const u of units) { if (u._corrupted) corruptedCount++; }
+      if (corruptedCount > 30) {
+        _reportSanity('psionics_corruption_overflow', \`\${corruptedCount} units are corrupted — corruption spread may be uncontrolled\`);
+      }
+
+    }, 3000);
+  }
+
   // ── GAME LIFECYCLE HOOKS ──────────────────────────────────────────────────
   // Poll for game start/end to trigger hook installation
   let _hookInstalled = false;
@@ -384,12 +543,14 @@ const INSTRUMENTATION_SCRIPT = `
       window.__qa.gameStartTime = Date.now();
       _hookMechanics();
       _startNaNScan();
+      _startSanityChecks();
       _hookInstalled = true;
     }
     if (G && G.running === false && _hookInstalled) {
       window.__qa.gameEndTime = Date.now();
       clearInterval(_gameWatcher);
       if (_nanScanTimer) clearInterval(_nanScanTimer);
+      if (_sanityTimer)  clearInterval(_sanityTimer);
     }
   }, 500);
 

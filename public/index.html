@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -400,19 +400,10 @@
       }
     }
 
-    /* ── TABLET / SMALL DESKTOP (600–1024px) — bigger text, better spacing ──── */
+    /* ── TABLET / SMALL DESKTOP (600–1024px) — slim info, cards get the room ── */
     @media (min-width: 601px) and (max-width: 1024px) {
-      .unit-stat-panel {
-        width: clamp(155px, 14vw, 210px);
-      }
-
-      .usp-label,
-      .usp-val {
-        font-size: clamp(.72rem, .92vw, .84rem);
-      }
-
-      .usp-special {
-        font-size: clamp(.7rem, .85vw, .8rem);
+      .hud-info {
+        width: clamp(112px, 14vw, 155px);
       }
 
       .hud-tab {
@@ -424,6 +415,38 @@
       .upcard-name {
         white-space: normal;
         word-wrap: break-word;
+      }
+
+      .upgrade-grid,
+      .buff-grid {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        align-content: start;
+      }
+    }
+
+    /* ── Stat panel hidden on all non-large screens — cards are higher priority ── */
+    @media (max-width: 1399px) {
+      .unit-stat-panel {
+        display: none;
+      }
+    }
+
+    /* ── MEDIUM DESKTOP (1025–1399px) — slim info, scrollable grids ─────────── */
+    @media (min-width: 1025px) and (max-width: 1399px) {
+      .hud-info {
+        width: clamp(145px, 12vw, 188px);
+      }
+
+      .ucard {
+        min-height: clamp(72px, 11vh, 130px);
+      }
+
+      .upgrade-grid,
+      .buff-grid {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        align-content: start;
       }
     }
 
@@ -727,6 +750,19 @@
       pointer-events: none;
     }
 
+    /* On narrow/portrait screens the battlefield scene looks terrible — hide it
+       and use a static atmospheric gradient instead */
+    @media (max-width: 700px), (orientation: portrait) and (max-width: 1024px) {
+      #menu-canvas { display: none; }
+      #sc-menu {
+        background:
+          radial-gradient(ellipse 120% 60% at 50% 100%, rgba(80, 10, 10, .55) 0%, transparent 65%),
+          radial-gradient(ellipse 80% 40% at 20% 80%, rgba(30, 8, 50, .4) 0%, transparent 60%),
+          radial-gradient(ellipse 80% 40% at 80% 80%, rgba(10, 20, 60, .4) 0%, transparent 60%),
+          linear-gradient(180deg, #030308 0%, #080612 40%, #120810 70%, #1a0a0a 100%);
+      }
+    }
+
     .menu-overlay {
       position: fixed;
       inset: 0;
@@ -756,6 +792,8 @@
       opacity: .75;
       margin-bottom: .3em;
       text-shadow: 0 0 12px rgba(212, 168, 67, .3);
+      text-align: center;
+      padding-left: .35em;
     }
 
     .menu-title {
@@ -1309,12 +1347,12 @@
     }
 
     .fcard-icon {
-      font-size: clamp(1rem, 1.5vw, 1.3rem);
+      font-size: clamp(1.1rem, 1.7vw, 1.45rem);
     }
 
     .fcard-name {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.72rem, 1.1vw, .95rem);
+      font-size: clamp(.82rem, 1.25vw, 1.05rem);
       letter-spacing: .06em;
       font-weight: 700;
       white-space: nowrap;
@@ -1323,7 +1361,7 @@
     }
 
     .fcard-tag {
-      font-size: clamp(.55rem, .8vw, .68rem);
+      font-size: clamp(.62rem, .92vw, .78rem);
       color: rgba(232, 224, 208, 0.6);
       line-height: 1.3;
     }
@@ -1447,37 +1485,37 @@
 
     .faction-preview .fp-name {
       font-family: Rajdhani, sans-serif;
-      font-size: clamp(.9rem, 1.3vw, 1.1rem);
+      font-size: clamp(1.05rem, 1.6vw, 1.3rem);
       font-weight: 700;
       letter-spacing: .08em;
     }
 
     .faction-preview .fp-tag {
-      font-size: var(--fs-sm);
+      font-size: var(--fs-md);
       color: rgba(232, 224, 208, .7);
       margin-left: auto;
     }
 
     .faction-preview .fp-passive {
-      font-size: var(--fs-sm);
+      font-size: clamp(.78rem, 1.1vw, 1rem);
       color: #a29bfe;
       background: #0e0b16;
       border: 1px solid #6c3483;
       border-radius: 3px;
-      padding: 3px 7px;
-      line-height: 1.45;
+      padding: 5px 10px;
+      line-height: 1.5;
     }
 
     .faction-preview .fp-units {
       display: flex;
       flex-wrap: wrap;
-      gap: 3px;
+      gap: 5px;
     }
 
     .faction-preview .fp-units .futag {
-      font-size: var(--fs-xs);
-      padding: 2px 5px;
-      border-radius: 2px;
+      font-size: var(--fs-sm);
+      padding: 4px 9px;
+      border-radius: 3px;
       background: #0f0f1c;
       border: 1px solid var(--border);
     }
@@ -1500,8 +1538,8 @@
 
     .faction-preview .fp-pros,
     .faction-preview .fp-cons {
-      font-size: clamp(.62rem, .88vw, .78rem);
-      line-height: 1.5;
+      font-size: clamp(.74rem, 1vw, .92rem);
+      line-height: 1.55;
       flex: 1;
       min-width: 100px;
     }
@@ -1516,7 +1554,7 @@
 
     .faction-preview .fp-start {
       font-family: Rajdhani, sans-serif;
-      font-size: var(--fs-xs);
+      font-size: var(--fs-sm);
       color: var(--gold);
       opacity: .8;
     }
@@ -1604,54 +1642,146 @@
     #wf-topbar-stats { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .95rem; }
 
     @media (max-width: 820px) {
-      #wf-topbar { padding: 8px 10px; gap: 8px; }
-      #wf-topbar-stats { gap: 8px; font-size: .82rem; overflow-x: auto; flex-wrap: nowrap; }
+      #wf-topbar { padding: 6px 10px; gap: 6px; flex-wrap: nowrap; }
+      #wf-topbar-stats { gap: 10px; font-size: .78rem; overflow-x: auto; flex-wrap: nowrap; flex-shrink: 1; min-width: 0; }
+      #wf-topbar-stats > div { white-space: nowrap; }
       #wf-faction-badge { display: none !important; }
-
-    }
-    @media (max-width: 820px) {
-      #wf-mainarea { flex-direction: column-reverse !important; }
+      /* Map on top, sidebar compact strip below */
+      #wf-mainarea { flex-direction: column !important; }
+      #wf-map-container { flex: 0 0 58vh !important; min-height: 180px; }
       #wf-sidebar {
-        flex: 0 0 auto !important;
-        max-height: 36vh !important;
+        flex: 1 1 auto !important;
+        max-height: 34vh !important;
         border-left: none !important;
         border-top: 1px solid rgba(200,80,80,.20);
         overflow-y: auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        gap: 0;
       }
-      #wf-battlelog-wrap { min-height: 0; }
-      #wf-help-overlay { font-size: .72rem; padding: 7px 10px; max-width: 200px; }
-      #wf-modal-inner { padding: 16px 14px; max-height: 90vh; overflow-y: auto; }
+      /* Sidebar sections become compact horizontal tiles */
+      #wf-sidebar > div {
+        flex: 1 1 160px;
+        border-bottom: 1px solid rgba(255,255,255,.05);
+        padding: 8px 12px !important;
+        min-width: 0;
+      }
+      #wf-battlelog-wrap {
+        flex: 1 1 100% !important;
+        min-height: 0;
+        border-top: 1px solid rgba(255,255,255,.06);
+      }
+      #wf-help-overlay { font-size: .68rem; padding: 6px 9px; max-width: 165px; line-height: 1.4; }
+      #wf-modal-inner { padding: 14px 12px; max-height: 88vh; overflow-y: auto; }
     }
     @media (max-width: 480px) {
-      #wf-topbar-stats > div > strong { font-size: .95rem !important; }
-      #wf-topbar-stats > div > span  { font-size: .62rem !important; }
+      #wf-map-container { flex: 0 0 52vh !important; }
+      #wf-topbar-stats > div > strong { font-size: .9rem !important; }
+      #wf-topbar-stats > div > span  { font-size: .58rem !important; }
+      /* Stack sidebar sections vertically again on very narrow screens */
+      #wf-sidebar { flex-direction: column !important; flex-wrap: nowrap !important; }
+      #wf-sidebar > div { flex: 0 0 auto !important; }
     }
-    /* ── FACTION SELECT — mobile stack ─────────────────────────────────────── */
+
+    /* ── FACTION SELECT — full mobile rework ───────────────────────────────── */
+
+    /* Mobile tab bar — hidden on desktop */
+    #faction-mobile-tabs {
+      display: none;
+    }
+
     @media (max-width: 700px) {
-      .faction-layout {
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
+      #sc-faction {
+        overflow-y: auto;
+        overflow-x: hidden;
       }
 
+      /* Show the P1/P2 tab bar */
+      #faction-mobile-tabs {
+        display: flex;
+        width: 100%;
+        max-width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .faction-mob-tab {
+        flex: 1;
+        padding: 10px 6px;
+        font-family: Rajdhani, sans-serif;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-align: center;
+        cursor: pointer;
+        background: rgba(0,0,0,.4);
+        color: var(--dim);
+        border: none;
+        transition: all .15s;
+        white-space: nowrap;
+      }
+      .faction-mob-tab.mob-active-p1 {
+        background: rgba(36,113,163,.22);
+        color: var(--p1);
+        border-bottom: 2px solid var(--p1);
+      }
+      .faction-mob-tab.mob-active-p2 {
+        background: rgba(192,57,43,.22);
+        color: var(--p2);
+        border-bottom: 2px solid var(--p2);
+      }
+
+      /* Single-column layout, mob-hidden hides inactive player side */
+      .faction-layout {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        overflow-y: visible;
+        padding-bottom: 4px;
+      }
       .faction-side {
         max-width: 100%;
         width: 100%;
       }
+      .faction-side.mob-hidden { display: none !important; }
 
-      .faction-vs {
-        font-size: 1.2rem;
-        padding: 2px 0;
-      }
+      /* Hide VS separator and preview panel on mobile */
+      .faction-vs { display: none; }
+      .faction-preview { display: none !important; }
 
+      /* Cards: 3 columns, unconstrained height (parent scrolls) */
       .faction-cards {
-        max-height: clamp(180px, 35vh, 340px);
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        max-height: none;
+        overflow-y: visible;
+        gap: 5px;
       }
 
-      .faction-preview {
-        min-height: clamp(60px, 10vh, 90px);
-      }
+      /* Compact card content on mobile */
+      .fcard-matchup,
+      .fcard-units,
+      .fcard-passive { display: none; }
+
+      .fcard-name { font-size: clamp(.65rem, 2.8vw, .8rem); }
+      .fcard-tag { font-size: clamp(.55rem, 2.3vw, .68rem); }
+      .fcard { padding: 7px 5px; gap: 3px; }
+      .fcard-icon { font-size: clamp(1.2rem, 5vw, 1.8rem); }
+
+      /* Compact player label and filter */
+      .faction-plabel { padding: 6px 8px; font-size: var(--fs-sm); }
+      .faction-filter { font-size: var(--fs-xs); padding: 5px 8px; margin-bottom: 4px; }
+
+      /* Footer — stack on very small screens */
+      .faction-footer { flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+      .faction-footer .btn { flex: 1 1 120px; min-width: 0; font-size: .82rem; padding: 10px 8px; min-height: 44px; }
+    }
+
+    @media (max-width: 400px) {
+      .faction-cards { grid-template-columns: repeat(2, 1fr); }
     }
 
     .faction-footer {
@@ -2516,6 +2646,31 @@
 
     #battlefield {
       display: block;
+    }
+
+    /* ── Portrait rotate banner ─────────────────────────────────────────────── */
+    #portrait-rotate-prompt {
+      display: none;
+    }
+    @media (orientation: portrait) and (max-width: 768px) {
+      #portrait-rotate-prompt {
+        display: flex;
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: rgba(10, 4, 20, .92);
+        border-bottom: 1px solid rgba(212,168,67,.35);
+        font-family: Rajdhani, sans-serif;
+        font-size: .8rem;
+        color: rgba(212,168,67,.9);
+        letter-spacing: .06em;
+        pointer-events: none;
+      }
+      #portrait-rotate-prompt .pr-icon { font-size: 1.1rem; }
     }
 
     /* ── Portrait mode: rotate game-stage -90° so landscape game fills portrait screen ── */
@@ -4660,10 +4815,15 @@
       border-top: 1px solid rgba(212, 168, 67, .12);
       border-bottom: 1px solid rgba(212, 168, 67, .12);
       padding: 10px 13px 10px;
-      display: flex;
+      display: none;
       flex-direction: column;
       gap: 4px;
       z-index: 2;
+    }
+
+    /* Show stat panel only on large screens where there's room for it */
+    @media (min-width: 1400px) and (min-height: 800px) {
+      .unit-stat-panel { display: flex; }
     }
 
     .usp-name {
@@ -6622,6 +6782,45 @@
       .menu-btns .btn {
         min-height: 44px;
       }
+
+      /* Faction mode buttons (PVP / VS AI / AI VS AI / HORDE) */
+      #faction-mode-row .fmode-btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Online screen action buttons */
+      .online-btn {
+        min-height: 44px;
+      }
+
+      /* Online screen back/secondary buttons */
+      .online-back-btn {
+        min-height: 44px !important;
+        padding: 10px 18px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* Campaign back button and modal CTA */
+      #camp-back,
+      #camp-modal-inner .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Mastery back-to-menu button */
+      .mastery-back-bar .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     /* ══════════════════════════════════════════════════════════════
@@ -8040,6 +8239,10 @@
                 &amp; KEY BINDS</button>
               <div class="menu-btn-sub">Rebind keys and direct-spawn hotkeys</div>
             </div>
+            <div class="menu-btn-entry" style="animation-delay:.53s"><button class="btn" onclick="_openStats()"
+                style="border-color:rgba(80,180,120,.4);color:#4cb87a;--btn-glow:rgba(80,180,120,.15)">📊 STATS &amp; ACHIEVEMENTS</button>
+              <div class="menu-btn-sub">Lifetime record, faction history, unlocks</div>
+            </div>
           </div>
         </div>
 
@@ -8190,8 +8393,12 @@
       <button class="fmode-btn" data-fmode="solo">VS AI</button>
       <button class="fmode-btn" data-fmode="aivsai">AI VS AI</button>
     </div>
+    <div id="faction-mobile-tabs">
+      <button class="faction-mob-tab mob-active-p1" id="fmob-p1-btn" onclick="factionMobTab(1)">&#128100; PLAYER 1</button>
+      <button class="faction-mob-tab" id="fmob-p2-btn" onclick="factionMobTab(2)">&#128100; PLAYER 2</button>
+    </div>
     <div class="faction-layout">
-      <div class="faction-side">
+      <div class="faction-side" id="faction-side-p1">
         <div class="faction-plabel p1l" id="faction-hint-p1">PLAYER 1<span></span></div>
         <input class="faction-filter" id="ffilter-p1" placeholder="Search factions..." aria-label="Search factions (Player 1)" autocomplete="off" />
         <div class="faction-scroll-wrap">
@@ -8223,7 +8430,7 @@
         </div>
       </div>
       <div class="faction-vs">VS</div>
-      <div class="faction-side">
+      <div class="faction-side mob-hidden" id="faction-side-p2">
         <!-- P2 human section (hidden in solo mode) -->
         <div id="p2-human-section">
           <div class="faction-plabel p2l" id="faction-hint-p2">PLAYER 2<span></span></div>
@@ -8489,6 +8696,9 @@
   </div>
   <!-- GAME -->
   <div id="sc-game" class="screen">
+    <div id="portrait-rotate-prompt">
+      <span class="pr-icon">&#8635;</span> Rotate device to landscape for best experience
+    </div>
     <div id="momentum-bar-wrap"
       title="FRONT LINE — shows where the battle is happening. Marker shifts toward whichever base is under pressure.">
       <div id="momentum-p1"></div>
@@ -8804,6 +9014,30 @@
   </div>
 
   <!-- GAMEOVER -->
+  <!-- Achievement toast -->
+  <div id="ach-toast" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;"></div>
+
+  <!-- Lifetime stats overlay -->
+  <div id="stats-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:900;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 0;">
+    <div style="background:linear-gradient(160deg,#0c0c1e 0%,#080810 100%);border:1px solid rgba(212,168,67,.3);border-radius:14px;max-width:700px;width:94%;font-family:Rajdhani,sans-serif;position:relative;margin:auto;box-shadow:0 0 60px rgba(0,0,0,.8);">
+      <div style="padding:22px 28px 0;">
+        <button onclick="document.getElementById('stats-overlay').style.display='none'" style="position:absolute;top:14px;right:18px;background:none;border:none;color:rgba(255,255,255,.35);font-size:1.5rem;cursor:pointer;line-height:1;transition:color .2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.35)'">✕</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:1.35rem;letter-spacing:.18em;color:var(--gold);font-weight:800;">📊 STATS &amp; ACHIEVEMENTS</div>
+          <div id="stats-cloud-badge" style="font-size:.68rem;color:rgba(232,224,208,.35);letter-spacing:.08em;">☁ syncing...</div>
+        </div>
+        <div id="stats-recovery-bar" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="font-size:.7rem;color:rgba(232,224,208,.4);letter-spacing:.1em;">RECOVERY CODE</span>
+          <span id="stats-recovery-code" style="font-size:.95rem;font-weight:800;color:var(--gold);letter-spacing:.15em;font-family:monospace;"></span>
+          <span style="font-size:.68rem;color:rgba(232,224,208,.3);">— write this down to restore your data on any device</span>
+          <button onclick="_statsRecover()" style="margin-left:auto;background:none;border:1px solid rgba(212,168,67,.3);border-radius:5px;color:rgba(212,168,67,.7);font-family:Rajdhani,sans-serif;font-size:.72rem;padding:3px 10px;cursor:pointer;letter-spacing:.08em;" onmouseover="this.style.borderColor='rgba(212,168,67,.8)'" onmouseout="this.style.borderColor='rgba(212,168,67,.3)'">RESTORE</button>
+        </div>
+        <div id="stats-tabs" style="display:flex;gap:2px;border-bottom:1px solid rgba(212,168,67,.15);padding-bottom:0;"></div>
+      </div>
+      <div id="stats-body" style="padding:22px 28px 30px;"></div>
+    </div>
+  </div>
+
   <div id="sc-gameover" class="screen">
     <div class="go-wrap">
       <div id="t-match-banner"></div>
@@ -12410,6 +12644,56 @@
       p1Slot0: null, p1Slot1: null, p1Slot2: null, p1Slot3: null, p1Slot4: null, p1Slot5: null, p1Slot6: null,
       p2Slot0: null, p2Slot1: null, p2Slot2: null, p2Slot3: null, p2Slot4: null, p2Slot5: null, p2Slot6: null,
     };
+    // Load persisted keybindings
+    try { const _sk = JSON.parse(localStorage.getItem('brc_keys') || 'null'); if (_sk && typeof _sk === 'object') Object.assign(KEYS, _sk); } catch(_) {}
+
+    // ── Player identity (UUID + recovery code for cloud stats) ──────────────
+    const _BRC_SERVER = window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com';
+    function _genUUID() { return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); }); }
+    function _genRecovery() { const ch = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from({length:4},()=>ch[Math.random()*ch.length|0]).join('') + '-' + Array.from({length:4},()=>'0123456789'[Math.random()*10|0]).join(''); }
+    let _BRC_UUID = localStorage.getItem('brc_uuid');
+    let _BRC_RECOVERY = localStorage.getItem('brc_recovery');
+    if (!_BRC_UUID) { _BRC_UUID = _genUUID(); _BRC_RECOVERY = _genRecovery(); localStorage.setItem('brc_uuid', _BRC_UUID); localStorage.setItem('brc_recovery', _BRC_RECOVERY); }
+
+    // Sync: push local stats to server
+    function _syncStatsToServer() {
+      try {
+        const stats = JSON.parse(localStorage.getItem('brc_stats') || '{}');
+        const ach = JSON.parse(localStorage.getItem('brc_ach') || '[]');
+        fetch(_BRC_SERVER + '/api/stats', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uuid: _BRC_UUID, recovery_code: _BRC_RECOVERY, stats, achievements: ach }),
+        }).catch(() => {});
+      } catch(_) {}
+    }
+
+    // Sync: pull from server and merge into localStorage (server wins on numeric totals)
+    function _syncStatsFromServer() {
+      fetch(_BRC_SERVER + '/api/stats/' + _BRC_UUID).then(r => r.json()).then(data => {
+        if (!data || !data.stats) return;
+        try {
+          const local = JSON.parse(localStorage.getItem('brc_stats') || '{}');
+          const srv = data.stats;
+          // Merge: take max/sum where appropriate — server is source of truth for totals
+          const merged = Object.assign({}, local);
+          const sumKeys = ['games','wins','losses','elapsed','kills','deaths','spawned','dmgDealt','soulsSpent','bodiesSpent','buffsUsed','midCaptures','warfrontWins','warfrontGames'];
+          const maxKeys = ['bestKills','bestSpawned','longestGame','hordeWaves','bestStreak'];
+          sumKeys.forEach(k => { if (srv[k] > (merged[k]||0)) merged[k] = srv[k]; });
+          maxKeys.forEach(k => { if (srv[k] > (merged[k]||0)) merged[k] = srv[k]; });
+          if (srv.fastestWin && (!merged.fastestWin || srv.fastestWin < merged.fastestWin)) merged.fastestWin = srv.fastestWin;
+          if (srv.fac) { merged.fac = merged.fac || {}; Object.entries(srv.fac).forEach(([fid,d]) => { if (!merged.fac[fid] || d.g > merged.fac[fid].g) merged.fac[fid] = d; }); }
+          localStorage.setItem('brc_stats', JSON.stringify(merged));
+          // Merge achievements
+          const localAch = JSON.parse(localStorage.getItem('brc_ach') || '[]');
+          const srvAch = data.achievements || [];
+          const mergedAch = [...new Set([...localAch, ...srvAch])];
+          localStorage.setItem('brc_ach', JSON.stringify(mergedAch));
+        } catch(_) {}
+      }).catch(() => {});
+    }
+
+    // Pull on page load (silently)
+    setTimeout(_syncStatsFromServer, 3000);
     let _rebinding = null; // { key: 'p1Left', el: element }
     let _devUnlocked = (() => { try { return !!localStorage.getItem('_devAuth'); } catch(_){return false;} })();
     let _devSessionActivated = false; // only true after clicking title this session
@@ -14669,6 +14953,22 @@
         const _hudEl = document.getElementById('hud');
         if (_hudEl) _hudEl.classList.add('gauntlet-mode');
       }
+      // Warfront defense bonuses — fortification grants extra resources and free upgrades
+      if (_isWarfront() && (window._wfDefenseFort || 0) > 0) {
+        const _fort = window._wfDefenseFort;
+        const _p1 = G.players[0];
+        _p1.souls  += _fort * 8;   // +8/16/24 souls
+        _p1.bodies += _fort * 3;   // +3/6/9 bodies
+        // Apply first _fort upgrades from P1's faction for free
+        const _defUpgrades = (G.factions[0].upgrades || []).slice(0, _fort);
+        for (const _up of _defUpgrades) {
+          if (!_p1.ownedUpgrades.has(_up.id)) {
+            _p1.ownedUpgrades.add(_up.id);
+            applyUpgrade(1, _up);
+          }
+        }
+        window._wfDefenseFort = 0;
+      }
       P1_SEL = 0; P2_SEL = 0; P1_MODE = 0; P2_MODE = 0;
       // ── AI config on game object ──
       G.aiTimer = 0;
@@ -15413,54 +15713,55 @@
           if (markerEl) markerEl.style.left = (markerPct * 100) + '%';
           if (p1El) p1El.style.width = (markerPct * 100) + '%';
           if (p2El) p2El.style.width = ((1 - markerPct) * 100) + '%';
-          // Dynamic arrows — multi-arrow system based on push intensity
-          // Arrows only show for the side that IS pushing (attacker gets arrows)
+          // Velocity tracking — arrows show DIRECTION OF MOVEMENT, not just position
+          // Exponentially smoothed so noise/jitter doesn't flip the arrows
+          if (G._moPrev == null) { G._moPrev = markerPct; G._moVel = 0; }
+          const rawDelta = markerPct - G._moPrev;
+          G._moVel = G._moVel * 0.88 + rawDelta * 0.12;
+          G._moPrev = markerPct;
+          const vel = G._moVel; // positive = moving right (P1 gaining), negative = moving left (P2 gaining)
           const p1Label = document.getElementById('momentum-p1-label');
           const p2Label = document.getElementById('momentum-p2-label');
           const titleEl = document.getElementById('momentum-title');
           const timerEl = document.getElementById('match-timer');
           const clashEl = document.getElementById('momentum-clash-arrows');
-          // Labels are fixed identifiers only — arrows live at the clash point
           if (p1Label) p1Label.textContent = 'P1';
           if (p2Label) p2Label.textContent = 'P2';
-          // Move clash arrows to the marker position (same transition as bar/marker)
+          // Arrows sit at the marker and point in the direction it's moving
           if (clashEl) {
             clashEl.style.left = (markerPct * 100) + '%';
-            const off = markerPct - 0.5;
-            // Place arrows to the right of marker when P1 pushes, left when P2 pushes
-            if (off > 0) {
-              clashEl.style.transform = 'translateY(-50%)';        // arrows start right after marker
-            } else if (off < 0) {
-              clashEl.style.transform = 'translateX(-100%) translateY(-50%)'; // arrows end right before marker
+            if (vel > 0) {
+              clashEl.style.transform = 'translateY(-50%)';
+            } else if (vel < 0) {
+              clashEl.style.transform = 'translateX(-100%) translateY(-50%)';
             } else {
               clashEl.style.transform = 'translateX(-50%) translateY(-50%)';
             }
           }
           if (titleEl && clashEl) {
-            const off = markerPct - 0.5;
-            // 3 tiers: slight (4-10%), moderate (10-18%), heavy (18%+)
-            const t1 = 0.04, t2 = 0.10, t3 = 0.18;
-            if (off > t3) {
+            // 3 tiers by velocity magnitude (per-frame delta smoothed)
+            const t1 = 0.00025, t2 = 0.0007, t3 = 0.0016;
+            if (vel > t3) {
               clashEl.textContent = '▶▶▶'; clashEl.style.color = 'rgba(100,180,255,.95)';
-              titleEl.textContent = 'P1 DOMINATING'; titleEl.style.color = 'rgba(100,180,255,.7)';
-            } else if (off > t2) {
+              titleEl.textContent = 'P1 SURGING'; titleEl.style.color = 'rgba(100,180,255,.7)';
+            } else if (vel > t2) {
               clashEl.textContent = '▶▶'; clashEl.style.color = 'rgba(100,180,255,.8)';
               titleEl.textContent = 'P1 PUSHING'; titleEl.style.color = 'rgba(100,180,255,.55)';
-            } else if (off > t1) {
+            } else if (vel > t1) {
               clashEl.textContent = '▶'; clashEl.style.color = 'rgba(100,180,255,.65)';
               titleEl.textContent = 'P1 ADVANCING'; titleEl.style.color = 'rgba(100,180,255,.4)';
-            } else if (off < -t3) {
+            } else if (vel < -t3) {
               clashEl.textContent = '◀◀◀'; clashEl.style.color = 'rgba(255,100,100,.95)';
-              titleEl.textContent = 'P2 DOMINATING'; titleEl.style.color = 'rgba(255,100,100,.7)';
-            } else if (off < -t2) {
+              titleEl.textContent = 'P2 SURGING'; titleEl.style.color = 'rgba(255,100,100,.7)';
+            } else if (vel < -t2) {
               clashEl.textContent = '◀◀'; clashEl.style.color = 'rgba(255,100,100,.8)';
               titleEl.textContent = 'P2 PUSHING'; titleEl.style.color = 'rgba(255,100,100,.55)';
-            } else if (off < -t1) {
+            } else if (vel < -t1) {
               clashEl.textContent = '◀'; clashEl.style.color = 'rgba(255,100,100,.65)';
               titleEl.textContent = 'P2 ADVANCING'; titleEl.style.color = 'rgba(255,100,100,.4)';
             } else {
               clashEl.textContent = '';
-              titleEl.textContent = ''; titleEl.style.color = 'rgba(255,255,255,.35)';
+              titleEl.textContent = 'STALEMATE'; titleEl.style.color = 'rgba(255,255,255,.35)';
             }
           }
           // Match timer
@@ -16881,6 +17182,8 @@
         }
         // Melee direct
         let actualDmg = Number.isFinite(dmg) ? dmg : Math.max(1, attacker.def.dmg || 1);
+        // Mid control combat buff — ramps with time held, caps at +10%
+        if (G.midOwner === attacker.player) actualDmg *= 1 + Math.min(0.10, (G.midOwnerTimer || 0) * 0.0007);
         // Defender's advantage: 12% DR when near own base
         const _tOwner = G.players[target.player - 1];
         if (_tOwner && Math.abs(target.x - _tOwner.baseX) < 180) actualDmg *= 0.88;
@@ -19462,12 +19765,18 @@
         ind.classList.add('capturing');
         if (capBar) { capBar.style.display = 'block'; capFill.style.width = capPct + '%'; capFill.style.background = capColor; }
       } else if (G.midOwner === 1) {
-        const _r1 = (() => { const s = G.midOwnerTimer || 0; return s < 30 ? 0.8 + (s / 30) * 0.7 : s < 60 ? 1.5 + ((s - 30) / 30) * 0.5 : 2.0; })();
-        ind.textContent = `🔵 MIDDLE — P1 (+${_r1.toFixed(1)}💀/s)`; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
+        const _s1 = G.midOwnerTimer || 0;
+        const _r1 = _s1 < 30 ? 0.8 + (_s1 / 30) * 0.7 : _s1 < 60 ? 1.5 + ((_s1 - 30) / 30) * 0.5 : 2.0;
+        const _b1 = Math.floor(Math.min(10, _s1 * 0.07));
+        const _bs1 = _b1 >= 1 ? ` ⚔+${_b1}%` : '';
+        ind.textContent = `🔵 MIDDLE — P1 (+${_r1.toFixed(1)}💀/s${_bs1})`; ind.style.color = '#2471a3'; ind.classList.remove('capturing');
         if (capBar) capBar.style.display = 'none';
       } else if (G.midOwner === 2) {
-        const _r2 = (() => { const s = G.midOwnerTimer || 0; return s < 30 ? 0.8 + (s / 30) * 0.7 : s < 60 ? 1.5 + ((s - 30) / 30) * 0.5 : 2.0; })();
-        ind.textContent = `🔴 MIDDLE — P2 (+${_r2.toFixed(1)}💀/s)`; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
+        const _s2 = G.midOwnerTimer || 0;
+        const _r2 = _s2 < 30 ? 0.8 + (_s2 / 30) * 0.7 : _s2 < 60 ? 1.5 + ((_s2 - 30) / 30) * 0.5 : 2.0;
+        const _b2 = Math.floor(Math.min(10, _s2 * 0.07));
+        const _bs2 = _b2 >= 1 ? ` ⚔+${_b2}%` : '';
+        ind.textContent = `🔴 MIDDLE — P2 (+${_r2.toFixed(1)}💀/s${_bs2})`; ind.style.color = '#c0392b'; ind.classList.remove('capturing');
         if (capBar) capBar.style.display = 'none';
       } else {
         ind.textContent = '⚔ MIDDLE — UNCLAIMED'; ind.style.color = 'var(--gold)'; ind.classList.remove('capturing');
@@ -23841,6 +24150,90 @@
       // Track per-faction wins for session badges on faction select screen
       const _winFid = G.factions[winner.id - 1].id;
       SESSION.factionWins[_winFid] = (SESSION.factionWins[_winFid] || 0) + 1;
+      // ── Lifetime stats ──
+      const _p1Won = winner.id === 1;
+      try {
+        const _ls = JSON.parse(localStorage.getItem('brc_stats') || '{}');
+        _ls.games = (_ls.games || 0) + 1;
+        _ls.elapsed = (_ls.elapsed || 0) + Math.round(G.elapsed || 0);
+        if (_p1Won) _ls.wins = (_ls.wins || 0) + 1; else _ls.losses = (_ls.losses || 0) + 1;
+        const _lfid = G.factions[0].id;
+        if (!_ls.fac) _ls.fac = {};
+        _ls.fac[_lfid] = _ls.fac[_lfid] || { g: 0, w: 0 };
+        _ls.fac[_lfid].g++; if (_p1Won) _ls.fac[_lfid].w++;
+        if (GAME_MODE === 'horde' && G.horde) _ls.hordeWaves = Math.max(_ls.hordeWaves || 0, G.horde.wave || 0);
+        if (WARFRONT.active && _p1Won) _ls.warfrontWins = (_ls.warfrontWins || 0) + 1;
+        if (WARFRONT.active) _ls.warfrontGames = (_ls.warfrontGames || 0) + 1;
+        if (_p1Won) { _ls.winStreak = (_ls.winStreak || 0) + 1; _ls.bestStreak = Math.max(_ls.bestStreak || 0, _ls.winStreak); } else { _ls.winStreak = 0; }
+        // Combat stats
+        const _p1 = G.players[0], _p2 = G.players[1];
+        _ls.kills = (_ls.kills || 0) + (_p1.kills || 0);
+        _ls.deaths = (_ls.deaths || 0) + (_p2 ? (_p2.kills || 0) : 0);
+        _ls.spawned = (_ls.spawned || 0) + (_p1.spawned || 0);
+        _ls.dmgDealt = (_ls.dmgDealt || 0) + Math.round(_p1.dmgDealt || 0);
+        _ls.soulsSpent = (_ls.soulsSpent || 0) + (_p1.soulsSpent || 0);
+        _ls.bodiesSpent = (_ls.bodiesSpent || 0) + (_p1.bodiesSpent || 0);
+        _ls.buffsUsed = (_ls.buffsUsed || 0) + (_p1.buffUsed || 0);
+        _ls.midCaptures = (_ls.midCaptures || 0) + (_p1.midCaptures || 0);
+        // Records
+        _ls.bestKills = Math.max(_ls.bestKills || 0, _p1.kills || 0);
+        _ls.bestSpawned = Math.max(_ls.bestSpawned || 0, _p1.spawned || 0);
+        _ls.longestGame = Math.max(_ls.longestGame || 0, Math.round(G.elapsed || 0));
+        if (_p1Won) _ls.fastestWin = Math.min(_ls.fastestWin || 999999, Math.round(G.elapsed || 0));
+        localStorage.setItem('brc_stats', JSON.stringify(_ls));
+        // ── Achievements ──
+        const _ach = JSON.parse(localStorage.getItem('brc_ach') || '[]');
+        const _newAch = [];
+        const _achUnlock = (id, name, desc) => { if (!_ach.includes(id)) { _ach.push(id); _newAch.push({ name, desc }); } };
+        if (_p1Won) _achUnlock('first_win', 'First Victory', 'Win your first game');
+        if (_p1Won && (_ls.wins || 0) >= 10) _achUnlock('wins_10', 'Rising Star', 'Win 10 games');
+        if (_p1Won && (_ls.wins || 0) >= 50) _achUnlock('wins_50', 'Champion', 'Win 50 games');
+        if ((_ls.games || 0) >= 100) _achUnlock('games_100', 'Veteran', 'Play 100 games');
+        if (_p1Won && G.elapsed < 120) _achUnlock('win_fast', 'Blitzkrieg', 'Win in under 2 minutes');
+        if (_p1Won && G.players[0].lastStandUsed) _achUnlock('last_stand_win', 'Against All Odds', 'Win after triggering Last Stand');
+        if (_p1Won && (G.players[0].ownedUpgrades || new Set()).size >= 3) _achUnlock('all_upgrades', 'Fully Equipped', 'Buy all upgrades in one game');
+        if (_p1Won && (G.players[0].ownedUpgrades || new Set()).size === 0) _achUnlock('no_upgrades', 'Raw Power', 'Win without buying any upgrades');
+        if (_p1Won && G.midOwner === 1 && (G.midOwnerTimer || 0) >= 60) _achUnlock('mid_dominant', 'Territorial', 'Hold mid for 60+ seconds and win');
+        if (GAME_MODE === 'horde' && G.horde && G.horde.wave >= 5) _achUnlock('horde_5', 'Wave Rider', 'Survive 5 Horde waves');
+        if (GAME_MODE === 'horde' && G.horde && G.horde.wave >= 10) _achUnlock('horde_10', 'Unstoppable', 'Clear all 10 Horde waves');
+        if (WARFRONT.active && _p1Won) _achUnlock('warfront_win', 'Conqueror', 'Win a Warfront campaign');
+        if (Object.keys(_ls.fac || {}).length >= 5) _achUnlock('play_5_facs', 'Diverse', 'Play 5 different factions');
+        if (Object.keys(_ls.fac || {}).length >= 24) _achUnlock('play_all_facs', 'Collector', 'Play every faction');
+        // Games played milestones
+        if ((_ls.games || 0) >= 50) _achUnlock('games_50', 'Seasoned', 'Play 50 games');
+        // Win milestones
+        if (_p1Won && (_ls.wins || 0) >= 100) _achUnlock('wins_100', 'Legend', 'Win 100 games');
+        // Win streak
+        if (_p1Won && (_ls.winStreak || 0) >= 3) _achUnlock('win_streak_3', 'Hot Streak', 'Win 3 games in a row');
+        if (_p1Won && (_ls.winStreak || 0) >= 10) _achUnlock('win_streak_10', 'Undefeated', 'Win 10 games in a row');
+        // Game duration
+        if (_p1Won && G.elapsed >= 600) _achUnlock('win_long', 'Marathon', 'Win a game lasting 10+ minutes');
+        // Base HP outcomes
+        if (_p1Won && (G.players[0].baseHp || 0) > 120) _achUnlock('dominant', 'Dominant', 'Win with base above 120 HP');
+        if (_p1Won && (G.players[0].baseHp || 0) >= 150) _achUnlock('untouchable', 'Untouchable', 'Win with your base undamaged');
+        if (_p1Won && (G.players[0].baseHp || 0) < 20) _achUnlock('close_call', 'Nail-Biter', 'Win with base below 20 HP');
+        // Kills
+        if ((G.players[0].kills || 0) >= 20) _achUnlock('kills_20', 'Bloodbath', 'Get 20 kills in one game');
+        if ((G.players[0].kills || 0) >= 50) _achUnlock('kills_50', 'Massacre', 'Get 50 kills in one game');
+        // Unit spawning
+        if ((G.players[0].spawned || 0) >= 50) _achUnlock('spawned_50', 'Commander', 'Spawn 50+ units in one game');
+        // Mid captures
+        if (_p1Won && (G.players[0].midCaptures || 0) === 0) _achUnlock('no_mid', 'Self-Sufficient', 'Win without capturing mid');
+        if ((G.players[0].midCaptures || 0) >= 3) _achUnlock('mid_three', 'Relentless', 'Capture mid 3+ times in one game');
+        // Buffs
+        if ((G.players[0].buffUsed || 0) >= 5) _achUnlock('buff_master', 'Tactician', 'Use 5+ buffs in one game');
+        // Mode-specific
+        if (_p1Won && GAME_MODE === 'sudden_death') _achUnlock('sudden_death_win', 'No Time to Bleed', 'Win a Sudden Death game');
+        if (_p1Won && typeof _isConquest === 'function' && _isConquest()) _achUnlock('conquest_win', 'Zone Commander', 'Win a Conquest game');
+        if (_p1Won && typeof _isGauntlet === 'function' && _isGauntlet()) _achUnlock('gauntlet_win', 'Gauntlet Master', 'Win a Gauntlet game');
+        // Faction specialist
+        const _maxFacWins = Math.max(0, ...Object.values(_ls.fac || {}).map(d => d.w || 0));
+        if (_maxFacWins >= 5) _achUnlock('faction_specialist', 'Specialist', 'Win 5 games with the same faction');
+        if (_maxFacWins >= 20) _achUnlock('faction_master', 'Master', 'Win 20 games with the same faction');
+        localStorage.setItem('brc_ach', JSON.stringify(_ach));
+        if (_newAch.length > 0) setTimeout(() => _showAchievements(_newAch), 2200);
+        if (typeof _syncStatsToServer === 'function') _syncStatsToServer();
+      } catch(_) {}
       // Grudge Match: remember loser for rematch bonus
       const _loserPid = winner.id === 1 ? 2 : 1;
       SESSION._lastLoserPid = _loserPid;
@@ -24484,6 +24877,7 @@
         _rebinding.el.textContent = formatKey(e.code);
         _rebinding.el.classList.remove('rebinding');
         _rebinding = null;
+        try { localStorage.setItem('brc_keys', JSON.stringify(KEYS)); } catch(_) {}
         updateFactionHints();
         e.preventDefault(); return;
       }
@@ -24737,6 +25131,7 @@
       const wasGame = document.getElementById('sc-game')?.classList.contains('active');
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+      if (id === 'sc-faction' && typeof factionMobTab === 'function') factionMobTab(1);
       if (wasGame && id !== 'sc-game') {
         _resetCanvas(); _onlineChatHide();
         if (typeof _hordeCleanup === 'function') _hordeCleanup();
@@ -25144,6 +25539,25 @@
 
     let AI1_FACTION_IDX = null; // P1 AI faction in aivsai mode
     let _rulesetMode = null; // 'conquest' | 'sudden_death' | null — the ruleset independent of player setup
+
+    function factionMobTab(player) {
+      const p1Side = document.getElementById('faction-side-p1');
+      const p2Side = document.getElementById('faction-side-p2');
+      const p1Btn  = document.getElementById('fmob-p1-btn');
+      const p2Btn  = document.getElementById('fmob-p2-btn');
+      if (!p1Side || !p2Side) return;
+      if (player === 1) {
+        p1Side.classList.remove('mob-hidden');
+        p2Side.classList.add('mob-hidden');
+        p1Btn.classList.add('mob-active-p1');
+        p2Btn.classList.remove('mob-active-p2');
+      } else {
+        p2Side.classList.remove('mob-hidden');
+        p1Side.classList.add('mob-hidden');
+        p2Btn.classList.add('mob-active-p2');
+        p1Btn.classList.remove('mob-active-p1');
+      }
+    }
 
     // Called when user clicks a PVP/VS AI/AI VS AI/HORDE button on faction screen
     function _setFactionPlayerMode(fmode) {
@@ -25632,9 +26046,12 @@
       if (!_menuInited || Math.abs(w - _menuLastW) > 50) { _initMenuScene(w, h); }
       _menuLastW = w;
       _menuLoopRunning = true;
-      function loop() {
+      let _menuLastTs = 0;
+      function loop(ts) {
         if (!document.getElementById('sc-menu').classList.contains('active')) { _menuLoopRunning = false; return; }
-        _menuT += 0.016;
+        const dt = _menuLastTs ? Math.min((ts - _menuLastTs) / 1000, 0.05) : 0.016667;
+        _menuLastTs = ts;
+        _menuT += dt;
         const w = menuCanvas.width, h = menuCanvas.height;
         const groundY = h * 0.72;
         mctx.clearRect(0, 0, w, h);
@@ -25938,7 +26355,7 @@
         // ── Soldiers — two distinct factions streaming from towers ──
         _menuSoldiers.forEach(s => {
           if (s._fighting) {
-            s._fightTimer -= 0.016;
+            s._fightTimer -= dt;
             // Smooth push-and-pull: sine drives position directly from a fixed base — no snapping
             s.x = s._fightBaseX + Math.sin(_menuT * 0.85 + s.bobPhase * 0.4) * 14;
             if (s._fightTimer <= 0) {
@@ -25948,7 +26365,7 @@
               s._fighting = false;
             }
           } else {
-            s.x += s.marchSpeed * 0.016 * 22;
+            s.x += s.marchSpeed * dt * 55;
             const reached = s.side === -1 ? s.x > w * s._clashThresh : s.x < w * s._clashThresh;
             if (reached) { s._fightBaseX = s.x; s._fighting = true; s._fightTimer = 4.0 + Math.random() * 4.0; }
           }
@@ -26068,7 +26485,7 @@
         // ── Embers rising from fires ──
         for (let i = _menuEmbers.length - 1; i >= 0; i--) {
           const p = _menuEmbers[i];
-          p.x += p.vx * 0.016; p.y += p.vy * 0.016; p.life -= 0.016;
+          p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
           p.x += Math.sin(_menuT * 1.5 + i * 0.3) * 0.25;
           if (p.life <= 0) {
             // Respawn near a fire or the ground
@@ -26329,7 +26746,7 @@
         const nodes = WARFRONT_NODES.map((n, i) => {
           // Player starts at corner 0 (NW)
           if (i === WF_CORNER_SPAWNS[0]) {
-            return { id: i, owner: 'player', faction: null, fortification: 1 };
+            return { id: i, owner: 'player', faction: null, fortification: 0 };
           }
           // Active AI factions occupy corners 1-3 (NE, SW, SE)
           const cornerIdx = [1, 2, 3].findIndex(ci => WF_CORNER_SPAWNS[ci] === i);
@@ -28486,20 +28903,31 @@
       const defChancePct = Math.round((0.40 + defNs.fortification * 0.15) * 100);
       const bodyEl = document.getElementById('wf-defense-body');
       if (bodyEl) {
-        const stars = '★'.repeat(defNs.fortification) + '☆'.repeat(3 - defNs.fortification);
+        const fort = defNs.fortification || 0;
+        const stars = '★'.repeat(fort) + '☆'.repeat(3 - fort);
+        const bonusLine = fort > 0
+          ? `<span style="color:#66bb6a;font-size:.9rem">🛡 Defense bonuses: <strong>+${fort * 8} souls, +${fort * 3} bodies, ${fort} free upgrade${fort > 1 ? 's' : ''}</strong></span><br><br>`
+          : '';
         bodyEl.innerHTML =
           `<strong style="color:#ff8080">${atkFac ? atkFac.icon + ' ' + atkFac.name : 'Enemy forces'}</strong>` +
           ` are attacking <strong style="color:#fff">${defNode.name}</strong>!<br><br>` +
           `Fortification: <span style="letter-spacing:.1em">${stars}</span><br><br>` +
+          bonusLine +
           `<span style="color:rgba(255,235,200,.65);font-size:.9rem">` +
           `Auto-resolve win chance: <strong style="color:#ffb444">${defChancePct}%</strong></span>`;
       }
       const fightBtn = document.getElementById('wf-defense-fight');
       const autoBtn  = document.getElementById('wf-defense-auto');
-      if (fightBtn) fightBtn.onclick = () => {
-        document.getElementById('wf-defense-overlay').style.display = 'none';
-        _wfBeginFactionSelect(pending.defId);
-      };
+      if (fightBtn) {
+        const fort = defNs.fortification || 0;
+        fightBtn.textContent = fort > 0
+          ? `🛡 DEFEND (+2⚡, ${fort} upgrade${fort > 1 ? 's' : ''} if win)`
+          : '🛡 DEFEND (+2⚡ if win)';
+        fightBtn.onclick = () => {
+          document.getElementById('wf-defense-overlay').style.display = 'none';
+          _wfBeginFactionSelect(pending.defId);
+        };
+      }
       if (autoBtn) autoBtn.onclick = () => _wfAutoResolveDefense();
       const ov = document.getElementById('wf-defense-overlay');
       if (ov) ov.style.display = 'flex';
@@ -28808,19 +29236,7 @@
           WARFRONT.save(); _wfRenderMap(); _wfRenderSidebar(); _wfUpdateHeader();
           _wfShowResultToast('⬆ ' + nd.name + ' reinforced to ' + '\u2605'.repeat(ns.fortification), WF_PLAYER_COLOR);
         };
-        if (autoBtn) {
-          autoBtn.textContent = canReinforce ? '\u26A1 REINFORCE' : 'Need influence';
-          autoBtn.disabled = !canReinforce;
-          autoBtn.style.display = 'flex';
-          autoBtn.onclick = () => {
-            if (!canReinforce) return;
-            document.getElementById('wf-modal').style.display = 'none';
-            ns.fortification = Math.min(3, ns.fortification + 1);
-            st.influence = Math.max(0, inf - (ns.fortification));
-            WARFRONT.save(); _wfRenderMap(); _wfRenderSidebar(); _wfUpdateHeader();
-            _wfShowResultToast('⬆ ' + nd.name + ' reinforced to ' + '\u2605'.repeat(ns.fortification), WF_PLAYER_COLOR);
-          };
-        }
+        if (autoBtn) autoBtn.style.display = 'none';
       } else {
         // Neutral or enemy tile: fight or auto-resolve
         startBtn.disabled = atksLeft <= 0;
@@ -28857,7 +29273,7 @@
       const playerWon = Math.random() < winChance;
       if (playerWon) {
         ns.owner = 'player'; ns.faction = null;
-        ns.fortification = Math.min(3, ns.fortification + 1);
+        ns.fortification = 0;
         if (nodeId === WF_CENTER_ID) st.centerStreak = (st.centerStreak || 0) + 1;
         st.influence = (st.influence || 0) + 1;  // auto win: +1 influence
         _wfShowResultToast('⚔ AUTO: Seized ' + nd.name + '! +1⚡', '#ffb444');
@@ -28886,8 +29302,11 @@
           const adjAi = WARFRONT_NODES[nodeId].adj.find(j => st.nodes[j].owner === 'ai');
           opponentFacId = adjAi !== undefined ? st.nodes[adjAi].faction : (st.activeFactions[0] || 'warriors');
         }
+        // Pass fortification level so initGame can apply defense bonuses
+        window._wfDefenseFort = ns.fortification || 0;
         st._pendingDefense = null;
       } else {
+        window._wfDefenseFort = 0;
         opponentFacId = ns.faction || (st.activeFactions[0] || 'warriors');
       }
       const p2Idx = FACTIONS.findIndex(f => f.id === opponentFacId);
@@ -28915,6 +29334,315 @@
       showScreen('sc-faction');
     }
 
+    // ── Achievement toast ──────────────────────────────────────────────────────
+    function _showAchievements(list) {
+      const container = document.getElementById('ach-toast');
+      if (!container) return;
+      container.style.display = 'flex';
+      list.forEach((ach, i) => {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.style.cssText = 'background:#0d1a0d;border:1px solid #4cb87a;border-radius:8px;padding:10px 16px;color:#e8e0d0;font-family:Rajdhani,sans-serif;box-shadow:0 0 20px rgba(76,184,122,.25);opacity:0;transform:translateX(40px);transition:opacity .4s,transform .4s;max-width:280px;';
+          el.innerHTML = `<div style="font-size:.65rem;letter-spacing:.15em;color:#4cb87a;margin-bottom:3px;">🏆 ACHIEVEMENT UNLOCKED</div><div style="font-size:.95rem;font-weight:700;">${ach.name}</div><div style="font-size:.72rem;color:rgba(232,224,208,.6);margin-top:2px;">${ach.desc}</div>`;
+          container.appendChild(el);
+          requestAnimationFrame(() => { el.style.opacity = '1'; el.style.transform = 'translateX(0)'; });
+          setTimeout(() => {
+            el.style.opacity = '0'; el.style.transform = 'translateX(40px)';
+            setTimeout(() => { el.remove(); if (container.children.length === 0) container.style.display = 'none'; }, 400);
+          }, 4000);
+        }, i * 600);
+      });
+    }
+
+    // ── Lifetime stats screen ─────────────────────────────────────────────────
+    function _openStats() {
+      const ov = document.getElementById('stats-overlay');
+      const body = document.getElementById('stats-body');
+      const tabsEl = document.getElementById('stats-tabs');
+      if (!ov || !body || !tabsEl) return;
+      let _ls = {}, _ach = [];
+      try { _ls = JSON.parse(localStorage.getItem('brc_stats') || '{}'); } catch(_e) {}
+      try { _ach = JSON.parse(localStorage.getItem('brc_ach') || '[]'); } catch(_e) {}
+
+      // ── Shared helpers ──
+      const _card = (val, label, color) => `
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 10px;text-align:center;">
+          <div style="font-size:1.7rem;font-weight:800;color:${color};line-height:1;">${val}</div>
+          <div style="font-size:.65rem;color:rgba(232,224,208,.45);letter-spacing:.12em;margin-top:5px;">${label}</div>
+        </div>`;
+      const _mini = (label, val) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+          <span style="font-size:.82rem;color:rgba(232,224,208,.6);">${label}</span>
+          <span style="font-size:.88rem;font-weight:700;color:#e8e0d0;">${val}</span>
+        </div>`;
+      const _secTitle = (t, emoji) => `<div style="font-size:.7rem;letter-spacing:.18em;color:var(--gold);margin:20px 0 10px;font-weight:700;display:flex;align-items:center;gap:6px;">${emoji ? emoji + ' ' : ''}${t}</div>`;
+      const _fmt = n => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(1)+'K' : String(n);
+      const _fmtTime = s => { const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60; return h > 0 ? `${h}h ${m}m` : m > 0 ? `${m}m ${sec}s` : `${sec}s`; };
+
+      // ── Derived values ──
+      const games = _ls.games || 0, wins = _ls.wins || 0, losses = _ls.losses || 0;
+      const wr = games > 0 ? Math.round((wins/games)*100) : 0;
+      const kills = _ls.kills || 0, deaths = _ls.deaths || 0;
+      const kd = deaths > 0 ? (kills/deaths).toFixed(2) : kills > 0 ? kills+'/' + 0 : '—';
+      const kdColor = deaths === 0 ? '#f0c040' : kills/deaths >= 2 ? '#4cb87a' : kills/deaths >= 1 ? '#a29bfe' : '#e17055';
+
+      // ── ALL_ACH definition ──
+      const ALL_ACH = [
+        { id:'first_win',        cat:'Victory',  icon:'⚔',  name:'First Victory',    desc:'Win your first game' },
+        { id:'wins_10',          cat:'Victory',  icon:'🌟', name:'Rising Star',       desc:'Win 10 games' },
+        { id:'wins_50',          cat:'Victory',  icon:'🏅', name:'Champion',          desc:'Win 50 games' },
+        { id:'wins_100',         cat:'Victory',  icon:'👑', name:'Legend',            desc:'Win 100 games' },
+        { id:'win_streak_3',     cat:'Victory',  icon:'🔥', name:'Hot Streak',        desc:'Win 3 games in a row' },
+        { id:'win_streak_10',    cat:'Victory',  icon:'💀', name:'Undefeated',        desc:'Win 10 games in a row' },
+        { id:'games_50',         cat:'Journey',  icon:'📅', name:'Seasoned',          desc:'Play 50 games' },
+        { id:'games_100',        cat:'Journey',  icon:'🎖', name:'Veteran',           desc:'Play 100 games' },
+        { id:'win_fast',         cat:'Journey',  icon:'⚡', name:'Blitzkrieg',        desc:'Win in under 2 minutes' },
+        { id:'win_long',         cat:'Journey',  icon:'⏳', name:'Marathon',          desc:'Win a game lasting 10+ minutes' },
+        { id:'play_5_facs',      cat:'Journey',  icon:'🎭', name:'Diverse',           desc:'Play 5 different factions' },
+        { id:'play_all_facs',    cat:'Journey',  icon:'📖', name:'Collector',         desc:'Play every faction' },
+        { id:'faction_specialist',cat:'Journey', icon:'🎯', name:'Specialist',        desc:'Win 5 games with the same faction' },
+        { id:'faction_master',   cat:'Journey',  icon:'🏆', name:'Master',            desc:'Win 20 games with the same faction' },
+        { id:'kills_20',         cat:'Combat',   icon:'🗡', name:'Bloodbath',         desc:'Get 20 kills in one game' },
+        { id:'kills_50',         cat:'Combat',   icon:'🩸', name:'Massacre',          desc:'Get 50 kills in one game' },
+        { id:'spawned_50',       cat:'Combat',   icon:'🪖', name:'Commander',         desc:'Spawn 50+ units in one game' },
+        { id:'buff_master',      cat:'Combat',   icon:'⚙',  name:'Tactician',         desc:'Use 5+ buffs in one game' },
+        { id:'dominant',         cat:'Combat',   icon:'🛡', name:'Dominant',          desc:'Win with base above 120 HP' },
+        { id:'untouchable',      cat:'Combat',   icon:'✨', name:'Untouchable',       desc:'Win with your base undamaged' },
+        { id:'close_call',       cat:'Combat',   icon:'💔', name:'Nail-Biter',        desc:'Win with base below 20 HP' },
+        { id:'last_stand_win',   cat:'Combat',   icon:'😤', name:'Against All Odds',  desc:'Win after triggering Last Stand' },
+        { id:'mid_dominant',     cat:'Control',  icon:'⚑',  name:'Territorial',       desc:'Hold mid 60+ seconds and win' },
+        { id:'no_mid',           cat:'Control',  icon:'🚫', name:'Self-Sufficient',   desc:'Win without capturing mid' },
+        { id:'mid_three',        cat:'Control',  icon:'♻',  name:'Relentless',        desc:'Capture mid 3+ times in one game' },
+        { id:'all_upgrades',     cat:'Control',  icon:'🔧', name:'Fully Equipped',    desc:'Buy all upgrades in one game' },
+        { id:'no_upgrades',      cat:'Control',  icon:'💪', name:'Raw Power',         desc:'Win without buying any upgrades' },
+        { id:'horde_5',          cat:'Modes',    icon:'🌊', name:'Wave Rider',        desc:'Survive 5 Horde waves' },
+        { id:'horde_10',         cat:'Modes',    icon:'💥', name:'Unstoppable',       desc:'Clear all 10 Horde waves' },
+        { id:'warfront_win',     cat:'Modes',    icon:'🗺', name:'Conqueror',         desc:'Win a Warfront campaign' },
+        { id:'sudden_death_win', cat:'Modes',    icon:'⏱', name:'No Time to Bleed',  desc:'Win a Sudden Death game' },
+        { id:'conquest_win',     cat:'Modes',    icon:'🏴', name:'Zone Commander',    desc:'Win a Conquest game' },
+        { id:'gauntlet_win',     cat:'Modes',    icon:'🔱', name:'Gauntlet Master',   desc:'Win a Gauntlet game' },
+      ];
+
+      // ── Tab render functions ──
+      function _tabOverview() {
+        const totalSecs = _ls.elapsed || 0;
+        const h = Math.floor(totalSecs/3600), m = Math.floor((totalSecs%3600)/60);
+        const timeTxt = h > 0 ? `${h}h ${m}m` : `${m}m`;
+        const streak = _ls.winStreak || 0, best = _ls.bestStreak || 0;
+        const wrColor = wr >= 60 ? '#4cb87a' : wr >= 40 ? '#a29bfe' : '#e17055';
+        const wBarPct = games > 0 ? Math.round((wins/games)*100) : 0;
+        const lBarPct = games > 0 ? Math.round((losses/games)*100) : 0;
+        body.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px;">
+            ${_card(games, 'GAMES PLAYED', '#d4a843')}
+            ${_card(wins, 'WINS', '#4cb87a')}
+            ${_card(losses, 'LOSSES', '#e17055')}
+            ${_card(wr+'%', 'WIN RATE', wrColor)}
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;">
+            ${_card(timeTxt, 'TIME PLAYED', '#a29bfe')}
+            ${_card(streak, 'WIN STREAK', streak >= 3 ? '#f0c040' : '#e8e0d0')}
+            ${_card(best, 'BEST STREAK', best >= 5 ? '#f0c040' : '#e8e0d0')}
+          </div>
+          ${_secTitle('WIN / LOSS BREAKDOWN', '📊')}
+          <div style="margin-bottom:14px;">
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;color:rgba(232,224,208,.5);margin-bottom:4px;">
+              <span>${wins} Wins</span><span>${losses} Losses</span>
+            </div>
+            <div style="height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;display:flex;">
+              <div style="width:${wBarPct}%;background:linear-gradient(90deg,#2d8a5e,#4cb87a);transition:.3s;"></div>
+              <div style="width:${lBarPct}%;background:linear-gradient(90deg,#a0442b,#e17055);transition:.3s;"></div>
+            </div>
+          </div>
+          ${_secTitle('MILESTONES', '🏅')}
+          ${_mini('Total Hours Played', h+'h '+ m+'m')}
+          ${_mini('Best Win Streak', (best || 0) + (best >= 10 ? ' 🔥' : ''))}
+          ${_mini('Warfront Battles', _ls.warfrontGames || 0)}
+          ${_mini('Warfront Wins', _ls.warfrontWins || 0)}
+          ${_mini('Best Horde Wave', _ls.hordeWaves || '—')}
+          ${_mini('Factions Tried', Object.keys(_ls.fac || {}).length + ' / 24')}
+          ${_mini('Achievements', _ach.length + ' / ' + ALL_ACH.length)}
+        `;
+      }
+
+      function _tabCombat() {
+        const spawned = _ls.spawned || 0;
+        const dmg = _ls.dmgDealt || 0;
+        const avgKd = deaths > 0 ? (kills/deaths).toFixed(2) : kills > 0 ? '∞' : '—';
+        const avgKillsPerGame = games > 0 ? (kills/games).toFixed(1) : '—';
+        const avgSpawnPerGame = games > 0 ? (spawned/games).toFixed(1) : '—';
+        const fastW = _ls.fastestWin && _ls.fastestWin < 999999 ? _fmtTime(_ls.fastestWin) : '—';
+        body.innerHTML = `
+          ${_secTitle('KILL / DEATH', '⚔')}
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;">
+            ${_card(_fmt(kills), 'TOTAL KILLS', '#4cb87a')}
+            ${_card(_fmt(deaths), 'TOTAL DEATHS', '#e17055')}
+            ${_card(avgKd, 'K/D RATIO', kdColor)}
+          </div>
+          ${_secTitle('ECONOMY', '💀')}
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;">
+            ${_card(_fmt(_ls.soulsSpent || 0), 'SOULS SPENT', '#d4a843')}
+            ${_card(_fmt(_ls.bodiesSpent || 0), 'BODIES SPENT', '#74b9ff')}
+          </div>
+          ${_secTitle('ARMY', '🪖')}
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;">
+            ${_card(_fmt(spawned), 'UNITS DEPLOYED', '#a29bfe')}
+            ${_card(_fmt(dmg), 'DAMAGE DEALT', '#fd79a8')}
+          </div>
+          ${_secTitle('COMBAT STATS', '📈')}
+          ${_mini('Avg Kills / Game', avgKillsPerGame)}
+          ${_mini('Avg Units / Game', avgSpawnPerGame)}
+          ${_mini('Buffs Activated', _ls.buffsUsed || 0)}
+          ${_mini('Mid Captures', _ls.midCaptures || 0)}
+          ${_secTitle('PERSONAL RECORDS', '🏆')}
+          ${_mini('Most Kills in One Game', _ls.bestKills || 0)}
+          ${_mini('Most Units in One Game', _ls.bestSpawned || 0)}
+          ${_mini('Fastest Win', fastW)}
+          ${_mini('Longest Game', _ls.longestGame ? _fmtTime(_ls.longestGame) : '—')}
+        `;
+      }
+
+      function _tabFactions() {
+        const facEntries = Object.entries(_ls.fac || {}).sort((a,b) => b[1].g - a[1].g);
+        if (facEntries.length === 0) {
+          body.innerHTML = `<div style="text-align:center;padding:40px 0;color:rgba(232,224,208,.35);font-size:.9rem;">No faction data yet.<br>Play some games!</div>`;
+          return;
+        }
+        const maxGames = Math.max(...facEntries.map(([,d]) => d.g));
+        const rows = facEntries.map(([fid, d]) => {
+          const fac = typeof FACTIONS !== 'undefined' ? FACTIONS.find(f => f.id === fid) : null;
+          const facWr = d.g > 0 ? Math.round((d.w/d.g)*100) : 0;
+          const wrCol = facWr >= 60 ? '#4cb87a' : facWr >= 40 ? '#a29bfe' : '#e17055';
+          const actBar = Math.round((d.g/maxGames)*100);
+          return `
+            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                <span style="font-size:1.4rem;">${fac ? fac.icon : '?'}</span>
+                <div style="flex:1;">
+                  <div style="font-size:.9rem;font-weight:700;color:#e8e0d0;">${fac ? fac.name : fid}</div>
+                  <div style="font-size:.7rem;color:rgba(232,224,208,.4);">${d.g} game${d.g!==1?'s':''} played</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:1.1rem;font-weight:800;color:${wrCol};">${facWr}%</div>
+                  <div style="font-size:.65rem;color:rgba(232,224,208,.4);">${d.w}W · ${d.g-d.w}L</div>
+                </div>
+              </div>
+              <div style="height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;">
+                <div style="width:${facWr}%;height:100%;background:${wrCol};border-radius:3px;"></div>
+              </div>
+              <div style="height:3px;background:rgba(255,255,255,.04);border-radius:2px;margin-top:3px;overflow:hidden;">
+                <div style="width:${actBar}%;height:100%;background:rgba(212,168,67,.4);border-radius:2px;"></div>
+              </div>
+              <div style="font-size:.6rem;color:rgba(232,224,208,.25);margin-top:2px;">activity</div>
+            </div>`;
+        }).join('');
+        body.innerHTML = `
+          ${_secTitle('FACTION HISTORY — '+facEntries.length+' played', '🎭')}
+          ${rows}
+        `;
+      }
+
+      function _tabAchievements() {
+        const cats = [...new Set(ALL_ACH.map(a => a.cat))];
+        const unlocked = ALL_ACH.filter(a => _ach.includes(a.id)).length;
+        const pct = Math.round((unlocked/ALL_ACH.length)*100);
+        const catHtml = cats.map(cat => {
+          const inCat = ALL_ACH.filter(a => a.cat === cat);
+          const catUnlocked = inCat.filter(a => _ach.includes(a.id)).length;
+          const achCards = inCat.map(a => {
+            const got = _ach.includes(a.id);
+            return `
+              <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:${got ? 'rgba(76,184,122,.08)' : 'rgba(255,255,255,.03)'};border:1px solid ${got ? 'rgba(76,184,122,.3)' : 'rgba(255,255,255,.06)'};border-radius:8px;margin-bottom:6px;opacity:${got ? '1' : '0.45'};">
+                <span style="font-size:1.2rem;line-height:1.3;">${got ? a.icon : '🔒'}</span>
+                <div style="flex:1;">
+                  <div style="font-size:.85rem;font-weight:700;color:${got ? '#4cb87a' : 'rgba(232,224,208,.7)'};">${a.name}</div>
+                  <div style="font-size:.71rem;color:rgba(232,224,208,.4);margin-top:1px;">${a.desc}</div>
+                </div>
+                ${got ? '<span style="font-size:.7rem;color:#4cb87a;white-space:nowrap;padding-top:2px;">UNLOCKED</span>' : ''}
+              </div>`;
+          }).join('');
+          return `
+            <div style="margin-bottom:18px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div style="font-size:.7rem;letter-spacing:.15em;color:var(--gold);font-weight:700;">${cat.toUpperCase()}</div>
+                <div style="font-size:.7rem;color:rgba(232,224,208,.4);">${catUnlocked}/${inCat.length}</div>
+              </div>
+              ${achCards}
+            </div>`;
+        }).join('');
+        body.innerHTML = `
+          <div style="margin-bottom:18px;">
+            <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px;">
+              <span style="color:rgba(232,224,208,.7);font-weight:700;">Progress</span>
+              <span style="color:var(--gold);font-weight:800;">${unlocked} / ${ALL_ACH.length} &nbsp;(${pct}%)</span>
+            </div>
+            <div style="height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;">
+              <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#b88820,#d4a843,#f0c040);border-radius:4px;"></div>
+            </div>
+          </div>
+          ${catHtml}
+        `;
+      }
+
+      // ── Tab system ──
+      const TABS = [
+        { id:'overview',      label:'OVERVIEW',     fn: _tabOverview },
+        { id:'combat',        label:'COMBAT',        fn: _tabCombat },
+        { id:'factions',      label:'FACTIONS',      fn: _tabFactions },
+        { id:'achievements',  label:'ACHIEVEMENTS',  fn: _tabAchievements },
+      ];
+      let _activeTab = 'overview';
+      function _renderTabs() {
+        tabsEl.innerHTML = TABS.map(t => {
+          const active = t.id === _activeTab;
+          return `<button onclick="_statsTab('${t.id}')" style="background:none;border:none;padding:8px 14px;font-family:Rajdhani,sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.12em;cursor:pointer;color:${active ? 'var(--gold)' : 'rgba(232,224,208,.4)'};border-bottom:2px solid ${active ? 'var(--gold)' : 'transparent'};transition:color .2s,border-color .2s;margin-bottom:-1px;">${t.label}</button>`;
+        }).join('');
+      }
+      window._statsTab = function(id) {
+        _activeTab = id;
+        _renderTabs();
+        const t = TABS.find(x => x.id === id);
+        if (t) t.fn();
+      };
+      _renderTabs();
+      _tabOverview();
+
+      // Show recovery code
+      const rcEl = document.getElementById('stats-recovery-code');
+      if (rcEl) rcEl.textContent = typeof _BRC_RECOVERY !== 'undefined' ? _BRC_RECOVERY : '—';
+
+      // Cloud sync status
+      const badge = document.getElementById('stats-cloud-badge');
+      const uuid = typeof _BRC_UUID !== 'undefined' ? _BRC_UUID : null;
+      if (badge && uuid) {
+        badge.textContent = '☁ syncing...';
+        fetch((window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com') + '/api/stats/' + uuid)
+          .then(r => r.json()).then(d => { badge.textContent = d ? '☁ synced' : '☁ not synced yet'; badge.style.color = d ? '#4cb87a' : 'rgba(232,224,208,.35)'; })
+          .catch(() => { badge.textContent = '☁ offline'; });
+      }
+
+      ov.style.display = 'flex';
+    }
+
+    window._statsRecover = function() {
+      const code = prompt('Enter your recovery code (e.g. WXYZ-1234):');
+      if (!code) return;
+      const srv = window._BKC_SERVER_URL || 'https://beyond-rts-conquest.onrender.com';
+      fetch(srv + '/api/stats/recover/' + encodeURIComponent(code.trim().toUpperCase()))
+        .then(r => r.json()).then(data => {
+          if (!data || !data.stats) { alert('Recovery code not found. Check the code and try again.'); return; }
+          localStorage.setItem('brc_stats', JSON.stringify(data.stats));
+          localStorage.setItem('brc_ach', JSON.stringify(data.achievements || []));
+          localStorage.setItem('brc_uuid', data.uuid);
+          localStorage.setItem('brc_recovery', data.recovery_code);
+          if (typeof _BRC_UUID !== 'undefined') window._BRC_UUID = data.uuid;
+          if (typeof _BRC_RECOVERY !== 'undefined') window._BRC_RECOVERY = data.recovery_code;
+          alert('Stats restored! Reopening stats screen...');
+          document.getElementById('stats-overlay').style.display = 'none';
+          setTimeout(_openStats, 200);
+        }).catch(() => alert('Could not reach server. Check your connection.'));
+    };
+
     function _wfOnGameOver(winnerPid) {
       if (!WARFRONT.active || _warfrontActiveNodeId === null) return;
       const st = WARFRONT.state;
@@ -28925,8 +29653,8 @@
       if (st._activeBattles) st._activeBattles = st._activeBattles.filter(b => b.defId !== _warfrontActiveNodeId && b.atkId !== _warfrontActiveNodeId);
       if (p1Won) {
         ns.owner = 'player'; ns.faction = null;
-        // Manual offense win: start at fort 2 (vs 1 for auto), +4 influence
-        ns.fortification = wasOffensive ? Math.min(3, Math.max(2, ns.fortification + 1)) : Math.min(3, ns.fortification + 1);
+        // Offense win: start at 0★ (build up via manual fortify); defense win: bump +1
+        ns.fortification = wasOffensive ? 0 : Math.min(3, ns.fortification + 1);
         if (_warfrontActiveNodeId === WF_CENTER_ID) st.centerStreak = (st.centerStreak || 0) + 1;
         st.influence = (st.influence || 0) + (wasOffensive ? 4 : 2);  // offense: +4, defense: +2
       } else {

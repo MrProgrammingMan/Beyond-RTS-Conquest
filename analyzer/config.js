@@ -64,10 +64,13 @@ module.exports = {
       'sc-draft',             // draft ban/pick screen
       'sc-online',            // online multiplayer lobby
       'sc-tournament-setup',  // tournament config
+      'sc-tournament-bracket',// active tournament bracket view
+      'sc-warfront',          // warfront campaign map + sidebar (+ node panel focused shot)
       'sc-campaign',          // campaign map
       'sc-mastery',           // faction mastery book
       'sc-tutorial',          // tutorial screen
       'sc-controls',          // keybind reference
+      'sc-rebind',            // key rebinding screen
       'sc-game',              // in-game (conquest, after 3s AI play)
       'sc-game-horde',        // horde mode gameplay
       'sc-gameover',          // game over screen

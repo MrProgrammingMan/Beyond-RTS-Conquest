@@ -17,6 +17,48 @@ const io = new Server(server, {
   allowUpgrades: true,
 });
 
+app.use(express.json());
+
+// ─── SUPABASE STATS ───────────────────────────────────────────────────────────
+
+const SUPA_URL = process.env.SUPABASE_URL || 'https://ousestlzzrujvetwihdt.supabase.co';
+const SUPA_KEY = process.env.SUPABASE_KEY;
+const _sh = SUPA_KEY ? { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${SUPA_KEY}`, 'Content-Type': 'application/json' } : null;
+const _supaReady = (res) => { if (!_sh) { res.status(503).json({ error: 'Stats unavailable' }); return false; } return true; };
+
+app.get('/api/stats/:uuid', async (req, res) => {
+  if (!_supaReady(res)) return;
+  try {
+    const r = await fetch(`${SUPA_URL}/rest/v1/player_stats?uuid=eq.${encodeURIComponent(req.params.uuid)}&select=*`, { headers: _sh });
+    const data = await r.json();
+    res.json(Array.isArray(data) && data.length > 0 ? data[0] : null);
+  } catch(e) { res.status(500).json({ error: 'DB error' }); }
+});
+
+app.get('/api/stats/recover/:code', async (req, res) => {
+  if (!_supaReady(res)) return;
+  try {
+    const r = await fetch(`${SUPA_URL}/rest/v1/player_stats?recovery_code=eq.${encodeURIComponent(req.params.code.toUpperCase())}&select=*`, { headers: _sh });
+    const data = await r.json();
+    res.json(Array.isArray(data) && data.length > 0 ? data[0] : null);
+  } catch(e) { res.status(500).json({ error: 'DB error' }); }
+});
+
+app.post('/api/stats', async (req, res) => {
+  if (!_supaReady(res)) return;
+  const { uuid, recovery_code, stats, achievements } = req.body;
+  if (!uuid) return res.status(400).json({ error: 'Missing uuid' });
+  try {
+    const r = await fetch(`${SUPA_URL}/rest/v1/player_stats`, {
+      method: 'POST',
+      headers: { ..._sh, 'Prefer': 'resolution=merge-duplicates,return=representation' },
+      body: JSON.stringify({ uuid, recovery_code, stats, achievements, updated_at: new Date().toISOString() }),
+    });
+    const data = await r.json();
+    res.json(data);
+  } catch(e) { res.status(500).json({ error: 'DB error' }); }
+});
+
 // Health/wake ping — used by client to pre-warm the Render instance
 app.get('/ping', (req, res) => res.json({ ok: true, t: Date.now() }));
 

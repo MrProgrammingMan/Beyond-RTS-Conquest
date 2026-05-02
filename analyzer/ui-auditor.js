@@ -86,6 +86,12 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
         } else if (screenId === 'sc-mastery') {
           // Mastery book needs a beat for the page-turn animation to settle
           await sleep(1200);
+        } else if (screenId === 'sc-warfront') {
+          // Warfront map canvas needs a render tick to paint nodes
+          await sleep(800);
+        } else if (screenId === 'sc-tournament-bracket') {
+          // Bracket DOM populates asynchronously after tRenderBracket()
+          await sleep(600);
         } else {
           await sleep(screenId === 'sc-gameover' ? 800 : 600);
         }
@@ -149,6 +155,53 @@ async function runUiAudit(gameHtmlPath, cfg, browser) {
               }
             });
             await sleep(300);
+          }
+
+          // ── Warfront: focused shots of map + sidebar, then node panel ──
+          if (screenId === 'sc-warfront') {
+            // Map area (left portion — everything except sidebar)
+            const mapEl = await page.$('#wf-mainarea, #wf-map-wrap, canvas#wf-canvas');
+            if (mapEl) {
+              const mapBox = await mapEl.boundingBox();
+              if (mapBox) {
+                const mapFile = path.join(ssDir, `sc-warfront-map-${vp.label}.png`);
+                await page.screenshot({ path: mapFile, clip: { x: Math.round(mapBox.x), y: Math.round(mapBox.y), width: Math.round(mapBox.width), height: Math.round(mapBox.height) } });
+                screenshots.push({ screen: 'sc-warfront-map', viewport: vp.label, path: mapFile, width: Math.round(mapBox.width), height: Math.round(mapBox.height) });
+              }
+            }
+            // Sidebar (right panel)
+            const sidebarEl = await page.$('#wf-sidebar');
+            if (sidebarEl) {
+              const sbBox = await sidebarEl.boundingBox();
+              if (sbBox) {
+                const sbFile = path.join(ssDir, `sc-warfront-sidebar-${vp.label}.png`);
+                await page.screenshot({ path: sbFile, clip: { x: Math.round(sbBox.x), y: Math.round(sbBox.y), width: Math.round(sbBox.width), height: Math.round(sbBox.height) } });
+                screenshots.push({ screen: 'sc-warfront-sidebar', viewport: vp.label, path: sbFile, width: Math.round(sbBox.width), height: Math.round(sbBox.height) });
+              }
+            }
+            // Click first available node to open node panel, then screenshot sidebar again
+            const clicked = await page.evaluate(() => {
+              try {
+                const nodes = window.WARFRONT?.state?.nodes;
+                if (!nodes) return false;
+                // Find first neutral or enemy node that can be selected
+                const idx = nodes.findIndex(n => n.owner !== 'player');
+                if (idx >= 0 && typeof window._wfSelectNode === 'function') {
+                  window._wfSelectNode(idx);
+                  return true;
+                }
+              } catch (_) { }
+              return false;
+            });
+            if (clicked) {
+              await sleep(300);
+              const sbFile2 = path.join(ssDir, `sc-warfront-node-panel-${vp.label}.png`);
+              if (sidebarEl) {
+                await sidebarEl.screenshot({ path: sbFile2 }).catch(() => {});
+                const sb2Box = await sidebarEl.boundingBox().catch(() => null);
+                screenshots.push({ screen: 'sc-warfront-node-panel', viewport: vp.label, path: sbFile2, width: Math.round(sb2Box?.width || vp.width), height: Math.round(sb2Box?.height || vp.height) });
+              }
+            }
           }
 
           // ── Game-over: focused screenshot of just the stats panel ──────
@@ -438,16 +491,47 @@ async function _navigateToScreen(page, screenId) {
       return true;
     }
 
-    // ── Tournament bracket: show the bracket view ──
+    // ── Tournament bracket: seed a minimal tournament so bracket renders ──
     if (id === 'sc-tournament-bracket') {
-      // Can only show bracket if a tournament has been set up
       const el = document.getElementById('sc-tournament-bracket');
-      if (el) {
-        if (typeof window.showScreen === 'function') {
-          try { window.showScreen('sc-tournament-bracket'); } catch (_) { }
+      if (!el) return false;
+      try {
+        // Build a minimal 4-player tournament so bracket has content to render
+        if (!window.TOURNAMENT || !window.TOURNAMENT.players?.length) {
+          const facs = ['warriors', 'brutes', 'summoners', 'glacial'];
+          if (typeof window.TOURNAMENT === 'undefined') window.TOURNAMENT = {};
+          window.TOURNAMENT.players = facs.map((f, i) => ({ name: `Player ${i + 1}`, faction: f }));
+          window.TOURNAMENT.state = 'bracket';
+          if (typeof window.tBuildBracket === 'function') window.tBuildBracket();
         }
+        if (typeof window.tRenderBracket === 'function') window.tRenderBracket();
+        if (typeof window.showScreen === 'function') window.showScreen('sc-tournament-bracket');
+      } catch (_) {
+        // Fallback: just show the screen as-is
+        if (typeof window.showScreen === 'function') try { window.showScreen('sc-tournament-bracket'); } catch (_) { }
       }
-      return !!el;
+      return true;
+    }
+
+    // ── Warfront campaign map ──
+    if (id === 'sc-warfront') {
+      const el = document.getElementById('sc-warfront');
+      if (!el) return false;
+      try {
+        // Load saved warfront state (or defaults) and render map + sidebar
+        if (typeof window.WARFRONT?.load === 'function') window.WARFRONT.load();
+        // Give the player a faction so we don't get redirected to faction select
+        if (window.WARFRONT?.state && !window.WARFRONT.state.playerFaction) {
+          window.WARFRONT.state.playerFaction = 'warriors';
+        }
+        if (typeof window._wfCenterCamera === 'function') window._wfCenterCamera();
+        if (typeof window._wfRenderMap === 'function') window._wfRenderMap();
+        if (typeof window._wfRenderSidebar === 'function') window._wfRenderSidebar();
+        if (typeof window._wfUpdateHeader === 'function') window._wfUpdateHeader();
+        if (typeof window._wfUpdateFactionBadge === 'function') window._wfUpdateFactionBadge();
+        if (typeof window.showScreen === 'function') window.showScreen('sc-warfront');
+      } catch (_) { }
+      return true;
     }
 
     // For other screens: use showScreen if available, else direct DOM manipulation

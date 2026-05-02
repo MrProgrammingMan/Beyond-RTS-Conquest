@@ -358,8 +358,15 @@ function aggregateStats(data) {
       if (rAsP2) {
         const games = rAsP2.p1Wins + rAsP2.p2Wins + rAsP2.draws + rAsP2.timeouts;
         if (games) {
+          totalGames += games;
+          totalWins += rAsP2.p2Wins;
+          totalLosses += rAsP2.p1Wins;
           asP2Wins += rAsP2.p2Wins;
           asP2Games += games;
+          rAsP2.durations.forEach(d => { totalDur += d; durCount++; });
+          const wr = rAsP2.p2Wins / games;
+          if (wr > best.rate) { best.rate = wr; best.faction = opp; }
+          if (wr < worst.rate) { worst.rate = wr; worst.faction = opp; }
         }
       }
     }

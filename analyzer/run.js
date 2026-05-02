@@ -256,9 +256,25 @@ async function main() {
     log('  ── Phase 1: Running AI vs AI games ────────────────────────────');
     log('');
 
+    const LIVE_N = 5;
     const liveLines = [];
     const t0 = Date.now();
     const etaWindow = [];
+    let _linesOut = 0;
+
+    function _liveWrite(lines) {
+      if (_linesOut > 0) process.stdout.write(`\x1b[${_linesOut}A`);
+      _linesOut = lines.length;
+      process.stdout.write(lines.map(l => `\r\x1b[K${l}`).join('\n') + '\n');
+    }
+
+    function _liveClear() {
+      if (_linesOut === 0) return;
+      process.stdout.write(`\x1b[${_linesOut}A`);
+      for (let i = 0; i < _linesOut; i++) process.stdout.write('\r\x1b[K\n');
+      process.stdout.write(`\x1b[${_linesOut}A`);
+      _linesOut = 0;
+    }
 
     rawData = await runAllMatchups(cfg, ({ done, total, latest }) => {
       const elapsedMs = Date.now() - t0;
@@ -270,25 +286,31 @@ async function main() {
         : etaSec > 60 ? `${Math.floor(etaSec / 60)}m${etaSec % 60}s`
           : `${etaSec}s`;
 
+      const elapsed = Math.round((Date.now() - t0) / 1000);
+      const elapsedStr = elapsed > 60 ? `${Math.floor(elapsed / 60)}m${elapsed % 60}s` : `${elapsed}s`;
+
       const icon = latest.timedOut ? '⏱' : latest.hasErrors ? '🐛' : latest.hasNaN ? '⚡' : '✅';
       const errNote = latest.hasErrors && latest.firstError
-        ? ` ↳ ${latest.firstError.slice(0, 55)}`
-        : latest.hasErrors ? ' [errors]' : '';
+        ? `  ↳ ${latest.firstError.replace(/\n/g, ' ').slice(0, 50)}`
+        : latest.hasErrors ? '  [err]' : '';
 
       liveLines.unshift(`  ${icon} ${latest.p1} vs ${latest.p2} → ${latest.result}${errNote}`);
-      if (liveLines.length > 4) liveLines.pop();
+      if (liveLines.length > LIVE_N) liveLines.pop();
 
-      const elapsed = ((Date.now() - t0) / 1000).toFixed(0);
-      process.stdout.write(
-        `\r\x1b[K  ${bar(done, total)}  ETA:${etaStr}  ${elapsed}s\n` +
-        liveLines.join('\n') +
-        `\x1b[${liveLines.length + 1}A`
-      );
+      _liveWrite([
+        `  ${bar(done, total)}  ETA:${etaStr}  elapsed:${elapsedStr}`,
+        '',
+        ...liveLines,
+      ]);
     });
 
-    process.stdout.write(`\x1b[6B\n`);
+    _liveClear();
     log('');
-    log(`  ✅ Games complete: ${rawData.qa.totalGamesRun} run · ${rawData.qa.allErrors.length} errors · ${rawData.qa.allTimedOut.length} timeouts`);
+    const { totalGamesRun, allErrors, allTimedOut } = rawData.qa;
+    const errCount = allErrors.length, toCount = allTimedOut.length;
+    const totalSecs2 = Math.round((Date.now() - t0) / 1000);
+    const totalTimeStr = totalSecs2 > 60 ? `${Math.floor(totalSecs2/60)}m${totalSecs2%60}s` : `${totalSecs2}s`;
+    log(`  ✅ Games complete: ${totalGamesRun} run · ${errCount} errors · ${toCount} timeouts · ${totalTimeStr}`);
 
     // Print top unique errors immediately
     if (rawData.qa.allErrors.length > 0) {
