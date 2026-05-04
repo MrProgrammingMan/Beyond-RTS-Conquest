@@ -24,7 +24,9 @@
       "Bash(export PATH=\"/c/Users/24TE_INF/node:$PATH\")",
       "Bash(node -e \"require\\(''fs''\\).readFileSync\\(''server.js'',''utf8''\\)\")",
       "Bash(node --check server.js)",
-      "Bash(node tools/generate-music.js)"
+      "Bash(node tools/generate-music.js)",
+      "Bash(node -e \"const fs=require\\('fs'\\);const html=fs.readFileSync\\('public/index.html','utf8'\\);const m=html.match\\(/<script[^>]*>\\([\\\\s\\\\S]*?\\)<\\\\/script>/g\\);console.log\\('script blocks:',m?m.length:0\\);\")",
+      "Bash(node -e ' *)"
     ]
   }
 }

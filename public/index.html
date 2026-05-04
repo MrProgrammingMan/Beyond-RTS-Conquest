@@ -3702,11 +3702,55 @@
 
     .vote-instructions {
       font-family: 'Rajdhani', sans-serif;
-      font-size: clamp(.6rem, 1vw, .8rem);
-      color: rgba(255, 255, 255, .5);
+      font-size: clamp(.85rem, 1.4vw, 1.15rem);
+      color: rgba(255, 255, 255, .95);
       letter-spacing: .08em;
       text-align: center;
+      font-weight: 700;
+      margin-top: 14px;
+      padding: 10px 18px;
+      background: rgba(0, 0, 0, .55);
+      border: 2px solid rgba(255, 215, 60, .7);
+      border-radius: 10px;
+      box-shadow: 0 0 22px rgba(255, 215, 60, .3), inset 0 0 14px rgba(255, 215, 60, .1);
+      display: inline-block;
     }
+
+    .vote-instructions .vk {
+      display: inline-block;
+      min-width: 1.4em;
+      padding: 2px 8px;
+      margin: 0 3px;
+      background: linear-gradient(180deg, #fff 0%, #d4d4d4 100%);
+      color: #111;
+      border: 1px solid #888;
+      border-radius: 5px;
+      font-weight: 800;
+      font-family: 'Rajdhani', sans-serif;
+      box-shadow: 0 2px 0 #555, inset 0 1px 0 rgba(255, 255, 255, .6);
+      vertical-align: 1px;
+      letter-spacing: 0;
+    }
+    .vote-instructions .vk-act {
+      background: linear-gradient(180deg, #ffe066 0%, #f5b800 100%);
+      color: #2a1d00;
+      border-color: #b07700;
+      box-shadow: 0 2px 0 #7a5300, inset 0 1px 0 rgba(255, 255, 255, .5);
+    }
+    .vote-instructions .vk-pid {
+      display: inline-block;
+      padding: 1px 9px;
+      margin-right: 6px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: .85em;
+      letter-spacing: .04em;
+      vertical-align: 1px;
+    }
+    .vote-instructions .vk-pid-1 { background: rgba(231, 76, 60, .9); color: #fff; }
+    .vote-instructions .vk-pid-2 { background: rgba(52, 152, 219, .9); color: #fff; }
+    .vote-instructions .vk-you { color: #ffd60a; font-weight: 800; }
+    .vote-instructions .vk-sep { opacity: .55; padding: 0 8px; }
 
     .vote-card-name {
       font-family: 'Rajdhani', sans-serif;
@@ -5714,14 +5758,9 @@
       border-color: var(--gold) !important;
     }
 
-    /* Vote overlay hint */
+    /* Vote overlay hint — superseded by .vote-instructions chips, kept hidden as a11y fallback */
     #vote-controls-hint {
-      font-family: Rajdhani, sans-serif;
-      font-size: clamp(.55rem, .9vw, .75rem);
-      color: rgba(255, 255, 255, .38);
-      letter-spacing: .08em;
-      text-align: center;
-      margin-top: 4px;
+      display: none;
     }
 
     /* Mid capture progress bar */
@@ -9930,10 +9969,16 @@
       // Instead of extrapolating (dead reckoning), render the world slightly
       // in the past and INTERPOLATE between two known snapshots.  This gives
       // perfectly smooth movement because both endpoints are known.
-      const _INTERP_DELAY = 66;           // ms behind real-time (~2 snapshot intervals)
+      const _SNAP_INTERVAL_MS = 40;       // 25 fps snapshots — half the cost of 30fps with imperceptible extra lag
+      const _INTERP_DELAY = 90;           // ms behind real-time (~2.25 snapshot intervals — leaves a safety margin)
       const _SNAP_BUFFER_MAX = 8;         // keep last N snapshots
       const _p2SnapBuffer = [];           // [{ data, time }, ...] newest last
       let _p2SnapLatest = null;           // most recent raw snapshot (for non-positional state)
+      // Cached unit-id → snapshot-row Map keyed by snapshot reference, to avoid
+      // rebuilding it every render frame (interpolate runs at 60fps but the
+      // underlying snapshots only change ~25fps).
+      let _cachedMapARef = null;          // snapA.data reference
+      let _cachedMapA = null;             // Map for that snapA
 
       // ── P2 client-side prediction ───────────────────────────────────────────
       // When P2 spends resources or spawns a unit, we apply it locally immediately
@@ -9951,6 +9996,8 @@
       const _p1PopQueue = [];       // { x, y, txt, col, pid }
       const _p1LastStandQueue = []; // { pid, isSuddenDeath }
       const _p1EventQueue = [];     // { msg, col, sub, lbl } — random event announcements
+      const _p1FxQueue = [];        // [x, y, fid, fallbackCol] — death VFX bursts to replay on P2
+      const _FX_QUEUE_MAX = 40;     // cap so big multi-kill frames don't bloat snapshots
 
       function queuePopupForP2(x, y, txt, col, pid) {
         if (myPid === 1 && _onlineMode) _p1PopQueue.push({ x: Math.round(x), y: Math.round(y), txt, col, pid });
@@ -9960,10 +10007,16 @@
         if (myPid === 1 && _onlineMode) _p1LastStandQueue.push({ pid, isSuddenDeath: isSuddenDeath ? 1 : 0 });
       }
 
+      function queueDeathFxForP2(x, y, fid, fallbackCol) {
+        if (myPid !== 1 || !_onlineMode) return;
+        if (_p1FxQueue.length >= _FX_QUEUE_MAX) return;
+        _p1FxQueue.push([Math.round(x), Math.round(y), fid || '', fallbackCol || '']);
+      }
+
       function _startStateSync() {
         if (_syncInterval) clearInterval(_syncInterval);
         if (myPid === 1) {
-          _syncInterval = setInterval(_broadcastFullState, 33); // ~30fps snapshots — dead reckoning fills gaps
+          _syncInterval = setInterval(_broadcastFullState, _SNAP_INTERVAL_MS);
         }
       }
       function _stopStateSync() {
@@ -10012,6 +10065,7 @@
             pops: _p1PopQueue.splice(0),       // popup events queued this frame
             lsTriggered: _p1LastStandQueue.splice(0), // last stand events
             evAnn: _p1EventQueue.splice(0),    // random event announcements
+            fx: _p1FxQueue.length ? _p1FxQueue.splice(0) : undefined, // death VFX bursts
             // Active event state so P2 draw functions (blood moon tint, eclipse, soul cache arc) work
             ae: G.activeEvent ? {
               type: G.activeEvent.type,
@@ -10052,14 +10106,14 @@
             ]),
             u: unitSnaps,
             pr: projSnaps,
-            sp: (G.spies || []).map(s => ({
+            sp: (G.spies && G.spies.length) ? G.spies.map(s => ({
               id: s.id, x: Math.round(s.x), y: Math.round(s.y),
               owner: s.owner, hp: Math.round(s.hp || 0), dead: s.dead,
-            })),
-            // New faction visual state (P2 needs these for rendering)
-            tp: (G.tarPatches || []).map(t => [Math.round(t.x), Math.round(t.life * 10), Math.round(t.dur * 10), t.toxic ? 1 : 0, t.owner || 0, t.radius || 22]),
-            co: (G.corpses || []).map(c => [Math.round(c.x), Math.round(c.y), Math.round((c.life || c.timer || 0) * 10)]),
-            dz: (G.darkZones || []).map(z => [Math.round(z.x), z.radius || 120, Math.round((z.life || z.timer || 0) * 10), z.player]),
+            })) : undefined,
+            // Optional faction visual state — omitted when empty to skip P2 work
+            tp: (G.tarPatches && G.tarPatches.length) ? G.tarPatches.map(t => [Math.round(t.x), Math.round(t.life * 10), Math.round(t.dur * 10), t.toxic ? 1 : 0, t.owner || 0, t.radius || 22]) : undefined,
+            co: (G.corpses && G.corpses.length) ? G.corpses.map(c => [Math.round(c.x), Math.round(c.y), Math.round((c.life || c.timer || 0) * 10)]) : undefined,
+            dz: (G.darkZones && G.darkZones.length) ? G.darkZones.map(z => [Math.round(z.x), z.radius || 120, Math.round((z.life || z.timer || 0) * 10), z.player]) : undefined,
           };
           socket.emit('stateUpdate', payload);
         } catch (e) { /* serialisation error — skip frame */ }
@@ -10136,7 +10190,9 @@
           G.siegeDecay = snap.sd === 1;
           G.workerMidMode = (snap.wm || [0, 0]).map(v => v === 1);
           G.shake = (snap.sh || 0) / 100;
-          G.spies = snap.sp || [];
+          // Only touch G.spies when the snapshot mentions them (P1 omits empty arrays).
+          if (snap.sp) G.spies = snap.sp;
+          else if (G.spies && G.spies.length) G.spies = [];
           // Sync activeEvent so P2 draw functions show blood moon tint, eclipse, soul cache arc etc.
           if (snap.ae) {
             if (!G.activeEvent || G.activeEvent.type !== snap.ae.type) {
@@ -10168,10 +10224,20 @@
           if (snap.evAnn && snap.evAnn.length) {
             snap.evAnn.forEach(({ msg, col, sub, lbl }) => _announceEvent(msg, col, sub, lbl));
           }
-          // Sync new faction visual state from P1
+          // Replay death VFX bursts so P2 sees the same death effects as P1
+          if (snap.fx && snap.fx.length && typeof _renderFactionDeath === 'function') {
+            for (let i = 0; i < snap.fx.length; i++) {
+              const fxRow = snap.fx[i];
+              _renderFactionDeath(fxRow[0], fxRow[1], fxRow[2] || null, fxRow[3] || '#bdc3c7');
+            }
+          }
+          // Sync new faction visual state from P1 (omitted from snap when empty)
           if (snap.tp) G.tarPatches = snap.tp.map(t => ({ x: t[0], life: t[1] / 10, dur: t[2] / 10, toxic: t[3] === 1, owner: t[4], radius: t[5] }));
+          else if (G.tarPatches && G.tarPatches.length) G.tarPatches = [];
           if (snap.co) G.corpses = snap.co.map(c => ({ x: c[0], y: c[1], life: c[2] / 10 }));
+          else if (G.corpses && G.corpses.length) G.corpses = [];
           if (snap.dz) G.darkZones = snap.dz.map(z => ({ x: z[0], radius: z[1], life: z[2] / 10, player: z[3] }));
+          else if (G.darkZones && G.darkZones.length) G.darkZones = [];
           if (snap.r === 0 && G.running !== false) { G.running = false; checkWin(); }
         } catch (e) { /* ignore */ }
       }
@@ -10227,12 +10293,8 @@
             document.getElementById('vote-sub-b').textContent = metaB.sub || '';
             document.getElementById('vote-card-a').className = 'vote-card';
             document.getElementById('vote-card-b').className = 'vote-card';
-            // P2-specific instructions
-            const p2L = typeof formatKey !== 'undefined' && typeof KEYS !== 'undefined' ? formatKey(KEYS.p2Left) : '←';
-            const p2R = typeof formatKey !== 'undefined' && typeof KEYS !== 'undefined' ? formatKey(KEYS.p2Right) : '→';
-            const p2A = typeof formatKey !== 'undefined' && typeof KEYS !== 'undefined' ? formatKey(KEYS.p2Act) : 'ENTER';
-            document.getElementById('vote-instructions').textContent =
-              `P1: ← → to choose · vote key to vote   |   P2 (YOU): ${p2L}/${p2R} to choose · ${p2A} to vote`;
+            // P2-specific instructions (rendered with key chips)
+            document.getElementById('vote-instructions').innerHTML = _voteInstructionsHTML(2);
             ov.classList.add('show');
             _p2VoteShowing = true;
           }
@@ -10271,8 +10333,32 @@
       // O(1) unit lookups via Map instead of .find() per unit per frame.
       const _p2UnitMap = new Map();       // id → unit reference in G.units
 
+      let _lastGhostAdvanceMs = 0;
+      function _advanceGhostUnits() {
+        // Walk client-predicted ghost units forward in the enemy direction so
+        // they don't appear frozen in spawn while waiting for P1's first
+        // snapshot to confirm them (~50–150 ms typical).
+        if (typeof G === 'undefined' || !G || !G.units) return;
+        const now = performance.now();
+        const dtMs = _lastGhostAdvanceMs ? Math.min(now - _lastGhostAdvanceMs, 60) : 16;
+        _lastGhostAdvanceMs = now;
+        const dt = dtMs / 1000;
+        for (let i = 0; i < G.units.length; i++) {
+          const u = G.units[i];
+          if (!u._ghost || !u.def) continue;
+          if (u.def.isWorker) continue; // workers have non-trivial paths; let snapshot drive them
+          const dir = u.player === 1 ? 1 : -1; // toward enemy base
+          const spd = (u.def.speed || 60);
+          u.x += dir * spd * dt;
+          u.vx = dir * spd;
+        }
+      }
+
       function _interpolateUnits() {
-        if (_p2SnapBuffer.length === 0 || typeof G === 'undefined' || !G) return;
+        if (_p2SnapBuffer.length === 0 || typeof G === 'undefined' || !G) {
+          _advanceGhostUnits();
+          return;
+        }
         const now = performance.now();
         const renderTime = now - _INTERP_DELAY;
 
@@ -10297,6 +10383,7 @@
           const elapsed = Math.min((renderTime - last.time) / 1000, 0.12);
           _applyExtrapolated(last.data, elapsed);
         }
+        _advanceGhostUnits();
       }
 
       // Build a Map of snapA unit data keyed by id for O(1) lookup
@@ -10352,7 +10439,16 @@
       function _applyInterpolated(snapA, snapB, t) {
         if (typeof G === 'undefined' || !G) return;
         try {
-          const mapA = _buildSnapMap(snapA.u);
+          // Cache mapA across frames — interpolate runs at 60fps but snapA only
+          // changes when a new snapshot pair is selected (~25fps). Saves O(N)/frame.
+          let mapA;
+          if (_cachedMapARef === snapA) {
+            mapA = _cachedMapA;
+          } else {
+            mapA = _buildSnapMap(snapA.u);
+            _cachedMapARef = snapA;
+            _cachedMapA = mapA;
+          }
           const currentIds = new Set(snapB.u.map(u => u[0]));
           const now = performance.now();
 
@@ -10737,7 +10833,7 @@
         joinRoom, cancelSearch, cleanup, setStatus,
         sendDraftAction, updateOnlineDraftLock: _updateOnlineDraftLock, onlineDraftDone: _onlineDraftDone,
         recordLocalAction,
-        queuePopupForP2, queueLastStandForP2,
+        queuePopupForP2, queueLastStandForP2, queueDeathFxForP2,
         _qaForceP1Online, _qaForceP2Online,
       };
     })();
@@ -15705,7 +15801,12 @@
           });
           card.addEventListener('mouseenter', e => {
             if (locked) return; // don't show tooltip or update sel for locked cards
-            showTT(e, def); if (pid === 1) P1_SEL = i; else P2_SEL = i; if (pid === 1) P1_MODE = 0; else P2_MODE = 0; refreshSel(pid); updateStatPanel(pid); if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 0 });
+            showTT(e, def);
+            if (_shouldIgnoreMouseHover()) return; // keyboard-driven, mouse stationary
+            if (pid === 1) P1_SEL = i; else P2_SEL = i;
+            if (pid === 1) P1_MODE = 0; else P2_MODE = 0;
+            refreshSel(pid); updateStatPanel(pid);
+            if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: i, mode: 0 });
           });
           card.addEventListener('mouseleave', () => { hideTT(); _clearStatPanel(pid); });
           grid.appendChild(card);
@@ -15732,7 +15833,15 @@
             refreshSel(pid);
             trySpawnSpy(pid);
           });
-          spyCard.addEventListener('mouseenter', e => { if (!_spyUnlocked()) return; showTT(e, SPY_DEF); const _sd = G.factions[pid - 1].units.filter(d => !d.isSpawned); const _spyIdx = _sd.length; if (pid === 1) { P1_SEL = _spyIdx; P1_MODE = 0; } else { P2_SEL = _spyIdx; P2_MODE = 0; } refreshSel(pid); updateStatPanel(pid); if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: 99, mode: 0 }); });
+          spyCard.addEventListener('mouseenter', e => {
+            if (!_spyUnlocked()) return;
+            showTT(e, SPY_DEF);
+            if (_shouldIgnoreMouseHover()) return;
+            const _sd = G.factions[pid - 1].units.filter(d => !d.isSpawned); const _spyIdx = _sd.length;
+            if (pid === 1) { P1_SEL = _spyIdx; P1_MODE = 0; } else { P2_SEL = _spyIdx; P2_MODE = 0; }
+            refreshSel(pid); updateStatPanel(pid);
+            if (typeof NET !== 'undefined' && NET.isOnline() && NET.isMyTurn(pid)) NET.sendAction({ type: 'hoverCard', pid, cardIdx: 99, mode: 0 });
+          });
           spyCard.addEventListener('mouseleave', () => { hideTT(); _clearStatPanel(pid); });
           grid.appendChild(spyCard);
         }
@@ -15756,6 +15865,7 @@
             tryBuyUpgrade(pid, i, card);
           });
           card.addEventListener('mouseenter', () => {
+            if (_shouldIgnoreMouseHover()) return;
             if (pid === 1) { P1_SEL = i; P1_MODE = 1; } else { P2_SEL = i; P2_MODE = 1; }
             refreshSel(pid); updateStatPanel(pid);
 
@@ -15780,6 +15890,7 @@
             tryActivateBuff(pid, i, card);
           });
           card.addEventListener('mouseenter', () => {
+            if (_shouldIgnoreMouseHover()) return;
             if (pid === 1) { P1_SEL = i; P1_MODE = 2; } else { P2_SEL = i; P2_MODE = 2; }
             refreshSel(pid);
 
@@ -15817,6 +15928,31 @@
       }
       if (mode === 1) return (G.factions[pid - 1].upgrades || []).length - 1;
       return RALLY_BUFFS.length - 1;
+    }
+
+    // ── Mouse vs keyboard input arbiter ────────────────────────────────────
+    // Tracks whether the *most recent* input was keyboard or actual mouse motion.
+    // mouseenter fires when the DOM moves under a stationary cursor (after
+    // refreshSel re-renders cards) which would otherwise stomp the keyboard
+    // selection. Gating on real motion fixes the "selection cuts out" bug.
+    let _kbdNavTime = 0;
+    let _mouseMoveTime = 0;
+    let _lastMouseX = -1, _lastMouseY = -1;
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', (e) => {
+        if (e.clientX !== _lastMouseX || e.clientY !== _lastMouseY) {
+          _lastMouseX = e.clientX; _lastMouseY = e.clientY;
+          _mouseMoveTime = performance.now();
+        }
+      }, { passive: true });
+    }
+    function _markKbdNav() { _kbdNavTime = performance.now(); }
+    // Returns true when keyboard nav happened more recently than the last real
+    // mouse movement and within the last 1.2s — meaning a stationary mouse
+    // should NOT override the keyboard cursor.
+    function _shouldIgnoreMouseHover() {
+      const now = performance.now();
+      return (now - _kbdNavTime < 1200) && _kbdNavTime > _mouseMoveTime;
     }
 
     function refreshSel(pid) {
@@ -16955,7 +17091,8 @@
         attackCooldown: Math.random() * (1 / Math.max(def.attackRate || 1, 0.1)) + _aerialDelay,
         target: null, carrying: false, carryCount: 0, offscreen: false, offTimer: 0, goToMid: false,
         hitFlash: 0, aliveSecs: 0, spawnTime: Date.now(), dmgMult: 1.0,
-        kiteChance: def.type === 'rng' ? (0.3 + Math.random() * 0.7) : 0, // floor 0.3 — all ranged reposition; top end still random
+        kiteChance: def.type === 'rng' ? (0.3 + Math.random() * 0.7) : 0,
+        kiteStepRemaining: 0, kiteCooldown: 0,
         veteranTimer: 0, veteranStacks: 0, stillTimer: 0, fortified: false, frenzyTimer: 0,
         chargeTimer: 0, _speedMult: 1.0, lastHitTime: 0,
         slowTimer: 0, stunTimer: 0, burnTimer: 0, burnDmgTotal: 0,
@@ -17176,7 +17313,14 @@
     }
     function spawnFactionDeath(u) {
       const fid = G.factions[u.player - 1] ? G.factions[u.player - 1].id : null;
-      const x = u.x, y = u.y;
+      const fallbackCol = (u.def && u.def.color) || '#bdc3c7';
+      _renderFactionDeath(u.x, u.y, fid, fallbackCol);
+      // Replicate to P2 so they see the same death burst (P2 doesn't run death code)
+      if (typeof NET !== 'undefined' && NET.isOnline && NET.isOnline() && NET.getPid && NET.getPid() === 1) {
+        NET.queueDeathFxForP2(u.x, u.y, fid, fallbackCol);
+      }
+    }
+    function _renderFactionDeath(x, y, fid, fallbackCol) {
       switch (fid) {
         case 'infernal':
           // Fire burst — hot orange/red particles rising fast, plus a ground fire patch
@@ -17388,7 +17532,7 @@
           }
           break;
         default: // warriors and any others
-          spawnParticles(x, y, u.def.color, 22);
+          spawnParticles(x, y, fallbackCol || '#bdc3c7', 22);
           spawnParticles(x, y - 8, '#ffffff', 6);
       }
     }
@@ -18387,6 +18531,7 @@
         offscreen: false, offTimer: 0, goToMid: false,
         hitFlash: 0, aliveSecs: 0, spawnTime: Date.now(), dmgMult: 1.15,
         kiteChance: wcDef.type === 'rng' ? 0.5 : 0,
+        kiteStepRemaining: 0, kiteCooldown: 0,
         veteranTimer: 0, veteranStacks: 0, stillTimer: 0, fortified: false, frenzyTimer: 0,
         chargeTimer: 0, _speedMult: 1.0, lastHitTime: 0,
         slowTimer: 0, stunTimer: 0, burnTimer: 0, burnDmgTotal: 0,
@@ -18457,17 +18602,32 @@
       document.getElementById('vote-timer-display').textContent = '10';
       document.getElementById('vote-tally').textContent = '';
       // Show controls instructions
-      const p1L = formatKey ? formatKey(KEYS.p1Left) : '←';
-      const p1R = formatKey ? formatKey(KEYS.p1Right) : '→';
-      const p1A = formatKey ? formatKey(KEYS.p1Act) : 'Q';
-      const p2L = formatKey ? formatKey(KEYS.p2Left) : '←';
-      const p2R = formatKey ? formatKey(KEYS.p2Right) : '→';
-      const p2A = formatKey ? formatKey(KEYS.p2Act) : 'ENTER';
-      document.getElementById('vote-instructions').textContent =
-        `P1: ${p1L}/${p1R} to choose · ${p1A} to vote   |   P2: ${p2L}/${p2R} to choose · ${p2A} to vote`;
+      const _myPid = (typeof NET !== 'undefined' && NET.isOnline && NET.isOnline()) ? NET.getPid() : null;
+      document.getElementById('vote-instructions').innerHTML = _voteInstructionsHTML(_myPid);
       _updateVoteDisplay();
       document.getElementById('vote-overlay').classList.add('show');
       if (G) G.paused = true;
+    }
+
+    function _voteInstructionsHTML(myOnlinePid) {
+      const fk = (k, fb) => (typeof formatKey === 'function' && k != null) ? formatKey(k) : fb;
+      const p1L = fk(KEYS && KEYS.p1Left, '←');
+      const p1R = fk(KEYS && KEYS.p1Right, '→');
+      const p1A = fk(KEYS && KEYS.p1Act, 'Q');
+      const p2L = fk(KEYS && KEYS.p2Left, '←');
+      const p2R = fk(KEYS && KEYS.p2Right, '→');
+      const p2A = fk(KEYS && KEYS.p2Act, 'ENTER');
+      const youP1 = myOnlinePid === 1 ? ' <span class="vk-you">(YOU)</span>' : '';
+      const youP2 = myOnlinePid === 2 ? ' <span class="vk-you">(YOU)</span>' : '';
+      return (
+        `<span class="vk-pid vk-pid-1">P1</span>${youP1} ` +
+        `<span class="vk">${p1L}</span>/<span class="vk">${p1R}</span> choose ` +
+        `<span class="vk vk-act">${p1A}</span> vote` +
+        `<span class="vk-sep">·</span>` +
+        `<span class="vk-pid vk-pid-2">P2</span>${youP2} ` +
+        `<span class="vk">${p2L}</span>/<span class="vk">${p2R}</span> choose ` +
+        `<span class="vk vk-act">${p2A}</span> vote`
+      );
     }
 
     function _updateVoteDisplay() {
@@ -19512,8 +19672,37 @@
           // BUG2: slowed units near target still engage; aerial units have wider engagement
           const effectiveRange = u.slowTimer > 0 ? u.def.range * 1.35 : u.def.aerial ? u.def.range * 1.3 : u.def.range;
           if (d <= effectiveRange) {
-            if (!u.def.aerial) { u.vx = (u.vx || 0) * 0.75; if (Math.abs(u.vx) < 0.2) u.vx = 0; }
             u.attackCooldown -= dt; u.chargeTimer = 0;
+            // Kiting: ranged units step back a fixed distance when a melee enemy is very close,
+            // but only if they can still reach the enemy after stepping back.
+            let _kiting = false;
+            if (u.def.type === 'rng' && !u.def.aerial && !u.retreating && !u.healingPhase) {
+              if ((u.kiteCooldown || 0) > 0) u.kiteCooldown -= dt;
+              const ownBase = G.players[u.player - 1].baseX;
+              const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2;
+              if ((u.kiteStepRemaining || 0) > 0 && !nearOwnBase) {
+                _kiting = true;
+                const KITE_SPD = 160;
+                const step = Math.min(u.kiteStepRemaining, KITE_SPD * dt);
+                const baseDir = u.player === 1 ? -1 : 1;
+                u.x += baseDir * step;
+                u.vx = baseDir * KITE_SPD;
+                u.kiteStepRemaining -= step;
+                if (u.kiteStepRemaining <= 0) {
+                  const kc = u.kiteChance || 0;
+                  u.kiteCooldown = 1.5 + (1 - kc) * 1.5; // 1.5s–3s cooldown
+                }
+              } else if ((u.kiteCooldown || 0) <= 0 && !nearOwnBase) {
+                const KITE_DIST = 55;
+                const enemyMeleeClose = G.units.some(e =>
+                  e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 80
+                );
+                if (enemyMeleeClose && d + KITE_DIST <= effectiveRange) {
+                  u.kiteStepRemaining = KITE_DIST;
+                }
+              }
+            }
+            if (!_kiting && !u.def.aerial) { u.vx = (u.vx || 0) * 0.75; if (Math.abs(u.vx) < 0.2) u.vx = 0; }
             if (u.attackCooldown <= 0) {
               const frenzyM = (u.frenzyTimer > 0) ? (1.15 + (G.players[u.player - 1]?._frenzyBonus || 0)) : 1;
               const berserkHPM = (u.def.berserkHPThresh && u.hp < u.maxHp * u.def.berserkHPThresh) ? 2.0 : 1.0;
@@ -19530,36 +19719,8 @@
             u.attackCooldown -= dt;
             u.chargeTimer = (u.chargeTimer || 0) + dt;
             const dx = enemy.x - u.x;
-            // ── Ranged kiting check BEFORE approach — prevents double-move teleporting ──
-            let _isKiting = false;
-            if (u.def.type === 'rng' && !u.def.aerial && !u.retreating && !u.healingPhase) {
-              const kc = u.kiteChance || 0;
-              const ownBase = G.players[u.player - 1].baseX;
-              const nearOwnBase = Math.abs(u.x - ownBase) < G.baseW * 2.5;
-              const enemyMeleeClose = G.units.some(e => e.player !== u.player && e.def.type === 'mel' && !e.offscreen && Math.abs(e.x - u.x) < 120);
-              const willKite = kc > 0;
-              _isKiting = willKite && !nearOwnBase && enemyMeleeClose;
-              if (_isKiting) {
-                // Kite: retreat toward own base at 0.30–0.45x speed — visible and catchable
-                const retreatSpd = spd * (0.30 + kc * 0.15);
-                const baseDir = u.player === 1 ? -1 : 1; // always toward own base
-                u.x += baseDir * retreatSpd * dt;
-                u.vx = baseDir * retreatSpd;
-                // High-kite archers drift toward ally melee (capped lerp to prevent jumps)
-                if (kc > 0.70) {
-                  const allyMelee = G.units.find(a =>
-                    a.player === u.player && !a.def.isWorker && a.def.type === 'mel' &&
-                    Math.abs(a.x - u.x) < 160 && Math.sign(a.x - u.x) !== Math.sign(dx)
-                  );
-                  if (allyMelee) {
-                    const lerpAmt = Math.min(0.02, 0.02 * dt * 60);
-                    u.x = u.x + (allyMelee.x - u.x) * lerpAmt;
-                  }
-                }
-              }
-            }
-            // Normal approach — only if NOT kiting
-            if (!_isKiting) {
+            // Normal approach
+            {
               // Mid-linger override: hold uncapped mid instead of chasing far enemies
               // Only ranged units linger — melee should keep marching to engage
               const _mlDist = Math.abs(u.x - G.midX);
@@ -25724,6 +25885,7 @@
         on ? '#f39c12' : '#95a5a6', pid);
     }
     function directSpawnSlot(pid, slotIdx) {
+      _markKbdNav();
       if (!G || !G.running || G.paused) return;
       const _sdDS = GAME_MODE === 'sudden_death' || GAME_MODE === 'sudden_death_solo' || GAME_MODE === 'sudden_death_aivsai';
       const defs = G.factions[pid - 1].units.filter(d => !d.isSpawned && (!_sdDS || !d.isWorker));
@@ -25747,12 +25909,14 @@
     }
 
     function cycleMode(pid, dir) {
+      _markKbdNav();
       const cur = pid === 1 ? P1_MODE : P2_MODE;
       const next = ((cur + dir) + 3) % 3;
       switchMode(pid, next);
     }
 
     function navigate(pid, dir) {
+      _markKbdNav();
       const mode = pid === 1 ? P1_MODE : P2_MODE;
       const max = getMaxSel(pid);
       let sel = pid === 1 ? P1_SEL : P2_SEL;
@@ -25766,6 +25930,7 @@
     }
 
     function activate(pid) {
+      _markKbdNav();
       const mode = pid === 1 ? P1_MODE : P2_MODE;
       const sel = pid === 1 ? P1_SEL : P2_SEL;
       if (mode === 0) {
@@ -26067,6 +26232,7 @@
         </div>
         <div class="fcard-startres">Start: 💀${f.startSouls} · 🦴${f.startBodies}</div>`;
           card.addEventListener('mouseenter', () => {
+            if (_shouldIgnoreMouseHover()) return;
             _showFactionPreview(pid, fi);
             if (typeof NET !== 'undefined' && NET.isOnline() && NET.getPid() === pid) {
               NET.sendHover(FACTIONS[fi].id);
@@ -26597,6 +26763,7 @@
     let fCursor = [0, 0]; // Highlighted (not yet confirmed) faction index per player
 
     function factionCursorMove(pid, dir) {
+      _markKbdNav();
       // Only active when faction screen is visible
       if (!document.getElementById('sc-faction').classList.contains('active')) return;
       // Online: only move your own cursor
