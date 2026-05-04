@@ -3320,6 +3320,33 @@
       background: rgba(255, 200, 80, .3);
     }
 
+    #p1-focus-lost-banner {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 900;
+      background: rgba(8, 5, 20, .97);
+      border: 2px solid rgba(231, 76, 60, .8);
+      border-radius: 18px;
+      padding: 22px 34px;
+      text-align: center;
+      font-family: 'Rajdhani', sans-serif;
+      box-shadow: 0 0 40px rgba(231, 76, 60, .35), 0 0 80px rgba(0, 0, 0, .7);
+      backdrop-filter: blur(10px);
+      pointer-events: none;
+      animation: focusBannerPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes focusBannerPulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(231,76,60,.35), 0 0 80px rgba(0,0,0,.7); }
+      50%       { box-shadow: 0 0 60px rgba(231,76,60,.65), 0 0 80px rgba(0,0,0,.7); }
+    }
+    #p1-focus-lost-banner .flb-icon  { font-size: 2.2rem; line-height: 1; margin-bottom: 8px; }
+    #p1-focus-lost-banner .flb-title { font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 800; letter-spacing: .1em; color: #e74c3c; text-transform: uppercase; }
+    #p1-focus-lost-banner .flb-sub   { font-size: clamp(.75rem, 1.3vw, .95rem); color: rgba(255,255,255,.75); margin-top: 6px; }
+    #p1-focus-lost-banner .flb-timer { font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 900; color: #e74c3c; margin-top: 10px; letter-spacing: .05em; }
+
     #mid-indicator {
       display: none;
       position: absolute;
@@ -9005,6 +9032,12 @@
     </div>
   </div>
   <!-- online chat bar is created dynamically by JS -->
+  <div id="p1-focus-lost-banner">
+    <div class="flb-icon">⚠️</div>
+    <div class="flb-title">PLAYER 1 TABBED OUT</div>
+    <div class="flb-sub">P1 must return or they forfeit</div>
+    <div class="flb-timer" id="p1-focus-lost-timer">30s</div>
+  </div>
   <!-- TOUCH CONTROLS (compact single-row, genuine touch screens only) -->
   <div id="touch-controls" style="display:none">
     <div class="touch-half" id="touch-p1">
@@ -10567,6 +10600,36 @@
           return;
         }
 
+        // P1 focus-loss notification (P2 side only — P1 never receives these back)
+        if (action.type === 'focusLost') {
+          const banner = document.getElementById('p1-focus-lost-banner');
+          const timerEl = document.getElementById('p1-focus-lost-timer');
+          if (!banner || !timerEl) return;
+          const timeoutMs = action.timeout || 30000;
+          const focusLostAt = Date.now();
+          banner.style.display = 'block';
+          timerEl.textContent = Math.ceil(timeoutMs / 1000) + 's';
+          // Update countdown every second on P2's screen
+          if (window._p2FocusBannerInterval) clearInterval(window._p2FocusBannerInterval);
+          window._p2FocusBannerInterval = setInterval(() => {
+            const remaining = timeoutMs - (Date.now() - focusLostAt);
+            if (remaining <= 0) {
+              clearInterval(window._p2FocusBannerInterval);
+              if (banner) banner.style.display = 'none';
+              return;
+            }
+            if (timerEl) timerEl.textContent = Math.ceil(remaining / 1000) + 's';
+            if (remaining <= 10000 && timerEl) timerEl.style.color = '#ff6b6b';
+          }, 250);
+          return;
+        }
+        if (action.type === 'focusRestored') {
+          const banner = document.getElementById('p1-focus-lost-banner');
+          if (banner) banner.style.display = 'none';
+          if (window._p2FocusBannerInterval) { clearInterval(window._p2FocusBannerInterval); window._p2FocusBannerInterval = null; }
+          return;
+        }
+
         if (!G || !G.running) return;
         const { type, pid } = action;
 
@@ -10984,17 +11047,7 @@
       bubble.style.display = 'block';
       bubble.style.pointerEvents = 'none';
       bubble.className = 'camp-dia-show';
-      // Position above the base — bases sit at ~72% of canvas height
-      const _cx = canvas.getBoundingClientRect();
-      const _bh = bubble.offsetHeight || 60;
-      const _baseY = _cx.top + _cx.height * 0.72; // at groundY
-      if (side === 'player') {
-        bubble.style.left = Math.max(10, _cx.left + 20) + 'px';
-      } else {
-        bubble.style.left = Math.min(window.innerWidth - 10, _cx.right - 20) - Math.min(380, window.innerWidth * 0.82) + 'px';
-      }
-      bubble.style.top = Math.max(10, _baseY - _bh - 10) + 'px';
-      bubble.style.setProperty('--arrow-left', side === 'player' ? '30px' : 'calc(100% - 50px)');
+      _campPosBubble(bubble, side);
       // Typewriter with per-letter sound
       let charIdx = 0, soundCounter = 0;
       CAMPAIGN._diaTimer = setInterval(() => {
@@ -11342,6 +11395,15 @@
     }
 
     // Live resize: just re-scale the canvas visually — game coords never change
+    let _p1FocusLostAt = 0;
+    let _p1FocusInterval = null;
+    const _P1_FORFEIT_MS = 30000; // 30 seconds before auto-forfeit
+
+    function _p1ClearFocusTimeout() {
+      if (_p1FocusInterval) { clearInterval(_p1FocusInterval); _p1FocusInterval = null; }
+      _p1FocusLostAt = 0;
+    }
+
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && G) G.lastTime = null;
       // Mute music when tab loses focus, restore when regained
@@ -11349,6 +11411,33 @@
         _musicGain.gain.setTargetAtTime(0, AC.currentTime, 0.08);
       } else {
         _musicGain.gain.setTargetAtTime(_musicVol, AC.currentTime, 0.15);
+      }
+
+      // Online P1 tab-out detection
+      if (typeof NET === 'undefined' || !NET.isOnline || !NET.isOnline()) return;
+      if (!NET.getPid || NET.getPid() !== 1) return;
+      if (!G || !G.running) return;
+
+      if (document.hidden) {
+        _p1FocusLostAt = Date.now();
+        NET.sendAction({ type: 'focusLost', pid: 1, timeout: _P1_FORFEIT_MS });
+        // Interval still fires at ~1fps in hidden tabs (browser throttling)
+        _p1FocusInterval = setInterval(() => {
+          if (!document.hidden) { _p1ClearFocusTimeout(); return; }
+          if (!G || !G.running) { _p1ClearFocusTimeout(); return; }
+          const elapsed = Date.now() - _p1FocusLostAt;
+          if (elapsed >= _P1_FORFEIT_MS) {
+            _p1ClearFocusTimeout();
+            // P1 forfeits — zero their base HP; checkWin propagates via snapshot
+            if (G && G.running && G.players && G.players[0]) {
+              G.players[0].baseHp = 0;
+              checkWin();
+            }
+          }
+        }, 1000);
+      } else {
+        _p1ClearFocusTimeout();
+        NET.sendAction({ type: 'focusRestored', pid: 1 });
       }
     });
 
@@ -25103,8 +25192,12 @@
       // Warfront hook — update node state on match end
       if (WARFRONT.active) _wfOnGameOver(_winner.id);
       const _goDelay = CAMPAIGN.active ? 10000 : 1650;
-      // Hide chat immediately when game ends (don't wait for gameover delay)
+      // Hide chat and focus-loss banner immediately when game ends
       _onlineChatHide();
+      const _flbEnd = document.getElementById('p1-focus-lost-banner');
+      if (_flbEnd) _flbEnd.style.display = 'none';
+      if (window._p2FocusBannerInterval) { clearInterval(window._p2FocusBannerInterval); window._p2FocusBannerInterval = null; }
+      _p1ClearFocusTimeout();
       setTimeout(() => {
         // Hide any campaign dialogue before showing victory screen
         if (typeof _campHideDialogue === 'function') _campHideDialogue();
